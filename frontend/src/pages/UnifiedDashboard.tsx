@@ -5726,9 +5726,9 @@ export const UnifiedDashboard: React.FC = () => {
 
                       <div className="border border-border rounded-xl overflow-hidden bg-muted/10 p-3">
                         <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider mb-2">Registered Countries</span>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <div className="flex flex-wrap justify-center gap-3">
                           {countries.map(c => (
-                            <div key={c.id} className="p-3 bg-card border border-border rounded-lg flex items-center justify-between text-xs">
+                            <div key={c.id} className="p-3 bg-card border border-border rounded-lg flex items-center justify-between text-xs w-full sm:w-[calc(50%-6px)] lg:w-[calc(33.33%-8px)]">
                               <div>
                                 <span className="font-bold block text-foreground">{c.name} ({c.code})</span>
                                 <span className="text-[10px] text-foreground/60">Currency: {c.currency}</span>
