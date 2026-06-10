@@ -740,6 +740,74 @@ export const UnifiedDashboard: React.FC = () => {
     Easypaisa: "merchant_id_990..."
   });
 
+  // SaaS Admin Custom states
+  const [countries, setCountries] = useState([
+    { id: '1', code: 'PK', name: 'Pakistan', currency: 'PKR', status: 'Active' },
+    { id: '2', code: 'UK', name: 'United Kingdom', currency: 'GBP', status: 'Active' },
+    { id: '3', code: 'AE', name: 'United Arab Emirates', currency: 'AED', status: 'Active' },
+    { id: '4', code: 'SA', name: 'Saudi Arabia', currency: 'SAR', status: 'Active' },
+    { id: '5', code: 'CA', name: 'Canada', currency: 'CAD', status: 'Active' }
+  ]);
+  const [newCountryCode, setNewCountryCode] = useState('');
+  const [newCountryName, setNewCountryName] = useState('');
+  const [newCountryCurrency, setNewCountryCurrency] = useState('USD');
+
+  const [organizations, setOrganizations] = useState([
+    { id: '1', name: 'Beaconhouse Group', owner: 'M. Ali', branches: 12, status: 'Active' },
+    { id: '2', name: 'Dar-e-Arqam Network', owner: 'Kamran S.', branches: 8, status: 'Active' },
+    { id: '3', name: 'The Educators', owner: 'Sana J.', branches: 6, status: 'Active' }
+  ]);
+  const [newOrgName, setNewOrgName] = useState('');
+  const [newOrgOwner, setNewOrgOwner] = useState('');
+  const [newOrgBranches, setNewOrgBranches] = useState('1');
+
+  const [schoolsList, setSchoolsList] = useState([
+    { id: '1', name: 'Beaconhouse Campus Lahore', subdomain: 'beaconhouse-lahore', status: 'Active' },
+    { id: '2', name: 'Dar-e-Arqam School Rawalpindi', subdomain: 'darearqam-rwp', status: 'Active' },
+    { id: '3', name: 'Roots International Toronto', subdomain: 'roots-toronto', status: 'Active' }
+  ]);
+  const [newSchoolName, setNewSchoolName] = useState('');
+  const [newSchoolSubdomain, setNewSchoolSubdomain] = useState('');
+
+  const [subscriptionPlans, setSubscriptionPlans] = useState([
+    { id: '1', name: 'Basic Academy Plan', price: 99, billing: 'Monthly', subscribers: 14 },
+    { id: '2', name: 'Premium School Plan', price: 249, billing: 'Monthly', subscribers: 28 },
+    { id: '3', name: 'Enterprise SaaS Plan', price: 599, billing: 'Monthly', subscribers: 12 }
+  ]);
+  const [newPlanName, setNewPlanName] = useState('');
+  const [newPlanPrice, setNewPlanPrice] = useState('');
+  const [newPlanBilling, setNewPlanBilling] = useState('Monthly');
+
+  const [whiteLabelConfig, setWhiteLabelConfig] = useState({
+    customDomain: 'portal.academichub.com',
+    dnsStatus: 'Verified',
+    primaryColor: '#6d28d9',
+    secondaryColor: '#1e1b4b'
+  });
+  const [dnsInput, setDnsInput] = useState('portal.academichub.com');
+
+  const [supportTickets, setSupportTickets] = useState([
+    { id: 'TKT-901', sender: 'Principal Usman', subject: 'Easypaisa integration error', priority: 'High', status: 'Open' },
+    { id: 'TKT-902', sender: 'Teacher Clara', subject: 'Gradebook CSV import failed', priority: 'Medium', status: 'Open' },
+    { id: 'TKT-903', sender: 'Parent Oliver', subject: 'GPS Bus Tracker lag', priority: 'Low', status: 'Resolved' }
+  ]);
+  const [replyTicketId, setReplyTicketId] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState('');
+
+  const [auditLogs, setAuditLogs] = useState([
+    { id: '1', timestamp: '2026-06-10 19:45:12', user: 'superadmin', action: 'Created new tenant school: Allied School Campus A' },
+    { id: '2', timestamp: '2026-06-10 18:22:04', user: 'admin', action: 'Approved leave request for Sarah Khan' },
+    { id: '3', timestamp: '2026-06-10 17:15:58', user: 'accountant', action: 'Recorded cash fee collection for invoice INV-001' },
+    { id: '4', timestamp: '2026-06-10 16:08:42', user: 'librarian', action: 'Issued book "Advanced Physics" to Kamran Shah' }
+  ]);
+
+  const [globalAnnouncements, setGlobalAnnouncements] = useState([
+    { id: '1', date: '2026-06-10', title: 'System Maintenance Window', content: 'Database server upgrades scheduled for June 12, 02:00 AM UTC.' },
+    { id: '2', date: '2026-06-08', title: 'New Payment Gateway Released', content: 'JazzCash auto-checkout is now active for Pakistan branches.' }
+  ]);
+  const [newAnnounceTitle, setNewAnnounceTitle] = useState('');
+  const [newAnnounceContent, setNewAnnounceContent] = useState('');
+
   // Simple logout function
   const handleLogout = () => {
     logout();
@@ -2331,27 +2399,25 @@ export const UnifiedDashboard: React.FC = () => {
                   <div 
                     key={i}
                     onClick={() => setActiveFeature(feature)}
-                    className="p-5 bg-card/70 hover:bg-muted/65 rounded-2xl border border-border flex flex-col justify-between gap-4 group cursor-pointer transition-all hover:scale-[1.015] active:scale-[0.985] hover:border-primary/45 duration-300 w-full sm:w-[calc(50%-8px)] lg:w-[calc(33.333%-11px)] hover:shadow-md hover:shadow-primary/5"
+                    className="p-5 bg-card/70 hover:bg-muted/65 rounded-2xl border border-border flex flex-col items-center justify-between gap-4 group cursor-pointer transition-all hover:scale-[1.015] active:scale-[0.985] hover:border-primary/45 duration-300 w-full sm:w-[calc(50%-8px)] lg:w-[calc(33.333%-11px)] hover:shadow-md hover:shadow-primary/5 text-center"
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-xs shrink-0 transition-transform duration-300 group-hover:scale-110">
-                          <FeatureIcon className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <span className="text-sm font-black text-foreground block group-hover:text-primary transition-colors">{feature}</span>
-                          <p className="text-[11px] text-foreground/50 leading-relaxed font-semibold mt-1 line-clamp-2">{details.desc}</p>
-                        </div>
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-xs shrink-0 transition-transform duration-300 group-hover:scale-110 mb-1">
+                        <FeatureIcon className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <span className="text-sm font-black text-foreground block group-hover:text-primary transition-colors">{feature}</span>
+                        <p className="text-[11px] text-foreground/50 leading-relaxed font-semibold mt-1.5 line-clamp-2">{details.desc}</p>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between pt-2 border-t border-border/40 mt-1">
+                    <div className="flex flex-col items-center gap-2.5 pt-3 border-t border-border/40 mt-1 w-full">
                       <span className="text-[9px] font-black text-primary uppercase tracking-widest bg-primary/5 border border-primary/20 px-2.5 py-0.5 rounded-md">
                         {details.stats}
                       </span>
-                      <span className="text-[10px] font-bold text-foreground/45 group-hover:text-primary flex items-center gap-1 transition-all group-hover:translate-x-0.5">
-                        Manage <ChevronRight className="w-3.5 h-3.5" />
-                      </span>
+                      <button className="w-full py-2 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white rounded-lg transition-all font-bold text-xs flex items-center justify-center gap-1 shadow-sm">
+                        Manage {feature} <ChevronRight className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   </div>
                 );
@@ -5622,103 +5688,511 @@ export const UnifiedDashboard: React.FC = () => {
                 </div>
               )}
               {/* SaaS Admin, Organization & Brand Settings */}
-              {['Country Management', 'Organization Management', 'School Management', 'Subscription Plans', 'Revenue Analytics', 'White Label Configuration', 'Support Tickets', 'Audit Logs', 'Organization Overview', 'School Performance Matrix', 'Branch Performance Ledger', 'Campus Performance Analytics', 'Group Revenue Reports', 'Expansion Planning Wizard', 'Branding Customizer Engine', 'Organization Core Users', 'School Overview Analytics', 'Revenue Tracker Details', 'Expense Audit Logs', 'Profitability Statements', 'Student Growth Reports', 'Academic Grade Summaries', 'Subscription Preferences', 'School Logo & Branding Customizer', 'Branding Overrides'].includes(activeFeature) && (
+              {['Country Management', 'Organization Management', 'School Management', 'Subscription Plans', 'Revenue Analytics', 'White Label Configuration', 'Support Tickets', 'Audit Logs', 'Global Announcements'].includes(activeFeature || '') && (
                 <div className="space-y-6">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-                    
-                    {/* Left Column: Security and Info */}
-                    <div className="space-y-4 flex flex-col justify-between">
+                  {/* 1. Country Management */}
+                  {activeFeature === 'Country Management' && (
+                    <div className="space-y-4 animate-fadeIn">
                       <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
-                        💼 View administrative settings and authorization profiles.
+                        🌍 Localize your enterprise network by registering new operational countries, setting currency rules, and adjusting regional tax contexts.
                       </div>
-
-                      {/* Secure by Design Info Block */}
-                      <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl space-y-4 shadow-xl text-slate-200 flex-1 flex flex-col justify-between">
-                        <span className="block text-xs font-black text-primary uppercase tracking-widest text-center">Secure by Design</span>
-                        
-                        <div className="flex justify-center pb-1">
-                          <div className="px-4 py-2 bg-slate-950 border border-slate-800/80 rounded-xl flex items-center gap-2 text-[11px] shadow-inner">
-                            <span className="text-base text-blue-400 font-sans font-bold">G</span>
-                            <span className="font-bold text-white">Google Authentication</span>
-                            <span className="text-slate-500 text-[10px]">One-tap sign in</span>
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-3 gap-2.5 text-[9px] items-stretch">
-                          <div className="p-3 bg-slate-950/80 border border-slate-800/60 rounded-xl space-y-2 text-center flex flex-col justify-center">
-                            <strong className="block text-amber-400 font-bold uppercase tracking-wider">Owner</strong>
-                            <div className="text-[9px] text-slate-400 space-y-0.5">
-                              <span className="block">🔒 Full Access</span>
-                              <span className="block">🔒 Billing</span>
-                              <span className="block">🔒 Settings</span>
-                            </div>
-                          </div>
-                          <div className="p-3 bg-slate-950/80 border border-slate-800/60 rounded-xl space-y-2 text-center flex flex-col justify-center">
-                            <strong className="block text-emerald-400 font-bold uppercase tracking-wider">Head Teacher</strong>
-                            <div className="text-[9px] text-slate-400 space-y-0.5">
-                              <span className="block">🔒 Students</span>
-                              <span className="block">🔒 Teachers</span>
-                              <span className="block">🔒 Results</span>
-                            </div>
-                          </div>
-                          <div className="p-3 bg-slate-950/80 border border-slate-800/60 rounded-xl space-y-2 text-center flex flex-col justify-center">
-                            <strong className="block text-blue-400 font-bold uppercase tracking-wider">Teacher</strong>
-                            <div className="text-[9px] text-slate-400 space-y-0.5">
-                              <span className="block">🔒 Attendance</span>
-                              <span className="block">🔒 Grades</span>
-                              <span className="block">🔒 Schedule</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <button onClick={() => handlePrintPdf('revenue_audit')} className="w-full py-2.5 bg-muted hover:bg-muted/80 border border-border text-foreground text-xs font-bold rounded-lg transition-all shadow-md mt-auto">
-                        📥 Download Consolidated Revenue Audit Statement (PDF)
-                      </button>
-                    </div>
-
-                    {/* Right Column: Branding Customizer and Campus List */}
-                    <div className="space-y-4 flex flex-col justify-between">
-                      {/* Branding customizer mockup form */}
-                      <form onSubmit={(e) => { e.preventDefault(); alert('Branding settings saved successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3.5 flex-1 flex flex-col justify-between">
-                        <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Theme Colors & School Branding Settings</span>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          <input type="text" placeholder="School Network Name (e.g. Dar-e-Arqam)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
-                          <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
-                            <option>Theme: Purple</option>
-                            <option>Theme: Green</option>
-                            <option>Theme: Blue</option>
+                      
+                      <form onSubmit={(e) => {
+                        e.preventDefault();
+                        if (!newCountryCode || !newCountryName) return;
+                        setCountries(prev => [...prev, { id: Date.now().toString(), code: newCountryCode.toUpperCase(), name: newCountryName, currency: newCountryCurrency, status: 'Active' }]);
+                        setNewCountryCode('');
+                        setNewCountryName('');
+                        alert(`Country ${newCountryName} successfully registered!`);
+                      }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3.5">
+                        <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Register New Country</span>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                          <input value={newCountryName} onChange={(e) => setNewCountryName(e.target.value)} type="text" placeholder="Country Name (e.g. Canada)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
+                          <input value={newCountryCode} onChange={(e) => setNewCountryCode(e.target.value)} type="text" placeholder="ISO Code (e.g. CA)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" maxLength={3} required />
+                          <select value={newCountryCurrency} onChange={(e) => setNewCountryCurrency(e.target.value)} className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold">
+                            <option value="USD">USD ($)</option>
+                            <option value="PKR">PKR (Rs)</option>
+                            <option value="GBP">GBP (£)</option>
+                            <option value="AED">AED (Dh)</option>
+                            <option value="CAD">CAD ($)</option>
                           </select>
                         </div>
-                        <div className="flex justify-end pt-1">
-                          <button type="submit" className="px-6 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md">
-                            Save Branding
+                        <div className="flex justify-center">
+                          <button type="submit" className="w-full sm:w-auto px-6 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md">
+                            Add Country Registry
                           </button>
                         </div>
                       </form>
 
-                      {/* Roster Table */}
-                      <div className="space-y-2 max-h-40 overflow-y-auto pr-1 border border-border rounded-xl p-3 bg-muted/10">
-                        <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Campus List</span>
+                      <div className="border border-border rounded-xl overflow-hidden bg-muted/10 p-3">
+                        <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider mb-2">Registered Countries</span>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                          {countries.map(c => (
+                            <div key={c.id} className="p-3 bg-card border border-border rounded-lg flex items-center justify-between text-xs">
+                              <div>
+                                <span className="font-bold block text-foreground">{c.name} ({c.code})</span>
+                                <span className="text-[10px] text-foreground/60">Currency: {c.currency}</span>
+                              </div>
+                              <button 
+                                onClick={() => {
+                                  setCountries(prev => prev.map(item => item.id === c.id ? { ...item, status: item.status === 'Active' ? 'Inactive' : 'Active' } : item));
+                                }}
+                                className={`px-2.5 py-1 rounded text-[10px] font-bold ${c.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}`}
+                              >
+                                {c.status}
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 2. Organization Management */}
+                  {activeFeature === 'Organization Management' && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                        🏢 Configure school chains, educational franchises, and corporate headquarters. Each organization holds isolated campuses under its billing wing.
+                      </div>
+                      
+                      <form onSubmit={(e) => {
+                        e.preventDefault();
+                        if (!newOrgName || !newOrgOwner) return;
+                        setOrganizations(prev => [...prev, { id: Date.now().toString(), name: newOrgName, owner: newOrgOwner, branches: parseInt(newOrgBranches) || 1, status: 'Active' }]);
+                        setNewOrgName('');
+                        setNewOrgOwner('');
+                        setNewOrgBranches('1');
+                        alert(`Organization ${newOrgName} has been registered!`);
+                      }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3.5">
+                        <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Add School Chain / Organization</span>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                          <input value={newOrgName} onChange={(e) => setNewOrgName(e.target.value)} type="text" placeholder="Organization Name" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
+                          <input value={newOrgOwner} onChange={(e) => setNewOrgOwner(e.target.value)} type="text" placeholder="Owner / Director" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
+                          <input value={newOrgBranches} onChange={(e) => setNewOrgBranches(e.target.value)} type="number" min={1} placeholder="Active Branches count" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
+                        </div>
+                        <div className="flex justify-center">
+                          <button type="submit" className="w-full sm:w-auto px-6 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md">
+                            Add Organization
+                          </button>
+                        </div>
+                      </form>
+
+                      <div className="border border-border rounded-xl bg-card overflow-hidden">
                         <table className="w-full text-left border-collapse text-xs">
                           <thead>
                             <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
-                              <th className="p-2">Campus Branch</th>
-                              <th className="p-2 text-center">Pupils</th>
-                              <th className="p-2 text-center">Staff</th>
-                              <th className="p-2 text-right">Net Margin</th>
+                              <th className="p-3">Organization Chain</th>
+                              <th className="p-3">Director</th>
+                              <th className="p-3 text-center">Branches</th>
+                              <th className="p-3 text-right">Status</th>
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-border text-foreground/85">
-                            <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Beaconhouse Campus</td><td className="p-2 text-center">480</td><td className="p-2 text-center">36</td><td className="p-2 text-right text-emerald-400 font-bold">32.4%</td></tr>
-                            <tr className="hover:bg-muted/10"><td className="p-2 font-bold">The Educators Main</td><td className="p-2 text-center">340</td><td className="p-2 text-center">28</td><td className="p-2 text-right text-emerald-400 font-bold">28.1%</td></tr>
-                            <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Dar-e-Arqam School</td><td className="p-2 text-center">420</td><td className="p-2 text-center">34</td><td className="p-2 text-right text-emerald-400 font-bold">30.5%</td></tr>
+                            {organizations.map(org => (
+                              <tr key={org.id} className="hover:bg-muted/10">
+                                <td className="p-3 font-bold">{org.name}</td>
+                                <td className="p-3">{org.owner}</td>
+                                <td className="p-3 text-center font-bold text-primary">{org.branches}</td>
+                                <td className="p-3 text-right">
+                                  <button 
+                                    onClick={() => {
+                                      setOrganizations(prev => prev.map(item => item.id === org.id ? { ...item, status: item.status === 'Active' ? 'Inactive' : 'Active' } : item));
+                                    }}
+                                    className={`px-2 py-0.5 rounded text-[10px] font-bold ${org.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}`}
+                                  >
+                                    {org.status}
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
                           </tbody>
                         </table>
                       </div>
                     </div>
+                  )}
 
-                  </div>
+                  {/* 3. School Management */}
+                  {activeFeature === 'School Management' && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                        🏫 Provision and launch new school campuses. Register distinct subdomains to partition database rows natively via RLS context.
+                      </div>
+                      
+                      <form onSubmit={(e) => {
+                        e.preventDefault();
+                        if (!newSchoolName || !newSchoolSubdomain) return;
+                        setSchoolsList(prev => [...prev, { id: Date.now().toString(), name: newSchoolName, subdomain: newSchoolSubdomain.toLowerCase(), status: 'Active' }]);
+                        setNewSchoolName('');
+                        setNewSchoolSubdomain('');
+                        alert(`School Campus ${newSchoolName} successfully created!`);
+                      }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3.5">
+                        <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Provision New School Campus</span>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          <input value={newSchoolName} onChange={(e) => setNewSchoolName(e.target.value)} type="text" placeholder="School Name (e.g. Allied School Campus A)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
+                          <div className="flex items-center gap-1 bg-card border border-border rounded-lg px-2">
+                            <input value={newSchoolSubdomain} onChange={(e) => setNewSchoolSubdomain(e.target.value)} type="text" placeholder="subdomain" className="bg-transparent text-xs py-2 w-full text-foreground outline-none" required />
+                            <span className="text-[10px] text-foreground/50 font-semibold">.academichub.com</span>
+                          </div>
+                        </div>
+                        <div className="flex justify-center">
+                          <button type="submit" className="w-full sm:w-auto px-6 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md">
+                            Provision Campus Subdomain
+                          </button>
+                        </div>
+                      </form>
+
+                      <div className="border border-border rounded-xl bg-card overflow-hidden">
+                        <table className="w-full text-left border-collapse text-xs">
+                          <thead>
+                            <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
+                              <th className="p-3">Campus Branch</th>
+                              <th className="p-3">Access Domain</th>
+                              <th className="p-3 text-right">RLS Tenant Status</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-border text-foreground/85">
+                            {schoolsList.map(sch => (
+                              <tr key={sch.id} className="hover:bg-muted/10">
+                                <td className="p-3 font-bold">{sch.name}</td>
+                                <td className="p-3 text-primary font-semibold">{sch.subdomain}.academichub.com</td>
+                                <td className="p-3 text-right">
+                                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                    Isolated RLS
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 4. Subscription Plans */}
+                  {activeFeature === 'Subscription Plans' && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                        💳 Manage licensing models and recurring software subscriptions for different school chains.
+                      </div>
+                      
+                      <form onSubmit={(e) => {
+                        e.preventDefault();
+                        if (!newPlanName || !newPlanPrice) return;
+                        setSubscriptionPlans(prev => [...prev, { id: Date.now().toString(), name: newPlanName, price: parseFloat(newPlanPrice) || 0, billing: newPlanBilling, subscribers: 0 }]);
+                        setNewPlanName('');
+                        setNewPlanPrice('');
+                        alert(`Subscription plan ${newPlanName} has been configured!`);
+                      }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3.5">
+                        <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Configure SaaS Pricing Plan</span>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                          <input value={newPlanName} onChange={(e) => setNewPlanName(e.target.value)} type="text" placeholder="Plan Title" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
+                          <input value={newPlanPrice} onChange={(e) => setNewPlanPrice(e.target.value)} type="number" placeholder="Price (USD)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
+                          <select value={newPlanBilling} onChange={(e) => setNewPlanBilling(e.target.value)} className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold">
+                            <option value="Monthly">Monthly Billing</option>
+                            <option value="Annually">Annually Billing</option>
+                          </select>
+                        </div>
+                        <div className="flex justify-center">
+                          <button type="submit" className="w-full sm:w-auto px-6 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md">
+                            Save Pricing Tier
+                          </button>
+                        </div>
+                      </form>
+
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {subscriptionPlans.map(plan => (
+                          <div key={plan.id} className="p-4 bg-card border border-border rounded-2xl flex flex-col justify-between items-center text-center space-y-3 shadow-md hover:border-primary/50 transition-all duration-300">
+                            <span className="font-black text-foreground text-sm uppercase tracking-wide">{plan.name}</span>
+                            <div>
+                              <span className="text-3xl font-extrabold text-foreground">${plan.price}</span>
+                              <span className="text-[10px] text-foreground/50 block">/ {plan.billing}</span>
+                            </div>
+                            <div className="w-full text-xs text-foreground/70 border-t border-border/60 pt-2 space-y-1">
+                              <span className="block">✓ Tenant Isolated Database</span>
+                              <span className="block">✓ Row-level security (RLS)</span>
+                              <span className="block font-bold text-primary">{plan.subscribers} Active Schools</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 5. Revenue Analytics */}
+                  {activeFeature === 'Revenue Analytics' && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                        📈 Consolidated Group financial indicators, net profitability margins, and software subscriber growth metrics.
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-center space-y-1 shadow-lg">
+                          <span className="text-xs text-slate-400 font-bold block uppercase tracking-wider">Consolidated Inflow</span>
+                          <span className="text-2xl font-black text-white">$12,450 / mo</span>
+                          <span className="text-[10px] text-emerald-400 block font-semibold">+18.4% growth</span>
+                        </div>
+                        <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-center space-y-1 shadow-lg">
+                          <span className="text-xs text-slate-400 font-bold block uppercase tracking-wider">Group Cashflow Outflow</span>
+                          <span className="text-2xl font-black text-white">$8,520 / mo</span>
+                          <span className="text-[10px] text-slate-500 block">Server & API nodes cost</span>
+                        </div>
+                        <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-center space-y-1 shadow-lg">
+                          <span className="text-xs text-slate-400 font-bold block uppercase tracking-wider">Net Profit Margin</span>
+                          <span className="text-2xl font-black text-emerald-400">31.5%</span>
+                          <span className="text-[10px] text-slate-400 block">Audit Status: Safe</span>
+                        </div>
+                      </div>
+
+                      {/* Mock Chart Area */}
+                      <div className="p-5 bg-card border border-border rounded-2xl space-y-3">
+                        <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider text-center">Monthly Software Subscriptions Revenue (USD)</span>
+                        <div className="flex items-end justify-between h-32 pt-6 px-4">
+                          {[
+                            { label: 'Jan', val: '$8K', height: '65%' },
+                            { label: 'Feb', val: '$9K', height: '70%' },
+                            { label: 'Mar', val: '$10K', height: '78%' },
+                            { label: 'Apr', val: '$11K', height: '85%' },
+                            { label: 'May', val: '$12K', height: '95%' }
+                          ].map((bar, i) => (
+                            <div key={i} className="flex flex-col items-center gap-1.5 w-12">
+                              <span className="text-[9px] font-bold text-foreground/50">{bar.val}</span>
+                              <div className="w-6 bg-gradient-to-t from-primary/30 to-primary rounded-t-lg shadow" style={{ height: bar.height }}></div>
+                              <span className="text-[9px] text-foreground/60 font-semibold">{bar.label}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="flex justify-center">
+                        <button onClick={() => handlePrintPdf('revenue_audit')} className="px-6 py-2.5 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md">
+                          📥 Download Consolidated Revenue Audit Statement (PDF)
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 6. White Label Configuration */}
+                  {activeFeature === 'White Label Configuration' && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                        🔧 Establish custom domain pointers, configure default branding colors, and verify DNS records.
+                      </div>
+                      
+                      <form onSubmit={(e) => {
+                        e.preventDefault();
+                        setWhiteLabelConfig(prev => ({ ...prev, customDomain: dnsInput }));
+                        alert('Custom DNS target configurations saved! DNS is currently propagation-testing.');
+                      }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-4">
+                        <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">White-Label DNS Pointer & Theme settings</span>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-1.5">
+                            <label className="text-[10px] text-foreground/60 font-bold uppercase block">Custom Domain Pointer</label>
+                            <input value={dnsInput} onChange={(e) => setDnsInput(e.target.value)} type="text" placeholder="portal.yourschool.com" className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
+                          </div>
+                          
+                          <div className="space-y-1.5">
+                            <label className="text-[10px] text-foreground/60 font-bold uppercase block">Primary HSL Custom Color</label>
+                            <select 
+                              value={whiteLabelConfig.primaryColor}
+                              onChange={(e) => setWhiteLabelConfig(prev => ({ ...prev, primaryColor: e.target.value }))}
+                              className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold"
+                            >
+                              <option value="#6d28d9">Modern Purple (#6d28d9)</option>
+                              <option value="#10b981">Emerald Green (#10b981)</option>
+                              <option value="#3b82f6">Ocean Blue (#3b82f6)</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div className="flex justify-center">
+                          <button type="submit" className="w-full sm:w-auto px-6 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md">
+                            Verify DNS & Save Branding
+                          </button>
+                        </div>
+                      </form>
+
+                      <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl space-y-3 text-slate-200">
+                        <span className="block text-xs font-black text-primary uppercase tracking-widest text-center">DNS Status Logs</span>
+                        <div className="space-y-2 text-xs">
+                          <div className="flex justify-between border-b border-slate-800 pb-2">
+                            <span>CNAME Target</span>
+                            <span className="font-mono text-slate-400">cname.academichub.com</span>
+                          </div>
+                          <div className="flex justify-between border-b border-slate-800 pb-2">
+                            <span>Propagation Status</span>
+                            <span className="font-bold text-emerald-400">{whiteLabelConfig.dnsStatus}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Active Domain</span>
+                            <span className="font-mono text-primary font-bold">{whiteLabelConfig.customDomain}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 7. Support Tickets */}
+                  {activeFeature === 'Support Tickets' && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                        💬 Review and address technical support query tickets opened by school administrators.
+                      </div>
+
+                      {replyTicketId && (
+                        <div className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+                          <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Reply to Ticket {replyTicketId}</span>
+                          <textarea 
+                            value={replyText} 
+                            onChange={(e) => setReplyText(e.target.value)} 
+                            placeholder="Type resolution notes here..." 
+                            className="w-full h-20 bg-card border border-border rounded-lg text-xs p-2 text-foreground outline-none focus:ring-1 focus:ring-primary"
+                          />
+                          <div className="flex justify-end gap-2">
+                            <button 
+                              onClick={() => setReplyTicketId(null)} 
+                              className="px-4 py-1.5 bg-muted hover:bg-muted/80 text-foreground rounded-lg font-bold text-xs border border-border"
+                            >
+                              Cancel
+                            </button>
+                            <button 
+                              onClick={() => {
+                                if (!replyText) return;
+                                setSupportTickets(prev => prev.map(t => t.id === replyTicketId ? { ...t, status: 'Resolved' } : t));
+                                setReplyTicketId(null);
+                                setReplyText('');
+                                alert('Reply submitted and ticket marked as Resolved!');
+                              }} 
+                              className="px-4 py-1.5 bg-primary hover:bg-primary/90 text-white rounded-lg font-bold text-xs shadow-md"
+                            >
+                              Send Reply Resolution
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div className="border border-border rounded-xl bg-card overflow-hidden">
+                        <table className="w-full text-left border-collapse text-xs">
+                          <thead>
+                            <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
+                              <th className="p-3">Ticket ID</th>
+                              <th className="p-3">Sender</th>
+                              <th className="p-3">Subject</th>
+                              <th className="p-3 text-center">Priority</th>
+                              <th className="p-3 text-right">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-border text-foreground/85">
+                            {supportTickets.map(ticket => (
+                              <tr key={ticket.id} className="hover:bg-muted/10">
+                                <td className="p-3 font-mono font-bold text-primary">{ticket.id}</td>
+                                <td className="p-3">{ticket.sender}</td>
+                                <td className="p-3 font-semibold">{ticket.subject}</td>
+                                <td className="p-3 text-center">
+                                  <span className={`px-2 py-0.5 rounded text-[9px] font-bold ${
+                                    ticket.priority === 'High' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
+                                    ticket.priority === 'Medium' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
+                                    'bg-slate-500/10 text-slate-400 border border-slate-500/20'
+                                  }`}>
+                                    {ticket.priority}
+                                  </span>
+                                </td>
+                                <td className="p-3 text-right">
+                                  {ticket.status === 'Open' ? (
+                                    <button 
+                                      onClick={() => setReplyTicketId(ticket.id)}
+                                      className="px-3 py-1 bg-primary text-white font-bold text-[10px] rounded hover:bg-primary/90"
+                                    >
+                                      Reply Resolution
+                                    </button>
+                                  ) : (
+                                    <span className="text-emerald-400 font-bold text-[10px] uppercase tracking-wider">
+                                      Resolved
+                                    </span>
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 8. Audit Logs */}
+                  {activeFeature === 'Audit Logs' && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                        🛡️ Real-time system log stream recording structural RLS schema activities and administrative operations.
+                      </div>
+                      
+                      <div className="border border-border rounded-xl bg-card overflow-hidden">
+                        <table className="w-full text-left border-collapse text-xs">
+                          <thead>
+                            <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
+                              <th className="p-3">Timestamp (UTC)</th>
+                              <th className="p-3">Operator</th>
+                              <th className="p-3">Administrative Action</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-border text-foreground/85">
+                            {auditLogs.map(log => (
+                              <tr key={log.id} className="hover:bg-muted/10 font-mono text-[11px]">
+                                <td className="p-3 text-foreground/50">{log.timestamp}</td>
+                                <td className="p-3 font-bold text-primary">{log.user}</td>
+                                <td className="p-3 text-foreground/80">{log.action}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 9. Global Announcements */}
+                  {activeFeature === 'Global Announcements' && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                        📣 Broadcast global alert banners, notices, and system alerts to all active campus instances.
+                      </div>
+                      
+                      <form onSubmit={(e) => {
+                        e.preventDefault();
+                        if (!newAnnounceTitle || !newAnnounceContent) return;
+                        setGlobalAnnouncements(prev => [
+                          { id: Date.now().toString(), date: new Date().toISOString().split('T')[0], title: newAnnounceTitle, content: newAnnounceContent },
+                          ...prev
+                        ]);
+                        setNewAnnounceTitle('');
+                        setNewAnnounceContent('');
+                        alert('Global notice announcement broadcasted successfully!');
+                      }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3.5">
+                        <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Create Global Broadcast Alert</span>
+                        <div className="space-y-3">
+                          <input value={newAnnounceTitle} onChange={(e) => setNewAnnounceTitle(e.target.value)} type="text" placeholder="Notice Headline (e.g. Server Maintenance Window)" className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
+                          <textarea value={newAnnounceContent} onChange={(e) => setNewAnnounceContent(e.target.value)} placeholder="Notice description content details..." className="w-full h-20 bg-card border border-border rounded-lg text-xs p-2.5 text-foreground outline-none" required />
+                        </div>
+                        <div className="flex justify-center">
+                          <button type="submit" className="w-full sm:w-auto px-6 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md">
+                            Broadcast Notice Bulletins
+                          </button>
+                        </div>
+                      </form>
+
+                      <div className="space-y-3">
+                        <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Active Broadcast Archives</span>
+                        {globalAnnouncements.map(ann => (
+                          <div key={ann.id} className="p-4 bg-card border border-border rounded-xl space-y-2">
+                            <div className="flex justify-between items-center text-xs">
+                              <span className="font-extrabold text-foreground">{ann.title}</span>
+                              <span className="text-[10px] text-foreground/50">{ann.date}</span>
+                            </div>
+                            <p className="text-xs text-foreground/60 leading-relaxed">{ann.content}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
