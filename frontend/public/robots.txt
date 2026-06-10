@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /super-admin/
+Disallow: /student-portal/
+
+Sitemap: https://academichub.com/sitemap.xml
