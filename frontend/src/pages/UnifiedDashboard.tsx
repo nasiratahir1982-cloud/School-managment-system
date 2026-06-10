@@ -1243,7 +1243,179 @@ export const UnifiedDashboard: React.FC = () => {
           </table>
         </div>
       `;
+    } else if (reportType === 'timetable') {
+      const currentTenantName = currentTenant?.schoolName || "Central Elite Grammar School";
+      const hasLogo = !!currentTenant?.logoUrl;
+      const logoHtml = hasLogo 
+        ? `<img src="${currentTenant.logoUrl}" style="height: 65px; object-fit: contain; margin-bottom: 12px; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.08));" />`
+        : `<div style="margin-bottom: 12px; display: inline-flex; justify-content: center; align-items: center; width: 60px; height: 60px; border-radius: 50%; border: 2px solid currentColor; font-size: 24px; font-weight: bold; background: rgba(0,0,0,0.03);">🎓</div>`;
+      
+      const primaryHsl = currentTenant?.themeSettings?.primaryHsl || '263.4 70% 50.4%';
+      const secondaryHsl = currentTenant?.themeSettings?.secondaryHsl || '217.2 32.6% 16%';
+
+      const primaryHslFormatted = toCommaHsl(primaryHsl);
+      const secondaryHslFormatted = toCommaHsl(secondaryHsl);
+
+      let themePrimary = `hsl(${primaryHslFormatted})`;
+      let themeAccent = `hsl(${secondaryHslFormatted})`;
+      let themeAccentLight = `hsla(${primaryHslFormatted.split(',')[0]}, 70%, 97%, 0.95)`;
+
+      reportTitle = `${currentTenantName} - Weekly Class Timetable`;
+      
+      const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+      
+      let rowsHtml = '';
+      for (let pIdx = 0; pIdx < 6; pIdx++) {
+        const periodNum = pIdx + 1;
+        const timeRange = 
+          periodNum === 1 ? '08:30 - 09:15' :
+          periodNum === 2 ? '09:15 - 10:00' :
+          periodNum === 3 ? '10:00 - 10:45' :
+          periodNum === 4 ? '11:15 - 12:00' :
+          periodNum === 5 ? '12:00 - 12:45' : '12:45 - 01:30';
+          
+        let rowColsHtml = `
+          <td style="
+            padding: 10px; 
+            border: 1px solid #cbd5e1; 
+            font-weight: 800; 
+            background: #f8fafc;
+            color: #0f172a;
+            text-align: left;
+            width: 12%;
+          ">
+            <div style="font-size: 12px; font-weight: 900; color: ${themePrimary};">Period ${periodNum}</div>
+            <div style="font-size: 9px; font-family: monospace; color: #64748b; margin-top: 2px;">${timeRange}</div>
+          </td>
+        `;
+        
+        days.forEach(day => {
+          const daySchedule = WEEKLY_SCHEDULE_DATA[day] || [];
+          const classItem = daySchedule.find(p => p.id === periodNum) || { subject: 'Free Study', teacher: '-', room: '-' };
+          
+          let cardBg = '#f8fafc';
+          let cardText = '#475569';
+          let cardBorder = '#cbd5e1';
+          
+          if (classItem.subject === 'Mathematics') {
+            cardBg = '#faf5ff'; cardText = '#7e22ce'; cardBorder = '#c084fc';
+          } else if (classItem.subject === 'Physics') {
+            cardBg = '#eff6ff'; cardText = '#1d4ed8'; cardBorder = '#60a5fa';
+          } else if (classItem.subject === 'Chemistry') {
+            cardBg = '#fffbeb'; cardText = '#b45309'; cardBorder = '#fbbf24';
+          } else if (classItem.subject === 'Biology') {
+            cardBg = '#ecfdf5'; cardText = '#047857'; cardBorder = '#34d399';
+          } else if (classItem.subject === 'English Language') {
+            cardBg = '#f0f9ff'; cardText = '#0369a1'; cardBorder = '#38bdf8';
+          } else if (classItem.subject === 'Computer Science') {
+            cardBg = '#fdf2f8'; cardText = '#be185d'; cardBorder = '#f472b6';
+          }
+          
+          rowColsHtml += `
+            <td style="
+              padding: 6px; 
+              border: 1px solid #cbd5e1; 
+              text-align: center; 
+              vertical-align: middle;
+              background: #ffffff;
+            ">
+              <div style="
+                background: ${cardBg}; 
+                border: 2px solid ${cardBorder}; 
+                border-radius: 8px; 
+                padding: 8px; 
+                height: 80px; 
+                display: flex; 
+                flex-direction: column; 
+                justify-content: space-between; 
+                box-sizing: border-box;
+              ">
+                <div style="font-weight: 900; font-size: 11px; color: ${cardText}; text-transform: uppercase; margin-bottom: 2px; line-height: 1.1;">
+                  ${classItem.subject}
+                </div>
+                <div style="border-top: 1px dashed rgba(0,0,0,0.06); padding-top: 2px;">
+                  <span style="display: block; font-size: 9px; font-weight: 800; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    ${classItem.teacher}
+                  </span>
+                  <span style="display: block; font-size: 8px; font-weight: 700; color: #64748b; margin-top: 1px;">
+                    Rm: ${classItem.room}
+                  </span>
+                </div>
+              </div>
+            </td>
+          `;
+        });
+        
+        rowsHtml += `<tr style="page-break-inside: avoid;">${rowColsHtml}</tr>`;
+      }
+
+      reportHtml = `
+        <div class="print-container" style="
+          border: 3px solid ${themePrimary};
+          outline: 1px solid ${themeAccent};
+          outline-offset: -8px;
+          padding: 24px; 
+          font-family: 'Outfit', 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif; 
+          color: #1e293b; 
+          background: #ffffff; 
+          width: 100%; 
+          box-sizing: border-box;
+          position: relative;
+          text-align: center;
+        ">
+          <!-- Corner Ornaments -->
+          <div style="position: absolute; top: 12px; left: 12px; width: 16px; height: 16px; border-top: 3px solid ${themePrimary}; border-left: 3px solid ${themePrimary};"></div>
+          <div style="position: absolute; top: 12px; right: 12px; width: 16px; height: 16px; border-top: 3px solid ${themePrimary}; border-right: 3px solid ${themePrimary};"></div>
+          <div style="position: absolute; bottom: 12px; left: 12px; width: 16px; height: 16px; border-bottom: 3px solid ${themePrimary}; border-left: 3px solid ${themePrimary};"></div>
+          <div style="position: absolute; bottom: 12px; right: 12px; width: 16px; height: 16px; border-bottom: 3px solid ${themePrimary}; border-right: 3px solid ${themePrimary};"></div>
+
+          <!-- Header -->
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed #cbd5e1; padding-bottom: 12px; margin-bottom: 16px;">
+            <div style="display: flex; gap: 12px; align-items: center; text-align: left;">
+              <div style="width: 55px; height: 55px; display: flex; justify-content: center; align-items: center; border-radius: 10px; background: #f8fafc; border: 1px solid #cbd5e1; padding: 4px;">
+                ${logoHtml.replace('height: 65px', 'height: 48px')}
+              </div>
+              <div>
+                <h1 style="margin: 0; font-size: 22px; font-weight: 900; color: ${themePrimary}; letter-spacing: -0.5px; line-height: 1.2;">${currentTenantName}</h1>
+                <p style="margin: 2px 0 0 0; font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Official Class Schedule &amp; Period Matrix</p>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span style="display: inline-block; padding: 4px 8px; border-radius: 20px; background: ${themeAccentLight}; color: ${themeAccent}; font-size: 9px; font-weight: 800; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.5);">
+                WEEKLY MATRIX
+              </span>
+              <p style="margin: 4px 0 0 0; font-size: 8px; color: #64748b; font-weight: 600;">Academic Year: 2025 - 2026</p>
+            </div>
+          </div>
+
+          <!-- Timetable Table -->
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 12px; table-layout: fixed;">
+            <thead>
+              <tr style="background: ${themePrimary}; color: #ffffff;">
+                <th style="padding: 8px; border: 1px solid #cbd5e1; font-weight: 800; font-size: 11px; width: 12%; text-align: left;">Period</th>
+                <th style="padding: 8px; border: 1px solid #cbd5e1; font-weight: 800; font-size: 11px; width: 17.6%; text-align: center;">Monday</th>
+                <th style="padding: 8px; border: 1px solid #cbd5e1; font-weight: 800; font-size: 11px; width: 17.6%; text-align: center;">Tuesday</th>
+                <th style="padding: 8px; border: 1px solid #cbd5e1; font-weight: 800; font-size: 11px; width: 17.6%; text-align: center;">Wednesday</th>
+                <th style="padding: 8px; border: 1px solid #cbd5e1; font-weight: 800; font-size: 11px; width: 17.6%; text-align: center;">Thursday</th>
+                <th style="padding: 8px; border: 1px solid #cbd5e1; font-weight: 800; font-size: 11px; width: 17.6%; text-align: center;">Friday</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+
+          <!-- Footer/Legend -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 9px; color: #64748b; font-weight: 600;">
+            <div>* This schedule is subject to institutional reviews and official calendar alterations.</div>
+            <div style="font-family: monospace;">Generated: ${currentDate}</div>
+          </div>
+        </div>
+      `;
     }
+
+    const paperOrientation = (reportType === 'timetable') ? 'landscape' : 'portrait';
+    const containerMaxWidth = (reportType === 'timetable') ? '1100px' : '800px';
 
     printWindow.document.write(`
       <html>
@@ -1265,7 +1437,7 @@ export const UnifiedDashboard: React.FC = () => {
             }
             @media print {
               @page {
-                size: portrait;
+                size: ${paperOrientation};
                 margin: 4mm 6mm !important;
               }
               html, body {
@@ -1289,7 +1461,7 @@ export const UnifiedDashboard: React.FC = () => {
           </style>
         </head>
         <body onload="setTimeout(() => { window.print(); window.close(); }, 500);">
-          <div style="width: 100%; max-width: 800px; margin: auto;">
+          <div style="width: 100%; max-width: ${containerMaxWidth}; margin: auto;">
             ${reportHtml}
           </div>
         </body>
@@ -4896,7 +5068,7 @@ export const UnifiedDashboard: React.FC = () => {
                   <div className="flex justify-end gap-2.5 pt-2">
                     <button 
                       type="button"
-                      onClick={() => window.print()} 
+                      onClick={() => handlePrintPdf('timetable')} 
                       className="px-5 py-2.5 bg-card hover:bg-muted border border-border text-foreground font-bold text-xs rounded-xl transition-all shadow-sm flex items-center gap-1.5"
                     >
                       📥 Export Timetable (PDF)
