@@ -1,0 +1,904 @@
+/* 🟢 یہاں سے Settings CSS شروع ہو رہا ہے */
+/**
+ * BSSMS Settings - اسٹائلز
+ * سیٹنگز پیج کے لیے مخصوص اسٹائلز
+ */
+
+/* === بنیادی لیآؤٹ === */
+#boa-settings-root {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+  color: var(--boa-gray-800);
+  background-color: var(--boa-gray-50);
+  min-height: 100vh;
+  padding: var(--boa-space-6);
+}
+
+/* === پیج ہیڈر === */
+.boa-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--boa-space-8);
+  flex-wrap: wrap;
+  gap: var(--boa-space-4);
+}
+
+.boa-header-left h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--boa-gray-900);
+  margin: 0 0 var(--boa-space-2) 0;
+  line-height: 1.2;
+}
+
+.boa-header-left p {
+  font-size: 1.125rem;
+  color: var(--boa-gray-600);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.boa-toolbar-actions {
+  display: flex;
+  gap: var(--boa-space-3);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* === سیٹنگز لیآؤٹ === */
+.boa-settings-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: var(--boa-space-8);
+  align-items: start;
+}
+
+/* === سیٹنگز سائیڈبار === */
+.boa-settings-sidebar {
+  position: sticky;
+  top: var(--boa-space-8);
+}
+
+.boa-settings-menu {
+  background: white;
+  border-radius: var(--boa-radius);
+  box-shadow: var(--boa-shadow);
+  border: 1px solid var(--boa-gray-200);
+  overflow: hidden;
+}
+
+.boa-menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--boa-space-3);
+  width: 100%;
+  padding: var(--boa-space-4) var(--boa-space-5);
+  background: none;
+  border: none;
+  border-left: 4px solid transparent;
+  color: var(--boa-gray-600);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.boa-menu-item:hover {
+  background: var(--boa-gray-50);
+  color: var(--boa-primary);
+}
+
+.boa-menu-active {
+  background: var(--boa-primary-light);
+  color: var(--boa-primary);
+  border-left-color: var(--boa-primary);
+}
+
+.boa-menu-item .dashicons {
+  font-size: 1.125rem;
+  width: 20px;
+  height: 20px;
+}
+
+/* === سیٹنگز کونٹینٹ === */
+.boa-settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--boa-space-8);
+}
+
+.boa-settings-section {
+  display: none;
+}
+
+.boa-section-active {
+  display: block;
+}
+
+/* === سیکشن ہیڈر === */
+.boa-section-header {
+  margin-bottom: var(--boa-space-6);
+}
+
+.boa-section-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--boa-gray-900);
+  margin: 0 0 var(--boa-space-2) 0;
+}
+
+.boa-section-header p {
+  font-size: 1rem;
+  color: var(--boa-gray-600);
+  margin: 0;
+}
+
+/* === سیٹنگز فارم === */
+.boa-settings-form {
+  background: white;
+  border-radius: var(--boa-radius);
+  box-shadow: var(--boa-shadow);
+  border: 1px solid var(--boa-gray-200);
+  overflow: hidden;
+}
+
+/* === سیٹنگ گروپ === */
+.boa-setting-group {
+  padding: var(--boa-space-6);
+  border-bottom: 1px solid var(--boa-gray-200);
+}
+
+.boa-setting-group:last-child {
+  border-bottom: none;
+}
+
+.boa-setting-group h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--boa-gray-900);
+  margin: 0 0 var(--boa-space-4) 0;
+}
+
+/* === فارم گرڈ === */
+.boa-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--boa-space-4);
+  margin-bottom: var(--boa-space-4);
+}
+
+.boa-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.boa-form-group label {
+  font-weight: 600;
+  color: var(--boa-gray-700);
+  margin-bottom: var(--boa-space-2);
+  font-size: 0.875rem;
+}
+
+.boa-form-input,
+.boa-form-select {
+  padding: var(--boa-space-3) var(--boa-space-4);
+  border: 1px solid var(--boa-gray-300);
+  border-radius: var(--boa-radius);
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.boa-form-input:focus,
+.boa-form-select:focus {
+  outline: none;
+  border-color: var(--boa-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.boa-form-group small {
+  margin-top: var(--boa-space-1);
+  color: var(--boa-gray-500);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+/* === فارم ایکشنز === */
+.boa-form-actions {
+  padding: var(--boa-space-6);
+  border-top: 1px solid var(--boa-gray-200);
+  background: var(--boa-gray-50);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--boa-space-3);
+}
+
+/* === لوگو اپلوڈ === */
+.boa-logo-upload-area {
+  display: flex;
+  flex-direction: column;
+  gap: var(--boa-space-4);
+}
+
+.boa-logo-preview {
+  border: 2px dashed var(--boa-gray-300);
+  border-radius: var(--boa-radius);
+  padding: var(--boa-space-8);
+  text-align: center;
+  background: var(--boa-gray-50);
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.boa-logo-placeholder {
+  color: var(--boa-gray-500);
+}
+
+.boa-logo-placeholder .dashicons {
+  font-size: 3rem;
+  margin-bottom: var(--boa-space-2);
+}
+
+.boa-logo-image {
+  text-align: center;
+}
+
+.boa-logo-image img {
+  max-width: 200px;
+  max-height: 60px;
+  border-radius: var(--boa-radius-sm);
+}
+
+.boa-logo-info {
+  margin-top: var(--boa-space-2);
+  font-size: 0.875rem;
+  color: var(--boa-gray-600);
+}
+
+.boa-logo-actions {
+  display: flex;
+  gap: var(--boa-space-3);
+  flex-wrap: wrap;
+}
+
+/* === کلر پکرز === */
+.boa-color-pickers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--boa-space-6);
+}
+
+.boa-color-picker label {
+  font-weight: 600;
+  color: var(--boa-gray-700);
+  margin-bottom: var(--boa-space-2);
+  font-size: 0.875rem;
+  display: block;
+}
+
+.boa-color-input-group {
+  display: flex;
+  gap: var(--boa-space-3);
+  align-items: center;
+}
+
+.boa-color-input {
+  width: 60px;
+  height: 40px;
+  border: 1px solid var(--boa-gray-300);
+  border-radius: var(--boa-radius);
+  cursor: pointer;
+}
+
+.boa-color-hex-input {
+  flex: 1;
+  padding: var(--boa-space-3) var(--boa-space-4);
+  border: 1px solid var(--boa-gray-300);
+  border-radius: var(--boa-radius);
+  font-size: 0.875rem;
+  font-family: monospace;
+}
+
+.boa-color-hex-input:focus {
+  outline: none;
+  border-color: var(--boa-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* === تھیم آپشنز === */
+.boa-theme-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--boa-space-4);
+}
+
+.boa-theme-option {
+  cursor: pointer;
+}
+
+.boa-theme-radio {
+  display: none;
+}
+
+.boa-theme-card {
+  border: 2px solid var(--boa-gray-300);
+  border-radius: var(--boa-radius);
+  padding: var(--boa-space-4);
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.boa-theme-option:hover .boa-theme-card {
+  border-color: var(--boa-primary);
+}
+
+.boa-theme-radio:checked + .boa-theme-card {
+  border-color: var(--boa-primary);
+  background: var(--boa-primary-light);
+}
+
+.boa-theme-preview {
+  width: 100%;
+  height: 80px;
+  border-radius: var(--boa-radius-sm);
+  margin-bottom: var(--boa-space-3);
+  overflow: hidden;
+  border: 1px solid var(--boa-gray-200);
+}
+
+.boa-theme-light {
+  background: linear-gradient(to bottom, #ffffff 0%, #f8fafc 100%);
+}
+
+.boa-theme-light .boa-preview-header {
+  height: 20px;
+  background: var(--boa-primary);
+  margin-bottom: 4px;
+}
+
+.boa-theme-light .boa-preview-content {
+  height: 56px;
+  background: #ffffff;
+  border-top: 1px solid var(--boa-gray-200);
+}
+
+.boa-theme-dark {
+  background: linear-gradient(to bottom, #1f2937 0%, #111827 100%);
+}
+
+.boa-theme-dark .boa-preview-header {
+  height: 20px;
+  background: var(--boa-primary);
+  margin-bottom: 4px;
+}
+
+.boa-theme-dark .boa-preview-content {
+  height: 56px;
+  background: #1f2937;
+  border-top: 1px solid #374151;
+}
+
+.boa-theme-auto {
+  background: linear-gradient(45deg, #ffffff 50%, #1f2937 50%);
+  position: relative;
+}
+
+.boa-theme-auto .boa-preview-header {
+  height: 20px;
+  background: var(--boa-primary);
+  margin-bottom: 4px;
+}
+
+.boa-theme-auto .boa-preview-content {
+  height: 56px;
+  background: linear-gradient(45deg, #f8fafc 50%, #111827 50%);
+  border-top: 1px solid var(--boa-gray-200);
+}
+
+.boa-theme-label {
+  font-weight: 500;
+  color: var(--boa-gray-700);
+  font-size: 0.875rem;
+}
+
+.boa-theme-radio:checked + .boa-theme-card .boa-theme-label {
+  color: var(--boa-primary);
+}
+
+/* === ٹوگل آپشنز === */
+.boa-toggle-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--boa-space-3);
+}
+
+.boa-toggle-option {
+  display: flex;
+  align-items: center;
+  gap: var(--boa-space-3);
+  cursor: pointer;
+  padding: var(--boa-space-2) 0;
+}
+
+.boa-toggle-input {
+  display: none;
+}
+
+.boa-toggle-slider {
+  width: 44px;
+  height: 24px;
+  background: var(--boa-gray-300);
+  border-radius: 24px;
+  position: relative;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.boa-toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.boa-toggle-input:checked + .boa-toggle-slider {
+  background: var(--boa-primary);
+}
+
+.boa-toggle-input:checked + .boa-toggle-slider::before {
+  transform: translateX(20px);
+}
+
+.boa-toggle-label {
+  font-weight: 500;
+  color: var(--boa-gray-700);
+  font-size: 0.875rem;
+}
+
+/* === کیٹیگریز مینجمنٹ === */
+.boa-categories-management {
+  display: flex;
+  flex-direction: column;
+  gap: var(--boa-space-6);
+}
+
+.boa-add-category-form {
+  background: white;
+  border-radius: var(--boa-radius);
+  box-shadow: var(--boa-shadow);
+  border: 1px solid var(--boa-gray-200);
+  padding: var(--boa-space-6);
+}
+
+.boa-add-category-form h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--boa-gray-900);
+  margin: 0 0 var(--boa-space-4) 0;
+}
+
+.boa-input-group {
+  display: flex;
+  gap: var(--boa-space-3);
+}
+
+.boa-input-group .boa-form-input {
+  flex: 1;
+}
+
+.boa-categories-table h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--boa-gray-900);
+  margin: 0 0 var(--boa-space-4) 0;
+}
+
+.boa-categories-table .boa-card {
+  overflow: hidden;
+}
+
+.boa-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.boa-data-table th {
+  background-color: var(--boa-gray-50);
+  padding: var(--boa-space-4) var(--boa-space-3);
+  text-align: left;
+  font-weight: 600;
+  color: var(--boa-gray-700);
+  border-bottom: 1px solid var(--boa-gray-200);
+}
+
+.boa-data-table td {
+  padding: var(--boa-space-4) var(--boa-space-3);
+  border-bottom: 1px solid var(--boa-gray-100);
+}
+
+.boa-data-table tr:hover {
+  background-color: var(--boa-gray-50);
+}
+
+.boa-data-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* === ایکشن بٹنز === */
+.boa-action-buttons {
+  display: flex;
+  gap: var(--boa-space-2);
+  justify-content: center;
+}
+
+.boa-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--boa-radius);
+  background: transparent;
+  color: var(--boa-gray-600);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+}
+
+.boa-btn-icon:hover {
+  background: var(--boa-gray-100);
+  color: var(--boa-gray-800);
+}
+
+.boa-btn-edit:hover {
+  background: var(--boa-warning-light);
+  color: var(--boa-warning-dark);
+}
+
+.boa-btn-delete:hover {
+  background: var(--boa-error-light);
+  color: var(--boa-error);
+}
+
+/* === سٹیٹس بیجز === */
+.boa-status-badge {
+  display: inline-block;
+  padding: var(--boa-space-1) var(--boa-space-3);
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: var(--boa-radius-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.boa-status-active {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+/* === ٹپس کارڈ === */
+.boa-tips-card {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: var(--boa-radius);
+  padding: var(--boa-space-5);
+  border-left: 4px solid var(--boa-primary);
+}
+
+.boa-tips-card h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--boa-gray-900);
+  margin: 0 0 var(--boa-space-3) 0;
+}
+
+.boa-tips-card ul {
+  margin: 0;
+  padding-left: var(--boa-space-4);
+  color: var(--boa-gray-700);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.boa-tips-card li {
+  margin-bottom: var(--boa-space-2);
+}
+
+.boa-tips-card li:last-child {
+  margin-bottom: 0;
+}
+
+/* === امپورٹ/ایکسپورٹ کارڈ === */
+.boa-import-export-card {
+  margin-top: var(--boa-space-8);
+}
+
+.boa-import-export-card .boa-card {
+  background: white;
+  border-radius: var(--boa-radius);
+  box-shadow: var(--boa-shadow);
+  border: 1px solid var(--boa-gray-200);
+  overflow: hidden;
+}
+
+.boa-import-export-card .boa-card-header {
+  padding: var(--boa-space-5);
+  border-bottom: 1px solid var(--boa-gray-200);
+  background: var(--boa-gray-50);
+}
+
+.boa-import-export-card .boa-card-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--boa-gray-900);
+  margin: 0;
+}
+
+.boa-import-export-card .boa-card-content {
+  padding: var(--boa-space-6);
+}
+
+.boa-import-export-actions {
+  display: flex;
+  gap: var(--boa-space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--boa-space-4);
+}
+
+.boa-warning-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--boa-space-2);
+  padding: var(--boa-space-3) var(--boa-space-4);
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: var(--boa-radius);
+  color: #92400e;
+  font-size: 0.875rem;
+}
+
+.boa-warning-note .dashicons {
+  color: #f59e0b;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* === گلوبل ایکشن بار === */
+.boa-global-actions-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid var(--boa-gray-200);
+  box-shadow: 0 -4px 6px -1px rgb(0 0 0 / 0.1);
+  z-index: 1000;
+  padding: var(--boa-space-4);
+}
+
+.boa-actions-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--boa-space-4);
+}
+
+.boa-actions-message {
+  display: flex;
+  align-items: center;
+  gap: var(--boa-space-2);
+  color: var(--boa-warning);
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.boa-actions-buttons {
+  display: flex;
+  gap: var(--boa-space-3);
+}
+
+/* === بٹنز === */
+.boa-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--boa-space-2);
+  padding: var(--boa-space-3) var(--boa-space-5);
+  border: none;
+  border-radius: var(--boa-radius);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.boa-btn-primary {
+  background: linear-gradient(135deg, var(--boa-primary), var(--boa-primary-dark));
+  color: white;
+  box-shadow: var(--boa-shadow);
+}
+
+.boa-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--boa-shadow-md);
+}
+
+.boa-btn-secondary {
+  background: white;
+  color: var(--boa-gray-700);
+  border: 1px solid var(--boa-gray-300);
+  box-shadow: var(--boa-shadow-sm);
+}
+
+.boa-btn-secondary:hover {
+  border-color: var(--boa-primary);
+  color: var(--boa-primary);
+  transform: translateY(-1px);
+}
+
+.boa-btn-outline {
+  background: transparent;
+  color: var(--boa-gray-600);
+  border: 1px solid var(--boa-gray-300);
+}
+
+.boa-btn-outline:hover {
+  border-color: var(--boa-primary);
+  color: var(--boa-primary);
+}
+
+/* === لوڈنگ === */
+.boa-loading {
+  text-align: center;
+  color: var(--boa-gray-500);
+  font-style: italic;
+  padding: var(--boa-space-4);
+}
+
+.boa-form-actions.boa-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* === خالی اسٹیٹ === */
+.boa-no-data {
+  text-align: center;
+  color: var(--boa-gray-500);
+  font-style: italic;
+  padding: var(--boa-space-8) !important;
+}
+
+/* === فوٹر === */
+.boa-footer {
+  text-align: center;
+  padding: var(--boa-space-6);
+  color: var(--boa-gray-500);
+  font-size: 0.875rem;
+  border-top: 1px solid var(--boa-gray-200);
+  margin-top: var(--boa-space-8);
+}
+
+/* === رسپانسیو ڈیزائن === */
+@media (max-width: 1024px) {
+  .boa-settings-layout {
+    grid-template-columns: 1fr;
+    gap: var(--boa-space-6);
+  }
+  
+  .boa-settings-sidebar {
+    position: static;
+  }
+  
+  .boa-settings-menu {
+    display: flex;
+    overflow-x: auto;
+  }
+  
+  .boa-menu-item {
+    flex-shrink: 0;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+  }
+  
+  .boa-menu-active {
+    border-left: none;
+    border-bottom-color: var(--boa-primary);
+  }
+}
+
+@media (max-width: 768px) {
+  #boa-settings-root {
+    padding: var(--boa-space-4);
+  }
+  
+  .boa-page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .boa-toolbar-actions {
+    justify-content: center;
+  }
+  
+  .boa-form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .boa-form-actions {
+    flex-direction: column;
+  }
+  
+  .boa-logo-actions {
+    flex-direction: column;
+  }
+  
+  .boa-color-pickers {
+    grid-template-columns: 1fr;
+  }
+  
+  .boa-theme-options {
+    grid-template-columns: 1fr;
+  }
+  
+  .boa-input-group {
+    flex-direction: column;
+  }
+  
+  .boa-import-export-actions {
+    flex-direction: column;
+  }
+  
+  .boa-actions-content {
+    flex-direction: column;
+    gap: var(--boa-space-3);
+    text-align: center;
+  }
+  
+  .boa-actions-buttons {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .boa-settings-menu {
+    flex-direction: column;
+  }
+  
+  .boa-menu-item {
+    justify-content: flex-start;
+  }
+  
+  .boa-data-table {
+    font-size: 0.8rem;
+  }
+  
+  .boa-data-table th,
+  .boa-data-table td {
+    padding: var(--boa-space-3) var(--boa-space-2);
+  }
+}
+
+/* === اضافی یوٹیلیٹی کلاسیز === */
+:root {
+  --boa-primary-light: #dbeafe;
+  --boa-primary-dark: #2563eb;
+  --boa-warning-light: #fef3c7;
+  --boa-warning-dark: #92400e;
+  --boa-error-light: #fee2e2;
+  --boa-warning: #f59e0b;
+}
+
+/* ✅ Syntax verified block end */

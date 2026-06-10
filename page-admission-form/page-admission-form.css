@@ -1,0 +1,353 @@
+/* 🟢 یہاں سے Public Admission Form CSS شروع ہو رہا ہے */
+/**
+ * BSSMS Public Admission Form - اسٹائلز
+ * فرنٹ-اینڈ شارٹ کوڈ کے لیے اسٹائلز
+ */
+
+/* === بنیادی کنٹینر === */
+#boa-public-form-root {
+  --boa-pub-primary: #6366f1;
+  --boa-pub-gray-100: #1e293b;        /* Slate 900 */
+  --boa-pub-gray-200: rgba(148, 163, 184, 0.12); /* Border */
+  --boa-pub-gray-300: rgba(148, 163, 184, 0.2);  /* Input border */
+  --boa-pub-gray-500: #94a3b8;        /* Slate 400 */
+  --boa-pub-gray-700: #cbd5e1;        /* Slate 300 */
+  --boa-pub-gray-900: #f8fafc;        /* Slate 50 */
+  --boa-pub-success: #10b981;
+  --boa-pub-error: #f43f5e;
+  --boa-pub-radius: 12px;
+  --boa-pub-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+  --boa-pub-space-2: 0.5rem;
+  --boa-pub-space-3: 0.75rem;
+  --boa-pub-space-4: 1rem;
+  --boa-pub-space-5: 1.25rem;
+  --boa-pub-space-6: 1.5rem;
+
+  max-width: 1080px;
+  margin: 2rem auto;
+  font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--boa-pub-gray-700);
+}
+
+.boa-public-hero {
+  background: linear-gradient(135deg, var(--boa-pub-primary), #4f46e5);
+  color: #fff;
+  border-radius: 18px;
+  padding: 28px;
+  margin-bottom: 18px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.3);
+}
+.boa-public-hero:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 70% 20%, rgba(255,255,255,0.16), transparent 36%);
+  pointer-events: none;
+}
+.boa-hero-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.boa-hero-title-wrap h1 {
+  margin: 0;
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: #fff;
+}
+.boa-hero-chip {
+  background: rgba(255,255,255,0.18);
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.26);
+  font-weight: 700;
+}
+.boa-hero-lead {
+  margin: 8px 0 0;
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.92);
+}
+.boa-hero-pills {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.boa-hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  background: rgba(255,255,255,0.14);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  backdrop-filter: blur(6px);
+}
+
+.boa-form-container {
+  background: var(--boa-pub-gray-100);
+  border-radius: var(--boa-pub-radius);
+  box-shadow: var(--boa-pub-shadow);
+  border: 1px solid var(--boa-pub-gray-200);
+  overflow: hidden;
+}
+
+/* === ہیڈر === */
+.boa-form-header {
+  padding: var(--boa-pub-space-5) var(--boa-pub-space-6);
+  background: rgba(15, 23, 42, 0.2);
+  border-bottom: 1px solid var(--boa-pub-gray-200);
+}
+
+.boa-form-header h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--boa-pub-gray-900);
+  margin: 0 0 var(--boa-pub-space-2) 0;
+}
+
+.boa-form-header p {
+  font-size: 1rem;
+  color: var(--boa-pub-gray-700);
+  margin: 0;
+}
+
+.boa-form-section {
+  padding: var(--boa-pub-space-6);
+  border-bottom: 1px solid var(--boa-pub-gray-200);
+}
+.boa-form-section:last-of-type {
+  border-bottom: none;
+}
+
+.boa-form-section h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--boa-pub-primary);
+  margin: 0 0 var(--boa-pub-space-4) 0;
+  border-bottom: 1px solid var(--boa-pub-gray-200);
+  padding-bottom: var(--boa-pub-space-2);
+}
+
+/* === فارم گرڈ === */
+.boa-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--boa-pub-space-4);
+}
+
+.boa-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--boa-pub-space-2);
+}
+
+.boa-group-full {
+  grid-column: 1 / -1;
+}
+
+.boa-form-group label {
+  font-weight: 500;
+  color: var(--boa-pub-gray-700);
+  font-size: 0.875rem;
+}
+
+.boa-form-group input[type="text"],
+.boa-form-group input[type="email"],
+.boa-form-group input[type="tel"],
+.boa-form-group input[type="number"],
+.boa-form-group input[type="date"],
+.boa-form-group select {
+  width: 100%;
+  padding: var(--boa-pub-space-3) var(--boa-pub-space-4);
+  border: 1px solid var(--boa-pub-gray-300);
+  background: rgba(15, 23, 42, 0.4);
+  color: var(--boa-pub-gray-900);
+  border-radius: var(--boa-pub-radius);
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.boa-form-group input:focus,
+.boa-form-group select:focus {
+  outline: none;
+  border-color: var(--boa-pub-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+}
+
+.boa-readonly-field {
+  background: rgba(15, 23, 42, 0.6);
+  color: var(--boa-pub-gray-900);
+  border-color: var(--boa-pub-gray-200);
+  font-weight: 600;
+}
+
+.boa-date-field {
+  color: var(--boa-pub-gray-900);
+}
+
+/* === اپلوڈ فیلڈ === */
+.boa-upload-instructions {
+  font-size: 0.875rem;
+  color: var(--boa-pub-gray-700);
+  background: rgba(15, 23, 42, 0.2);
+  padding: var(--boa-pub-space-3);
+  border: 1px solid var(--boa-pub-gray-200);
+  border-radius: var(--boa-pub-radius);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.boa-upload-instructions strong {
+  color: var(--boa-pub-gray-900);
+}
+
+.boa-form-group input[type="file"] {
+  padding: 0;
+  border: none;
+  font-size: 0.875rem;
+  color: var(--boa-pub-gray-700);
+}
+
+.boa-form-group small {
+  font-size: 0.75rem;
+  color: var(--boa-pub-gray-500);
+}
+
+/* === فوٹر اور سبمٹ بٹن === */
+.boa-form-footer {
+  padding: var(--boa-pub-space-6);
+  background: rgba(15, 23, 42, 0.2);
+  border-top: 1px solid var(--boa-pub-gray-200);
+  text-align: right;
+}
+
+.boa-submit-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--boa-pub-space-3) var(--boa-pub-space-6);
+  border: none;
+  border-radius: var(--boa-pub-radius);
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: var(--boa-pub-primary);
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+}
+
+.boa-submit-button:hover {
+  background: #4f46e5;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+}
+
+/* === لوڈر === */
+.boa-loader {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #ffffff;
+  animation: boa-spin 1s ease-in-out infinite;
+}
+
+@keyframes boa-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* === میسجز === */
+.boa-form-messages {
+  padding: 0 var(--boa-pub-space-6);
+  margin-top: var(--boa-pub-space-4);
+}
+
+.boa-message {
+  padding: var(--boa-pub-space-4);
+  border-radius: var(--boa-pub-radius);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.boa-error {
+  background: rgba(244, 63, 94, 0.15);
+  color: var(--boa-pub-error);
+  border: 1px solid var(--boa-pub-error);
+}
+
+.boa-success {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--boa-pub-success);
+  border: 1px solid var(--boa-pub-success);
+}
+
+/* Success Message */
+.boa-success-message {
+  padding: var(--boa-pub-space-6);
+  text-align: center;
+}
+
+.boa-success-icon {
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+  line-height: 60px;
+  border-radius: 50%;
+  background: var(--boa-pub-success);
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: var(--boa-pub-space-4);
+}
+
+.boa-success-message h3 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--boa-pub-gray-900);
+  margin: 0 0 var(--boa-pub-space-2) 0;
+}
+
+.boa-success-message p {
+  font-size: 1rem;
+  color: var(--boa-pub-gray-700);
+  line-height: 1.6;
+  margin: 0 0 var(--boa-pub-space-4) 0;
+}
+
+.boa-reset-button {
+  display: inline-block;
+  padding: var(--boa-pub-space-3) var(--boa-pub-space-6);
+  border: 1px solid var(--boa-pub-gray-300);
+  border-radius: var(--boa-pub-radius);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--boa-pub-gray-900);
+  background: var(--boa-pub-gray-100);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+.boa-reset-button:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .boa-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ✅ Syntax verified block end

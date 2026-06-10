@@ -1,0 +1,66 @@
+.boa-public-sessions-wrapper {
+    max-width: 820px;
+    margin: 30px auto;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+}
+
+.boa-public-sessions-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #fff;
+    padding: 25px;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.05);
+}
+
+.boa-public-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.boa-public-session-filters input {
+    padding: 8px 12px;
+    border: 1px solid #cbd5f5;
+    border-radius: 6px;
+    margin-right: 6px;
+}
+
+.boa-public-session-list .boa-session-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+    background: #f9fafb;
+}
+
+.boa-session-card h4 {
+    margin: 0 0 5px;
+}
+
+.boa-session-card small {
+    display: block;
+    color: #6b7280;
+}
+
+.boa-session-card .boa-session-actions {
+    margin-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.boa-session-card button {
+    background: #2563eb;
+    border: none;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.boa-session-card button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

@@ -1,0 +1,755 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 47% 6%; /* Sleek ultra-dark blue/gray */
+    --foreground: 213 31% 91%;
+
+    --muted: 223 47% 11%;
+    --muted-foreground: 215.4 16.3% 56.9%;
+
+    --popover: 222 47% 6%;
+    --popover-foreground: 215 20.2% 65.1%;
+
+    --card: 222 47% 9%;
+    --card-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 16%;
+    --input: 217.2 32.6% 16%;
+
+    --primary: 263.4 70% 50.4%; /* Vibrant purple branding by default */
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 217.2 32.6% 16%;
+    --secondary-foreground: 210 40% 98%;
+
+    --accent: 263.4 70% 50.4%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --ring: 263.4 70% 50.4%;
+
+    --radius: 0.75rem;
+  }
+}
+
+body {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Premium glassmorphic background & glow utilities */
+.glass {
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+:root:not(.dark) .glass {
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.glass-card {
+  background: rgba(30, 41, 59, 0.35);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-left: 6px solid var(--card-accent, hsl(var(--primary))) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:root:not(.dark) .glass-card {
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-left: 6px solid var(--card-accent, hsl(var(--primary))) !important;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+}
+
+/* Premium 2D Accent Color Configurations */
+.accent-purple { --card-accent: #a855f7 !important; }
+.accent-emerald { --card-accent: #10b981 !important; }
+.accent-amber { --card-accent: #f59e0b !important; }
+.accent-blue { --card-accent: #3b82f6 !important; }
+.accent-indigo { --card-accent: #6366f1 !important; }
+.accent-rose { --card-accent: #f43f5e !important; }
+.accent-cyan { --card-accent: #06b6d4 !important; }
+
+.glass-card:hover {
+  border-color: rgba(168, 85, 247, 0.35);
+  box-shadow: 0 12px 40px 0 rgba(168, 85, 247, 0.15);
+  transform: translateY(-2px);
+}
+
+:root:not(.dark) .glass-card:hover {
+  border-color: rgba(168, 85, 247, 0.25);
+  box-shadow: 0 12px 40px 0 rgba(168, 85, 247, 0.08);
+}
+
+.glow-purple {
+  box-shadow: 0 0 60px -10px rgba(168, 85, 247, 0.25);
+}
+
+.glow-blue {
+  box-shadow: 0 0 60px -10px rgba(59, 130, 246, 0.25);
+}
+
+.glow-green {
+  box-shadow: 0 0 60px -10px rgba(16, 185, 129, 0.25);
+}
+
+/* Text stroke utility */
+.text-gradient-purple {
+  background: linear-gradient(135deg, #c084fc 0%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Animated floating backdrop glow circles for academic hub branding */
+.bg-glow-circle-1 {
+  position: fixed;
+  top: -15%;
+  left: -10%;
+  width: 65vw;
+  height: 65vw;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.16) 0%, rgba(16, 185, 129, 0.03) 50%, transparent 70%);
+  filter: blur(80px);
+  z-index: 0;
+  pointer-events: none;
+  animation: floatGlow1 32s ease-in-out infinite alternate;
+}
+
+.bg-glow-circle-2 {
+  position: fixed;
+  bottom: -20%;
+  right: -10%;
+  width: 60vw;
+  height: 60vw;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, rgba(99, 102, 241, 0.02) 50%, transparent 70%);
+  filter: blur(90px);
+  z-index: 0;
+  pointer-events: none;
+  animation: floatGlow2 26s ease-in-out infinite alternate;
+}
+
+.bg-glow-circle-3 {
+  position: fixed;
+  top: 35%;
+  right: 25%;
+  width: 45vw;
+  height: 45vw;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.09) 0%, rgba(6, 182, 212, 0.01) 50%, transparent 70%);
+  filter: blur(85px);
+  z-index: 0;
+  pointer-events: none;
+  animation: floatGlow3 28s ease-in-out infinite alternate;
+}
+
+@keyframes floatGlow1 {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  50% {
+    transform: translate(8vw, 12vh) scale(1.15) rotate(90deg);
+  }
+  100% {
+    transform: translate(-5vw, 6vh) scale(0.95) rotate(180deg);
+  }
+}
+
+@keyframes floatGlow2 {
+  0% {
+    transform: translate(0, 0) scale(1.1) rotate(0deg);
+  }
+  50% {
+    transform: translate(-10vw, -15vh) scale(0.9) rotate(-120deg);
+  }
+  100% {
+    transform: translate(4vw, -8vh) scale(1.05) rotate(-240deg);
+  }
+}
+
+@keyframes floatGlow3 {
+  0% {
+    transform: translate(0, 0) scale(0.9) rotate(0deg);
+  }
+  50% {
+    transform: translate(12vw, -5vh) scale(1.1) rotate(140deg);
+  }
+  100% {
+    transform: translate(-8vw, 10vh) scale(0.85) rotate(280deg);
+  }
+}
+
+/* Glass card micro-animations and border glow */
+.glass-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.03) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg);
+  transition: 0.75s;
+}
+
+.glass-card:hover::after {
+  left: 150%;
+  transition: 0.75s;
+}
+
+/* Premium gradient borders for key action items */
+.glow-border-active {
+  position: relative;
+}
+
+.glow-border-active::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(135deg, #10b981, #6366f1, #06b6d4, #10b981);
+  background-size: 400% 400%;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: borderGradient 8s ease infinite;
+}
+
+@keyframes borderGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Pulsing accent ring animations */
+.glow-ring-emerald {
+  animation: pulseRingEmerald 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulseRingEmerald {
+  0%, 100% {
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0), 0 0 20px 0 rgba(16, 185, 129, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.25), 0 0 30px 4px rgba(16, 185, 129, 0.4);
+  }
+}
+
+/* Let's Get Started Button Animations */
+.btn-premium-animated {
+  background: linear-gradient(135deg, #10b981, #059669);
+  background-size: 200% 200%;
+  transition: all 0.3s ease;
+  animation: gradientShift 4s ease infinite;
+  box-shadow: 0 0 20px 0 rgba(16, 185, 129, 0.45);
+}
+
+.btn-premium-animated:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px 0 rgba(16, 185, 129, 0.7);
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ========================================================================
+   GLOBAL MODAL / DIALOG / OVERLAY SYSTEM
+   Prevents ALL modal content from ever overflowing the viewport.
+   ======================================================================== */
+
+/* Overlay backdrop – covers full viewport, centers modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* Modal container – flex column, never exceeds 90vh */
+.modal-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--card));
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.5);
+  animation: modalSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-container.modal-sm { max-width: 28rem; }  /* ~448px */
+.modal-container.modal-md { max-width: 32rem; }  /* ~512px */
+.modal-container.modal-lg { max-width: 36rem; }  /* ~576px */
+.modal-container.modal-xl { max-width: 42rem; }  /* ~672px */
+.modal-container.modal-2xl { max-width: 48rem; } /* ~768px */
+
+/* Modal header – sticky at top, never scrolls away */
+.modal-header {
+  flex-shrink: 0;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid hsl(var(--border));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Modal body – scrolls when content overflows */
+.modal-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 1.5rem;
+  min-height: 0;
+}
+
+/* ========================================================================
+   HIGH-CONTRAST GLOBAL SCROLLBAR SYSTEM
+   Ensures scrollbars are highly visible and highlighted in both modes.
+   ======================================================================== */
+
+/* Width and sizing */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+/* Track style */
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.04) !important; /* soft light gray in light mode */
+  border-radius: 100px;
+}
+
+:root.dark ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02) !important; /* very dark in dark mode */
+}
+
+/* Thumb style for Light Mode (Dark / Contrast Purple Thumb) */
+::-webkit-scrollbar-thumb {
+  background: rgba(109, 40, 217, 0.65) !important; /* Premium dark purple thumb */
+  border: 2px solid #f8fafc !important; /* create outline padding matching background */
+  border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(91, 33, 182, 0.9) !important; /* solid deep purple on hover */
+}
+
+/* Thumb style for Dark Mode (Light / Glowing Silver Purple Thumb) */
+:root.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.5) !important; /* Bright silver/white thumb */
+  border: 2px solid #0b0f19 !important; /* matches dark theme background */
+  border-radius: 100px;
+}
+
+:root.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(168, 85, 247, 0.8) !important; /* Glowing purple on hover in dark mode */
+}
+
+/* Firefox support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(109, 40, 217, 0.65) rgba(15, 23, 42, 0.04);
+}
+
+:root.dark * {
+  scrollbar-color: rgba(255, 255, 255, 0.5) rgba(255, 255, 255, 0.02);
+}
+
+/* Modal footer – sticky at bottom, always visible */
+.modal-footer {
+  flex-shrink: 0;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid hsl(var(--border));
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.625rem;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Ensure any overflow:hidden on glass-card doesn't break modal scroll */
+.modal-container.glass-card {
+  overflow: hidden;
+}
+
+/* ========================================================================
+   PREMIUM LIGHT MODE VISIBILITY & CONTRAST SYSTEM
+   Ensures absolute readability, glowing contrast, and high visibility 
+   across all cards, texts, buttons, and layouts in light mode.
+   ======================================================================== */
+:root:not(.dark) {
+  color: #0f172a !important; /* Premium deep dark slate */
+}
+
+/* Fix text contrast in glass cards and dashboard panels in light mode */
+:root:not(.dark) .text-white:not(
+  button, 
+  button *, 
+  a, 
+  a *,
+  .btn, 
+  .btn *,
+  .badge, 
+  [class*="bg-purple-"], 
+  [class*="bg-emerald-"], 
+  [class*="bg-blue-"], 
+  [class*="bg-indigo-"], 
+  [class*="bg-red-"], 
+  [class*="bg-amber-"], 
+  [class*="bg-rose-"],
+  [class*="bg-green-"]
+) {
+  color: #0f172a !important;
+}
+
+:root:not(.dark) .text-slate-100,
+:root:not(.dark) .text-slate-200,
+:root:not(.dark) .text-slate-300 {
+  color: #1e293b !important; /* Deeper slate for high contrast */
+}
+
+:root:not(.dark) .text-slate-400 {
+  color: #334155 !important; /* Premium dark slate gray (instead of faint gray) */
+}
+
+:root:not(.dark) .text-slate-500 {
+  color: #475569 !important; /* Clear subtext gray */
+}
+
+:root:not(.dark) .text-purple-100,
+:root:not(.dark) .text-purple-200,
+:root:not(.dark) .text-purple-300 {
+  color: #5b21b6 !important; /* Deep royal purple */
+}
+
+/* Refined slate background elements for light mode */
+:root:not(.dark) .bg-slate-900\/40,
+:root:not(.dark) .bg-slate-900\/60,
+:root:not(.dark) .bg-slate-950,
+:root:not(.dark) .bg-slate-900 {
+  background-color: rgba(15, 23, 42, 0.05) !important;
+}
+
+/* Soft contrast border grids */
+:root:not(.dark) .border-slate-800,
+:root:not(.dark) .border-slate-700,
+:root:not(.dark) .border-slate-900\/60,
+:root:not(.dark) .divide-slate-800\/60 > * + * {
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+
+/* Enhanced hover list indicators in ledgers */
+:root:not(.dark) tr.hover\:bg-slate-900\/35:hover {
+  background-color: rgba(109, 40, 217, 0.06) !important;
+}
+
+/* Make primary action button text pop in light mode */
+:root:not(.dark) .bg-purple-650 {
+  background-color: #6d28d9 !important; /* Deeper vibrant violet */
+  color: #ffffff !important;
+}
+
+:root:not(.dark) .bg-purple-650:hover {
+  background-color: #5b21b6 !important;
+}
+
+/* Modal overlays and dialog containers in light mode */
+:root:not(.dark) .modal-overlay {
+  background: rgba(15, 23, 42, 0.3) !important;
+}
+
+:root:not(.dark) .modal-container {
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.14) !important;
+  box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.16) !important;
+}
+
+:root:not(.dark) .modal-header,
+:root:not(.dark) .modal-footer {
+  border-color: rgba(15, 23, 42, 0.08) !important;
+  background: #f8fafc !important;
+}
+
+/* Input structures validation and visibility */
+:root:not(.dark) input,
+:root:not(.dark) select,
+:root:not(.dark) textarea {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.18) !important;
+  color: #0f172a !important;
+}
+
+:root:not(.dark) input::placeholder,
+:root:not(.dark) textarea::placeholder {
+  color: #64748b !important;
+}
+
+/* Premium micro-shadow highlights for telemetry cards in light mode */
+:root:not(.dark) .glass-card {
+  box-shadow: 0 6px 20px -4px rgba(15, 23, 42, 0.06), 0 0 1px 1px rgba(15, 23, 42, 0.05) !important;
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+:root:not(.dark) .glass-card:hover {
+  box-shadow: 0 12px 30px -6px rgba(109, 40, 217, 0.12), 0 0 1px 1px rgba(109, 40, 217, 0.15) !important;
+  border-color: rgba(109, 40, 217, 0.3) !important;
+}
+
+/* ========================================================================
+   HIGH-CONTRAST TIMETABLE PRINT OPTIMIZATION SYSTEM
+   ======================================================================== */
+@media print {
+  @page {
+    size: landscape;
+    margin: 8mm;
+  }
+
+  /* HIDE everything else so ONLY the active report/modal contents are printed on 1 page */
+  header, 
+  main, 
+  nav, 
+  sidebar, 
+  button, 
+  .no-print, 
+  .bg-glow-circle-1, 
+  .bg-glow-circle-2, 
+  .bg-glow-circle-3 {
+    display: none !important;
+  }
+  
+  /* Reset body and root container to occupy full print viewport */
+  body, #root {
+    background: #ffffff !important;
+    color: #0d1117 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: visible !important;
+  }
+
+  /* Unroll modal container, overlay, and body completely to avoid scrollbars/clipping */
+  .modal-overlay {
+    position: static !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    overflow: visible !important;
+  }
+
+  .modal-container,
+  .modal-body {
+    position: static !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: visible !important;
+    height: 100% !important;
+    max-height: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* Hide the default modal header entirely on print since we render custom school branding headers */
+  .modal-header {
+    display: none !important;
+  }
+
+  /* Hide borders and backgrounds on print header card to make it clean & compact */
+  .print-header-compact {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 15px !important;
+    text-align: center !important;
+  }
+
+  /* Force table layout to reset from sticky/fixed positioning for standard print templates */
+  .sticky, th.sticky, td.sticky {
+    position: static !important;
+  }
+  
+  table {
+    height: 80vh !important; /* Stretches the table vertically to fill the page */
+    width: 100% !important;
+    table-layout: fixed !important;
+  }
+
+  th, td {
+    position: static !important;
+    background: #ffffff !important;
+    color: #0d1117 !important;
+    border: 1px solid #cbd5e1 !important; /* Clean light gray grid borders */
+    padding: 6px 8px !important; /* Larger padding for landscape */
+    opacity: 1 !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  th {
+    background: #f8fafc !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    padding: 8px !important;
+    font-size: 13px !important; /* Larger headers */
+  }
+
+  /* Keep the beautiful colorful subject cards on print instead of flattening them to gray */
+  td div.rounded-xl {
+    height: 100% !important; 
+    min-height: 85px !important; /* Stretches cards beautifully */
+    padding: 8px 10px !important; /* Premium spacing inside cards */
+    box-shadow: none !important;
+    transform: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-width: 2px !important; /* Slightly thicker borders for high-end look */
+    border-style: solid !important;
+    border-radius: 10px !important; /* Premium rounded look */
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Ensure text colors, weights, and alignment match screen styles */
+  td span.font-black {
+    font-size: 12px !important; /* Scaled up for large visibility */
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    line-height: 1.2 !important;
+  }
+  
+  td span.font-extrabold {
+    color: #1e293b !important; /* Solid readable teacher label */
+    font-size: 10px !important;
+    font-weight: 800 !important;
+  }
+
+  td span.font-bold {
+    color: #64748b !important; /* Readable room code */
+    font-size: 9px !important;
+    font-weight: 700;
+  }
+
+  /* Make sure the 'Period & Time' column text is extremely dark and readable on white background */
+  td:first-of-type,
+  td:first-of-type div {
+    color: #0f172a !important; /* Solid deep dark slate */
+  }
+  td:first-of-type div.text-foreground {
+    font-size: 12px !important;
+    font-weight: 900 !important;
+  }
+  td:first-of-type div.font-mono {
+    color: #475569 !important; /* High contrast gray for the time slot */
+    font-size: 10px !important;
+  }
+
+  /* Ensure print header text / school name doesn't clip and prints large */
+  h2 {
+    font-size: 26px !important; /* Large beautiful school name */
+    font-weight: 900 !important;
+  }
+  h4, p {
+    overflow: visible !important;
+    line-height: 1.3 !important;
+    height: auto !important;
+  }
+}
+
+/* Security overlay - floats to the right side on desktop so main modals stay visible */
+.security-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+}
+
+@media (min-width: 769px) {
+  .security-modal-overlay {
+    justify-content: flex-end;
+    padding-right: 3rem;
+  }
+}
+

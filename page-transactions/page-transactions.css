@@ -1,0 +1,329 @@
+.boa-transactions-page {
+  background: radial-gradient(circle at 14% 18%, #e0f2fe 0, #f8fafc 36%), radial-gradient(circle at 78% 0, #eef2ff 0, #ffffff 38%), #f8fafc;
+  padding: var(--boa-space-8);
+  border-radius: 16px;
+  min-height: 100vh;
+}
+
+.boa-transactions-page .boa-card {
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+.boa-transactions-hero {
+  display: flex;
+  gap: var(--boa-space-6);
+  align-items: stretch;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(135deg, #0ea5e9, #6366f1);
+  color: #fff;
+}
+
+.boa-transactions-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 70% 20%, rgba(255, 255, 255, 0.18), transparent 36%);
+  pointer-events: none;
+}
+
+.boa-hero-left,
+.boa-hero-right {
+  position: relative;
+  z-index: 1;
+}
+
+.boa-hero-left {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--boa-space-3);
+}
+
+.boa-hero-kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.boa-hero-title {
+  display: flex;
+  align-items: center;
+  gap: var(--boa-space-3);
+  flex-wrap: wrap;
+}
+
+.boa-hero-title h1 {
+  margin: 0;
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.boa-hero-chip {
+  background: rgba(255, 255, 255, 0.14);
+  padding: var(--boa-space-2) var(--boa-space-4);
+  border-radius: 999px;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.boa-hero-lead {
+  margin: 0;
+  font-size: 1.05rem;
+  max-width: 720px;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.boa-hero-pills {
+  display: flex;
+  gap: var(--boa-space-3);
+  flex-wrap: wrap;
+}
+
+.boa-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--boa-space-2);
+  padding: var(--boa-space-2) var(--boa-space-4);
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  backdrop-filter: blur(6px);
+}
+
+.boa-pill-gateway {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.boa-pill-soft {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.boa-hero-right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.boa-hero-card {
+  background: #ffffff;
+  color: #0f172a;
+  padding: var(--boa-space-5);
+  border-radius: 18px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: var(--boa-space-3);
+  min-width: 280px;
+}
+
+.boa-hero-note {
+  display: flex;
+  align-items: center;
+  gap: var(--boa-space-2);
+  font-weight: 600;
+  color: #0ea5e9;
+}
+
+.boa-hero-sub {
+  margin: 0;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.boa-filters-card .boa-card-header,
+.boa-table-card .boa-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--boa-space-4);
+  flex-wrap: wrap;
+}
+
+.boa-card-kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  color: var(--boa-primary);
+  margin: 0 0 var(--boa-space-1) 0;
+  font-weight: 700;
+}
+
+.boa-filters-card h3,
+.boa-table-card h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--boa-gray-900);
+}
+
+.boa-soft-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--boa-space-2);
+  background: #f1f5f9;
+  padding: var(--boa-space-2) var(--boa-space-4);
+  border-radius: 999px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.boa-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--boa-space-4);
+}
+
+.boa-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--boa-space-2);
+}
+
+.boa-form-group label {
+  font-weight: 600;
+  color: var(--boa-gray-700);
+}
+
+.boa-input-shell {
+  display: flex;
+  align-items: center;
+  gap: var(--boa-space-2);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--boa-radius);
+  padding: 10px 12px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.boa-input-shell select,
+.boa-input-shell input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 0.95rem;
+  color: var(--boa-gray-800);
+  outline: none;
+}
+
+.boa-input-shell .dashicons {
+  color: var(--boa-primary);
+}
+
+.boa-table-wrapper {
+  overflow-x: auto;
+}
+
+.boa-transactions-table th,
+.boa-transactions-table td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+.boa-transactions-table th {
+  font-size: 0.9rem;
+  color: var(--boa-gray-600);
+  background: #f8fafc;
+  position: sticky;
+  top: 0;
+}
+
+.boa-transactions-table tbody tr:hover {
+  background: #f1f5f9;
+}
+
+.boa-transactions-table td {
+  font-size: 0.92rem;
+  color: var(--boa-gray-800);
+}
+
+.boa-transactions-table td small {
+  color: var(--boa-gray-500);
+}
+
+.boa-pagination {
+  display: flex;
+  gap: var(--boa-space-2);
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: var(--boa-space-4);
+  flex-wrap: wrap;
+}
+
+.boa-page-btn {
+  border: 1px solid var(--boa-gray-200);
+  background: linear-gradient(135deg, #ffffff, #f8fafc);
+  margin: 0;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--boa-gray-700);
+  font-weight: 600;
+  transition: all 0.15s ease-in-out;
+}
+
+.boa-page-btn:hover {
+  border-color: var(--boa-primary);
+  color: var(--boa-primary);
+  box-shadow: var(--boa-shadow-sm);
+}
+
+.boa-page-btn.boa-page-active {
+  background: linear-gradient(135deg, var(--boa-primary), var(--boa-primary-dark));
+  border-color: var(--boa-primary);
+  color: #fff;
+  box-shadow: var(--boa-shadow-md);
+}
+
+.boa-status-legend {
+  display: flex;
+  gap: var(--boa-space-2);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.boa-status-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  border: 1px solid transparent;
+}
+
+.boa-status-chip-completed {
+  background: #dcfce7;
+  color: #166534;
+  border-color: #bbf7d0;
+}
+
+.boa-status-chip-initiated {
+  background: #fef3c7;
+  color: #92400e;
+  border-color: #fde68a;
+}
+
+.boa-status-chip-failed {
+  background: #fee2e2;
+  color: #991b1b;
+  border-color: #fecdd3;
+}
+
+@media (max-width: 960px) {
+  .boa-transactions-hero {
+    flex-direction: column;
+  }
+
+  .boa-hero-right {
+    justify-content: flex-start;
+  }
+}

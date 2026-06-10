@@ -1,0 +1,180 @@
+#boa-admin-materials-root {
+    background: radial-gradient(circle at 12% 20%, #eef2ff 0%, #fff 45%), radial-gradient(circle at 80% 0, #e0f2fe 0%, #fff 35%);
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.boa-page-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.boa-page-header h1 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.boa-page-header p {
+    margin: 6px 0 0;
+    color: #475569;
+    font-size: 14px;
+}
+
+.boa-header-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-weight: 600;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+}
+
+.boa-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    margin-top: 18px;
+    overflow: hidden;
+}
+
+.boa-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.boa-card-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.boa-card-content {
+    padding: 16px;
+}
+
+.boa-form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-bottom: 12px;
+    align-items: center;
+}
+
+.boa-form-row label {
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.boa-form-row input,
+.boa-form-row select,
+.boa-form-row textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.boa-form-row textarea {
+    min-height: 90px;
+}
+
+.boa-form-row input:focus,
+.boa-form-row select:focus,
+.boa-form-row textarea:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    outline: none;
+}
+
+.boa-data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.boa-data-table th {
+    background: #f8fafc;
+    padding: 12px;
+    text-align: left;
+    font-size: 13px;
+    color: #475569;
+    border-bottom: 1px solid #e2e8f0;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.boa-data-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 14px;
+    color: #0f172a;
+    vertical-align: middle;
+}
+
+.boa-data-table tr:hover td {
+    background: #f8fafc;
+}
+
+.boa-material-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #e0f2fe;
+    color: #0369a1;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.boa-actions {
+    display: inline-flex;
+    gap: 8px;
+}
+
+.boa-actions .boa-btn {
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.boa-btn-primary {
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: #fff;
+    border: none;
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);
+}
+
+.boa-btn-primary:hover {
+    filter: brightness(1.05);
+}
+
+.boa-btn-secondary {
+    background: #f8fafc;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+}
+
+@media (max-width: 768px) {
+    .boa-page-header { flex-direction: column; align-items: flex-start; }
+    .boa-card-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .boa-data-table thead { display: none; }
+    .boa-data-table tr { display: block; margin-bottom: 12px; border: 1px solid #e2e8f0; border-radius: 10px; }
+    .boa-data-table td { display: flex; justify-content: space-between; padding: 10px 12px; }
+    .boa-data-table td::before { content: attr(data-label); font-weight: 600; color: #475569; }
+}

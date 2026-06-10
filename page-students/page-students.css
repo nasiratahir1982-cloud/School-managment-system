@@ -1,0 +1,1122 @@
+/* 🟢 یہاں سے Students Management CSS شروع ہو رہا ہے */
+/**
+ * BSSMS Students Management - اسٹائلز
+ * سٹوڈنٹس مینجمنٹ پیج کے لیے مخصوص اسٹائلز
+ */
+
+/* === بنیادی لیآؤٹ === */
+#boa-students-root {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+  color: var(--boa-gray-800);
+  background-color: var(--boa-gray-50);
+  min-height: 100vh;
+  padding: var(--boa-space-6);
+}
+
+/* === پیج ہیڈر === */
+.boa-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--boa-space-8);
+  flex-wrap: wrap;
+  gap: var(--boa-space-4);
+}
+
+.boa-header-left h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--boa-gray-900);
+  margin: 0 0 var(--boa-space-2) 0;
+  line-height: 1.2;
+}
+
+.boa-header-left p {
+  font-size: 1.125rem;
+  color: var(--boa-gray-600);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.boa-toolbar-actions {
+  display: flex;
+  gap: var(--boa-space-3);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* === سمری کارڈز === */
+.boa-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--boa-space-6);
+  margin-bottom: var(--boa-space-8);
+}
+
+.boa-stats-card {
+  position: relative;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-left: 4px solid var(--boa-primary);
+  transition: all 0.2s ease-in-out;
+}
+
+.boa-stats-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--boa-shadow-md);
+}
+
+.boa-card-header {
+  margin-bottom: var(--boa-space-4);
+}
+
+.boa-card-icon {
+  font-size: 1.5rem;
+  color: var(--boa-primary);
+  opacity: 0.8;
+}
+
+.boa-stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--boa-gray-900);
+  line-height: 1;
+  margin-bottom: var(--boa-space-2);
+}
+
+.boa-stat-label {
+  font-size: 0.875rem;
+  color: var(--boa-gray-600);
+}
+
+/* === مین لیآؤٹ === */
+.boa-main-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--boa-space-8);
+  align-items: start;
+}
+
+.boa-main-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--boa-space-6);
+}
+
+.boa-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--boa-space-6);
+}
+
+/* === بلک ایکشنز بار === */
+.boa-bulk-actions-bar {
+  background: var(--boa-primary-light);
+  border: 1px solid var(--boa-primary);
+  border-radius: var(--boa-radius);
+  padding: var(--boa-space-3) var(--boa-space-4);
+  margin-bottom: var(--boa-space-4);
+}
+
+.boa-bulk-actions-content {
+  display: flex;
+  align-items: center;
+  gap: var(--boa-space-4);
+  flex-wrap: wrap;
+}
+
+.boa-bulk-select {
+  padding: var(--boa-space-2) var(--boa-space-3);
+  border: 1px solid var(--boa-gray-300);
+  border-radius: var(--boa-radius);
+  background: white;
+  font-size: 0.875rem;
+}
+
+/* === ٹیبل کنٹرولز === */
+.boa-table-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--boa-space-4);
+  flex-wrap: wrap;
+  padding: var(--boa-space-4);
+  background: white;
+  border-radius: var(--boa-radius);
+  border: 1px solid var(--boa-gray-200);
+}
+
+.boa-search-box {
+  position: relative;
+  flex: 1;
+  min-width: 250px;
+}
+
+.boa-search-box .dashicons {
+  position: absolute;
+  left: var(--boa-space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--boa-gray-400);
+}
+
+.boa-search-input {
+  width: 100%;
+  padding: var(--boa-space-3) var(--boa-space-3) var(--boa-space-3) var(--boa-space-10);
+  border: 1px solid var(--boa-gray-300);
+  border-radius: var(--boa-radius);
+  font-size: 0.875rem;
+}
+
+.boa-search-input:focus {
+  outline: none;
+  border-color: var(--boa-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.boa-filter-select {
+  padding: var(--boa-space-3) var(--boa-space-4);
+  border: 1px solid var(--boa-gray-300);
+  border-radius: var(--boa-radius);
+  background: white;
+  font-size: 0.875rem;
+  min-width: 140px;
+}
+
+.boa-date-input {
+  padding: var(--boa-space-3) var(--boa-space-4);
+  border: 1px solid var(--boa-gray-300);
+  border-radius: var(--boa-radius);
+  background: white;
+  font-size: 0.875rem;
+  min-width: 140px;
+}
+
+.boa-reset-link {
+  color: var(--boa-primary);
+  text-decoration: none;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.boa-reset-link:hover {
+  text-decoration: underline;
+}
+
+/* === سٹوڈنٹس ٹیبل === */
+.boa-table-card {
+  background: white;
+  border-radius: var(--boa-radius);
+  box-shadow: var(--boa-shadow);
+  border: 1px solid var(--boa-gray-200);
+  overflow: hidden;
+}
+
+.boa-table-card .boa-card-header {
+  padding: var(--boa-space-5);
+  border-bottom: 1px solid var(--boa-gray-200);
+  background: var(--boa-gray-50);
+}
+
+.boa-table-card .boa-card-content {
+  padding: 0;
+}
+
+.boa-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.boa-data-table th {
+  background-color: var(--boa-gray-50);
+  padding: var(--boa-space-4) var(--boa-space-3);
+  text-align: left;
+  font-weight: 600;
+  color: var(--boa-gray-700);
+  border-bottom: 1px solid var(--boa-gray-200);
+}
+
+.boa-data-table td {
+  padding: var(--boa-space-4) var(--boa-space-3);
+  border-bottom: 1px solid var(--boa-gray-100);
+}
+
+.boa-data-table tr:hover {
+  background-color: var(--boa-gray-50);
+}
+
+.boa-data-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* === ایکشن بٹنز === */
+.boa-action-buttons {
+  display: flex;
+  gap: var(--boa-space-2);
+  justify-content: center;
+}
+
+.boa-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--boa-radius);
+  background: transparent;
+  color: var(--boa-gray-600);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+}
+
+.boa-btn-icon:hover {
+  background: var(--boa-gray-100);
+  color: var(--boa-gray-800);
+}
+
+.boa-btn-view:hover {
+  background: var(--boa-primary-light);
+  color: var(--boa-primary);
+}
+
+.boa-btn-edit:hover {
+  background: var(--boa-warning-light);
+  color: var(--boa-warning-dark);
+}
+
+.boa-btn-delete:hover {
+  background: var(--boa-error-light);
+  color: var(--boa-error);
+}
+
+/* === پیجینیشن === */
+.boa-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--boa-space-5);
+  border-top: 1px solid var(--boa-gray-200);
+  background: var(--boa-gray-50);
+  flex-wrap: wrap;
+  gap: var(--boa-space-4);
+}
+
+.boa-pagination-info {
+  font-size: 0.875rem;
+  color: var(--boa-gray-600);
+}
+
+.boa-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--boa-space-3);
+}
+
+.boa-rows-select {
+  padding: var(--boa-space-2) var(--boa-space-3);
+  border: 1px solid var(--boa-gray-300);
+  border-radius: var(--boa-radius);
+  background: white;
+  font-size: 0.875rem;
+}
+
+.boa-page-numbers {
+  display: flex;
+  align-items: center;
+  gap: var(--boa-space-2);
+}
+
+.boa-page-btn {
+  padding: var(--boa-space-2) var(--boa-space-3);
+  border: 1px solid var(--boa-gray-300);
+  border-radius: var(--boa-radius);
+  background: white;
+  color: var(--boa-gray-700);
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.boa-page-btn:hover {
+  border-color: var(--boa-primary);
+  color: var(--boa-primary);
+}
+
+.boa-page-active {
+  background: var(--boa-primary);
+  border-color: var(--boa-primary);
+  color: white;
+}
+
+.boa-page-dots {
+  padding: var(--boa-space-2) var(--boa-space-1);
+  color: var(--boa-gray-400);
+}
+
+/* === سائیڈبار کارڈز === */
+.boa-filters-card,
+.boa-snapshot-card,
+.boa-recent-card {
+  background: white;
+  border-radius: var(--boa-radius);
+  box-shadow: var(--boa-shadow);
+  border: 1px solid var(--boa-gray-200);
+  overflow: hidden;
+}
+
+.boa-filters-card .boa-card-header,
+.boa-snapshot-card .boa-card-header,
+.boa-recent-card .boa-card-header {
+  padding: var(--boa-space-4) var(--boa-space-5);
+  border-bottom: 1px solid var(--boa-gray-200);
+  background: var(--boa-gray-50);
+}
+
+.boa-filters-card .boa-card-content,
+.boa-snapshot-card .boa-card-content,
+.boa-recent-card .boa-card-content {
+  padding: var(--boa-space-5);
+}
+
+.boa-filters-card h3,
+.boa-snapshot-card h3,
+.boa-recent-card h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--boa-gray-900);
+  margin: 0;
+}
+
+/* === فلٹر چپس === */
+.boa-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--boa-space-2);
+  margin-bottom: var(--boa-space-4);
+}
+
+.boa-chip {
+  padding: var(--boa-space-2) var(--boa-space-3);
+  border: 1px solid var(--boa-gray-300);
+  border-radius: var(--boa-radius);
+  background: white;
+  color: var(--boa-gray-700);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.boa-chip:hover {
+  border-color: var(--boa-primary);
+  color: var(--boa-primary);
+}
+
+.boa-chip-active {
+  background: var(--boa-primary);
+  border-color: var(--boa-primary);
+  color: white;
+}
+
+/* === کورس فلٹرز === */
+.boa-course-filters {
+  margin-bottom: var(--boa-space-4);
+}
+
+.boa-course-filters h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--boa-gray-700);
+  margin: 0 0 var(--boa-space-3) 0;
+}
+
+.boa-pill {
+  display: inline-block;
+  padding: var(--boa-space-1) var(--boa-space-3);
+  margin: 0 var(--boa-space-2) var(--boa-space-2) 0;
+  border: 1px solid var(--boa-gray-300);
+  border-radius: 20px;
+  background: white;
+  color: var(--boa-gray-700);
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.boa-pill:hover {
+  border-color: var(--boa-primary);
+  color: var(--boa-primary);
+}
+
+/* === سنیپ شاٹ چارٹ === */
+.boa-chart-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--boa-space-4);
+}
+
+.boa-popular-courses {
+  display: flex;
+  flex-direction: column;
+  gap: var(--boa-space-3);
+}
+
+.boa-popular-course {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--boa-space-2) var(--boa-space-3);
+  background: var(--boa-gray-50);
+  border-radius: var(--boa-radius);
+  font-size: 0.875rem;
+}
+
+.boa-course-name {
+  font-weight: 500;
+  color: var(--boa-gray-700);
+}
+
+.boa-student-count {
+  color: var(--boa-gray-500);
+  font-size: 0.75rem;
+}
+
+/* === حالیہ ایڈمیشنز === */
+.boa-recent-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--boa-space-3);
+}
+
+.boa-recent-item {
+  display: flex;
+  flex-direction: column;
+  padding: var(--boa-space-3);
+  background: var(--boa-gray-50);
+  border-radius: var(--boa-radius);
+  border-left: 3px solid var(--boa-primary);
+}
+
+.boa-recent-name {
+  font-weight: 500;
+  color: var(--boa-gray-800);
+  font-size: 0.875rem;
+  margin-bottom: var(--boa-space-1);
+}
+
+.boa-recent-course {
+  color: var(--boa-gray-600);
+  font-size: 0.75rem;
+  margin-bottom: var(--boa-space-1);
+}
+
+.boa-recent-date {
+  color: var(--boa-gray-500);
+  font-size: 0.7rem;
+}
+
+/* === سلیڈ اوور پروفائل === */
+.boa-slide-over {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 600px;
+  height: 100vh;
+  background: white;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  transition: right 0.3s ease-in-out;
+  overflow-y: auto;
+}
+
+.boa-slide-open {
+  right: 0;
+}
+
+.boa-slide-over-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.boa-slide-over-header {
+  padding: var(--boa-space-6);
+  border-bottom: 1px solid var(--boa-gray-200);
+  background: var(--boa-gray-50);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.boa-slide-over-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--boa-gray-900);
+}
+
+.boa-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--boa-gray-500);
+  cursor: pointer;
+  padding: var(--boa-space-2);
+  border-radius: var(--boa-radius);
+}
+
+.boa-close-btn:hover {
+  background: var(--boa-gray-200);
+  color: var(--boa-gray-700);
+}
+
+.boa-slide-over-body {
+  flex: 1;
+  padding: var(--boa-space-6);
+}
+
+/* === پروفائل ٹیبز === */
+.boa-profile-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--boa-gray-200);
+  margin-bottom: var(--boa-space-6);
+}
+
+.boa-tab-btn {
+  padding: var(--boa-space-3) var(--boa-space-5);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--boa-gray-600);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.boa-tab-btn:hover {
+  color: var(--boa-primary);
+}
+
+.boa-tab-active {
+  color: var(--boa-primary);
+  border-bottom-color: var(--boa-primary);
+}
+
+.boa-tab-content {
+  display: none;
+}
+
+.boa-tab-active {
+  display: block;
+}
+
+/* === پروفائل ڈیٹیلز === */
+.boa-profile-actions {
+  display: flex;
+  gap: var(--boa-space-3);
+  margin-bottom: var(--boa-space-6);
+}
+
+.boa-btn-danger {
+  background: linear-gradient(135deg, var(--boa-error), #dc2626);
+  color: white;
+}
+
+.boa-btn-danger:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  transform: translateY(-1px);
+}
+
+.boa-profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--boa-space-4);
+}
+
+.boa-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--boa-space-3) var(--boa-space-4);
+  background: var(--boa-gray-50);
+  border-radius: var(--boa-radius);
+  border-left: 3px solid var(--boa-primary);
+}
+
+.boa-detail-row label {
+  font-weight: 600;
+  color: var(--boa-gray-700);
+  font-size: 0.875rem;
+}
+
+.boa-detail-row span {
+  color: var(--boa-gray-800);
+  font-size: 0.875rem;
+}
+
+/* === فیس ہسٹری === */
+.boa-fee-actions {
+  display: flex;
+  gap: var(--boa-space-3);
+  margin-bottom: var(--boa-space-4);
+}
+
+.boa-fee-table {
+  font-size: 0.8rem;
+}
+
+.boa-fee-table th,
+.boa-fee-table td {
+  padding: var(--boa-space-3);
+}
+
+/* === دستاویزات === */
+.boa-documents-grid {
+  display: grid;
+  gap: var(--boa-space-3);
+}
+
+.boa-document-item {
+  display: flex;
+  align-items: center;
+  gap: var(--boa-space-3);
+  padding: var(--boa-space-3) var(--boa-space-4);
+  background: var(--boa-gray-50);
+  border-radius: var(--boa-radius);
+  border-left: 3px solid var(--boa-primary);
+}
+
+.boa-document-icon {
+  font-size: 1.5rem;
+  color: var(--boa-primary);
+}
+
+.boa-document-info {
+  flex: 1;
+}
+
+.boa-document-name {
+  font-weight: 500;
+  color: var(--boa-gray-800);
+  font-size: 0.875rem;
+  margin-bottom: var(--boa-space-1);
+}
+
+.boa-document-date {
+  color: var(--boa-gray-500);
+  font-size: 0.75rem;
+}
+
+.boa-document-actions {
+  display: flex;
+  gap: var(--boa-space-1);
+}
+
+/* === موڈلز === */
+.boa-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+}
+
+.boa-modal-open {
+  display: flex;
+}
+
+.boa-modal-content {
+  background: white;
+  border-radius: var(--boa-radius);
+  box-shadow: var(--boa-shadow-lg);
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.boa-modal-header {
+  padding: var(--boa-space-6);
+  border-bottom: 1px solid var(--boa-gray-200);
+  background: var(--boa-gray-50);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.boa-modal-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--boa-gray-900);
+}
+
+.boa-modal-body {
+  padding: var(--boa-space-6);
+}
+
+.boa-modal-footer {
+  padding: var(--boa-space-6);
+  border-top: 1px solid var(--boa-gray-200);
+  background: var(--boa-gray-50);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--boa-space-3);
+}
+
+/* === فارم اسٹائلز === */
+.boa-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--boa-space-4);
+  margin-bottom: var(--boa-space-4);
+}
+
+.boa-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.boa-form-group label {
+  font-weight: 600;
+  color: var(--boa-gray-700);
+  margin-bottom: var(--boa-space-2);
+  font-size: 0.875rem;
+}
+
+.boa-form-input,
+.boa-form-select {
+  padding: var(--boa-space-3) var(--boa-space-4);
+  border: 1px solid var(--boa-gray-300);
+  border-radius: var(--boa-radius);
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.boa-form-input:focus,
+.boa-form-select:focus {
+  outline: none;
+  border-color: var(--boa-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.boa-form-group small {
+  margin-top: var(--boa-space-1);
+  color: var(--boa-gray-500);
+  font-size: 0.75rem;
+}
+
+/* === امپورٹ موڈل === */
+.boa-upload-area {
+  border: 2px dashed var(--boa-gray-300);
+  border-radius: var(--boa-radius);
+  padding: var(--boa-space-8);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: var(--boa-space-4);
+}
+
+.boa-upload-area:hover {
+  border-color: var(--boa-primary);
+  background: var(--boa-gray-50);
+}
+
+.boa-upload-dragover {
+  border-color: var(--boa-primary);
+  background: var(--boa-primary-light);
+}
+
+.boa-upload-area .dashicons {
+  font-size: 3rem;
+  color: var(--boa-gray-400);
+  margin-bottom: var(--boa-space-3);
+}
+
+.boa-upload-area p {
+  margin: 0;
+  color: var(--boa-gray-600);
+  font-size: 1rem;
+}
+
+.boa-import-instructions {
+  background: var(--boa-gray-50);
+  padding: var(--boa-space-4);
+  border-radius: var(--boa-radius);
+  margin-bottom: var(--boa-space-4);
+}
+
+.boa-import-instructions p {
+  margin: 0 0 var(--boa-space-2) 0;
+  font-weight: 600;
+  color: var(--boa-gray-700);
+}
+
+.boa-import-instructions ul {
+  margin: 0;
+  padding-left: var(--boa-space-5);
+  color: var(--boa-gray-600);
+}
+
+.boa-import-instructions li {
+  margin-bottom: var(--boa-space-1);
+}
+
+/* === لوڈنگ اور خالی اسٹیٹس === */
+.boa-loading-cell {
+  text-align: center;
+  color: var(--boa-gray-500);
+  font-style: italic;
+  padding: var(--boa-space-8) !important;
+}
+
+.boa-no-data {
+  text-align: center;
+  color: var(--boa-gray-500);
+  font-style: italic;
+  padding: var(--boa-space-8) !important;
+}
+
+/* === فوٹر === */
+.boa-footer {
+  text-align: center;
+  padding: var(--boa-space-6);
+  color: var(--boa-gray-500);
+  font-size: 0.875rem;
+  border-top: 1px solid var(--boa-gray-200);
+  margin-top: var(--boa-space-8);
+}
+
+/* === رسپانسیو ڈیزائن === */
+@media (max-width: 1200px) {
+  .boa-main-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .boa-sidebar {
+    order: -1;
+  }
+}
+
+@media (max-width: 768px) {
+  #boa-students-root {
+    padding: var(--boa-space-4);
+  }
+  
+  .boa-page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .boa-toolbar-actions {
+    justify-content: center;
+  }
+  
+  .boa-table-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .boa-search-box {
+    min-width: auto;
+  }
+  
+  .boa-form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .boa-pagination {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  
+  .boa-slide-over {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .boa-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .boa-toolbar-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .boa-profile-actions {
+    flex-direction: column;
+  }
+  
+  .boa-modal-content {
+    width: 95%;
+    margin: var(--boa-space-4);
+  }
+}
+
+/* === اضافی یوٹیلیٹی کلاسیز === */
+:root {
+  --boa-warning-light: #fef3c7;
+  --boa-warning-dark: #92400e;
+  --boa-error-light: #fee2e2;
+}
+
+/* === WhatsApp Button Styles === */
+.boa-whatsapp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: var(--boa-space-2);
+  vertical-align: middle;
+}
+
+.boa-whatsapp-btn:hover {
+  background: linear-gradient(135deg, #128C7E, #25D366);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+}
+
+.boa-whatsapp-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: white;
+}
+
+.boa-phone-display {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* === Discount Modal Styles === */
+.boa-student-info {
+  background: var(--boa-gray-50);
+  border: 1px solid var(--boa-gray-200);
+  border-radius: var(--boa-radius-md);
+  padding: var(--boa-space-4);
+  margin-bottom: var(--boa-space-6);
+}
+
+.boa-student-info h4 {
+  margin: 0 0 var(--boa-space-2) 0;
+  color: var(--boa-gray-900);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.boa-student-info p {
+  margin: 0 0 var(--boa-space-1) 0;
+  color: var(--boa-gray-600);
+  font-size: 0.875rem;
+}
+
+.boa-fee-summary {
+  background: white;
+  border: 1px solid var(--boa-gray-200);
+  border-radius: var(--boa-radius-md);
+  padding: var(--boa-space-4);
+  margin-bottom: var(--boa-space-6);
+}
+
+.boa-fee-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--boa-space-2) 0;
+  border-bottom: 1px solid var(--boa-gray-100);
+}
+
+.boa-fee-row:last-child {
+  border-bottom: none;
+}
+
+.boa-fee-row-pending {
+  background: var(--boa-warning-light);
+  margin: var(--boa-space-2) calc(-1 * var(--boa-space-4));
+  padding: var(--boa-space-3) var(--boa-space-4);
+  border-radius: var(--boa-radius-md);
+  font-weight: 600;
+}
+
+.boa-fee-row-pending strong {
+  color: var(--boa-warning-dark);
+}
+
+/* === Action Buttons Enhancement === */
+.boa-btn-icon.boa-btn-discount {
+  background: var(--boa-accent-color);
+  color: white;
+}
+
+.boa-btn-icon.boa-btn-discount:hover {
+  background: var(--boa-primary-dark);
+  transform: translateY(-1px);
+}
+
+/* === Spinning Animation === */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.dashicons.spin {
+  animation: spin 1s linear infinite;
+}
+
+/* === Enhanced Table Styles === */
+.boa-data-table .boa-action-buttons {
+  display: flex;
+  gap: var(--boa-space-1);
+  align-items: center;
+}
+
+.boa-data-table .boa-btn-icon {
+  padding: var(--boa-space-1);
+  min-width: auto;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* === Responsive Enhancements === */
+@media (max-width: 768px) {
+  .boa-whatsapp-btn {
+    width: 32px;
+    height: 32px;
+    margin-left: var(--boa-space-1);
+  }
+  
+  .boa-whatsapp-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .boa-action-buttons {
+    flex-wrap: wrap;
+  }
+}
+
+/* ✅ Enhanced Features CSS End */
+
+/* ✅ Syntax verified block end */
