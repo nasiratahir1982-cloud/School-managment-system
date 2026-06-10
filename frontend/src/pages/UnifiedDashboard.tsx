@@ -1809,30 +1809,35 @@ export const UnifiedDashboard: React.FC = () => {
       
       {/* Header Banner */}
       <header className="border-b border-border bg-card/40 backdrop-blur-md sticky top-0 z-50">
-        <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 py-3 flex flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5 shrink-0">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary/30 to-primary/5 flex items-center justify-center border border-primary/45 shadow-inner relative overflow-hidden group shrink-0">
-              <div className="absolute inset-0 bg-primary/5 animate-pulse"></div>
-              <GraduationCap className="w-5 h-5 text-primary" />
-            </div>
-            <div className="flex flex-col gap-0.5">
-              <div className="flex items-center gap-2">
-                <h1 className="text-xs sm:text-sm lg:text-base font-extrabold tracking-wide text-foreground m-0 uppercase leading-none whitespace-nowrap">
-                  {spec.title}
-                </h1>
-                <span className="px-2 py-0.5 rounded bg-primary/20 border border-primary/30 text-[8px] font-black text-primary uppercase tracking-wider shrink-0 whitespace-nowrap">
-                  {simulatedRole.replace('_', ' ')}
+        <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row md:items-center justify-between gap-3">
+          
+          {/* Left Side: Title & Info */}
+          <div className="flex items-center gap-2.5 w-full md:w-auto justify-between md:justify-start">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary/30 to-primary/5 flex items-center justify-center border border-primary/45 shadow-inner relative overflow-hidden group shrink-0">
+                <div className="absolute inset-0 bg-primary/5 animate-pulse"></div>
+                <GraduationCap className="w-5 h-5 text-primary" />
+              </div>
+              <div className="flex flex-col gap-0.5">
+                <div className="flex items-center gap-2">
+                  <h1 className="text-xs sm:text-sm lg:text-base font-extrabold tracking-wide text-foreground m-0 uppercase leading-none whitespace-nowrap">
+                    {spec.title}
+                  </h1>
+                  <span className="px-2 py-0.5 rounded bg-primary/20 border border-primary/30 text-[8px] font-black text-primary uppercase tracking-wider shrink-0 whitespace-nowrap">
+                    {simulatedRole.replace('_', ' ')}
+                  </span>
+                </div>
+                <span className="text-[9px] text-foreground/60 block leading-none">
+                  Logged in as: <strong className="text-foreground">{currentUser?.name || 'Administrator'}</strong>
                 </span>
               </div>
-              <span className="text-[9px] text-foreground/60 block leading-none">
-                Logged in as: <strong className="text-foreground">{currentUser?.name || 'Administrator'}</strong>
-              </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 lg:gap-3 justify-end shrink-0">
+          {/* Right Side: Actions (Dropdown & Buttons) */}
+          <div className="flex items-center justify-between md:justify-end gap-2 w-full md:w-auto border-t border-border/20 pt-2.5 md:pt-0 md:border-t-0">
             {currentUser?.role && ['super_admin', 'admin', 'org_owner', 'school_owner'].includes(currentUser.role) && (
-              <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border transition-all shrink-0 ${
+              <div className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border transition-all shrink-0 ${
                 darkMode 
                   ? 'bg-purple-950/25 border-purple-500/20' 
                   : 'bg-purple-50/50 border-purple-200/60'
@@ -1843,7 +1848,7 @@ export const UnifiedDashboard: React.FC = () => {
                 <select
                   value={simulatedRole}
                   onChange={(e) => setSimulatedRole(e.target.value as UserRole)}
-                  className={`text-[10px] rounded px-2 py-0.5 focus:outline-none focus:ring-1 focus:ring-purple-500 font-semibold transition-all shrink-0 ${
+                  className={`text-[10px] rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-purple-500 font-semibold transition-all shrink-0 ${
                     darkMode 
                       ? 'bg-slate-950 border-slate-800 text-white' 
                       : 'bg-white border-purple-200 text-purple-900'
@@ -1868,39 +1873,44 @@ export const UnifiedDashboard: React.FC = () => {
               </div>
             )}
 
-            {currentUser?.role === 'super_admin' && (
-              <button 
-                onClick={() => navigate('/super-admin')}
-                className="inline-flex items-center justify-center gap-1 bg-purple-700 hover:bg-purple-800 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all shadow-sm whitespace-nowrap shrink-0"
-              >
-                <span className="whitespace-nowrap">← Control Panel</span>
-              </button>
-            )}
-            <button
-              onClick={toggleTheme}
-              className="inline-flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg bg-card border border-border text-[10px] text-foreground/80 hover:text-foreground hover:border-foreground/30 transition-all font-semibold shadow-sm whitespace-nowrap shrink-0"
-              title="Toggle Light/Dark Mode"
-            >
-              {darkMode ? (
-                <>
-                  <Sun className="h-3.5 w-3.5 text-amber-400 shrink-0" />
-                  <span className="hidden md:inline whitespace-nowrap">Light</span>
-                </>
-              ) : (
-                <>
-                  <Moon className="h-3.5 w-3.5 text-indigo-400 shrink-0" />
-                  <span className="hidden md:inline whitespace-nowrap">Dark</span>
-                </>
+            <div className="flex items-center gap-1.5 justify-end">
+              {currentUser?.role === 'super_admin' && (
+                <button 
+                  onClick={() => navigate('/super-admin')}
+                  className="inline-flex items-center justify-center gap-1 bg-purple-700 hover:bg-purple-800 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition-all shadow-sm whitespace-nowrap shrink-0"
+                  title="Control Panel"
+                >
+                  <span>← <span className="hidden sm:inline">Control Panel</span></span>
+                </button>
               )}
-            </button>
-            <button 
-              onClick={handleLogout}
-              className="inline-flex items-center justify-center gap-1 bg-card border border-border hover:bg-muted hover:text-foreground px-3 py-1.5 rounded-lg text-[10px] transition-all whitespace-nowrap shrink-0 font-semibold"
-            >
-              <LogOut className="w-3.5 h-3.5 shrink-0" />
-              <span className="whitespace-nowrap">Sign Out</span>
-            </button>
+              <button
+                onClick={toggleTheme}
+                className="inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-card border border-border text-[10px] text-foreground/80 hover:text-foreground hover:border-foreground/30 transition-all font-semibold shadow-sm whitespace-nowrap shrink-0"
+                title="Toggle Light/Dark Mode"
+              >
+                {darkMode ? (
+                  <>
+                    <Sun className="h-3.5 w-3.5 text-amber-400 shrink-0" />
+                    <span className="hidden md:inline whitespace-nowrap">Light</span>
+                  </>
+                ) : (
+                  <>
+                    <Moon className="h-3.5 w-3.5 text-indigo-400 shrink-0" />
+                    <span className="hidden md:inline whitespace-nowrap">Dark</span>
+                  </>
+                )}
+              </button>
+              <button 
+                onClick={handleLogout}
+                className="inline-flex items-center justify-center gap-1 bg-card border border-border hover:bg-muted hover:text-foreground px-2.5 py-1.5 rounded-lg text-[10px] transition-all whitespace-nowrap shrink-0 font-semibold"
+                title="Sign Out"
+              >
+                <LogOut className="w-3.5 h-3.5 shrink-0" />
+                <span className="hidden sm:inline whitespace-nowrap">Sign Out</span>
+              </button>
+            </div>
           </div>
+
         </div>
       </header>
 
