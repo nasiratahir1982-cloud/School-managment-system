@@ -794,7 +794,7 @@ export const UnifiedDashboard: React.FC = () => {
   const [replyTicketId, setReplyTicketId] = useState<string | null>(null);
   const [replyText, setReplyText] = useState('');
 
-  const [auditLogs, setAuditLogs] = useState([
+  const [auditLogs] = useState([
     { id: '1', timestamp: '2026-06-10 19:45:12', user: 'superadmin', action: 'Created new tenant school: Allied School Campus A' },
     { id: '2', timestamp: '2026-06-10 18:22:04', user: 'admin', action: 'Approved leave request for Sarah Khan' },
     { id: '3', timestamp: '2026-06-10 17:15:58', user: 'accountant', action: 'Recorded cash fee collection for invoice INV-001' },
@@ -3260,11 +3260,11 @@ export const UnifiedDashboard: React.FC = () => {
                   {/* Beautiful Student Roster Grid */}
                   <div className="space-y-3 pt-2 border-t border-border/60">
                     <span className="block text-xs font-bold text-foreground/75 uppercase tracking-wider">Student Roster</span>
-                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                    <div className="flex flex-wrap justify-center gap-3">
                       {students.map((stud) => {
                         const initials = stud.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
                         return (
-                          <div key={stud.id} className="p-3 bg-card/65 border border-border rounded-xl flex flex-col items-center justify-center text-center gap-1.5 hover:border-primary/45 transition-all">
+                          <div key={stud.id} className="p-3 bg-card/65 border border-border rounded-xl flex flex-col items-center justify-center text-center gap-1.5 hover:border-primary/45 transition-all w-[calc(50%-6px)] sm:w-[calc(25%-9px)]">
                             <div className="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-xs font-black text-primary">
                               {initials}
                             </div>
@@ -3349,9 +3349,9 @@ export const UnifiedDashboard: React.FC = () => {
                   <div className="space-y-3 pt-2 border-t border-border/60">
 
                     <span className="block text-xs font-bold text-foreground/75 uppercase tracking-wider">Teaching Staff Roster</span>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="flex flex-wrap justify-center gap-3">
                       {teachers.map((teach) => (
-                        <div key={teach.id} className="p-4 bg-card/60 border border-border rounded-xl flex items-center justify-between gap-3 hover:border-primary/45 transition-all">
+                        <div key={teach.id} className="p-4 bg-card/60 border border-border rounded-xl flex items-center justify-between gap-3 hover:border-primary/45 transition-all w-full md:w-[calc(50%-6px)]">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-black text-primary text-xs shrink-0">
                               {teach.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
