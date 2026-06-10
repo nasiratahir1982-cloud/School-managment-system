@@ -961,7 +961,7 @@ export const UnifiedDashboard: React.FC = () => {
           font-family: 'Outfit', 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif; 
           color: #1e293b; 
           background: #ffffff; 
-          max-width: 850px; 
+          max-width: 920px; 
           margin: 0 auto; 
           box-sizing: border-box;
           position: relative;
@@ -1023,7 +1023,7 @@ export const UnifiedDashboard: React.FC = () => {
           </div>
 
           <!-- Academic Scores & Progress Bar Chart -->
-          <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; margin-bottom: 24px; align-items: start;">
+          <div style="display: grid; grid-template-columns: 1.55fr 1fr; gap: 24px; margin-bottom: 24px; align-items: start;">
             <!-- Left Side: Roster Table -->
             <div>
               <h3 style="margin: 0 0 12px 0; font-size: 12px; font-weight: 800; color: #334155; uppercase tracking-wide;">Academic Grades Summary</h3>
@@ -1122,32 +1122,33 @@ export const UnifiedDashboard: React.FC = () => {
                   align-items: center; 
                   justify-content: center;
                   box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+                  flex-shrink: 0;
                 ">
-                  <div style="width: 50px; height: 50px; border-radius: 50%; background: #ffffff; display: flex; items-center; justify-content: center; font-size: 13px; font-weight: 900; color: ${themePrimary}; line-height: 50px; text-align: center;">
+                  <div style="width: 50px; height: 50px; border-radius: 50%; background: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; color: ${themePrimary}; line-height: 50px; text-align: center;">
                     89.6%
                   </div>
                 </div>
-                <div>
-                  <span style="display: block; font-size: 10px; font-weight: 700; color: #64748b; uppercase;">Class Average</span>
-                  <strong style="font-size: 13px; color: #0f172a;">89.6% Overall Marks</strong>
+                <div style="flex: 1; min-width: 0;">
+                  <span style="display: block; font-size: 10px; font-weight: 800; color: #64748b; uppercase; letter-spacing: 0.5px;">Class Average</span>
+                  <strong style="font-size: 13px; color: #0f172a; display: block; margin-top: 2px; white-space: nowrap;">89.6% Overall Marks</strong>
                 </div>
               </div>
 
               <!-- Attendance Bar -->
               <div>
                 <div style="display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; color: #64748b; uppercase; margin-bottom: 6px;">
-                  <span>Attendance Rate</span>
-                  <span style="color: #10b981;">96.5% Present</span>
+                  <span style="letter-spacing: 0.5px;">Attendance Rate</span>
+                  <span style="color: #10b981; white-space: nowrap;">96.5% Present</span>
                 </div>
-                <div style="height: 8px; width: 100%; bg: #e2e8f0; background: #e2e8f0; border-radius: 10px; overflow: hidden;">
+                <div style="height: 8px; width: 100%; background: #e2e8f0; border-radius: 10px; overflow: hidden;">
                   <div style="height: 100%; width: 96.5%; background: #10b981; border-radius: 10px;"></div>
                 </div>
               </div>
 
               <!-- Honors status badge -->
-              <div style="background: ${themeAccentLight}; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4); padding: 12px; border-radius: 12px; text-align: center;">
-                <span style="font-size: 9px; font-weight: 800; color: ${themeAccent}; uppercase tracking-wider block mb-1">HONOR ROLL INSIGNIA</span>
-                <strong style="font-size: 11px; color: ${themePrimary}; block">Dean's List Placement Candidate</strong>
+              <div style="background: ${themeAccentLight}; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4); padding: 12px; border-radius: 12px; text-align: center; display: flex; flex-direction: column; gap: 4px; align-items: center; justify-content: center;">
+                <span style="font-size: 9px; font-weight: 850; color: ${themeAccent}; uppercase tracking-wider block">HONOR ROLL INSIGNIA</span>
+                <strong style="font-size: 10.5px; color: ${themePrimary}; display: block; white-space: nowrap;">Dean's List Placement Candidate</strong>
               </div>
             </div>
           </div>
