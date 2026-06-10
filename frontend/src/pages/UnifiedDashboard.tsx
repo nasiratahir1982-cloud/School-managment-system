@@ -1027,11 +1027,13 @@ export const UnifiedDashboard: React.FC = () => {
             <!-- Left Side: Roster Table -->
             <div>
               <h3 style="margin: 0 0 12px 0; font-size: 12px; font-weight: 800; color: #334155; uppercase tracking-wide;">Academic Grades Summary</h3>
-              <table style="width: 100%; border-collapse: collapse; font-size: 12px; border: 1.5px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 80%, 0.5); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.01);">
+              <table style="width: 100%; border-collapse: collapse; font-size: 11px; border: 1.5px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 80%, 0.5); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.01);">
                 <thead>
                   <tr style="background: ${themePrimary}; color: #ffffff;">
                     <th style="padding: 10px 14px; text-align: left; font-weight: 700; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">Subject</th>
-                    <th style="padding: 10px 14px; text-align: center; font-weight: 700; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">Marks</th>
+                    <th style="padding: 10px 14px; text-align: center; font-weight: 700; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">Obtained</th>
+                    <th style="padding: 10px 14px; text-align: center; font-weight: 700; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">Total</th>
+                    <th style="padding: 10px 14px; text-align: center; font-weight: 700; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">Percentage</th>
                     <th style="padding: 10px 14px; text-align: center; font-weight: 700; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">Grade</th>
                     <th style="padding: 10px 14px; text-align: right; font-weight: 700; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">Result</th>
                   </tr>
@@ -1039,38 +1041,58 @@ export const UnifiedDashboard: React.FC = () => {
                 <tbody style="background: #ffffff; color: #334155;">
                   <tr style="border-bottom: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">
                     <td style="padding: 10px 14px; font-weight: 700; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">Mathematics</td>
+                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">92</td>
+                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">100</td>
                     <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">92%</td>
                     <td style="padding: 10px 14px; text-align: center; font-weight: 800; color: ${themeAccent}; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">A+</td>
                     <td style="padding: 10px 14px; text-align: right; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);"><span style="background: #e2fbf0; color: #10b981; padding: 2px 8px; font-weight: bold; border-radius: 12px; font-size: 9px;">Pass</span></td>
                   </tr>
                   <tr style="border-bottom: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">
                     <td style="padding: 10px 14px; font-weight: 700; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">Physics</td>
+                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">88</td>
+                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">100</td>
                     <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">88%</td>
                     <td style="padding: 10px 14px; text-align: center; font-weight: 800; color: ${themeAccent}; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">A</td>
                     <td style="padding: 10px 14px; text-align: right; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);"><span style="background: #e2fbf0; color: #10b981; padding: 2px 8px; font-weight: bold; border-radius: 12px; font-size: 9px;">Pass</span></td>
                   </tr>
                   <tr style="border-bottom: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">
                     <td style="padding: 10px 14px; font-weight: 700; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">Chemistry</td>
+                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">79</td>
+                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">100</td>
                     <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">79%</td>
                     <td style="padding: 10px 14px; text-align: center; font-weight: 800; color: ${themeAccent}; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">B+</td>
                     <td style="padding: 10px 14px; text-align: right; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);"><span style="background: #e2fbf0; color: #10b981; padding: 2px 8px; font-weight: bold; border-radius: 12px; font-size: 9px;">Pass</span></td>
                   </tr>
                   <tr style="border-bottom: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">
                     <td style="padding: 10px 14px; font-weight: 700; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">Biology</td>
+                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">90</td>
+                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">100</td>
                     <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">90%</td>
                     <td style="padding: 10px 14px; text-align: center; font-weight: 800; color: ${themeAccent}; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">A</td>
                     <td style="padding: 10px 14px; text-align: right; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);"><span style="background: #e2fbf0; color: #10b981; padding: 2px 8px; font-weight: bold; border-radius: 12px; font-size: 9px;">Pass</span></td>
                   </tr>
                   <tr style="border-bottom: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">
                     <td style="padding: 10px 14px; font-weight: 700; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">English Language</td>
+                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">94</td>
+                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">100</td>
                     <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">94%</td>
                     <td style="padding: 10px 14px; text-align: center; font-weight: 800; color: ${themeAccent}; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">A</td>
                     <td style="padding: 10px 14px; text-align: right; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);"><span style="background: #e2fbf0; color: #10b981; padding: 2px 8px; font-weight: bold; border-radius: 12px; font-size: 9px;">Pass</span></td>
                   </tr>
                   <tr style="border-bottom: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">
                     <td style="padding: 10px 14px; font-weight: 700; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">Computer Science</td>
+                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">95</td>
+                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">100</td>
                     <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">95%</td>
                     <td style="padding: 10px 14px; text-align: center; font-weight: 800; color: ${themeAccent}; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">A+</td>
+                    <td style="padding: 10px 14px; text-align: right; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);"><span style="background: #e2fbf0; color: #10b981; padding: 2px 8px; font-weight: bold; border-radius: 12px; font-size: 9px;">Pass</span></td>
+                  </tr>
+                  <tr style="background: #f8fafc; font-weight: bold; border-top: 2px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 80%, 0.6);">
+                    <td style="padding: 10px 14px; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4); font-weight: 800;">Total Summary</td>
+                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4); font-weight: 800; color: ${themePrimary};">538</td>
+                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4); font-weight: 800;">600</td>
+                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4); font-weight: 800;">89.6%</td>
+                    <td style="padding: 10px 14px; text-align: center; font-weight: 800; color: ${themeAccent}; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">A</td>
                     <td style="padding: 10px 14px; text-align: right; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);"><span style="background: #e2fbf0; color: #10b981; padding: 2px 8px; font-weight: bold; border-radius: 12px; font-size: 9px;">Pass</span></td>
                   </tr>
                 </tbody>
