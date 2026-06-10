@@ -4961,13 +4961,6 @@ export const UnifiedDashboard: React.FC = () => {
                         <input type="number" placeholder="Marks % (e.g. 85)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
                       </div>
                       <div className="flex justify-center gap-2.5 pt-2 pb-1">
-                        <button 
-                          type="button" 
-                          onClick={() => handlePrintPdf('progress_card')}
-                          className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold text-xs rounded-lg transition-all shadow-md flex items-center gap-1.5"
-                        >
-                          🖨️ Print Report
-                        </button>
                         <button type="submit" className="px-6 py-2.5 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md">
                           + Save Grades
                         </button>
