@@ -451,8 +451,7 @@ export const SuperAdminDashboard: React.FC = () => {
                 <p className="text-xs text-slate-400 mt-3">
                   Perform administrative master tasks across the entire SaaS infrastructure with one click:
                 </p>
-                
-                <div className="space-y-2.5 mt-4">
+                 <div className="space-y-2.5 mt-4">
                   <button
                     onClick={() => setWizardOpen(true)}
                     className="w-full flex items-center justify-between p-3 bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-purple-500/50 rounded-xl text-left text-xs font-semibold text-slate-200 transition-all active:scale-[0.98]"
@@ -460,7 +459,7 @@ export const SuperAdminDashboard: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <span>🚀</span>
                       <div>
-                        <span className="block font-bold text-white">Create New School</span>
+                        <span className="block font-bold text-slate-900 dark:text-white">Create New School</span>
                         <span className="text-[10px] text-slate-500">Launch provisioning wizard</span>
                       </div>
                     </div>
@@ -474,7 +473,7 @@ export const SuperAdminDashboard: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <span>💾</span>
                       <div>
-                        <span className="block font-bold text-white">Run DB Backup</span>
+                        <span className="block font-bold text-slate-900 dark:text-white">Run DB Backup</span>
                         <span className="text-[10px] text-slate-500">Instant SQL snapshot</span>
                       </div>
                     </div>
@@ -488,7 +487,7 @@ export const SuperAdminDashboard: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <span>🛡️</span>
                       <div>
-                        <span className="block font-bold text-white">Check Security Status</span>
+                        <span className="block font-bold text-slate-900 dark:text-white">Check Security Status</span>
                         <span className="text-[10px] text-slate-500">Verify RLS constraints</span>
                       </div>
                     </div>
