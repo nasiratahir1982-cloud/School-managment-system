@@ -281,10 +281,10 @@ export const SuperAdminDashboard: React.FC = () => {
           <div className="flex items-center gap-3">
             <button 
               onClick={() => navigate('/dashboard')}
-              className="flex items-center gap-2 bg-purple-900/40 border border-purple-800/80 hover:bg-purple-800 hover:text-white px-4 py-2 rounded-lg text-sm font-bold text-white transition-all shadow-md shadow-purple-950/20"
+              className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-black transition-all shadow-md shadow-purple-500/30 border border-purple-500"
             >
-              <Sparkles className="w-4 h-4 text-white" />
-              Simulate School Portals
+              <Sparkles className="w-4 h-4 text-white fill-white/20 animate-pulse" />
+              Manage School Portals
             </button>
             <button
               onClick={toggleTheme}
