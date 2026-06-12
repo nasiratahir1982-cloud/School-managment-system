@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import type { UserRole } from '../store/authStore';
+import { auth } from '../store/firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useSchoolStore, COUNTRY_CONFIGS } from '../store/schoolStore';
 import type { SupportedCountry } from '../store/schoolStore';
 import { useThemeStore } from '../store/themeStore';
@@ -79,10 +81,28 @@ export const Login: React.FC = () => {
   // Theme state
   const { darkMode, toggleTheme } = useThemeStore();
 
-  const handleSuperAdminSubmit = (e: React.FormEvent) => {
+  const handleSuperAdminSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSuperError('');
     const emailLower = superEmail.trim().toLowerCase();
+
+    // First try to authenticate using Firebase
+    try {
+      await signInWithEmailAndPassword(auth, emailLower, superPassword);
+      loginUser({
+        userId: 'usr-superadmin',
+        name: 'Super Admin',
+        email: emailLower,
+        role: 'super_admin',
+        token: 'mock-jwt-token-value-2026'
+      });
+      navigate('/super-admin');
+      return;
+    } catch (fbErr: any) {
+      console.warn("Firebase Super Admin Sign-In failed, trying fallback:", fbErr.message);
+    }
+
+    // Fallback mock sign-in
     if ((emailLower === 'superadmin@academichub.com' || emailLower === 'superadmin@academic-hub.com') && superPassword === 'superpass123') {
       loginUser({
         userId: 'usr-superadmin',
@@ -212,6 +232,14 @@ export const Login: React.FC = () => {
             return;
           }
         }
+      }
+
+      // Log in to Firebase Authentication to enable Realtime Database sync
+      try {
+        await signInWithEmailAndPassword(auth, emailLower, password);
+      } catch (fbErr: any) {
+        console.warn("Firebase Authentication failed:", fbErr.message);
+        alert(`Firebase Sync Warning: ${fbErr.message}\n\nSince this account is not registered in your Firebase Console, database read/write sync will be disabled.`);
       }
 
       // Log in session
