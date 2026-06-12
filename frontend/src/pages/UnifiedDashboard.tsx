@@ -432,6 +432,15 @@ export const UnifiedDashboard: React.FC = () => {
   const [activeGuide, setActiveGuide] = useState<{ title: string; answerTitle: string; answerContent: string } | null>(null);
   const [selectedReportStudent, setSelectedReportStudent] = useState('');
 
+  const [isCertModalOpen, setIsCertModalOpen] = useState(false);
+  const [isCertEditMode, setIsCertEditMode] = useState(false);
+  const [editCertAuthority, setEditCertAuthority] = useState('');
+  const [editCertLicense, setEditCertLicense] = useState('');
+  const [editCertGrade, setEditCertGrade] = useState('');
+  const [editCertStatus, setEditCertStatus] = useState('');
+  const [editCertIssueDate, setEditCertIssueDate] = useState('');
+  const [editCertExpiryDate, setEditCertExpiryDate] = useState('');
+
   const [studentGrades, setStudentGrades] = useState<Record<string, { subject: string; grade: string; marks: number; total: number; status: string }[]>>({
     'Kamran Shah': [
       { subject: 'Mathematics', grade: 'A', marks: 92, total: 100, status: 'Pass' },
@@ -527,6 +536,14 @@ export const UnifiedDashboard: React.FC = () => {
     assignments: any[];
     disciplines: { id: string; name: string; date: string; infraction: string; action: string }[];
     parentMessages: { id: string; parent: string; date: string; subject: string; message: string }[];
+    foodCert?: {
+      authority: string;
+      licenseCode: string;
+      grade: string;
+      status: string;
+      issueDate: string;
+      expiryDate: string;
+    };
   }>>(() => ({
     // 1. Dar-e-Arqam School (PK)
     '11111111-1111-1111-1111-111111111111': {
@@ -806,6 +823,15 @@ export const UnifiedDashboard: React.FC = () => {
   const disciplines = schoolDb.disciplines;
   const parentMessages = schoolDb.parentMessages;
 
+  const foodCert = schoolDb.foodCert || {
+    authority: 'Punjab Food Authority',
+    licenseCode: 'PFA-LHR-2026-8942',
+    grade: 'A+ Excellent',
+    status: 'Valid',
+    issueDate: '2026-01-10',
+    expiryDate: '2026-12-31'
+  };
+
   const activeStudentName = currentUser?.role === 'student' || currentUser?.role === 'parent'
     ? (students[0]?.name || 'Kamran Shah')
     : (selectedReportStudent || students[0]?.name || 'Kamran Shah');
@@ -836,6 +862,7 @@ export const UnifiedDashboard: React.FC = () => {
   const setAssignments = (val: any) => updateSchoolDb('assignments', val);
   const setDisciplines = (val: any) => updateSchoolDb('disciplines', val);
   const setParentMessages = (val: any) => updateSchoolDb('parentMessages', val);
+  const setFoodCert = (val: any) => updateSchoolDb('foodCert', val);
 
   const [completedAssignments, setCompletedAssignments] = useState<string[]>([]);
 
@@ -3437,21 +3464,30 @@ export const UnifiedDashboard: React.FC = () => {
                       <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-2xl mb-2">
                         📜
                       </div>
-                      <div className="text-[9.5px] font-black uppercase tracking-widest text-primary">Food Authority Certified</div>
-                      <div className="text-[7.5px] text-foreground/50 font-bold mt-1">LICENSE CODE: PFA-LHR-2026-8942</div>
+                      <div className="text-[9.5px] font-black uppercase tracking-widest text-primary">{foodCert.authority}</div>
+                      <div className="text-[7.5px] text-foreground/50 font-bold mt-1">LICENSE: {foodCert.licenseCode}</div>
                       
                       <div className="grid grid-cols-2 gap-1.5 w-full mt-3.5 border-t border-border/40 pt-3 text-[8.5px] font-extrabold text-foreground/75">
-                        <div className="bg-muted p-1 rounded">Grade: <span className="text-primary font-black">A+ Excellent</span></div>
-                        <div className="bg-muted p-1 rounded">Status: <span className="text-emerald-500 font-black">Valid</span></div>
+                        <div className="bg-muted p-1 rounded">Grade: <span className="text-primary font-black">{foodCert.grade}</span></div>
+                        <div className="bg-muted p-1 rounded">Status: <span className={`${foodCert.status.toLowerCase() === 'valid' ? 'text-emerald-500' : 'text-amber-500'} font-black`}>{foodCert.status}</span></div>
                       </div>
                     </div>
                   </div>
                   
                   <button 
-                    onClick={() => alert("Loading official Food Authority Certificate details...")}
+                    onClick={() => {
+                      setEditCertAuthority(foodCert.authority);
+                      setEditCertLicense(foodCert.licenseCode);
+                      setEditCertGrade(foodCert.grade);
+                      setEditCertStatus(foodCert.status);
+                      setEditCertIssueDate(foodCert.issueDate);
+                      setEditCertExpiryDate(foodCert.expiryDate);
+                      setIsCertEditMode(false);
+                      setIsCertModalOpen(true);
+                    }}
                     className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-primary hover:bg-primary/95 text-[10px] font-bold text-white transition-all shadow-md active:scale-98 mt-4"
                   >
-                    <span>View License Certificate</span>
+                    <span>View & Edit Certificate</span>
                     <ArrowRight className="w-3 h-3" />
                   </button>
                 </div>
@@ -3741,6 +3777,180 @@ export const UnifiedDashboard: React.FC = () => {
                 Understood
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* FOOD AUTHORITY CERTIFICATE VIEW & EDIT MODAL */}
+      {isCertModalOpen && (
+        <div className="modal-overlay z-[100]">
+          <div className="modal-container modal-md glass-card glow-purple text-foreground p-6 space-y-4">
+            
+            {/* Modal Header */}
+            <div className="flex justify-between items-center border-b border-border/40 pb-3">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">📜</span>
+                <h3 className="text-sm font-black uppercase tracking-wider text-foreground">
+                  {isCertEditMode ? 'Edit Food Safety Certificate' : 'Food Authority Certificate'}
+                </h3>
+              </div>
+              <button 
+                onClick={() => setIsCertModalOpen(false)}
+                className="px-2.5 py-1 text-xs font-bold rounded bg-muted border border-border hover:bg-card text-foreground transition-all active:scale-95"
+              >
+                Close
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            {isCertEditMode ? (
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                setFoodCert({
+                  authority: editCertAuthority,
+                  licenseCode: editCertLicense,
+                  grade: editCertGrade,
+                  status: editCertStatus,
+                  issueDate: editCertIssueDate,
+                  expiryDate: editCertExpiryDate
+                });
+                setIsCertEditMode(false);
+              }} className="space-y-4 text-xs font-bold text-left">
+                <div className="space-y-1">
+                  <label className="text-[10px] text-foreground/60 uppercase">Authority / Issuing Body</label>
+                  <input 
+                    type="text" 
+                    value={editCertAuthority} 
+                    onChange={e => setEditCertAuthority(e.target.value)} 
+                    className="w-full p-2 bg-card border border-border rounded-lg text-foreground text-xs"
+                    required
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] text-foreground/60 uppercase">License Code / Reference</label>
+                  <input 
+                    type="text" 
+                    value={editCertLicense} 
+                    onChange={e => setEditCertLicense(e.target.value)} 
+                    className="w-full p-2 bg-card border border-border rounded-lg text-foreground text-xs"
+                    required
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-[10px] text-foreground/60 uppercase">Inspection Grade</label>
+                    <input 
+                      type="text" 
+                      value={editCertGrade} 
+                      onChange={e => setEditCertGrade(e.target.value)} 
+                      className="w-full p-2 bg-card border border-border rounded-lg text-foreground text-xs"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] text-foreground/60 uppercase">Status</label>
+                    <select 
+                      value={editCertStatus} 
+                      onChange={e => setEditCertStatus(e.target.value)} 
+                      className="w-full p-2 bg-card border border-border rounded-lg text-foreground text-xs font-bold"
+                    >
+                      <option value="Valid">Valid</option>
+                      <option value="Expired">Expired</option>
+                      <option value="Pending Review">Pending Review</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-[10px] text-foreground/60 uppercase">Issue Date</label>
+                    <input 
+                      type="date" 
+                      value={editCertIssueDate} 
+                      onChange={e => setEditCertIssueDate(e.target.value)} 
+                      className="w-full p-2 bg-card border border-border rounded-lg text-foreground text-xs"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] text-foreground/60 uppercase">Expiry Date</label>
+                    <input 
+                      type="date" 
+                      value={editCertExpiryDate} 
+                      onChange={e => setEditCertExpiryDate(e.target.value)} 
+                      className="w-full p-2 bg-card border border-border rounded-lg text-foreground text-xs"
+                      required
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex gap-2 justify-end pt-2">
+                  <button 
+                    type="button"
+                    onClick={() => setIsCertEditMode(false)}
+                    className="px-4 py-2 text-xs font-bold rounded-lg bg-muted border border-border text-foreground transition-all active:scale-95"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit"
+                    className="px-4 py-2 text-xs font-bold rounded-lg bg-primary hover:bg-primary/95 text-white shadow-md transition-all active:scale-95"
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <div className="space-y-4">
+                {/* Beautiful Certificate Representation */}
+                <div className="border-8 double border-primary/35 p-6 rounded-2xl bg-card/50 relative overflow-hidden flex flex-col items-center text-center shadow-inner space-y-4">
+                  {/* Corner Ornaments */}
+                  <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-primary/35"></div>
+                  <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-primary/35"></div>
+                  <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-primary/35"></div>
+                  <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-primary/35"></div>
+                  
+                  <div className="text-3xl">🏆</div>
+                  <div>
+                    <h4 className="text-xs font-extrabold uppercase tracking-widest text-primary">CERTIFICATE OF FOOD SAFETY COMPLIANCE</h4>
+                    <p className="text-[9px] text-foreground/45 mt-1 font-bold">This certifies that the hostel kitchen and dining services comply fully under municipal safety standards.</p>
+                  </div>
+                  
+                  <div className="w-full border-t border-dashed border-border/60 my-2"></div>
+                  
+                  <div className="space-y-2 text-[10px] font-bold text-foreground/85 w-full text-left">
+                    <div className="flex justify-between">
+                      <span className="text-foreground/45">Authority:</span>
+                      <span>{foodCert.authority}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-foreground/45">License Code:</span>
+                      <span className="font-mono">{foodCert.licenseCode}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-foreground/45">Hygiene Grade:</span>
+                      <span className="text-primary font-black">{foodCert.grade}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-foreground/45">Current Status:</span>
+                      <span className={`${foodCert.status.toLowerCase() === 'valid' ? 'text-emerald-500' : 'text-amber-500'} font-black`}>{foodCert.status}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-foreground/45">Validity Period:</span>
+                      <span>{foodCert.issueDate} to {foodCert.expiryDate}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-2 justify-end">
+                  <button 
+                    onClick={() => setIsCertEditMode(true)}
+                    className="px-4 py-2 text-xs font-bold rounded-lg bg-primary hover:bg-primary/95 text-white shadow-md transition-all active:scale-95 flex items-center gap-1.5"
+                  >
+                    ✏️ Update Certificate
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
