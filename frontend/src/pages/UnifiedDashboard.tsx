@@ -1998,6 +1998,233 @@ export const UnifiedDashboard: React.FC = () => {
     }
   };
 
+  const getOperationalStatusData = () => {
+    const defaultText = `${spec.placeholderText || 'Classroom Manager active. Tap a class below to enter grades or homework.'} Secured and isolated. Regional parameters: ${currentSchool?.city || 'Lahore'}, ${COUNTRY_CONFIGS[currentSchool?.country || 'PK'].countryName} (Currency: ${COUNTRY_CONFIGS[currentSchool?.country || 'PK'].currency}, prefix: ${COUNTRY_CONFIGS[currentSchool?.country || 'PK'].phonePrefix}).`;
+    
+    switch (simulatedRole) {
+      case 'transport':
+        return {
+          title: 'Transit & Fleet Status',
+          desc: 'Fleet Management System. Realtime vehicle tracking, routes optimization, and speed loggers synced. Connected directly with national transport guidelines.',
+          diagnostics: [
+            { icon: '🗺️', text: 'GPS Route Synced' },
+            { icon: '✓', text: 'Speed Limit Lock' },
+            { icon: '🚌', text: 'Cameras Online' },
+            { icon: '✓', text: 'Auto-Fuel Logs' },
+            { icon: '👤', text: 'Licenses Verified' },
+            { icon: '⚙️', text: 'Engine Diagnostics' }
+          ],
+          footerIcon: '🟢',
+          footerText: 'Transit Stream Active'
+        };
+      case 'hostel':
+        return {
+          title: 'Hostel & Mess Operations',
+          desc: 'Hostel Wardens Board. Track occupancy logs, check-in thresholds, and mess kitchen hygiene audits. Fully compliant under local health authority directives.',
+          diagnostics: [
+            { icon: '📜', text: 'Food Auth Cert' },
+            { icon: '✓', text: 'Allergy Guide Ok' },
+            { icon: '🍱', text: 'Pest Control Pass' },
+            { icon: '✓', text: 'Warden Log Live' },
+            { icon: '🚒', text: 'Fire Exit Checked' },
+            { icon: '💧', text: 'Water Safety OK' }
+          ],
+          footerIcon: '🟢',
+          footerText: 'Dorm Systems Live'
+        };
+      case 'librarian':
+        return {
+          title: 'Library System Status',
+          desc: 'School Library Admin Deck. Monitor catalog sync status, reservations roster, and barcode scanner system status. Realtime backup enabled.',
+          diagnostics: [
+            { icon: '📚', text: 'Catalog Synced' },
+            { icon: '✓', text: 'RFID Gate Active' },
+            { icon: '🔍', text: 'Scanner Online' },
+            { icon: '✓', text: 'Reservation Bot' },
+            { icon: '🗂️', text: 'Overdue System' },
+            { icon: '🛡️', text: 'Secure Isolation' }
+          ],
+          footerIcon: '🟢',
+          footerText: 'Library Database Active'
+        };
+      case 'hr':
+        return {
+          title: 'HR & Personnel Dashboard',
+          desc: 'Human Resource Console. Sync employee biometric data, leave balances, and payroll schedules securely. Isolated client data rules applied.',
+          diagnostics: [
+            { icon: '👥', text: 'Biometric Sync' },
+            { icon: '✓', text: 'Payroll Approved' },
+            { icon: '📜', text: 'Contracts Valid' },
+            { icon: '✓', text: 'Leave Ledgers Ok' },
+            { icon: '🏥', text: 'Health Cover Set' },
+            { icon: '⚙️', text: 'Tax System Linked' }
+          ],
+          footerIcon: '🟢',
+          footerText: 'HR Database Live'
+        };
+      case 'accountant':
+        return {
+          title: 'Financial Gateway Status',
+          desc: 'Billing and Ledger Desk. Verify payment gateway status (Stripe, Paypal, Easypaisa), double-entry matching, and automated tax logs compliance.',
+          diagnostics: [
+            { icon: '💳', text: 'Gateways Sync' },
+            { icon: '✓', text: 'Ledger Reconciled' },
+            { icon: '📜', text: 'Audit Logs Valid' },
+            { icon: '✓', text: 'Challan PDF Gen' },
+            { icon: '🛡️', text: 'Fraud Shield' },
+            { icon: '🏦', text: 'Bank Sync Normal' }
+          ],
+          footerIcon: '🟢',
+          footerText: 'Finance Ledgers Secure'
+        };
+      default: // student, parent, teacher, admin, super_admin, etc.
+        return {
+          title: 'Operational Status',
+          desc: defaultText,
+          diagnostics: [
+            { icon: '✓', text: 'RLS Isolation' },
+            { icon: '✓', text: 'AES-256 Crypt' },
+            { icon: '✓', text: 'SSL Certified' },
+            { icon: '✓', text: 'Auto-Backup' },
+            { icon: '✓', text: 'CSRF Shield' },
+            { icon: '✓', text: 'DDoS Guard' }
+          ],
+          footerIcon: '🟢',
+          footerText: 'System Fully Operational'
+        };
+    }
+  };
+
+  const getSupportData = () => {
+    switch (simulatedRole) {
+      case 'transport':
+        return {
+          title: 'Route Guides & Safety Check',
+          subLabel: 'Route Operations Manuals:',
+          guides: [
+            { 
+              title: '🚌 Student Emergency Protocol Guidelines',
+              answerTitle: 'Student Emergency Protocol Guidelines',
+              answerContent: 'In the event of a transport delay or route emergency, drivers must stop in a secure location, check student passenger status, and notify dispatch via the secure GPS system immediately.'
+            },
+            { 
+              title: '🔧 Pre-trip Vehicle Safety Checklist',
+              answerTitle: 'Pre-trip Vehicle Safety Checklist',
+              answerContent: 'Inspect all school buses for tyre wear, brake responsiveness, functional GPS transponders, and safety kit presence before starting daily routes.'
+            }
+          ],
+          links: [
+            { id: 'l1', title: 'Local Transport Authority Rules', url: 'https://google.com', subject: 'GOVT RULES', desc: 'Official student transport standard rules.' },
+            { id: 'l2', title: 'Route Maps & GPS Rota PDF', url: 'https://google.com', subject: 'ROUTE MAP', desc: 'Download route outlines and stop grids.' },
+            { id: 'l3', title: 'Driver Shifts & Vehicle Insurance', url: 'https://google.com', subject: 'SAFETY LOGS', desc: 'Verify vehicle coverages and shift patterns.' }
+          ]
+        };
+      case 'hostel':
+        return {
+          title: 'Mess Menus & Safety Guides',
+          subLabel: 'Hostel Wardens Manuals:',
+          guides: [
+            { 
+              title: '🍱 Weekly Student Allergy Guide',
+              answerTitle: 'Weekly Student Allergy Guide',
+              answerContent: 'Laminated list of student allergies is updated weekly in the mess kitchen. Ensure kitchen staff double check ingredients for lactose and nut allergens.'
+            },
+            { 
+              title: '🚒 Evacuation Routes & Emergency plan',
+              answerTitle: 'Evacuation Routes & Emergency plan',
+              answerContent: 'Review dormitory emergency plans. Fire exits must remain unlocked and clear. Assembly point is located in the main lawn.'
+            }
+          ],
+          links: [
+            { id: 'l1', title: 'Food Authority Hygiene Certificate', url: 'https://google.com', subject: 'HYGIENE', desc: 'View municipal kitchen certificate and ratings.' },
+            { id: 'l2', title: 'Weekly Mess Menu & Calories Info', url: 'https://google.com', subject: 'MESS MENU', desc: 'Standard breakfast, lunch, and dinner plans.' },
+            { id: 'l3', title: 'Hostel Boarders Code of Conduct', url: 'https://google.com', subject: 'RULES', desc: 'Official dormitory disciplinary regulations.' }
+          ]
+        };
+      case 'librarian':
+        return {
+          title: 'Cataloging & Library Guides',
+          subLabel: 'Library Manuals:',
+          guides: [
+            { 
+              title: '📚 How to catalog new books using barcodes',
+              answerTitle: 'Barcode Cataloging Procedure',
+              answerContent: 'Scan the ISBN code of the book. The local database will fetch metadata. Assign a shelf code and attach a barcode sticker.'
+            },
+            { 
+              title: '💻 RFID gate troubleshooting steps',
+              answerTitle: 'RFID Gate Troubleshooting',
+              answerContent: 'If the gate alarm triggers incorrectly, reboot the reader console from the primary desk and test with a tagged reference book.'
+            }
+          ],
+          links: [
+            { id: 'l1', title: 'Library Code & Catalog Index', url: 'https://google.com', subject: 'CATALOG', desc: 'Database index of all school publications.' },
+            { id: 'l2', title: 'Borrowing Policies & Fines Scale', url: 'https://google.com', subject: 'POLICY', desc: 'Details on return times and late fines.' }
+          ]
+        };
+      case 'hr':
+        return {
+          title: 'HR Policy & Checklists',
+          subLabel: 'HR Manuals:',
+          guides: [
+            { 
+              title: '👤 Employee onboarding steps',
+              answerTitle: 'Staff Onboarding Protocol',
+              answerContent: 'Ensure new hires submit signed contracts, verified transcripts, and biometric attendance records before portal access is provisioned.'
+            },
+            { 
+              title: '💼 Performance evaluation guide',
+              answerTitle: 'Performance Evaluation Guidelines',
+              answerContent: 'Coordinate with vice principals to execute class delivery reviews and student feedback audits once per semester.'
+            }
+          ],
+          links: [
+            { id: 'l1', title: 'Employee Handbook & Codes', url: 'https://google.com', subject: 'HANDBOOK', desc: 'Official rules and codes of conduct.' },
+            { id: 'l2', title: 'Health Insurance Coverage details', url: 'https://google.com', subject: 'BENEFITS', desc: 'Staff medical insurance guidelines.' }
+          ]
+        };
+      case 'accountant':
+        return {
+          title: 'Finance Handbooks & Rota',
+          subLabel: 'Accounting Guides:',
+          guides: [
+            { 
+              title: '💳 Weekly ledger matching guide',
+              answerTitle: 'Weekly Ledger Reconciliation',
+              answerContent: 'Match bank collection statements with the ERP fee receipt log. All discrepancies must be logged under audit adjustments.'
+            },
+            { 
+              title: '📄 Online fee challan generation steps',
+              answerTitle: 'Fee Challan Generation steps',
+              answerContent: 'Select target class sections, choose billing month, check base fee, and click compile to generate PDF challans.'
+            }
+          ],
+          links: [
+            { id: 'l1', title: 'Double-entry Accounting Standard', url: 'https://google.com', subject: 'STANDARDS', desc: 'Official audit guidelines.' },
+            { id: 'l2', title: 'Online Payment API Documentation', url: 'https://google.com', subject: 'APIS', desc: 'Stripe and Easypaisa integration guidelines.' }
+          ]
+        };
+      default:
+        return {
+          title: 'Knowledge Base & Support',
+          subLabel: 'Quick Operations Guides:',
+          guides: spec.supportGuides || [
+            { 
+              title: 'Marking daily attendance?',
+              answerTitle: 'Marking Daily Attendance',
+              answerContent: 'Teachers can mark attendance by selecting the class section, checking student check-ins, and clicking save.'
+            },
+            { 
+              title: 'Creating homework assignments?',
+              answerTitle: 'Creating Homework Assignments',
+              answerContent: 'Upload homework file instructions in the assignments panel, select target class and set a deadline.'
+            }
+          ],
+          links: usefulLinks
+        };
+    }
+  };
+
   const canUserEditSection = (section: string): boolean => {
     if (['student', 'parent'].includes(simulatedRole)) return false;
     const role = currentUser?.role || 'student';
@@ -3050,180 +3277,426 @@ export const UnifiedDashboard: React.FC = () => {
         <section className="glass-card p-6 rounded-2xl border border-border bg-card/20 space-y-4">
           <h3 className="text-sm font-bold text-foreground flex items-center gap-2 pb-2 border-b border-border/40">
             <Activity className="w-4.5 h-4.5 text-primary" />
-            Recent Administrative Activity & Operational Telemetry
+            {simulatedRole === 'transport' ? 'Transit Control Center & Route Tracker' : 
+             simulatedRole === 'hostel' ? 'Hostel Boarding & Food Safety Registry' :
+             'Recent Administrative Activity & Operational Telemetry'}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
-            {/* Card 1: Operational Status Board */}
-            <div className="glass-card p-6 rounded-2xl border border-border bg-card/30 flex flex-col justify-between min-h-[420px]">
-              <div>
-                <h4 className="text-xs font-black text-foreground/60 uppercase tracking-widest pb-2.5 border-b border-border/40 flex items-center gap-1.5">
-                  <FileCode className="w-4.5 h-4.5 text-primary" />
-                  Operational Status
-                </h4>
-                <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed font-semibold mt-4">
-                  {spec.placeholderText} Secured and isolated. Regional parameters: <strong>{currentSchool?.city || 'Lahore'}, {COUNTRY_CONFIGS[currentSchool?.country || 'PK'].countryName}</strong> (Currency: <strong>{COUNTRY_CONFIGS[currentSchool?.country || 'PK'].currency}</strong>, prefix: <strong>{COUNTRY_CONFIGS[currentSchool?.country || 'PK'].phonePrefix}</strong>).
-                </p>
-
-                {/* Diagnostics Grid to fill empty space */}
-                <div className="grid grid-cols-2 gap-3 mt-6 text-[11px] font-extrabold text-foreground/80">
-                  <div className="flex items-center gap-2 p-2.5 bg-card border border-border rounded-xl shadow-inner hover:scale-[1.02] transition-transform">
-                    <span className="text-emerald-400 text-xs">✓</span>
-                    <span>RLS Isolation</span>
-                  </div>
-                  <div className="flex items-center gap-2 p-2.5 bg-card border border-border rounded-xl shadow-inner hover:scale-[1.02] transition-transform">
-                    <span className="text-emerald-400 text-xs">✓</span>
-                    <span>AES-256 Crypt</span>
-                  </div>
-                  <div className="flex items-center gap-2 p-2.5 bg-card border border-border rounded-xl shadow-inner hover:scale-[1.02] transition-transform">
-                    <span className="text-emerald-400 text-xs">✓</span>
-                    <span>SSL Certified</span>
-                  </div>
-                  <div className="flex items-center gap-2 p-2.5 bg-card border border-border rounded-xl shadow-inner hover:scale-[1.02] transition-transform">
-                    <span className="text-emerald-400 text-xs">✓</span>
-                    <span>Auto-Backup</span>
-                  </div>
-                  <div className="flex items-center gap-2 p-2.5 bg-card border border-border rounded-xl shadow-inner hover:scale-[1.02] transition-transform">
-                    <span className="text-emerald-400 text-xs">✓</span>
-                    <span>CSRF Shield</span>
-                  </div>
-                  <div className="flex items-center gap-2 p-2.5 bg-card border border-border rounded-xl shadow-inner hover:scale-[1.02] transition-transform">
-                    <span className="text-emerald-400 text-xs">✓</span>
-                    <span>DDoS Guard</span>
-                  </div>
-                </div>
-              </div>
-              <div className="pt-3 text-[11px] text-primary font-black uppercase tracking-widest text-center mt-6 flex items-center justify-center gap-2 border-t border-border/40">
-                <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span> System Fully Operational
-              </div>
-            </div>
-
-            {/* Card 2: Knowledge Base & Support */}
-            <div className="glass-card p-6 rounded-2xl border border-border bg-card/30 flex flex-col justify-between min-h-[420px]">
-              <div>
-                <h4 className="text-xs font-bold text-foreground/50 uppercase tracking-widest pb-2 border-b border-border/40 flex items-center gap-1.5">
-                  <HelpCircle className="w-4.5 h-4.5 text-primary" />
-                  Knowledge Base & Support
-                </h4>
-                
-                {/* Step-by-Step Guides */}
-                <p className="text-[10px] text-foreground/65 leading-relaxed mt-2.5 font-bold uppercase tracking-wider">
-                  Quick Operations Guides:
-                </p>
-                <div className="space-y-1.5 mt-1.5">
-                  {(spec.supportGuides || []).slice(0, 2).map((guide, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setActiveGuide(guide)}
-                      className="w-full flex items-center justify-between p-2 rounded-lg bg-card border border-border hover:border-primary/45 hover:bg-muted text-[10px] text-foreground/80 hover:text-foreground font-bold text-left transition-all active:scale-[0.98]"
-                    >
-                      <span>{guide.title}</span>
-                      <ChevronRight className="w-3 h-3 text-foreground/40" />
-                    </button>
-                  ))}
-                </div>
-
-                {/* Useful Learning Links Section */}
-                <div className="mt-4 pt-3 border-t border-border/40">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-[10px] font-bold text-foreground/65 uppercase tracking-wider flex items-center gap-1">
-                      🔗 Useful Study Links:
-                    </span>
-                    {(simulatedRole === 'teacher' || showSystemTelemetry) && (
-                      <button 
-                        onClick={() => setIsLinksModalOpen(true)}
-                        className="text-[9px] font-bold text-primary hover:text-primary-focus bg-primary/10 border border-primary/20 px-2 py-0.5 rounded transition-all active:scale-95"
-                      >
-                        Manage Links
-                      </button>
-                    )}
-                  </div>
-                  <div className="grid grid-cols-1 gap-1.5 max-h-[140px] overflow-y-auto pr-1">
-                    {usefulLinks.map(link => (
-                      <a
-                        key={link.id}
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-2 bg-card/60 hover:bg-card border border-border hover:border-primary/45 rounded-lg flex flex-col gap-0.5 transition-all text-left group"
-                      >
-                        <div className="flex justify-between items-center">
-                          <span className="text-[10px] font-bold text-foreground group-hover:text-primary transition-colors flex items-center gap-1">
-                            {link.title}
-                            <span className="text-[8px] text-foreground/45 font-normal">↗</span>
-                          </span>
-                          <span className="text-[7.5px] px-1.5 py-0.2 bg-primary/10 border border-primary/20 rounded font-black text-primary uppercase tracking-wide">
-                            {link.subject}
-                          </span>
-                        </div>
-                        <span className="text-[9px] text-foreground/50 leading-relaxed truncate">
-                          {link.desc}
-                        </span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <button 
-                onClick={() => alert("Redirecting to the global documentation portal...")}
-                className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg bg-primary hover:bg-primary/95 text-[10px] font-bold text-white transition-all shadow-md active:scale-98 mt-4"
-              >
-                <span>Browse Guides</span>
-                <ArrowRight className="w-3 h-3" />
-              </button>
-            </div>
-
-            {/* Card 3: Tracker Widget */}
-            {(() => {
-              const tracker = getTrackerData();
-              return (
+            
+            {/* ----------------- TRANSPORT ROLE CUSTOM CARDS ----------------- */}
+            {simulatedRole === 'transport' && (
+              <>
+                {/* Transport Card 1: GPS Live Route tracking */}
                 <div className="glass-card p-6 rounded-2xl border border-border bg-card/30 flex flex-col justify-between min-h-[420px]">
                   <div>
-                    <h4 className="text-xs font-black text-foreground/60 uppercase tracking-widest pb-2.5 border-b border-border/40">
-                      {tracker.title}
+                    <h4 className="text-xs font-black text-foreground/60 uppercase tracking-widest pb-2.5 border-b border-border/40 flex items-center gap-1.5">
+                      <Map className="w-4.5 h-4.5 text-primary" />
+                      Live Route GPS Map Tracker
                     </h4>
+                    <p className="text-xs text-foreground/70 leading-relaxed font-semibold mt-3 mb-4">
+                      Realtime bus location tracking and route path compliance.
+                    </p>
 
-                    <div className="bg-card/50 border border-border rounded-xl p-3.5 space-y-3 mt-3">
-                      <div className="flex justify-between items-center text-xs font-bold text-foreground/80">
-                        <span>{tracker.mainLabel}</span>
-                        <span className="text-primary font-black text-sm">{tracker.mainValue}</span>
-                      </div>
+                    {/* Visual Map Simulator */}
+                    <div className="relative bg-muted/65 rounded-xl border border-border p-4 h-48 overflow-hidden flex flex-col justify-between">
+                      {/* Dotted Route Line */}
+                      <div className="absolute top-1/2 left-4 right-4 h-0.5 border-t-2 border-dashed border-primary/50 -translate-y-1/2"></div>
                       
-                      {/* Visual progress indicator */}
-                      <div className="w-full bg-muted/60 h-2 rounded-full overflow-hidden border border-border/20">
-                        <div 
-                          className="bg-gradient-to-r from-primary/60 to-primary h-full rounded-full transition-all duration-500" 
-                          style={{ width: tracker.mainValue.includes('%') ? tracker.mainValue : '95%' }}
-                        ></div>
+                      {/* Stop 1 */}
+                      <div className="absolute left-6 top-1/2 -translate-y-1/2 flex flex-col items-center">
+                        <div className="w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-background flex items-center justify-center">
+                          <span className="w-1.5 h-1.5 rounded-full bg-background"></span>
+                        </div>
+                        <span className="text-[7.5px] font-black text-foreground/75 mt-1 bg-card px-1 rounded shadow-sm border border-border">Gulberg</span>
                       </div>
 
-                      {/* Taller Bar Chart */}
-                      <div className="flex items-end justify-between h-20 pt-3">
-                        {tracker.bars.map((bar, i) => (
-                          <div key={i} className="flex flex-col items-center gap-1 w-8">
-                            <span className="text-[9px] font-extrabold text-foreground/60">{bar.value}</span>
-                            <div className="w-3 bg-gradient-to-t from-primary/30 to-primary rounded-t-sm transition-all duration-300" style={{ height: bar.percent }}></div>
-                            <span className="text-[9px] text-foreground/50 font-bold uppercase tracking-tighter">{bar.label}</span>
-                          </div>
-                        ))}
+                      {/* Bus pulsing dot (Simulating live transit) */}
+                      <div className="absolute left-[52%] top-1/2 -translate-y-1/2 flex flex-col items-center animate-bounce">
+                        <div className="w-5 h-5 rounded-full bg-primary border-2 border-background flex items-center justify-center shadow-lg shadow-primary/40 animate-pulse">
+                          <span className="text-[9px]">🚌</span>
+                        </div>
+                        <span className="text-[7px] font-black text-primary bg-primary/10 border border-primary/25 px-1 py-0.2 rounded mt-1.5 whitespace-nowrap">BUS-08 (60 km/h)</span>
                       </div>
 
-                      {/* Stats Grid */}
-                      <div className="grid grid-cols-2 gap-3 mt-5 text-[11px] font-extrabold text-foreground/80">
-                        {tracker.stats.map((stat, idx) => (
-                          <div key={idx} className="flex items-center gap-2 p-2.5 bg-card border border-border rounded-xl shadow-inner hover:scale-[1.02] transition-transform">
-                            <span className={`${stat.colorClass} text-xs`}>{stat.icon}</span>
-                            <span>{stat.text}</span>
-                          </div>
-                        ))}
+                      {/* Stop 2 */}
+                      <div className="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col items-center">
+                        <div className="w-3.5 h-3.5 rounded-full bg-foreground/35 border-2 border-background flex items-center justify-center">
+                          <span className="w-1.5 h-1.5 rounded-full bg-background"></span>
+                        </div>
+                        <span className="text-[7.5px] font-black text-foreground/50 mt-1 bg-card px-1 rounded shadow-sm border border-border">DHA Phase 5</span>
+                      </div>
+
+                      <div className="z-10 bg-card/90 border border-border/80 backdrop-blur p-2 rounded-lg text-[9px] font-extrabold flex justify-between items-center w-full shadow-md mt-auto">
+                        <span className="text-foreground/75">Next Stop: DHA Phase 5</span>
+                        <span className="text-primary animate-pulse">ETA: ~4 mins</span>
                       </div>
                     </div>
                   </div>
-                  <div className="pt-3 text-[11px] text-foreground/60 border-t border-border/40 font-black uppercase tracking-widest text-center mt-6">
-                    {tracker.footer}
+                  
+                  <button 
+                    onClick={() => alert("Pinging GPS vehicle transponder... Connection healthy. Status: Active & Synced.")}
+                    className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-primary hover:bg-primary/95 text-[10px] font-bold text-white transition-all shadow-md active:scale-98 mt-4"
+                  >
+                    <span>Ping Bus GPS Link</span>
+                    <Activity className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                {/* Transport Card 2: Safety & Compliance Checklist */}
+                <div className="glass-card p-6 rounded-2xl border border-border bg-card/30 flex flex-col justify-between min-h-[420px]">
+                  <div>
+                    <h4 className="text-xs font-black text-foreground/60 uppercase tracking-widest pb-2.5 border-b border-border/40 flex items-center gap-1.5">
+                      <Shield className="w-4.5 h-4.5 text-primary" />
+                      Compliance & Fleet Safety Logs
+                    </h4>
+                    <p className="text-xs text-foreground/70 leading-relaxed font-semibold mt-3 mb-4">
+                      Mandatory regulatory safety checks before dispatching active fleet routes.
+                    </p>
+
+                    <div className="space-y-2.5">
+                      <div className="flex items-start gap-2.5 p-2 bg-card border border-border rounded-xl">
+                        <input type="checkbox" defaultChecked className="mt-0.5 accent-primary" />
+                        <div className="text-[10px] font-bold text-foreground/85">
+                          <div>Pre-trip Mechanical Check</div>
+                          <span className="text-[8.5px] text-foreground/45 font-semibold">Tires, brakes, engine fluid logs cleared.</span>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2.5 p-2 bg-card border border-border rounded-xl">
+                        <input type="checkbox" defaultChecked className="mt-0.5 accent-primary" />
+                        <div className="text-[10px] font-bold text-foreground/85">
+                          <div>Speed Governor Compliance</div>
+                          <span className="text-[8.5px] text-foreground/45 font-semibold">Limited at 60 km/h speed threshold.</span>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2.5 p-2 bg-card border border-border rounded-xl">
+                        <input type="checkbox" defaultChecked className="mt-0.5 accent-primary" />
+                        <div className="text-[10px] font-bold text-foreground/85">
+                          <div>Breathalyzer Integration</div>
+                          <span className="text-[8.5px] text-foreground/45 font-semibold">Driver verified clear before ignition locks open.</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 text-[11px] text-emerald-500 font-black uppercase tracking-widest text-center mt-6 flex items-center justify-center gap-2 border-t border-border/40">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Safety Compliance Cleared
                   </div>
                 </div>
-              );
-            })()}
+
+                {/* Transport Card 3: Transit Logs & Roster */}
+                <div className="glass-card p-6 rounded-2xl border border-border bg-card/30 flex flex-col justify-between min-h-[420px]">
+                  <div>
+                    <h4 className="text-xs font-black text-foreground/60 uppercase tracking-widest pb-2.5 border-b border-border/40 flex items-center gap-1.5">
+                      <Users className="w-4.5 h-4.5 text-primary" />
+                      Active Route Roster
+                    </h4>
+                    <p className="text-xs text-foreground/70 leading-relaxed font-semibold mt-3 mb-4">
+                      Students assigned to BUS-08 on active morning shift.
+                    </p>
+
+                    <div className="space-y-2.5 max-h-[220px] overflow-y-auto pr-1">
+                      <div className="flex justify-between items-center p-2.5 bg-card border border-border rounded-xl">
+                        <span className="text-[10px] font-bold text-foreground">Kamran Shah (Grade 10)</span>
+                        <span className="text-[8px] font-black uppercase bg-emerald-500/15 border border-emerald-500/35 text-emerald-500 px-2 py-0.5 rounded-full">Boarded</span>
+                      </div>
+                      <div className="flex justify-between items-center p-2.5 bg-card border border-border rounded-xl">
+                        <span className="text-[10px] font-bold text-foreground">Ayesha Siddiqui (Grade 10)</span>
+                        <span className="text-[8px] font-black uppercase bg-amber-500/15 border border-amber-500/35 text-amber-500 px-2 py-0.5 rounded-full">Not Boarded</span>
+                      </div>
+                      <div className="flex justify-between items-center p-2.5 bg-card border border-border rounded-xl">
+                        <span className="text-[10px] font-bold text-foreground">Zainab Ali (Grade 9)</span>
+                        <span className="text-[8px] font-black uppercase bg-muted border border-border text-foreground/50 px-2 py-0.5 rounded-full">Absent</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 text-[11px] text-foreground/65 border-t border-border/40 font-black uppercase tracking-widest text-center mt-6">
+                    Total: 3 Registered Boarders
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* ----------------- HOSTEL ROLE CUSTOM CARDS ----------------- */}
+            {simulatedRole === 'hostel' && (
+              <>
+                {/* Hostel Card 1: Food Authority Certificate */}
+                <div className="glass-card p-6 rounded-2xl border border-border bg-card/30 flex flex-col justify-between min-h-[420px]">
+                  <div>
+                    <h4 className="text-xs font-black text-foreground/60 uppercase tracking-widest pb-2.5 border-b border-border/40 flex items-center gap-1.5">
+                      <Shield className="w-4.5 h-4.5 text-primary" />
+                      Hygiene & Food Safety Certs
+                    </h4>
+                    <p className="text-xs text-foreground/70 leading-relaxed font-semibold mt-3 mb-4">
+                      Official municipal food authority licensing and health compliance reports.
+                    </p>
+
+                    {/* Official Certificate Seal widget */}
+                    <div className="border-4 double border-primary/45 p-4 rounded-xl bg-card relative overflow-hidden flex flex-col items-center text-center shadow-inner">
+                      <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-2xl mb-2">
+                        📜
+                      </div>
+                      <div className="text-[9.5px] font-black uppercase tracking-widest text-primary">Food Authority Certified</div>
+                      <div className="text-[7.5px] text-foreground/50 font-bold mt-1">LICENSE CODE: PFA-LHR-2026-8942</div>
+                      
+                      <div className="grid grid-cols-2 gap-1.5 w-full mt-3.5 border-t border-border/40 pt-3 text-[8.5px] font-extrabold text-foreground/75">
+                        <div className="bg-muted p-1 rounded">Grade: <span className="text-primary font-black">A+ Excellent</span></div>
+                        <div className="bg-muted p-1 rounded">Status: <span className="text-emerald-500 font-black">Valid</span></div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <button 
+                    onClick={() => alert("Loading official Food Authority Certificate details...")}
+                    className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-primary hover:bg-primary/95 text-[10px] font-bold text-white transition-all shadow-md active:scale-98 mt-4"
+                  >
+                    <span>View License Certificate</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </button>
+                </div>
+
+                {/* Hostel Card 2: Student Food Allergy Safety Guide */}
+                <div className="glass-card p-6 rounded-2xl border border-border bg-card/30 flex flex-col justify-between min-h-[420px]">
+                  <div>
+                    <h4 className="text-xs font-black text-foreground/60 uppercase tracking-widest pb-2.5 border-b border-border/40 flex items-center gap-1.5">
+                      <AlertTriangle className="w-4.5 h-4.5 text-primary" />
+                      Allergy Safety & Emergency Protocol
+                    </h4>
+                    <p className="text-xs text-foreground/70 leading-relaxed font-semibold mt-3 mb-4">
+                      Immediate action directories and severe dietary allergy alerts for current boarders.
+                    </p>
+
+                    <div className="space-y-2.5">
+                      <div className="bg-amber-500/10 border border-amber-500/25 p-3 rounded-xl flex items-start gap-2.5">
+                        <span className="text-lg mt-0.5">⚠️</span>
+                        <div className="text-[10px] font-extrabold text-foreground/80 leading-normal">
+                          <span className="text-primary uppercase tracking-wide block mb-0.5">Nut Allergy Alert</span>
+                          3 boarding students have severe peanut allergies. Enforce strict kitchen allergen segregation.
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-1.5 text-[9px] font-extrabold text-foreground/70">
+                        <div className="flex justify-between p-1.5 bg-card border border-border rounded-lg">
+                          <span>Epipen Kit Location:</span>
+                          <span className="text-primary">First-Aid Box A (Office)</span>
+                        </div>
+                        <div className="flex justify-between p-1.5 bg-card border border-border rounded-lg">
+                          <span>Allergy Officer:</span>
+                          <span className="text-primary">Dr. Sajid Malik</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 text-[11px] text-primary font-black uppercase tracking-widest text-center mt-6 flex items-center justify-center gap-2 border-t border-border/40">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Allergen Guides Active
+                  </div>
+                </div>
+
+                {/* Hostel Card 3: Mess Menu & Dining Logs */}
+                <div className="glass-card p-6 rounded-2xl border border-border bg-card/30 flex flex-col justify-between min-h-[420px]">
+                  <div>
+                    <h4 className="text-xs font-black text-foreground/60 uppercase tracking-widest pb-2.5 border-b border-border/40 flex items-center gap-1.5">
+                      <Layers className="w-4.5 h-4.5 text-primary" />
+                      Mess Kitchen & Meal Logs
+                    </h4>
+                    <p className="text-xs text-foreground/70 leading-relaxed font-semibold mt-3 mb-4">
+                      Daily boarding food schedule and nutritional logs.
+                    </p>
+
+                    <div className="space-y-2 text-[10px] font-extrabold text-foreground/80">
+                      <div className="p-2.5 bg-card border border-border rounded-xl flex justify-between items-center">
+                        <span className="text-primary">🍳 Breakfast:</span>
+                        <span>Omelette, Toast & Chai</span>
+                      </div>
+                      <div className="p-2.5 bg-card border border-border rounded-xl flex justify-between items-center">
+                        <span className="text-primary">🍗 Lunch:</span>
+                        <span>Chicken Biryani & Raita</span>
+                      </div>
+                      <div className="p-2.5 bg-card border border-border rounded-xl flex justify-between items-center">
+                        <span className="text-primary">🥘 Dinner:</span>
+                        <span>Daal Chawal & Roti</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 text-[11px] text-foreground/65 border-t border-border/40 font-black uppercase tracking-widest text-center mt-6">
+                    Today: 112 Boarder Servings
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* ----------------- DEFAULT PORTALS (Principal, Teacher, Student, Parent, etc.) ----------------- */}
+            {simulatedRole !== 'transport' && simulatedRole !== 'hostel' && (
+              <>
+                {/* Card 1: Operational Status Board */}
+                {(() => {
+                  const opData = getOperationalStatusData();
+                  return (
+                    <div className="glass-card p-6 rounded-2xl border border-border bg-card/30 flex flex-col justify-between min-h-[420px]">
+                      <div>
+                        <h4 className="text-xs font-black text-foreground/60 uppercase tracking-widest pb-2.5 border-b border-border/40 flex items-center gap-1.5">
+                          <FileCode className="w-4.5 h-4.5 text-primary" />
+                          {opData.title}
+                        </h4>
+                        <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed font-semibold mt-4">
+                          {opData.desc}
+                        </p>
+
+                        {/* Diagnostics Grid to fill empty space */}
+                        <div className="grid grid-cols-2 gap-3 mt-6 text-[11px] font-extrabold text-foreground/80">
+                          {opData.diagnostics.map((diag, idx) => (
+                            <div key={idx} className="flex items-center gap-2 p-2.5 bg-card border border-border rounded-xl shadow-inner hover:scale-[1.02] transition-transform">
+                              <span className="text-emerald-400 text-xs">{diag.icon}</span>
+                              <span>{diag.text}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="pt-3 text-[11px] text-primary font-black uppercase tracking-widest text-center mt-6 flex items-center justify-center gap-2 border-t border-border/40">
+                        <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span> {opData.footerText}
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* Card 2: Knowledge Base & Support */}
+                {(() => {
+                  const support = getSupportData();
+                  return (
+                    <div className="glass-card p-6 rounded-2xl border border-border bg-card/30 flex flex-col justify-between min-h-[420px]">
+                      <div>
+                        <h4 className="text-xs font-bold text-foreground/50 uppercase tracking-widest pb-2 border-b border-border/40 flex items-center gap-1.5">
+                          <HelpCircle className="w-4.5 h-4.5 text-primary" />
+                          {support.title}
+                        </h4>
+                        
+                        {/* Step-by-Step Guides */}
+                        <p className="text-[10px] text-foreground/65 leading-relaxed mt-2.5 font-bold uppercase tracking-wider">
+                          {support.subLabel}
+                        </p>
+                        <div className="space-y-1.5 mt-1.5">
+                          {support.guides.slice(0, 2).map((guide, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => setActiveGuide(guide)}
+                              className="w-full flex items-center justify-between p-2 rounded-lg bg-card border border-border hover:border-primary/45 hover:bg-muted text-[10px] text-foreground/80 hover:text-foreground font-bold text-left transition-all active:scale-[0.98]"
+                            >
+                              <span>{guide.title}</span>
+                              <ChevronRight className="w-3 h-3 text-foreground/40" />
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* Useful Learning Links Section */}
+                        <div className="mt-4 pt-3 border-t border-border/40">
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="text-[10px] font-bold text-foreground/65 uppercase tracking-wider flex items-center gap-1">
+                              🔗 Relevant Resources:
+                            </span>
+                            {(simulatedRole === 'teacher' || showSystemTelemetry) && (
+                              <button 
+                                onClick={() => setIsLinksModalOpen(true)}
+                                className="text-[9px] font-bold text-primary hover:text-primary-focus bg-primary/10 border border-primary/20 px-2 py-0.5 rounded transition-all active:scale-95"
+                              >
+                                Manage Links
+                              </button>
+                            )}
+                          </div>
+                          <div className="grid grid-cols-1 gap-1.5 max-h-[140px] overflow-y-auto pr-1">
+                            {support.links.map(link => (
+                              <a
+                                key={link.id}
+                                href={link.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-2 bg-card/60 hover:bg-card border border-border hover:border-primary/45 rounded-lg flex flex-col gap-0.5 transition-all text-left group"
+                              >
+                                <div className="flex justify-between items-center">
+                                  <span className="text-[10px] font-bold text-foreground group-hover:text-primary transition-colors flex items-center gap-1">
+                                    {link.title}
+                                    <span className="text-[8px] text-foreground/45 font-normal">↗</span>
+                                  </span>
+                                  <span className="text-[7.5px] px-1.5 py-0.2 bg-primary/10 border border-primary/20 rounded font-black text-primary uppercase tracking-wide">
+                                    {link.subject}
+                                  </span>
+                                </div>
+                                <span className="text-[9px] text-foreground/50 leading-relaxed truncate">
+                                  {link.desc}
+                                </span>
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      <button 
+                        onClick={() => alert("Redirecting to the global documentation portal...")}
+                        className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg bg-primary hover:bg-primary/95 text-[10px] font-bold text-white transition-all shadow-md active:scale-98 mt-4"
+                      >
+                        <span>Browse Guides</span>
+                        <ArrowRight className="w-3 h-3" />
+                      </button>
+                    </div>
+                  );
+                })()}
+
+                {/* Card 3: Tracker Widget */}
+                {(() => {
+                  const tracker = getTrackerData();
+                  return (
+                    <div className="glass-card p-6 rounded-2xl border border-border bg-card/30 flex flex-col justify-between min-h-[420px]">
+                      <div>
+                        <h4 className="text-xs font-black text-foreground/60 uppercase tracking-widest pb-2.5 border-b border-border/40">
+                          {tracker.title}
+                        </h4>
+
+                        <div className="bg-card/50 border border-border rounded-xl p-3.5 space-y-3 mt-3">
+                          <div className="flex justify-between items-center text-xs font-bold text-foreground/80">
+                            <span>{tracker.mainLabel}</span>
+                            <span className="text-primary font-black text-sm">{tracker.mainValue}</span>
+                          </div>
+                          
+                          {/* Visual progress indicator */}
+                          <div className="w-full bg-muted/60 h-2 rounded-full overflow-hidden border border-border/20">
+                            <div 
+                              className="bg-gradient-to-r from-primary/60 to-primary h-full rounded-full transition-all duration-500" 
+                              style={{ width: tracker.mainValue.includes('%') ? tracker.mainValue : '95%' }}
+                            ></div>
+                          </div>
+
+                          {/* Taller Bar Chart */}
+                          <div className="flex items-end justify-between h-20 pt-3">
+                            {tracker.bars.map((bar, i) => (
+                              <div key={i} className="flex flex-col items-center gap-1 w-8">
+                                <span className="text-[9px] font-extrabold text-foreground/60">{bar.value}</span>
+                                <div className="w-3 bg-gradient-to-t from-primary/30 to-primary rounded-t-sm transition-all duration-300" style={{ height: bar.percent }}></div>
+                                <span className="text-[9px] text-foreground/50 font-bold uppercase tracking-tighter">{bar.label}</span>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Stats Grid */}
+                          <div className="grid grid-cols-2 gap-3 mt-5 text-[11px] font-extrabold text-foreground/80">
+                            {tracker.stats.map((stat, idx) => (
+                              <div key={idx} className="flex items-center gap-2 p-2.5 bg-card border border-border rounded-xl shadow-inner hover:scale-[1.02] transition-transform">
+                                <span className={`${stat.colorClass} text-xs`}>{stat.icon}</span>
+                                <span>{stat.text}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="pt-3 text-[11px] text-foreground/60 border-t border-border/40 font-black uppercase tracking-widest text-center mt-6">
+                        {tracker.footer}
+                      </div>
+                    </div>
+                  );
+                })()}
+              </>
+            )}
           </div>
 
         </section>
