@@ -2906,6 +2906,7 @@ export const UnifiedDashboard: React.FC = () => {
                         else if (action.label === 'Assign Student Route' || action.label === 'Driver logs') section = 'transport';
                         else if (action.label === 'Allocate Dorm Room' || action.label === 'Mess Schedule') section = 'hostel';
                         else if (action.label === 'Add Inquiry Lead') section = 'admissions';
+                        else if (action.label === 'Mark Attendance') section = 'attendance';
 
                         const readOnlyActions = ['View Assignments', 'Contact Class Teacher', 'Recorded Lectures'];
                         if (!readOnlyActions.includes(action.label) && !canUserEditSection(section)) {
