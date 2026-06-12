@@ -3053,46 +3053,54 @@ export const UnifiedDashboard: React.FC = () => {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
             {/* Card 1: Operational Status Board */}
-            <div className="glass-card p-5 rounded-2xl border border-border bg-card/30 flex flex-col justify-between">
+            <div className="glass-card p-6 rounded-2xl border border-border bg-card/30 flex flex-col justify-between min-h-[420px]">
               <div>
-                <h4 className="text-xs font-bold text-foreground/50 uppercase tracking-widest pb-2 border-b border-border/40 flex items-center gap-1.5">
-                  <FileCode className="w-4 h-4 text-primary" />
+                <h4 className="text-xs font-black text-foreground/60 uppercase tracking-widest pb-2.5 border-b border-border/40 flex items-center gap-1.5">
+                  <FileCode className="w-4.5 h-4.5 text-primary" />
                   Operational Status
                 </h4>
-                <p className="text-xs text-foreground/75 leading-relaxed font-semibold mt-3">
+                <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed font-semibold mt-4">
                   {spec.placeholderText} Secured and isolated. Regional parameters: <strong>{currentSchool?.city || 'Lahore'}, {COUNTRY_CONFIGS[currentSchool?.country || 'PK'].countryName}</strong> (Currency: <strong>{COUNTRY_CONFIGS[currentSchool?.country || 'PK'].currency}</strong>, prefix: <strong>{COUNTRY_CONFIGS[currentSchool?.country || 'PK'].phonePrefix}</strong>).
                 </p>
 
                 {/* Diagnostics Grid to fill empty space */}
-                <div className="grid grid-cols-2 gap-2 mt-4 text-[10px] font-bold text-foreground/70">
-                  <div className="flex items-center gap-1.5 p-2 bg-card border border-border rounded-lg">
-                    <span className="text-emerald-400">✓</span>
-                    <span>RLS Isolation Active</span>
+                <div className="grid grid-cols-2 gap-3 mt-6 text-[11px] font-extrabold text-foreground/80">
+                  <div className="flex items-center gap-2 p-2.5 bg-card border border-border rounded-xl shadow-inner hover:scale-[1.02] transition-transform">
+                    <span className="text-emerald-400 text-xs">✓</span>
+                    <span>RLS Isolation</span>
                   </div>
-                  <div className="flex items-center gap-1.5 p-2 bg-card border border-border rounded-lg">
-                    <span className="text-emerald-400">✓</span>
-                    <span>AES-256 DB Crypt</span>
+                  <div className="flex items-center gap-2 p-2.5 bg-card border border-border rounded-xl shadow-inner hover:scale-[1.02] transition-transform">
+                    <span className="text-emerald-400 text-xs">✓</span>
+                    <span>AES-256 Crypt</span>
                   </div>
-                  <div className="flex items-center gap-1.5 p-2 bg-card border border-border rounded-lg">
-                    <span className="text-emerald-400">✓</span>
-                    <span>SSL Certificate Valid</span>
+                  <div className="flex items-center gap-2 p-2.5 bg-card border border-border rounded-xl shadow-inner hover:scale-[1.02] transition-transform">
+                    <span className="text-emerald-400 text-xs">✓</span>
+                    <span>SSL Certified</span>
                   </div>
-                  <div className="flex items-center gap-1.5 p-2 bg-card border border-border rounded-lg">
-                    <span className="text-emerald-400">✓</span>
-                    <span>Auto-Backup Enabled</span>
+                  <div className="flex items-center gap-2 p-2.5 bg-card border border-border rounded-xl shadow-inner hover:scale-[1.02] transition-transform">
+                    <span className="text-emerald-400 text-xs">✓</span>
+                    <span>Auto-Backup</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-2.5 bg-card border border-border rounded-xl shadow-inner hover:scale-[1.02] transition-transform">
+                    <span className="text-emerald-400 text-xs">✓</span>
+                    <span>CSRF Shield</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-2.5 bg-card border border-border rounded-xl shadow-inner hover:scale-[1.02] transition-transform">
+                    <span className="text-emerald-400 text-xs">✓</span>
+                    <span>DDoS Guard</span>
                   </div>
                 </div>
               </div>
-              <div className="pt-2.5 text-[10px] text-primary/80 border-t border-border/40 font-bold uppercase tracking-wider text-center mt-4 flex items-center justify-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-emerald-500"></span> System Active
+              <div className="pt-3 text-[11px] text-primary font-black uppercase tracking-widest text-center mt-6 flex items-center justify-center gap-2 border-t border-border/40">
+                <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span> System Fully Operational
               </div>
             </div>
 
             {/* Card 2: Knowledge Base & Support */}
-            <div className="glass-card p-5 rounded-2xl border border-border bg-card/30 flex flex-col justify-between">
+            <div className="glass-card p-6 rounded-2xl border border-border bg-card/30 flex flex-col justify-between min-h-[420px]">
               <div>
                 <h4 className="text-xs font-bold text-foreground/50 uppercase tracking-widest pb-2 border-b border-border/40 flex items-center gap-1.5">
-                  <HelpCircle className="w-4 h-4 text-primary" />
+                  <HelpCircle className="w-4.5 h-4.5 text-primary" />
                   Knowledge Base & Support
                 </h4>
                 
@@ -3167,39 +3175,49 @@ export const UnifiedDashboard: React.FC = () => {
             {(() => {
               const tracker = getTrackerData();
               return (
-                <div className="glass-card p-5 rounded-2xl border border-border bg-card/30 flex flex-col justify-between">
+                <div className="glass-card p-6 rounded-2xl border border-border bg-card/30 flex flex-col justify-between min-h-[420px]">
                   <div>
-                    <h4 className="text-xs font-bold text-foreground/50 uppercase tracking-widest pb-2 border-b border-border/40">
+                    <h4 className="text-xs font-black text-foreground/60 uppercase tracking-widest pb-2.5 border-b border-border/40">
                       {tracker.title}
                     </h4>
 
-                    <div className="bg-card/50 border border-border rounded-xl p-3 space-y-2 mt-3">
-                      <div className="flex justify-between items-center text-[10px] font-semibold text-foreground/75">
+                    <div className="bg-card/50 border border-border rounded-xl p-3.5 space-y-3 mt-3">
+                      <div className="flex justify-between items-center text-xs font-bold text-foreground/80">
                         <span>{tracker.mainLabel}</span>
-                        <span className="text-primary font-black">{tracker.mainValue}</span>
+                        <span className="text-primary font-black text-sm">{tracker.mainValue}</span>
                       </div>
-                      {/* Tiny Bar Chart */}
-                      <div className="flex items-end justify-between h-16 pt-2">
+                      
+                      {/* Visual progress indicator */}
+                      <div className="w-full bg-muted/60 h-2 rounded-full overflow-hidden border border-border/20">
+                        <div 
+                          className="bg-gradient-to-r from-primary/60 to-primary h-full rounded-full transition-all duration-500" 
+                          style={{ width: tracker.mainValue.includes('%') ? tracker.mainValue : '95%' }}
+                        ></div>
+                      </div>
+
+                      {/* Taller Bar Chart */}
+                      <div className="flex items-end justify-between h-20 pt-3">
                         {tracker.bars.map((bar, i) => (
-                          <div key={i} className="flex flex-col items-center gap-1 w-7">
-                            <span className="text-[8px] font-bold text-foreground/50">{bar.value}</span>
-                            <div className="w-2.5 bg-gradient-to-t from-primary/30 to-primary rounded-t-sm" style={{ height: bar.percent }}></div>
-                            <span className="text-[8px] text-foreground/45 font-semibold">{bar.label}</span>
+                          <div key={i} className="flex flex-col items-center gap-1 w-8">
+                            <span className="text-[9px] font-extrabold text-foreground/60">{bar.value}</span>
+                            <div className="w-3 bg-gradient-to-t from-primary/30 to-primary rounded-t-sm transition-all duration-300" style={{ height: bar.percent }}></div>
+                            <span className="text-[9px] text-foreground/50 font-bold uppercase tracking-tighter">{bar.label}</span>
                           </div>
                         ))}
                       </div>
+
                       {/* Stats Grid */}
-                      <div className="grid grid-cols-2 gap-2 mt-4 text-[10px] font-bold text-foreground/70">
+                      <div className="grid grid-cols-2 gap-3 mt-5 text-[11px] font-extrabold text-foreground/80">
                         {tracker.stats.map((stat, idx) => (
-                          <div key={idx} className="flex items-center gap-1.5 p-2 bg-card border border-border rounded-lg">
-                            <span className={stat.colorClass}>{stat.icon}</span>
+                          <div key={idx} className="flex items-center gap-2 p-2.5 bg-card border border-border rounded-xl shadow-inner hover:scale-[1.02] transition-transform">
+                            <span className={`${stat.colorClass} text-xs`}>{stat.icon}</span>
                             <span>{stat.text}</span>
                           </div>
                         ))}
                       </div>
                     </div>
                   </div>
-                  <div className="pt-2 text-[10px] text-foreground/45 border-t border-border/40 font-semibold uppercase tracking-widest text-center mt-4">
+                  <div className="pt-3 text-[11px] text-foreground/60 border-t border-border/40 font-black uppercase tracking-widest text-center mt-6">
                     {tracker.footer}
                   </div>
                 </div>
