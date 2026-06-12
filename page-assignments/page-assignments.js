@@ -213,7 +213,7 @@
 
     function openGradeModal(data) {
         $('#boa-grade-submission-id').val(data.submission);
-        $('#boa-grade-marks').val(data.marks && data.marks !== '—' ? data.marks : '');
+        $('#boa-grade-marks').val(data.marks && data.marks !== '—' && data.marks !== '-' ? data.marks : '');
         $('#boa-grade-remarks').val(data.remarks || '');
         $('#boa-grade-feedback').val(data.feedback || '');
         toggleGradeModal(true);

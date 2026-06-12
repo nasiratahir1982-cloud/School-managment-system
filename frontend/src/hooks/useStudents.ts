@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useTenantStore } from '../store/tenantStore';
+import { useSchoolStore } from '../store/schoolStore';
 
 export interface Student {
   student_id: string;
@@ -26,15 +26,15 @@ const mockStudentsList: Record<string, Student[]> = {
 
 export const useStudents = () => {
   const queryClient = useQueryClient();
-  const currentTenant = useTenantStore((state) => state.currentTenant);
-  const tenantId = currentTenant?.tenantId || '11111111-1111-1111-1111-111111111111';
+  const currentSchool = useSchoolStore((state) => state.currentSchool);
+  const schoolId = currentSchool?.schoolId || '11111111-1111-1111-1111-111111111111';
 
   // Query to fetch students ledger
   const studentsQuery = useQuery({
-    queryKey: ['students', tenantId],
+    queryKey: ['students', schoolId],
     queryFn: async (): Promise<Student[]> => {
       try {
-        const subdomain = currentTenant?.domain || 'school-a';
+        const subdomain = currentSchool?.domain || 'school-a';
         const response = await fetch('/api/v1/students', {
           headers: {
             'Host': `${subdomain}.academichub.com`,
@@ -45,9 +45,9 @@ export const useStudents = () => {
         if (result.success) return result.data;
         throw new Error(result.message);
       } catch (err) {
-        console.warn('Backend server connection not found. Falling back to local tenant storage.', err);
-        // Fallback to high-fidelity mock data per tenant
-        return mockStudentsList[tenantId] || [];
+        console.warn('Backend server connection not found. Falling back to local school storage.', err);
+        // Fallback to high-fidelity mock data per school
+        return mockStudentsList[schoolId] || [];
       }
     }
   });
@@ -56,7 +56,7 @@ export const useStudents = () => {
   const createStudentMutation = useMutation({
     mutationFn: async (newStudent: Omit<Student, 'student_id'>) => {
       try {
-        const subdomain = currentTenant?.domain || 'school-a';
+        const subdomain = currentSchool?.domain || 'school-a';
         const response = await fetch('/api/v1/students', {
           method: 'POST',
           headers: {
@@ -82,15 +82,15 @@ export const useStudents = () => {
           student_id: `s-${Date.now()}`,
           ...newStudent
         };
-        if (!mockStudentsList[tenantId]) {
-          mockStudentsList[tenantId] = [];
+        if (!mockStudentsList[schoolId]) {
+          mockStudentsList[schoolId] = [];
         }
-        mockStudentsList[tenantId].push(simulated);
+        mockStudentsList[schoolId].push(simulated);
         return { success: true, data: simulated };
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['students', tenantId] });
+      queryClient.invalidateQueries({ queryKey: ['students', schoolId] });
     }
   });
 

@@ -162,6 +162,7 @@
                             <div class="boa-table-actions">
                                 <button class="boa-btn boa-btn-sm boa-btn-outline" data-action="edit">${escapeHtml(i18n.edit || 'Edit')}</button>
                                 <button class="boa-btn boa-btn-sm" data-action="questions">${escapeHtml(i18n.questions || 'Questions')}</button>
+                                <button class="boa-btn boa-btn-sm boa-btn-outline" data-action="attempts">${escapeHtml(i18n.attempts || 'Attempts')}</button>
                                 <button class="boa-btn boa-btn-sm boa-btn-delete" data-action="delete">${escapeHtml(i18n.delete || 'Delete')}</button>
                             </div>
                         </td>
@@ -171,6 +172,57 @@
             tbody.html(rows.join(''));
             renderPagination();
         });
+    }
+
+    function loadAttempts(quizId) {
+        const tbody = $('#boa-quiz-attempts-tbody');
+        if (!quizId) {
+            tbody.html(`<tr><td colspan="5">${escapeHtml(i18n.selectQuizPrompt || 'Select a quiz to view attempts.')}</td></tr>`);
+            return;
+        }
+        tbody.html(`<tr><td colspan="5">${escapeHtml(i18n.loading || 'Loading...')}</td></tr>`);
+        $('#boa-attempts-selected-quiz').text((state.cache[quizId] && state.cache[quizId].title) || '');
+
+        $.post(ajaxUrl, { action: 'boa_get_quiz_attempts', nonce, quiz_id: quizId }, (response) => {
+            if (!response || !response.success) {
+                tbody.html(`<tr><td colspan="5">${escapeHtml(responseMessage(response, 'Unable to load attempts.'))}</td></tr>`);
+                return;
+            }
+            const attempts = response.data.attempts || [];
+            if (!attempts.length) {
+                tbody.html(`<tr><td colspan="5">${escapeHtml(i18n.noAttempts || 'No attempts yet.')}</td></tr>`);
+                return;
+            }
+            const rows = attempts.map((attempt) => {
+                return `
+                    <tr>
+                        <td data-label="${escapeHtml(i18n.student || 'Student')}">${escapeHtml(attempt.student_name || '-')}<br><small>${escapeHtml(attempt.student_email || '')}</small></td>
+                        <td data-label="${escapeHtml(i18n.attemptDate || 'Attempt Date')}">${escapeHtml(formatDate(attempt.attempt_date))}</td>
+                        <td data-label="${escapeHtml(i18n.score || 'Score')}">${escapeHtml(attempt.score)}</td>
+                        <td data-label="${escapeHtml(i18n.totalMarks || 'Total Marks')}">${escapeHtml(attempt.total_marks || '-')}</td>
+                        <td data-label="${escapeHtml(i18n.actions || 'Actions')}">
+                            <button class="boa-btn boa-btn-sm boa-btn-primary boa-quiz-grade-btn"
+                                data-attempt="${attempt.attempt_id}"
+                                data-score="${attempt.score}">
+                                ${escapeHtml(i18n.editScore || 'Edit Score')}
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.html(rows.join(''));
+        });
+    }
+
+    function toggleQuizGradeModal(show) {
+        const modal = $('#boa-quiz-grade-modal');
+        if (show) {
+            modal.addClass('is-visible').attr('aria-hidden', 'false');
+        } else {
+            modal.removeClass('is-visible').attr('aria-hidden', 'true');
+            $('#boa-quiz-grade-form')[0].reset();
+            $('#boa-quiz-grade-attempt-id').val('0');
+        }
     }
 
     function loadQuestions(quizId) {
@@ -289,6 +341,10 @@
             } else if (action === 'questions') {
                 state.activeQuiz = quizId;
                 loadQuestions(quizId);
+            } else if (action === 'attempts') {
+                state.activeQuiz = quizId;
+                loadAttempts(quizId);
+                $('html, body').animate({ scrollTop: $('#boa-quiz-attempts-tbody').closest('.boa-card').offset().top - 40 }, 300);
             }
         });
 
@@ -369,6 +425,51 @@
             $('#boa-question-id').val('0');
             $('#boa-question-form')[0].reset();
             renderOptions([]);
+        });
+
+        // Quiz attempts grade button click
+        $('#boa-quiz-attempts-tbody').on('click', '.boa-quiz-grade-btn', function() {
+            const attemptId = $(this).data('attempt');
+            const score = $(this).data('score');
+            $('#boa-quiz-grade-attempt-id').val(attemptId);
+            $('#boa-quiz-grade-score').val(score);
+            toggleQuizGradeModal(true);
+        });
+
+        // Quiz grade form submit
+        $('#boa-quiz-grade-form').on('submit', function(e) {
+            e.preventDefault();
+            const attemptId = $('#boa-quiz-grade-attempt-id').val();
+            const score = $('#boa-quiz-grade-score').val();
+            if (!attemptId) {
+                return;
+            }
+            $.post(ajaxUrl, {
+                action: 'boa_update_quiz_attempt',
+                nonce,
+                attempt_id: attemptId,
+                score: score
+            }, (response) => {
+                if (response && response.success) {
+                    notify(i18n.scoreSaved || 'Score updated successfully.');
+                    toggleQuizGradeModal(false);
+                    if (state.activeQuiz) {
+                        loadAttempts(state.activeQuiz);
+                    }
+                } else {
+                    notify(responseMessage(response, 'Unable to update score.'));
+                }
+            });
+        });
+
+        $(document).on('click', '[data-dismiss="quiz-grade-modal"]', function() {
+            toggleQuizGradeModal(false);
+        });
+
+        $(document).on('keydown', function(e) {
+            if (e.key === 'Escape') {
+                toggleQuizGradeModal(false);
+            }
         });
     }
 

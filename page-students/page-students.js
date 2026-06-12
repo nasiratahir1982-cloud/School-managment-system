@@ -106,7 +106,17 @@
                 
                 // student_uid کو student_id سے تبدیل کیا
                 row.querySelector('.boa-student-id').textContent = student.student_uid || `STU-${student.student_id}`;
-                row.querySelector('.boa-student-name').textContent = student.name || 'N/A';
+                const nameCell = row.querySelector('.boa-student-name');
+                const studentName = student.name || 'N/A';
+                nameCell.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(studentName)}" 
+                             alt="${studentName}" 
+                             style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid #eaeaea; background: #f5f5f5; object-fit: cover; flex-shrink: 0;"
+                             onerror="this.style.display='none';" />
+                        <span>${studentName}</span>
+                    </div>
+                `;
                 row.querySelector('.boa-student-email').textContent = student.email || 'N/A';
                 
                 // Phone with WhatsApp button
@@ -328,9 +338,29 @@
     window.BOA_OpenAddStudentModal = function() {
         $('#boa-modal-title').text('Add Student');
         $('#boa-student-form')[0].reset();
-        $('#boa-student-id').val('').prop('readonly', true);
+        $('#boa-student-db-id').val('');
+        $('#boa-student-id').val('Loading...').prop('readonly', false);
         $('#boa-student-admission-date').val(new Date().toISOString().split('T')[0]);
         $('#boa-student-modal').addClass('boa-modal-open');
+
+        $.ajax({
+            url: window.boa_students_data.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'boa_get_next_student_id',
+                nonce: window.boa_students_data.nonce
+            },
+            success: function(response) {
+                if (response.success && response.data.next_student_id) {
+                    $('#boa-student-id').val(response.data.next_student_id);
+                } else {
+                    $('#boa-student-id').val('');
+                }
+            },
+            error: function() {
+                $('#boa-student-id').val('');
+            }
+        });
     };
 
     window.BOA_CloseStudentModal = function() { $('#boa-student-modal').removeClass('boa-modal-open'); };
@@ -382,7 +412,8 @@
         $('#boa-student-phone').val(studentData.phone);
         $('#boa-student-admission-date').val(window.formatDateForInput(studentData.admission_date));
         $('#boa-student-status').val(studentData.status);
-        $('#boa-student-id').val(boaStudents.currentStudentId).prop('readonly', true);
+        $('#boa-student-id').val($('#boa-profile-id').text()).prop('readonly', true);
+        $('#boa-student-db-id').val(boaStudents.currentStudentId);
         const course = window.boa_students_data.courses_list.find(c => c.course_name === studentData.course);
         $('#boa-student-course').val(course ? course.course_id : '');
         $('#boa-student-modal').addClass('boa-modal-open');
@@ -406,7 +437,9 @@
         $('#boa-student-phone').val(studentData.phone);
         $('#boa-student-admission-date').val(window.formatDateForInput(studentData.admission_date));
         $('#boa-student-status').val(studentData.status);
-        $('#boa-student-id').val(studentId).prop('readonly', true);
+        const studentUid = row.find('.boa-student-id').text();
+        $('#boa-student-id').val(studentUid).prop('readonly', true);
+        $('#boa-student-db-id').val(studentId);
         const course = window.boa_students_data.courses_list.find(c => c.course_name === studentData.course);
         $('#boa-student-course').val(course ? course.course_id : '');
         $('#boa-student-modal').addClass('boa-modal-open');

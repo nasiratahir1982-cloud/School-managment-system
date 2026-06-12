@@ -162,6 +162,29 @@ $courses = $courses_data['items'] ?? array();
                     <div id="boa-quizzes-pagination" class="boa-pagination" aria-live="polite"></div>
                 </div>
             </div>
+
+            <div class="boa-card">
+                <div class="boa-card-header">
+                    <h3><?php esc_html_e( 'Quiz Attempts & Grades', 'baba-online-academy' ); ?></h3>
+                    <span class="boa-soft-pill" id="boa-attempts-selected-quiz"><?php esc_html_e( 'Select a quiz to view attempts.', 'baba-online-academy' ); ?></span>
+                </div>
+                <div class="boa-card-content">
+                    <table class="boa-data-table">
+                        <thead>
+                            <tr>
+                                <th><?php esc_html_e( 'Student', 'baba-online-academy' ); ?></th>
+                                <th><?php esc_html_e( 'Attempt Date', 'baba-online-academy' ); ?></th>
+                                <th><?php esc_html_e( 'Score', 'baba-online-academy' ); ?></th>
+                                <th><?php esc_html_e( 'Total Marks', 'baba-online-academy' ); ?></th>
+                                <th><?php esc_html_e( 'Actions', 'baba-online-academy' ); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody id="boa-quiz-attempts-tbody">
+                            <tr><td colspan="5"><?php esc_html_e( 'Select a quiz from the list to load attempts.', 'baba-online-academy' ); ?></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <div class="boa-sidebar">
@@ -199,6 +222,27 @@ $courses = $courses_data['items'] ?? array();
                     </form>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id="boa-quiz-grade-modal" class="boa-modal" aria-hidden="true">
+        <div class="boa-modal-overlay" data-dismiss="quiz-grade-modal"></div>
+        <div class="boa-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="boa-quiz-grade-title">
+            <div class="boa-modal-header">
+                <h3 id="boa-quiz-grade-title"><?php esc_html_e( 'Edit Quiz Score', 'baba-online-academy' ); ?></h3>
+                <button type="button" class="boa-modal-close" data-dismiss="quiz-grade-modal" aria-label="<?php esc_attr_e( 'Close', 'baba-online-academy' ); ?>">&times;</button>
+            </div>
+            <form id="boa-quiz-grade-form">
+                <input type="hidden" id="boa-quiz-grade-attempt-id" value="0">
+                <div class="boa-form-group">
+                    <label for="boa-quiz-grade-score"><?php esc_html_e( 'Score / Marks Obtained', 'baba-online-academy' ); ?></label>
+                    <input type="number" id="boa-quiz-grade-score" step="0.5" min="0" required class="boa-form-input">
+                </div>
+                <div class="boa-form-actions">
+                    <button type="submit" class="boa-btn boa-btn-primary"><?php esc_html_e( 'Save Score', 'baba-online-academy' ); ?></button>
+                    <button type="button" class="boa-btn boa-btn-secondary" data-dismiss="quiz-grade-modal"><?php esc_html_e( 'Cancel', 'baba-online-academy' ); ?></button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

@@ -404,9 +404,10 @@ $student_stats = BOA_DB::get_student_summary_stats();
                         </select>
                     </div>
                     <div class="boa-form-group">
-                        <label for="boa-student-id">Student ID</label>
-                        <input type="text" id="boa-student-id" name="student_id" class="boa-form-input" readonly>
-                        <small>Auto-generated</small>
+                        <label for="boa-student-id">Student ID *</label>
+                        <input type="text" id="boa-student-id" name="student_uid" class="boa-form-input" required>
+                        <input type="hidden" id="boa-student-db-id" name="student_id">
+                        <small>Auto-generated sequential pattern (customizable)</small>
                     </div>
                 </div>
             </form>

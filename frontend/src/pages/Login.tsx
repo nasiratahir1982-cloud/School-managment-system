@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import type { UserRole } from '../store/authStore';
-import { useTenantStore, COUNTRY_CONFIGS } from '../store/tenantStore';
-import type { SupportedCountry } from '../store/tenantStore';
+import { useSchoolStore, COUNTRY_CONFIGS } from '../store/schoolStore';
+import type { SupportedCountry } from '../store/schoolStore';
 import { useThemeStore } from '../store/themeStore';
 import { 
   GraduationCap, 
@@ -55,9 +55,9 @@ const t = {
 export const Login: React.FC = () => {
   const navigate = useNavigate();
   const loginUser = useAuthStore((state) => state.login);
-  const tenantsList = useTenantStore((state) => state.tenants);
-  const resolveTenant = useTenantStore((state) => state.resolveTenant);
-  const currentTenant = useTenantStore((state) => state.currentTenant);
+  const schoolsList = useSchoolStore((state) => state.schools);
+  const resolveSchool = useSchoolStore((state) => state.resolveSchool);
+  const currentSchool = useSchoolStore((state) => state.currentSchool);
 
   // Progressive Wizard Step: 1 = Welcome, 2 = Country, 3 = School, 4 = Preview, 5 = Auth/Sign In
   const [step, setStep] = useState(1);
@@ -98,14 +98,14 @@ export const Login: React.FC = () => {
   };
 
   // Filter schools dynamically based on selected country
-  const filteredSchools = tenantsList.filter(t => t.country === selectedCountry);
+  const filteredSchools = schoolsList.filter(t => t.country === selectedCountry);
 
   // Automatically update settings when subdomain is selected
   useEffect(() => {
     if (subdomain) {
-      resolveTenant(subdomain).catch(console.error);
+      resolveSchool(subdomain).catch(console.error);
     }
-  }, [subdomain, resolveTenant]);
+  }, [subdomain, resolveSchool]);
 
   const handleCountrySelect = (code: SupportedCountry) => {
     setSelectedCountry(code);
@@ -198,16 +198,16 @@ export const Login: React.FC = () => {
         return;
       }
 
-      // Cross-tenant prevention: Ensure domain in email matches selected tenant subdomain
+      // Cross-school prevention: Ensure domain in email matches selected school subdomain
       if (detectedRole !== 'super_admin') {
-        const tenantDomain = currentTenant?.domain; // e.g. "beaconhouse" or "lgs"
+        const schoolDomain = currentSchool?.domain; // e.g. "beaconhouse" or "lgs"
         const emailParts = emailLower.split('@');
         const emailDomain = emailParts[1]?.split('.')[0]; // e.g. "beaconhouse"
         
         // Allow academic-hub.com or academichub.com as a master test domain for all portals
         if (emailDomain !== 'academic-hub' && emailDomain !== 'academichub') {
-          if (tenantDomain && emailDomain && emailDomain !== tenantDomain) {
-            setLoginError(`Cross-tenant restriction! This account belongs to another school's system and cannot log into ${currentTenant?.schoolName || 'this school'}.`);
+          if (schoolDomain && emailDomain && emailDomain !== schoolDomain) {
+            setLoginError(`Cross-school restriction! This account belongs to another school's system and cannot log into ${currentSchool?.schoolName || 'this school'}.`);
             setLoading(false);
             return;
           }
@@ -475,11 +475,11 @@ export const Login: React.FC = () => {
                     className="w-full flex items-center justify-between p-2.5 rounded-xl bg-card border border-border hover:border-primary/40 hover:bg-muted/30 text-left transition-all shadow-sm"
                   >
                     <div className="flex items-center gap-2.5">
-                      <div className="h-9 w-9 rounded-lg bg-muted border border-border flex items-center justify-center overflow-hidden flex-shrink-0">
+                      <div className="h-9 w-9 flex items-center justify-center flex-shrink-0">
                         {school.logoUrl ? (
-                          <img src={school.logoUrl} alt="Logo" className="h-full w-full object-cover" />
+                          <img src={school.logoUrl} alt="Logo" className="h-full w-full object-contain" />
                         ) : (
-                          <GraduationCap className="h-4 w-4 text-primary" />
+                          <GraduationCap className="h-5 w-5 text-primary" />
                         )}
                       </div>
                       <div className="min-w-0">
@@ -507,7 +507,7 @@ export const Login: React.FC = () => {
         )}
 
         {/* STEP 4: School Information Preview */}
-        {!superAdminMode && step === 4 && currentTenant && (
+        {!superAdminMode && step === 4 && currentSchool && (
           <div className="space-y-4 animate-fadeIn">
             <div className="text-center">
               <h3 className="text-xl font-bold text-foreground">{t.schoolPreview}</h3>
@@ -521,18 +521,18 @@ export const Login: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="h-12 w-12 rounded-lg bg-muted border border-border flex items-center justify-center overflow-hidden flex-shrink-0">
-                  {currentTenant.logoUrl ? (
-                    <img src={currentTenant.logoUrl} alt="School Logo" className="h-full w-full object-cover" />
+                <div className="h-12 w-12 flex items-center justify-center flex-shrink-0">
+                  {currentSchool.logoUrl ? (
+                    <img src={currentSchool.logoUrl} alt="School Logo" className="h-full w-full object-contain" />
                   ) : (
-                    <GraduationCap className="h-6 w-6 text-primary" />
+                    <GraduationCap className="h-7 w-7 text-primary" />
                   )}
                 </div>
                 <div>
-                  <h4 className="text-base font-black text-foreground">{currentTenant.schoolName}</h4>
+                  <h4 className="text-base font-black text-foreground">{currentSchool.schoolName}</h4>
                   <div className="flex items-center gap-1 text-[10px] text-foreground/70">
                     <MapPin className="h-2.5 w-2.5 text-foreground/55" />
-                    <span>{currentTenant.city}, {COUNTRY_CONFIGS[currentTenant.country].countryName}</span>
+                    <span>{currentSchool.city}, {COUNTRY_CONFIGS[currentSchool.country].countryName}</span>
                   </div>
                 </div>
               </div>
@@ -544,7 +544,7 @@ export const Login: React.FC = () => {
                   </span>
                   <span className="text-foreground font-bold flex items-center gap-1">
                     <Layers className="h-3 w-3 text-primary" />
-                    {currentTenant.campusCount} Campuses
+                    {currentSchool.campusCount} Campuses
                   </span>
                 </div>
                 <div className="p-2.5 bg-muted/40 rounded-lg border border-border">
@@ -553,7 +553,7 @@ export const Login: React.FC = () => {
                   </span>
                   <span className="text-foreground font-bold flex items-center gap-1">
                     <Calendar className="h-3 w-3 text-primary" />
-                    {currentTenant.currentAcademicSession}
+                    {currentSchool.currentAcademicSession}
                   </span>
                 </div>
               </div>
@@ -586,23 +586,23 @@ export const Login: React.FC = () => {
             </div>
 
             {/* Beautiful compact school info sub-card */}
-            {currentTenant && (
+            {currentSchool && (
               <div className="p-2.5 bg-muted/40 border border-border rounded-xl flex items-center gap-3 shadow-inner">
-                <div className="h-10 w-10 rounded-lg bg-card border border-border flex items-center justify-center overflow-hidden flex-shrink-0">
-                  {currentTenant.logoUrl ? (
-                    <img src={currentTenant.logoUrl} alt="Logo" className="h-full w-full object-cover" />
+                <div className="h-10 w-10 flex items-center justify-center flex-shrink-0">
+                  {currentSchool.logoUrl ? (
+                    <img src={currentSchool.logoUrl} alt="Logo" className="h-full w-full object-contain" />
                   ) : (
-                    <GraduationCap className="h-5 w-5 text-primary" />
+                    <GraduationCap className="h-6 w-6 text-primary" />
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <span className="block text-xs font-bold text-foreground truncate">{currentTenant.schoolName}</span>
+                  <span className="block text-xs font-bold text-foreground truncate">{currentSchool.schoolName}</span>
                   <div className="flex flex-wrap items-center gap-1.5 text-[9px] text-foreground/60 mt-0.5 font-medium">
-                    <span>📍 {currentTenant.city}</span>
+                    <span>📍 {currentSchool.city}</span>
                     <span>•</span>
-                    <span>🏫 {currentTenant.campusCount} Campuses</span>
+                    <span>🏫 {currentSchool.campusCount} Campuses</span>
                     <span>•</span>
-                    <span>📅 {currentTenant.currentAcademicSession}</span>
+                    <span>📅 {currentSchool.currentAcademicSession}</span>
                   </div>
                 </div>
               </div>

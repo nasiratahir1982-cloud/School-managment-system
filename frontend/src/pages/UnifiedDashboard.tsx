@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '../store/authStore';
 import type { UserRole } from '../store/authStore';
-import { useTenantStore, COUNTRY_CONFIGS } from '../store/tenantStore';
+import { useSchoolStore, COUNTRY_CONFIGS } from '../store/schoolStore';
 import { useNavigate } from 'react-router-dom';
+import { setupRealtimeSync, updateRealtimeData } from '../store/firebase';
 import { 
   Building2, 
   Layers, 
@@ -60,7 +61,7 @@ const getFeatureDetails = (featureName: string) => {
     case 'Organization Management':
       return { desc: 'Manage school chains and franchise headquarters.', icon: Building2, stats: '12 Chains' };
     case 'School Management':
-      return { desc: 'Register new school subdomains and tenant databases.', icon: GraduationCap, stats: '24 Campuses' };
+      return { desc: 'Register new school subdomains and school databases.', icon: GraduationCap, stats: '24 Campuses' };
     case 'Subscription Plans':
       return { desc: 'Establish licensing models and pricing plans.', icon: CreditCard, stats: '3 Plans Configured' };
     case 'Billing & Invoicing':
@@ -298,6 +299,19 @@ const getFeatureDetails = (featureName: string) => {
     case 'Payment Gateway Settings':
       return { desc: 'Manage localized fee checkout processors and Stripe credentials.', icon: CreditCard, stats: 'Stripe Enabled' };
 
+    case 'School Transport':
+      return { desc: 'View school bus schedules, route information, and tracking.', icon: Map, stats: 'Bus Synced' };
+    case 'Library Books':
+      return { desc: 'Manage your library borrows, check due dates and request extensions.', icon: BookOpen, stats: 'Books Issued' };
+    case 'Hostel Portal':
+      return { desc: 'Manage hostel room allocation details, meals, and wardens.', icon: Home, stats: 'Room Synced' };
+    case 'Transport Roster':
+      return { desc: 'View student transport allocations and route lists.', icon: Map, stats: 'Route Roster' };
+    case 'Library Books Roster':
+      return { desc: 'Check student library checkouts and due dates.', icon: BookOpen, stats: 'Library Roster' };
+    case 'Hostel Roster':
+      return { desc: 'Check boarding student room and bed allocations.', icon: Home, stats: 'Hostel Roster' };
+
     default:
       return { desc: 'Access operational modules and dashboard logs.', icon: BookOpen, stats: 'Operational' };
   }
@@ -408,16 +422,102 @@ export const UnifiedDashboard: React.FC = () => {
   const navigate = useNavigate();
   const currentUser = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
-  const currentTenant = useTenantStore((state) => state.currentTenant);
+  const currentSchool = useSchoolStore((state) => state.currentSchool);
   const { darkMode, toggleTheme } = useThemeStore();
-  const formatCurrency = useTenantStore((state) => state.formatCurrency);
-  const getRollLabel = useTenantStore((state) => state.getRollLabel);
+  const formatCurrency = useSchoolStore((state) => state.formatCurrency);
+  const getRollLabel = useSchoolStore((state) => state.getRollLabel);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFeature, setActiveFeature] = useState<string | null>(null);
   const [activeGuide, setActiveGuide] = useState<{ title: string; answerTitle: string; answerContent: string } | null>(null);
+  const [selectedReportStudent, setSelectedReportStudent] = useState('');
 
-  // Core functional database state partitioned by school tenantId
+  const [studentGrades, setStudentGrades] = useState<Record<string, { subject: string; grade: string; marks: number; total: number; status: string }[]>>({
+    'Kamran Shah': [
+      { subject: 'Mathematics', grade: 'A', marks: 92, total: 100, status: 'Pass' },
+      { subject: 'Physics', grade: 'A', marks: 88, total: 100, status: 'Pass' },
+      { subject: 'Chemistry', grade: 'B+', marks: 79, total: 100, status: 'Pass' },
+      { subject: 'Biology', grade: 'A', marks: 90, total: 100, status: 'Pass' },
+      { subject: 'English Language', grade: 'A', marks: 94, total: 100, status: 'Pass' },
+      { subject: 'Computer Science', grade: 'A', marks: 95, total: 100, status: 'Pass' },
+    ],
+    'Ayesha Siddiqui': [
+      { subject: 'Mathematics', grade: 'A+', marks: 98, total: 100, status: 'Pass' },
+      { subject: 'Physics', grade: 'A', marks: 91, total: 100, status: 'Pass' },
+      { subject: 'Chemistry', grade: 'A', marks: 90, total: 100, status: 'Pass' },
+      { subject: 'Biology', grade: 'B', marks: 72, total: 100, status: 'Pass' },
+      { subject: 'English Language', grade: 'A', marks: 88, total: 100, status: 'Pass' },
+      { subject: 'Computer Science', grade: 'A+', marks: 97, total: 100, status: 'Pass' },
+    ],
+    'Zainab Ali': [
+      { subject: 'Mathematics', grade: 'B', marks: 75, total: 100, status: 'Pass' },
+      { subject: 'Physics', grade: 'C', marks: 62, total: 100, status: 'Pass' },
+      { subject: 'Chemistry', grade: 'C+', marks: 68, total: 100, status: 'Pass' },
+      { subject: 'Biology', grade: 'A', marks: 89, total: 100, status: 'Pass' },
+      { subject: 'English Language', grade: 'B', marks: 78, total: 100, status: 'Pass' },
+      { subject: 'Computer Science', grade: 'B', marks: 74, total: 100, status: 'Pass' },
+    ]
+  });
+
+  const getStudentGrades = (studentName: string) => {
+    return studentGrades[studentName] || [
+      { subject: 'Mathematics', grade: 'A', marks: 92, total: 100, status: 'Pass' },
+      { subject: 'Physics', grade: 'A', marks: 88, total: 100, status: 'Pass' },
+      { subject: 'Chemistry', grade: 'B+', marks: 79, total: 100, status: 'Pass' },
+      { subject: 'Biology', grade: 'A', marks: 90, total: 100, status: 'Pass' },
+      { subject: 'English Language', grade: 'A', marks: 94, total: 100, status: 'Pass' },
+      { subject: 'Computer Science', grade: 'A', marks: 95, total: 100, status: 'Pass' },
+    ];
+  };
+
+  // State mapping student names to transport services
+  const [studentTransport, setStudentTransport] = useState<Record<string, {
+    active: boolean;
+    route?: string;
+    vehicle?: string;
+    driver?: string;
+    phone?: string;
+    fee?: number;
+  }>>({
+    'Kamran Shah': { active: true, route: 'Route Alpha (Main Loop)', vehicle: 'BUS-08 (LHR-9876)', driver: 'Ahmed Khan', phone: '0300-1234567', fee: 2500 },
+    'Ayesha Siddiqui': { active: false },
+    'Zainab Ali': { active: false }
+  });
+
+  // State mapping student names to library book issues
+  const [studentLibrary, setStudentLibrary] = useState<Record<string, {
+    id: string;
+    title: string;
+    issueDate: string;
+    dueDate: string;
+    status: 'Active' | 'Overdue' | 'Due Soon' | 'Extended';
+  }[]>>({
+    'Kamran Shah': [
+      { id: 'lib-1', title: 'Advanced Calculus Vol 1', issueDate: '2026-06-01', dueDate: '2026-06-15', status: 'Active' },
+      { id: 'lib-2', title: 'Introduction to Quantum Mechanics', issueDate: '2026-06-05', dueDate: '2026-06-20', status: 'Active' }
+    ],
+    'Ayesha Siddiqui': [
+      { id: 'lib-3', title: 'A History of Modern Literature', issueDate: '2026-05-15', dueDate: '2026-06-05', status: 'Overdue' }
+    ],
+    'Zainab Ali': []
+  });
+
+  // State mapping student names to hostel allocations
+  const [studentHostel, setStudentHostel] = useState<Record<string, {
+    allocated: boolean;
+    wing?: string;
+    room?: string;
+    warden?: string;
+    phone?: string;
+    feeStatus?: 'Paid' | 'Unpaid';
+  }>>({
+    'Kamran Shah': { allocated: true, wing: 'Wing A', room: 'Room 104', warden: 'Sajid Malik', phone: '0321-7654321', feeStatus: 'Unpaid' },
+    'Ayesha Siddiqui': { allocated: true, wing: 'Wing B', room: 'Room 202', warden: 'Sajid Malik', phone: '0321-7654321', feeStatus: 'Paid' },
+    'Zainab Ali': { allocated: false }
+  });
+
+
+  // Core functional database state partitioned by school schoolId
   const [database, setDatabase] = useState<Record<string, {
     students: { id: string; name: string; roll: string; className: string; status: string }[];
     teachers: { id: string; name: string; subject: string; className: string; status: string }[];
@@ -648,43 +748,122 @@ export const UnifiedDashboard: React.FC = () => {
   }));
 
   // Resolve current active database partition
-  const activeTenantId = currentTenant?.tenantId || '11111111-1111-1111-1111-111111111111';
-  const tenantDb = database[activeTenantId] || database['11111111-1111-1111-1111-111111111111'];
+  const activeSchoolId = currentSchool?.schoolId || '11111111-1111-1111-1111-111111111111';
 
-  const students = tenantDb.students;
-  const teachers = tenantDb.teachers;
-  const notices = tenantDb.notices;
-  const leaves = tenantDb.leaves;
-  const invoices = tenantDb.invoices;
-  const assignments = tenantDb.assignments;
-  const disciplines = tenantDb.disciplines;
-  const parentMessages = tenantDb.parentMessages;
+  // Seed database partition for newly created schools if it doesn't exist
+  React.useEffect(() => {
+    if (activeSchoolId && !database[activeSchoolId]) {
+      const schoolName = currentSchool?.schoolName || 'New School';
+      const city = currentSchool?.city || 'Lahore';
+      setDatabase(prev => {
+        if (prev[activeSchoolId]) return prev;
+        return {
+          ...prev,
+          [activeSchoolId]: {
+            students: [
+              { id: '1', name: 'Ahmad Raza', roll: '01', className: 'Class 10-A', status: 'Present' },
+              { id: '2', name: 'Zainab Fatima', roll: '02', className: 'Class 10-A', status: 'Present' },
+              { id: '3', name: 'Muhammad Ali', roll: '03', className: 'Class 9-A', status: 'Absent' }
+            ],
+            teachers: [
+              { id: '1', name: 'Dr. Sajid Malik', subject: 'General Science', className: 'Class 10-A', status: 'Active' },
+              { id: '2', name: 'Mrs. Huma Shah', subject: 'Mathematics', className: 'Class 9-A', status: 'Active' }
+            ],
+            notices: [
+              { id: '1', date: '2026-06-12', title: `Welcome to ${schoolName}`, content: `Congratulations on launching the new portal for ${schoolName} in ${city}!` }
+            ],
+            leaves: [],
+            invoices: [
+              { id: 'INV-1001', student: 'Ahmad Raza', amount: 5000, status: 'Unpaid' },
+              { id: 'INV-1002', student: 'Zainab Fatima', amount: 5000, status: 'Paid' }
+            ],
+            assignments: [],
+            disciplines: [],
+            parentMessages: []
+          }
+        };
+      });
+    }
+  }, [activeSchoolId, currentSchool]);
+
+  const schoolDb = database[activeSchoolId] || {
+    students: [],
+    teachers: [],
+    notices: [],
+    leaves: [],
+    invoices: [],
+    assignments: [],
+    disciplines: [],
+    parentMessages: []
+  };
+
+  const students = schoolDb.students;
+  const teachers = schoolDb.teachers;
+  const notices = schoolDb.notices;
+  const leaves = schoolDb.leaves;
+  const invoices = schoolDb.invoices;
+  const assignments = schoolDb.assignments;
+  const disciplines = schoolDb.disciplines;
+  const parentMessages = schoolDb.parentMessages;
+
+  const activeStudentName = currentUser?.role === 'student' || currentUser?.role === 'parent'
+    ? (students[0]?.name || 'Kamran Shah')
+    : (selectedReportStudent || students[0]?.name || 'Kamran Shah');
+  const activeStudent = students.find(s => s.name === activeStudentName) || students[0] || { id: '1', name: 'Kamran Shah', roll: '12', className: 'Class 10-A', status: 'Present' };
 
   // Sync state updaters to target the selected tenant database partition
-  const updateTenantDb = (key: string, updater: any) => {
+  const updateSchoolDb = (key: string, updater: any) => {
     setDatabase(prev => {
-      const current = prev[activeTenantId] || prev['11111111-1111-1111-1111-111111111111'];
+      const current = prev[activeSchoolId] || prev['11111111-1111-1111-1111-111111111111'];
       const updatedValue = typeof updater === 'function' ? updater(current[key as keyof typeof current]) : updater;
-      return {
+      const updatedDb = {
         ...prev,
-        [activeTenantId]: {
+        [activeSchoolId]: {
           ...current,
           [key]: updatedValue
         }
       };
+      updateRealtimeData('school_database', updatedDb);
+      return updatedDb;
     });
   };
 
-  const setStudents = (val: any) => updateTenantDb('students', val);
-  const setTeachers = (val: any) => updateTenantDb('teachers', val);
-  const setNotices = (val: any) => updateTenantDb('notices', val);
-  const setLeaves = (val: any) => updateTenantDb('leaves', val);
-  const setInvoices = (val: any) => updateTenantDb('invoices', val);
-  const setAssignments = (val: any) => updateTenantDb('assignments', val);
-  const setDisciplines = (val: any) => updateTenantDb('disciplines', val);
-  const setParentMessages = (val: any) => updateTenantDb('parentMessages', val);
+  const setStudents = (val: any) => updateSchoolDb('students', val);
+  const setTeachers = (val: any) => updateSchoolDb('teachers', val);
+  const setNotices = (val: any) => updateSchoolDb('notices', val);
+  const setLeaves = (val: any) => updateSchoolDb('leaves', val);
+  const setInvoices = (val: any) => updateSchoolDb('invoices', val);
+  const setAssignments = (val: any) => updateSchoolDb('assignments', val);
+  const setDisciplines = (val: any) => updateSchoolDb('disciplines', val);
+  const setParentMessages = (val: any) => updateSchoolDb('parentMessages', val);
 
   const [completedAssignments, setCompletedAssignments] = useState<string[]>([]);
+
+  // Realtime Sync Subscription with Firebase RTDB
+  React.useEffect(() => {
+    const unsubscribeDb = setupRealtimeSync('school_database', (data) => {
+      if (data) {
+        setDatabase(data);
+      } else {
+        // Seed database if empty
+        updateRealtimeData('school_database', database);
+      }
+    });
+
+    const unsubscribeLinks = setupRealtimeSync('useful_links', (data) => {
+      if (data && Array.isArray(data)) {
+        setUsefulLinks(data);
+      } else {
+        // Seed links if empty
+        updateRealtimeData('useful_links', usefulLinks);
+      }
+    });
+
+    return () => {
+      unsubscribeDb();
+      unsubscribeLinks();
+    };
+  }, []);
   const [activeVideoStreamUrl, setActiveVideoStreamUrl] = useState<string | null>(null);
   const [assignmentModalOpen, setAssignmentModalOpen] = useState(false);
   const [newAssignmentTitle, setNewAssignmentTitle] = useState('');
@@ -795,7 +974,7 @@ export const UnifiedDashboard: React.FC = () => {
   const [replyText, setReplyText] = useState('');
 
   const [auditLogs] = useState([
-    { id: '1', timestamp: '2026-06-10 19:45:12', user: 'superadmin', action: 'Created new tenant school: Allied School Campus A' },
+    { id: '1', timestamp: '2026-06-10 19:45:12', user: 'superadmin', action: 'Created new school: Allied School Campus A' },
     { id: '2', timestamp: '2026-06-10 18:22:04', user: 'admin', action: 'Approved leave request for Sarah Khan' },
     { id: '3', timestamp: '2026-06-10 17:15:58', user: 'accountant', action: 'Recorded cash fee collection for invoice INV-001' },
     { id: '4', timestamp: '2026-06-10 16:08:42', user: 'librarian', action: 'Issued book "Advanced Physics" to Kamran Shah' }
@@ -935,14 +1114,14 @@ export const UnifiedDashboard: React.FC = () => {
     });
 
     if (reportType === 'progress_card') {
-      const currentTenantName = currentTenant?.schoolName || "Central Elite Grammar School";
-      const hasLogo = !!currentTenant?.logoUrl;
+      const currentSchoolName = currentSchool?.schoolName || "Central Elite Grammar School";
+      const hasLogo = !!currentSchool?.logoUrl;
       const logoHtml = hasLogo 
-        ? `<img src="${currentTenant.logoUrl}" style="height: 65px; object-fit: contain; margin-bottom: 12px; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.08));" />`
+        ? `<img src="${currentSchool.logoUrl}" style="height: 65px; object-fit: contain; margin-bottom: 12px; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.08));" />`
         : `<div style="margin-bottom: 12px; display: inline-flex; justify-content: center; align-items: center; width: 60px; height: 60px; border-radius: 50%; border: 2px solid currentColor; font-size: 24px; font-weight: bold; background: rgba(0,0,0,0.03);">🎓</div>`;
       
-      const primaryHsl = currentTenant?.themeSettings?.primaryHsl || '263.4 70% 50.4%';
-      const secondaryHsl = currentTenant?.themeSettings?.secondaryHsl || '217.2 32.6% 16%';
+      const primaryHsl = currentSchool?.themeSettings?.primaryHsl || '263.4 70% 50.4%';
+      const secondaryHsl = currentSchool?.themeSettings?.secondaryHsl || '217.2 32.6% 16%';
 
       const primaryHslFormatted = toCommaHsl(primaryHsl);
       const secondaryHslFormatted = toCommaHsl(secondaryHsl);
@@ -951,7 +1130,7 @@ export const UnifiedDashboard: React.FC = () => {
       let themeAccent = `hsl(${secondaryHslFormatted})`;
       let themeAccentLight = `hsla(${primaryHslFormatted.split(',')[0]}, 70%, 97%, 0.95)`;
       let themeSeal = `radial-gradient(circle, hsla(${primaryHslFormatted.split(',')[0]}, 80%, 75%, 0.9) 0%, hsl(${secondaryHslFormatted}) 100%)`;
-      reportTitle = `${currentTenantName} - Student Progress Card`;
+      reportTitle = `${currentSchoolName} - Student Progress Card`;
       reportHtml = `
         <div class="print-container" style="
           border: 3px solid ${themePrimary};
@@ -979,7 +1158,7 @@ export const UnifiedDashboard: React.FC = () => {
                 ${logoHtml.replace('height: 65px', 'height: 58px')}
               </div>
               <div>
-                <h1 style="margin: 0; font-size: 22px; font-weight: 800; color: ${themePrimary}; letter-spacing: -0.5px; line-height: 1.2;">${currentTenantName}</h1>
+                <h1 style="margin: 0; font-size: 22px; font-weight: 800; color: ${themePrimary}; letter-spacing: -0.5px; line-height: 1.2;">${currentSchoolName}</h1>
                 <p style="margin: 3px 0 0 0; font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Official Student Report Card</p>
                 <p style="margin: 2px 0 0 0; font-size: 10px; color: #94a3b8; font-style: italic;">Academic Session: 2025 - 2026</p>
               </div>
@@ -1194,32 +1373,32 @@ export const UnifiedDashboard: React.FC = () => {
         </div>
       `;
     } else if (reportType === 'revenue_audit') {
-      const currentTenantName = currentTenant?.schoolName || "Central Elite Grammar School";
-      const hasLogo = !!currentTenant?.logoUrl;
+      const currentSchoolName = currentSchool?.schoolName || "Central Elite Grammar School";
+      const hasLogo = !!currentSchool?.logoUrl;
       const logoHtml = hasLogo 
-        ? `<img src="${currentTenant.logoUrl}" style="height: 50px; object-fit: contain; margin-bottom: 10px;" />`
+        ? `<img src="${currentSchool.logoUrl}" style="height: 50px; object-fit: contain; margin-bottom: 10px;" />`
         : `<span style="font-size: 20px;">🎓</span>`;
 
       // Theme logic fallback
       let themePrimary = '#1e1b4b'; 
       let themeBorder = '4px solid #1e1b4b';
-      if (currentTenantName.includes('Dar-e-Arqam')) {
+      if (currentSchoolName.includes('Dar-e-Arqam')) {
         themePrimary = '#064e3b';
         themeBorder = '4px solid #064e3b';
-      } else if (currentTenantName.includes('Beaconhouse')) {
+      } else if (currentSchoolName.includes('Beaconhouse')) {
         themePrimary = '#1e3a8a';
         themeBorder = '4px solid #1e3a8a';
-      } else if (currentTenantName.includes('Educators')) {
+      } else if (currentSchoolName.includes('Educators')) {
         themePrimary = '#1d4ed8';
         themeBorder = '4px solid #1d4ed8';
       }
 
-      reportTitle = `${currentTenantName} - Revenue Audit Report`;
+      reportTitle = `${currentSchoolName} - Revenue Audit Report`;
       reportHtml = `
         <div style="border: ${themeBorder}; padding: 35px; font-family: 'Inter', system-ui, sans-serif; color: #1e293b; background: #fafaf9; max-width: 800px; margin: 0 auto; border-radius: 6px;">
           <div style="text-align: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 20px;">
             ${logoHtml}
-            <h1 style="margin: 5px 0 0 0; font-size: 24px; color: ${themePrimary}; font-weight: 800; text-transform: uppercase;">${currentTenantName}</h1>
+            <h1 style="margin: 5px 0 0 0; font-size: 24px; color: ${themePrimary}; font-weight: 800; text-transform: uppercase;">${currentSchoolName}</h1>
             <p style="margin: 4px 0 0 0; font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Consolidated Operational Roster & Revenue Audit</p>
             <p style="margin: 4px 0 0 0; font-size: 11px; color: #94a3b8; font-style: italic;">System generated audit logs: ${currentDate}</p>
           </div>
@@ -1246,32 +1425,32 @@ export const UnifiedDashboard: React.FC = () => {
         </div>
       `;
     } else if (reportType === 'financial_statement') {
-      const currentTenantName = currentTenant?.schoolName || "Central Elite Grammar School";
-      const hasLogo = !!currentTenant?.logoUrl;
+      const currentSchoolName = currentSchool?.schoolName || "Central Elite Grammar School";
+      const hasLogo = !!currentSchool?.logoUrl;
       const logoHtml = hasLogo 
-        ? `<img src="${currentTenant.logoUrl}" style="height: 50px; object-fit: contain; margin-bottom: 10px;" />`
+        ? `<img src="${currentSchool.logoUrl}" style="height: 50px; object-fit: contain; margin-bottom: 10px;" />`
         : `<span style="font-size: 20px;">🎓</span>`;
 
       // Theme logic fallback
       let themePrimary = '#1e1b4b'; 
       let themeBorder = '4px solid #1e1b4b';
-      if (currentTenantName.includes('Dar-e-Arqam')) {
+      if (currentSchoolName.includes('Dar-e-Arqam')) {
         themePrimary = '#064e3b';
         themeBorder = '4px solid #064e3b';
-      } else if (currentTenantName.includes('Beaconhouse')) {
+      } else if (currentSchoolName.includes('Beaconhouse')) {
         themePrimary = '#1e3a8a';
         themeBorder = '4px solid #1e3a8a';
-      } else if (currentTenantName.includes('Educators')) {
+      } else if (currentSchoolName.includes('Educators')) {
         themePrimary = '#1d4ed8';
         themeBorder = '4px solid #1d4ed8';
       }
 
-      reportTitle = `${currentTenantName} - Operations Cash-Flow Balance Statement`;
+      reportTitle = `${currentSchoolName} - Operations Cash-Flow Balance Statement`;
       reportHtml = `
         <div style="border: ${themeBorder}; padding: 35px; font-family: 'Inter', system-ui, sans-serif; color: #1e293b; background: #fafaf9; max-width: 800px; margin: 0 auto; border-radius: 6px;">
           <div style="text-align: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 20px;">
             ${logoHtml}
-            <h1 style="margin: 5px 0 0 0; font-size: 24px; color: ${themePrimary}; font-weight: 800; text-transform: uppercase;">${currentTenantName}</h1>
+            <h1 style="margin: 5px 0 0 0; font-size: 24px; color: ${themePrimary}; font-weight: 800; text-transform: uppercase;">${currentSchoolName}</h1>
             <p style="margin: 4px 0 0 0; font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Double-Entry Operations Ledger & Balance Sheet</p>
             <p style="margin: 4px 0 0 0; font-size: 11px; color: #94a3b8; font-style: italic;">Statement Generated Date: ${currentDate}</p>
           </div>
@@ -1293,32 +1472,32 @@ export const UnifiedDashboard: React.FC = () => {
         </div>
       `;
     } else if (reportType === 'leads_funnel') {
-      const currentTenantName = currentTenant?.schoolName || "Central Elite Grammar School";
-      const hasLogo = !!currentTenant?.logoUrl;
+      const currentSchoolName = currentSchool?.schoolName || "Central Elite Grammar School";
+      const hasLogo = !!currentSchool?.logoUrl;
       const logoHtml = hasLogo 
-        ? `<img src="${currentTenant.logoUrl}" style="height: 50px; object-fit: contain; margin-bottom: 10px;" />`
+        ? `<img src="${currentSchool.logoUrl}" style="height: 50px; object-fit: contain; margin-bottom: 10px;" />`
         : `<span style="font-size: 20px;">🎓</span>`;
 
       // Theme logic fallback
       let themePrimary = '#1e1b4b'; 
       let themeBorder = '4px solid #1e1b4b';
-      if (currentTenantName.includes('Dar-e-Arqam')) {
+      if (currentSchoolName.includes('Dar-e-Arqam')) {
         themePrimary = '#064e3b';
         themeBorder = '4px solid #064e3b';
-      } else if (currentTenantName.includes('Beaconhouse')) {
+      } else if (currentSchoolName.includes('Beaconhouse')) {
         themePrimary = '#1e3a8a';
         themeBorder = '4px solid #1e3a8a';
-      } else if (currentTenantName.includes('Educators')) {
+      } else if (currentSchoolName.includes('Educators')) {
         themePrimary = '#1d4ed8';
         themeBorder = '4px solid #1d4ed8';
       }
 
-      reportTitle = `${currentTenantName} - Prospective Leads CRM Funnel`;
+      reportTitle = `${currentSchoolName} - Prospective Leads CRM Funnel`;
       reportHtml = `
         <div style="border: ${themeBorder}; padding: 35px; font-family: 'Inter', system-ui, sans-serif; color: #1e293b; background: #fafaf9; max-width: 800px; margin: 0 auto; border-radius: 6px;">
           <div style="text-align: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 20px;">
             ${logoHtml}
-            <h1 style="margin: 5px 0 0 0; font-size: 24px; color: ${themePrimary}; font-weight: 800; text-transform: uppercase;">${currentTenantName}</h1>
+            <h1 style="margin: 5px 0 0 0; font-size: 24px; color: ${themePrimary}; font-weight: 800; text-transform: uppercase;">${currentSchoolName}</h1>
             <p style="margin: 4px 0 0 0; font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Admission Inquiries & CRM Leads Funnel Statement</p>
             <p style="margin: 4px 0 0 0; font-size: 11px; color: #94a3b8; font-style: italic;">Logs Generated Date: ${currentDate}</p>
           </div>
@@ -1339,14 +1518,14 @@ export const UnifiedDashboard: React.FC = () => {
         </div>
       `;
     } else if (reportType === 'timetable') {
-      const currentTenantName = currentTenant?.schoolName || "Central Elite Grammar School";
-      const hasLogo = !!currentTenant?.logoUrl;
+      const currentSchoolName = currentSchool?.schoolName || "Central Elite Grammar School";
+      const hasLogo = !!currentSchool?.logoUrl;
       const logoHtml = hasLogo 
-        ? `<img src="${currentTenant.logoUrl}" style="height: 65px; object-fit: contain; margin-bottom: 12px; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.08));" />`
+        ? `<img src="${currentSchool.logoUrl}" style="height: 65px; object-fit: contain; margin-bottom: 12px; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.08));" />`
         : `<div style="margin-bottom: 12px; display: inline-flex; justify-content: center; align-items: center; width: 60px; height: 60px; border-radius: 50%; border: 2px solid currentColor; font-size: 24px; font-weight: bold; background: rgba(0,0,0,0.03);">🎓</div>`;
       
-      const primaryHsl = currentTenant?.themeSettings?.primaryHsl || '263.4 70% 50.4%';
-      const secondaryHsl = currentTenant?.themeSettings?.secondaryHsl || '217.2 32.6% 16%';
+      const primaryHsl = currentSchool?.themeSettings?.primaryHsl || '263.4 70% 50.4%';
+      const secondaryHsl = currentSchool?.themeSettings?.secondaryHsl || '217.2 32.6% 16%';
 
       const primaryHslFormatted = toCommaHsl(primaryHsl);
       const secondaryHslFormatted = toCommaHsl(secondaryHsl);
@@ -1355,7 +1534,7 @@ export const UnifiedDashboard: React.FC = () => {
       let themeAccent = `hsl(${secondaryHslFormatted})`;
       let themeAccentLight = `hsla(${primaryHslFormatted.split(',')[0]}, 70%, 97%, 0.95)`;
 
-      reportTitle = `${currentTenantName} - Weekly Class Timetable`;
+      reportTitle = `${currentSchoolName} - Weekly Class Timetable`;
       
       const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
       
@@ -1471,7 +1650,7 @@ export const UnifiedDashboard: React.FC = () => {
                 ${logoHtml.replace('height: 65px', 'height: 48px')}
               </div>
               <div>
-                <h1 style="margin: 0; font-size: 22px; font-weight: 900; color: ${themePrimary}; letter-spacing: -0.5px; line-height: 1.2;">${currentTenantName}</h1>
+                <h1 style="margin: 0; font-size: 22px; font-weight: 900; color: ${themePrimary}; letter-spacing: -0.5px; line-height: 1.2;">${currentSchoolName}</h1>
                 <p style="margin: 2px 0 0 0; font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Official Class Schedule &amp; Period Matrix</p>
               </div>
             </div>
@@ -1570,6 +1749,254 @@ export const UnifiedDashboard: React.FC = () => {
   );
   
   const isEditor = !['student', 'parent'].includes(simulatedRole);
+
+  const showSystemTelemetry = ['super_admin', 'org_owner', 'school_owner', 'admin'].includes(simulatedRole);
+
+  const [usefulLinks, setUsefulLinks] = useState([
+    { id: '1', title: 'Khan Academy', url: 'https://www.khanacademy.org', desc: 'Free online courses, lessons & practice for Maths and Science.', subject: 'Maths & Science' },
+    { id: '2', title: 'BBC Bitesize', url: 'https://www.bbc.co.uk/bitesize', desc: 'Interactive curriculum-aligned study resources for school subjects.', subject: 'General Study' },
+    { id: '3', title: 'British Council LearnEnglish', url: 'https://learnenglish.britishcouncil.org', desc: 'Free international resource hub to improve English skills.', subject: 'English' },
+    { id: '4', title: 'National Geographic Education', url: 'https://www.nationalgeographic.org/society/education-resources/', desc: 'Premium international learning and science exploration resources.', subject: 'Science' }
+  ]);
+  const [isLinksModalOpen, setIsLinksModalOpen] = useState(false);
+  const [newLinkTitle, setNewLinkTitle] = useState('');
+  const [newLinkUrl, setNewLinkUrl] = useState('');
+  const [newLinkDesc, setNewLinkDesc] = useState('');
+  const [newLinkSubject, setNewLinkSubject] = useState('Maths');
+
+  const updateUsefulLinksState = (updater: any) => {
+    setUsefulLinks(prev => {
+      const updatedVal = typeof updater === 'function' ? updater(prev) : updater;
+      updateRealtimeData('useful_links', updatedVal);
+      return updatedVal;
+    });
+  };
+
+  const getTrackerData = () => {
+    switch (simulatedRole) {
+      case 'student':
+      case 'parent':
+        return {
+          title: 'Student Study Tracker',
+          mainLabel: 'Weekly Active Study Time',
+          mainValue: '12.5 Hours',
+          bars: [
+            { label: 'M', value: '2h', percent: '50%' },
+            { label: 'T', value: '3h', percent: '75%' },
+            { label: 'W', value: '1.5h', percent: '37.5%' },
+            { label: 'T', value: '4h', percent: '100%' },
+            { label: 'F', value: '2h', percent: '50%' }
+          ],
+          stats: [
+            { icon: '★', text: 'GPA: A- Average', colorClass: 'text-primary' },
+            { icon: '✓', text: '94% Attendance', colorClass: 'text-primary' },
+            { icon: '🗂', text: '2 Due Soon', colorClass: 'text-primary' },
+            { icon: '🏆', text: 'Top 10% Rank', colorClass: 'text-primary' }
+          ],
+          footer: 'Telemetry Logged'
+        };
+      case 'teacher':
+        return {
+          title: 'Classroom Analytics Tracker',
+          mainLabel: 'Weekly Grading Turnaround',
+          mainValue: '96.2%',
+          bars: [
+            { label: 'Mon', value: '14 gr', percent: '65%' },
+            { label: 'Tue', value: '22 gr', percent: '90%' },
+            { label: 'Wed', value: '12 gr', percent: '55%' },
+            { label: 'Thu', value: '25 gr', percent: '100%' },
+            { label: 'Fri', value: '18 gr', percent: '75%' }
+          ],
+          stats: [
+            { icon: '📊', text: '92.4% Attendance', colorClass: 'text-emerald-400' },
+            { icon: '✓', text: '3 active sections', colorClass: 'text-emerald-400' },
+            { icon: '📝', text: '14 graded tasks', colorClass: 'text-emerald-400' },
+            { icon: '📢', text: '3 notices published', colorClass: 'text-emerald-400' }
+          ],
+          footer: 'Classroom Telemetry Sync'
+        };
+      case 'librarian':
+        return {
+          title: 'Library Circulation Tracker',
+          mainLabel: 'Weekly Circulation Rate',
+          mainValue: '142 Books',
+          bars: [
+            { label: 'Mon', value: '14 checkout', percent: '50%' },
+            { label: 'Tue', value: '28 checkout', percent: '95%' },
+            { label: 'Wed', value: '12 checkout', percent: '45%' },
+            { label: 'Thu', value: '20 checkout', percent: '70%' },
+            { label: 'Fri', value: '30 checkout', percent: '100%' }
+          ],
+          stats: [
+            { icon: '📚', text: '4,820 total books', colorClass: 'text-purple-400' },
+            { icon: '✓', text: '142 active issues', colorClass: 'text-purple-400' },
+            { icon: '⚠️', text: '8 overdue alerts', colorClass: 'text-purple-400' },
+            { icon: '🛡️', text: '100% audit safe', colorClass: 'text-purple-400' }
+          ],
+          footer: 'Library Database Active'
+        };
+      case 'transport':
+        return {
+          title: 'Fleet Operations Tracker',
+          mainLabel: 'Route Compliance Rate',
+          mainValue: '98.8%',
+          bars: [
+            { label: 'Mon', value: '8 runs', percent: '80%' },
+            { label: 'Tue', value: '10 runs', percent: '100%' },
+            { label: 'Wed', value: '8 runs', percent: '80%' },
+            { label: 'Thu', value: '9 runs', percent: '90%' },
+            { label: 'Fri', value: '10 runs', percent: '100%' }
+          ],
+          stats: [
+            { icon: '🚌', text: '12 vehicles active', colorClass: 'text-blue-400' },
+            { icon: '👤', text: '8 drivers shift', colorClass: 'text-blue-400' },
+            { icon: '📡', text: 'GPS telemetry link', colorClass: 'text-blue-400' },
+            { icon: '✓', text: '240 pupils roster', colorClass: 'text-blue-400' }
+          ],
+          footer: 'GPS Link Stream Active'
+        };
+      case 'hostel':
+        return {
+          title: 'Hostel Occupancy Tracker',
+          mainLabel: 'Hostel Capacity Utilization',
+          mainValue: '93.3%',
+          bars: [
+            { label: 'Mon', value: '108 beds', percent: '85%' },
+            { label: 'Tue', value: '112 beds', percent: '90%' },
+            { label: 'Wed', value: '112 beds', percent: '90%' },
+            { label: 'Thu', value: '114 beds', percent: '95%' },
+            { label: 'Fri', value: '115 beds', percent: '100%' }
+          ],
+          stats: [
+            { icon: '🏢', text: '60 rooms total', colorClass: 'text-amber-400' },
+            { icon: '✓', text: '112 boarders synced', colorClass: 'text-amber-400' },
+            { icon: '🛏️', text: '8 vacant beds', colorClass: 'text-amber-400' },
+            { icon: '🍱', text: 'Mess menu active', colorClass: 'text-amber-400' }
+          ],
+          footer: 'Hostel Records Live'
+        };
+      case 'admissions':
+        return {
+          title: 'CRM Leads Funnel Tracker',
+          mainLabel: 'Monthly Conversion Rate',
+          mainValue: '33.3%',
+          bars: [
+            { label: 'Mon', value: '12 cold', percent: '60%' },
+            { label: 'Tue', value: '15 cold', percent: '75%' },
+            { label: 'Wed', value: '8 cold', percent: '40%' },
+            { label: 'Thu', value: '20 cold', percent: '100%' },
+            { label: 'Fri', value: '14 cold', percent: '70%' }
+          ],
+          stats: [
+            { icon: '👤', text: '42 active leads', colorClass: 'text-indigo-400' },
+            { icon: '📝', text: '8 applications rev', colorClass: 'text-indigo-400' },
+            { icon: '📅', text: '3 interviews set', colorClass: 'text-indigo-400' },
+            { icon: '✓', text: '14 enrollments done', colorClass: 'text-indigo-400' }
+          ],
+          footer: 'CRM Lead Center Active'
+        };
+      case 'accountant':
+        return {
+          title: 'Collections Efficiency Tracker',
+          mainLabel: 'Fee Collection Progress',
+          mainValue: '94.6%',
+          bars: [
+            { label: 'Mon', value: '24 chall', percent: '80%' },
+            { label: 'Tue', value: '30 chall', percent: '100%' },
+            { label: 'Wed', value: '15 chall', percent: '50%' },
+            { label: 'Thu', value: '22 chall', percent: '73%' },
+            { label: 'Fri', value: '28 chall', percent: '93%' }
+          ],
+          stats: [
+            { icon: '💳', text: 'Rs 12.4k collected', colorClass: 'text-emerald-400' },
+            { icon: '⚠️', text: '14 defaulter alerts', colorClass: 'text-emerald-400' },
+            { icon: '🗂️', text: '42 unpaid invoices', colorClass: 'text-emerald-400' },
+            { icon: '🛡️', text: 'Double-entry lock', colorClass: 'text-emerald-400' }
+          ],
+          footer: 'Finance Ledger Validated'
+        };
+      case 'hr':
+        return {
+          title: 'Staff Presence & HR Tracker',
+          mainLabel: 'Employee Presence Rate',
+          mainValue: '98.1%',
+          bars: [
+            { label: 'Mon', value: '110 staff', percent: '95%' },
+            { label: 'Tue', value: '112 staff', percent: '98%' },
+            { label: 'Wed', value: '111 staff', percent: '96%' },
+            { label: 'Thu', value: '114 staff', percent: '100%' },
+            { label: 'Fri', value: '113 staff', percent: '99%' }
+          ],
+          stats: [
+            { icon: '👥', text: '114 staff active', colorClass: 'text-purple-400' },
+            { icon: '📅', text: '2 leaves pending', colorClass: 'text-purple-400' },
+            { icon: '⚙️', text: 'Bio-sync online', colorClass: 'text-purple-400' },
+            { icon: '💼', text: '3 openings active', colorClass: 'text-purple-400' }
+          ],
+          footer: 'Staff Attendance Ledger'
+        };
+      case 'reception':
+        return {
+          title: 'Visitor Log Analytics Tracker',
+          mainLabel: 'Visitor Front Desk Efficiency',
+          mainValue: '100%',
+          bars: [
+            { label: 'Mon', value: '4 vis', percent: '50%' },
+            { label: 'Tue', value: '8 vis', percent: '100%' },
+            { label: 'Wed', value: '6 vis', percent: '75%' },
+            { label: 'Thu', value: '5 vis', percent: '62%' },
+            { label: 'Fri', value: '7 vis', percent: '87%' }
+          ],
+          stats: [
+            { icon: '👤', text: '4 visitors checked', colorClass: 'text-cyan-400' },
+            { icon: '📅', text: '2 appointments set', colorClass: 'text-cyan-400' },
+            { icon: '💬', text: '5 inquiries pending', colorClass: 'text-cyan-400' },
+            { icon: '✓', text: 'Gate logs clear', colorClass: 'text-cyan-400' }
+          ],
+          footer: 'Front Desk Logs Synced'
+        };
+      case 'vice_principal':
+        return {
+          title: 'Academic Progress Tracker',
+          mainLabel: 'Lesson Compliance Index',
+          mainValue: '82%',
+          bars: [
+            { label: 'Mon', value: '80%', percent: '80%' },
+            { label: 'Tue', value: '85%', percent: '85%' },
+            { label: 'Wed', value: '82%', percent: '82%' },
+            { label: 'Thu', value: '90%', percent: '90%' },
+            { label: 'Fri', value: '88%', percent: '88%' }
+          ],
+          stats: [
+            { icon: '📖', text: 'Syllabus sync normal', colorClass: 'text-emerald-400' },
+            { icon: '🏆', text: '89.2% passing ratio', colorClass: 'text-emerald-400' },
+            { icon: '✓', text: '0 discipline cases', colorClass: 'text-emerald-400' },
+            { icon: '🛡️', text: 'Protected status', colorClass: 'text-emerald-400' }
+          ],
+          footer: 'Academic Compliance Sync'
+        };
+      default:
+        return {
+          title: 'Campus Operations Tracker',
+          mainLabel: 'Server Roster Synced Status',
+          mainValue: '99.8% Healthy',
+          bars: [
+            { label: 'Mon', value: '1.2k', percent: '85%' },
+            { label: 'Tue', value: '1.3k', percent: '92%' },
+            { label: 'Wed', value: '1.2k', percent: '85%' },
+            { label: 'Thu', value: '1.4k', percent: '98%' },
+            { label: 'Fri', value: '1.4k', percent: '100%' }
+          ],
+          stats: [
+            { icon: '⚡', text: '8 Sync Nodes', colorClass: 'text-emerald-400' },
+            { icon: '✓', text: 'Backup Verified', colorClass: 'text-emerald-400' },
+            { icon: '🌐', text: '100% API Uptime', colorClass: 'text-emerald-400' },
+            { icon: '⚙', text: 'System v14.2', colorClass: 'text-emerald-400' }
+          ],
+          footer: 'Telemetry Logged'
+        };
+    }
+  };
 
   const canUserEditSection = (section: string): boolean => {
     if (['student', 'parent'].includes(simulatedRole)) return false;
@@ -1781,7 +2208,7 @@ export const UnifiedDashboard: React.FC = () => {
         { label: "Assignments Due", value: "14 Submissions", icon: FileText, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Class 10 English essays" },
         { label: "Upcoming Exams", value: "3 Days left", icon: Award, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: "Midterm grading active" }
       ],
-      features: ["My Classes", "Attendance Marking", "Homework Management", "Assignments Entry", "Marks Sheet", "Parent Communication", "Teacher Leave Requests"],
+      features: ["My Classes", "Attendance Marking", "Homework Management", "Assignments Entry", "Marks Sheet", "Parent Communication", "Teacher Leave Requests", "Transport Roster", "Library Books Roster", "Hostel Roster"],
       quickActions: [
         { label: "Mark Attendance", desc: "Take attendance for 10-A", icon: UserCheck },
         { label: "Create Assignment", desc: "Upload assignment details", icon: Plus }
@@ -1803,7 +2230,7 @@ export const UnifiedDashboard: React.FC = () => {
         { label: "Assignments Due", value: pendingCount === 0 ? "All Clear!" : `${pendingCount} Pending`, icon: FileText, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Physics and Chemistry tasks" },
         { label: "Upcoming Exams", value: "Physics - June 12", icon: Calendar, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: "Syllabus updated" }
       ],
-      features: ["Attendance Ledger", "Assignments", "Exams Results", "Timetable", "Study Material", "Recorded Lectures", "Fee Status", "Notifications"],
+      features: ["Attendance Ledger", "Assignments", "Exams Results", "Timetable", "Study Material", "Recorded Lectures", "Fee Status", "Notifications", "School Transport", "Library Books", "Hostel Portal"],
       quickActions: [
         { label: "View Assignments", desc: "Download homework instructions", icon: FileText },
         { label: "Recorded Lectures", desc: "Play previous class video streams", icon: BookOpen }
@@ -1825,7 +2252,7 @@ export const UnifiedDashboard: React.FC = () => {
         { label: "Next Exam", value: "June 12", icon: Calendar, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Physics prep active" },
         { label: "Homework Due", value: pendingCount === 0 ? "All Completed" : `${pendingCount} Tasks pending`, icon: FileText, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: "View assignments" }
       ],
-      features: ["Child Attendance", "Assignments", "Exam Grades", "Fee Payments", "Notifications Log", "Teacher Communication", "Leave Requests", "Transport GPS Tracking"],
+      features: ["Child Attendance", "Assignments", "Exam Grades", "Fee Payments", "Notifications Log", "Teacher Communication", "Leave Requests", "School Transport", "Library Books", "Hostel Portal"],
       quickActions: [
         { label: "Pay Fees Online", desc: "Instantly clear fee challan", icon: CreditCard },
         { label: "Contact Class Teacher", desc: "Send message to teacher", icon: MessageSquare }
@@ -2455,8 +2882,8 @@ export const UnifiedDashboard: React.FC = () => {
 
         {/* Middle Section: Quick Operations & Live System Telemetry */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch w-full">
-          {/* Card 1: Quick Operations (Left side, col-span-2) */}
-          <div className="lg:col-span-2 glass-card p-6 rounded-2xl border border-border bg-card/30 space-y-4 flex flex-col justify-between">
+          {/* Card 1: Quick Operations (Left side, col-span-2 or col-span-3) */}
+          <div className={`${showSystemTelemetry ? 'lg:col-span-2' : 'lg:col-span-3'} glass-card p-6 rounded-2xl border border-border bg-card/30 space-y-4 flex flex-col justify-between`}>
             <div>
               <h3 className="font-bold text-foreground m-0 flex items-center gap-2 pb-3 border-b border-border">
                 <Settings className="w-5 h-5 text-primary" />
@@ -2504,7 +2931,7 @@ export const UnifiedDashboard: React.FC = () => {
                           } else if (action.label === 'Recorded Lectures') {
                             setActiveFeature('Recorded Lectures');
                           } else {
-                            alert(`[${currentTenant?.schoolName || 'School'}] Starting operation: ${action.label}`);
+                            alert(`[${currentSchool?.schoolName || 'School'}] Starting operation: ${action.label}`);
                           }
                         };
 
@@ -2537,84 +2964,86 @@ export const UnifiedDashboard: React.FC = () => {
                   );
                 })}
               </div>
-            </div>
-            <div className="pt-2 text-[10px] text-foreground/45 border-t border-border/40 font-semibold uppercase tracking-widest text-center mt-4">
-              Authorized Operations Console
+              <div className="pt-2 text-[10px] text-foreground/45 border-t border-border/40 font-semibold uppercase tracking-widest text-center mt-4">
+                Authorized Operations Console
+              </div>
             </div>
           </div>
 
           {/* Card 2: Live System Telemetry (Right side, col-span-1) */}
-          <div className="glass-card p-6 rounded-2xl border border-border bg-card/30 space-y-4 flex flex-col justify-between">
-            <div>
-              <div className="flex justify-between items-center pb-2 border-b border-border/40">
-                <span className="text-[10px] font-bold text-foreground/50 uppercase tracking-widest">
-                  Live System Telemetry
-                </span>
-                <span className="flex items-center gap-1 text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                  Operational
-                </span>
+            {showSystemTelemetry && (
+              <div className="glass-card p-6 rounded-2xl border border-border bg-card/30 space-y-4 flex flex-col justify-between">
+                <div>
+                  <div className="flex justify-between items-center pb-2 border-b border-border/40">
+                    <span className="text-[10px] font-bold text-foreground/50 uppercase tracking-widest">
+                      Live System Telemetry
+                    </span>
+                    <span className="flex items-center gap-1 text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                      Operational
+                    </span>
+                  </div>
+
+                  <div className="bg-card/50 border border-border rounded-xl p-3.5 space-y-3 relative overflow-hidden mt-3">
+                    <div className="flex justify-between items-end">
+                      <div>
+                        <span className="text-[10px] font-semibold text-foreground/60 block">API Request Latency</span>
+                        <strong className="text-sm font-black text-foreground">14ms average</strong>
+                      </div>
+                      <span className="text-[9px] font-bold text-primary/80">99.98% uptime</span>
+                    </div>
+
+                    {/* SVG Area Sparkline */}
+                    <div className="h-16 w-full mt-1">
+                      <svg className="w-full h-full overflow-visible" viewBox="0 0 240 60" preserveAspectRatio="none">
+                        <defs>
+                          <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="#818cf8" />
+                            <stop offset="50%" stopColor="#c084fc" />
+                            <stop offset="100%" stopColor="#22d3ee" />
+                          </linearGradient>
+                          <linearGradient id="telemetryGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#c084fc" stopOpacity="0.3" />
+                            <stop offset="100%" stopColor="#c084fc" stopOpacity="0.0" />
+                          </linearGradient>
+                        </defs>
+                        <path
+                          d="M 0 50 Q 30 35 60 42 T 120 25 T 180 38 T 240 20 L 240 60 L 0 60 Z"
+                          fill="url(#telemetryGrad)"
+                        />
+                        <path
+                          d="M 0 50 Q 30 35 60 42 T 120 25 T 180 38 T 240 20"
+                          fill="none"
+                          stroke="url(#lineGrad)"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                        />
+                        <circle cx="240" cy="20" r="4.5" fill="#22d3ee" className="animate-pulse shadow-glow" />
+                      </svg>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-1.5 pt-2 border-t border-border/40 text-[9px] font-semibold text-foreground/60">
+                      <div className="text-center bg-muted/40 p-1 rounded">
+                        <span className="block text-foreground/45 text-[8px] uppercase">CPU Load</span>
+                        <strong className="text-foreground text-[10px]">12%</strong>
+                      </div>
+                      <div className="text-center bg-muted/40 p-1 rounded">
+                        <span className="block text-foreground/45 text-[8px] uppercase">DB Queue</span>
+                        <strong className="text-foreground text-[10px]">0.02ms</strong>
+                      </div>
+                      <div className="text-center bg-muted/40 p-1 rounded">
+                        <span className="block text-foreground/45 text-[8px] uppercase">Cache Hit</span>
+                        <strong className="text-foreground text-[10px]">99.4%</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="pt-2 text-[10px] text-foreground/45 border-t border-border/40 font-semibold uppercase tracking-widest text-center mt-4">
+                  Database Sync Active
+                </div>
               </div>
-
-              <div className="bg-card/50 border border-border rounded-xl p-3.5 space-y-3 relative overflow-hidden mt-3">
-                <div className="flex justify-between items-end">
-                  <div>
-                    <span className="text-[10px] font-semibold text-foreground/60 block">API Request Latency</span>
-                    <strong className="text-sm font-black text-foreground">14ms average</strong>
-                  </div>
-                  <span className="text-[9px] font-bold text-primary/80">99.98% uptime</span>
-                </div>
-
-                {/* SVG Area Sparkline */}
-                <div className="h-16 w-full mt-1">
-                  <svg className="w-full h-full overflow-visible" viewBox="0 0 240 60" preserveAspectRatio="none">
-                    <defs>
-                      <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="#818cf8" />
-                        <stop offset="50%" stopColor="#c084fc" />
-                        <stop offset="100%" stopColor="#22d3ee" />
-                      </linearGradient>
-                      <linearGradient id="telemetryGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#c084fc" stopOpacity="0.3" />
-                        <stop offset="100%" stopColor="#c084fc" stopOpacity="0.0" />
-                      </linearGradient>
-                    </defs>
-                    <path
-                      d="M 0 50 Q 30 35 60 42 T 120 25 T 180 38 T 240 20 L 240 60 L 0 60 Z"
-                      fill="url(#telemetryGrad)"
-                    />
-                    <path
-                      d="M 0 50 Q 30 35 60 42 T 120 25 T 180 38 T 240 20"
-                      fill="none"
-                      stroke="url(#lineGrad)"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                    />
-                    <circle cx="240" cy="20" r="4.5" fill="#22d3ee" className="animate-pulse shadow-glow" />
-                  </svg>
-                </div>
-
-                <div className="grid grid-cols-3 gap-1.5 pt-2 border-t border-border/40 text-[9px] font-semibold text-foreground/60">
-                  <div className="text-center bg-muted/40 p-1 rounded">
-                    <span className="block text-foreground/45 text-[8px] uppercase">CPU Load</span>
-                    <strong className="text-foreground text-[10px]">12%</strong>
-                  </div>
-                  <div className="text-center bg-muted/40 p-1 rounded">
-                    <span className="block text-foreground/45 text-[8px] uppercase">DB Queue</span>
-                    <strong className="text-foreground text-[10px]">0.02ms</strong>
-                  </div>
-                  <div className="text-center bg-muted/40 p-1 rounded">
-                    <span className="block text-foreground/45 text-[8px] uppercase">Cache Hit</span>
-                    <strong className="text-foreground text-[10px]">99.4%</strong>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="pt-2 text-[10px] text-foreground/45 border-t border-border/40 font-semibold uppercase tracking-widest text-center mt-4">
-              Database Sync Active
-            </div>
-          </div>
-        </section>
+            )}
+          </section>
 
         {/* Symmetrical Parallel Footer Section */}
         <section className="glass-card p-6 rounded-2xl border border-border bg-card/20 space-y-4">
@@ -2631,7 +3060,7 @@ export const UnifiedDashboard: React.FC = () => {
                   Operational Status
                 </h4>
                 <p className="text-xs text-foreground/75 leading-relaxed font-semibold mt-3">
-                  {spec.placeholderText} Secured and isolated. Regional parameters: <strong>{currentTenant?.city || 'Lahore'}, {COUNTRY_CONFIGS[currentTenant?.country || 'PK'].countryName}</strong> (Currency: <strong>{COUNTRY_CONFIGS[currentTenant?.country || 'PK'].currency}</strong>, prefix: <strong>{COUNTRY_CONFIGS[currentTenant?.country || 'PK'].phonePrefix}</strong>).
+                  {spec.placeholderText} Secured and isolated. Regional parameters: <strong>{currentSchool?.city || 'Lahore'}, {COUNTRY_CONFIGS[currentSchool?.country || 'PK'].countryName}</strong> (Currency: <strong>{COUNTRY_CONFIGS[currentSchool?.country || 'PK'].currency}</strong>, prefix: <strong>{COUNTRY_CONFIGS[currentSchool?.country || 'PK'].phonePrefix}</strong>).
                 </p>
 
                 {/* Diagnostics Grid to fill empty space */}
@@ -2666,10 +3095,12 @@ export const UnifiedDashboard: React.FC = () => {
                   <HelpCircle className="w-4 h-4 text-primary" />
                   Knowledge Base & Support
                 </h4>
-                <p className="text-xs text-foreground/65 leading-relaxed mt-3 font-semibold">
-                  Need help with operations? Click the quick guides below to view step-by-step instructions.
+                
+                {/* Step-by-Step Guides */}
+                <p className="text-[10px] text-foreground/65 leading-relaxed mt-2.5 font-bold uppercase tracking-wider">
+                  Quick Operations Guides:
                 </p>
-                <div className="space-y-2 mt-3">
+                <div className="space-y-1.5 mt-1.5">
                   {(spec.supportGuides || []).slice(0, 2).map((guide, idx) => (
                     <button
                       key={idx}
@@ -2680,6 +3111,47 @@ export const UnifiedDashboard: React.FC = () => {
                       <ChevronRight className="w-3 h-3 text-foreground/40" />
                     </button>
                   ))}
+                </div>
+
+                {/* Useful Learning Links Section */}
+                <div className="mt-4 pt-3 border-t border-border/40">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-[10px] font-bold text-foreground/65 uppercase tracking-wider flex items-center gap-1">
+                      🔗 Useful Study Links:
+                    </span>
+                    {(simulatedRole === 'teacher' || showSystemTelemetry) && (
+                      <button 
+                        onClick={() => setIsLinksModalOpen(true)}
+                        className="text-[9px] font-bold text-primary hover:text-primary-focus bg-primary/10 border border-primary/20 px-2 py-0.5 rounded transition-all active:scale-95"
+                      >
+                        Manage Links
+                      </button>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 gap-1.5 max-h-[140px] overflow-y-auto pr-1">
+                    {usefulLinks.map(link => (
+                      <a
+                        key={link.id}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 bg-card/60 hover:bg-card border border-border hover:border-primary/45 rounded-lg flex flex-col gap-0.5 transition-all text-left group"
+                      >
+                        <div className="flex justify-between items-center">
+                          <span className="text-[10px] font-bold text-foreground group-hover:text-primary transition-colors flex items-center gap-1">
+                            {link.title}
+                            <span className="text-[8px] text-foreground/45 font-normal">↗</span>
+                          </span>
+                          <span className="text-[7.5px] px-1.5 py-0.2 bg-primary/10 border border-primary/20 rounded font-black text-primary uppercase tracking-wide">
+                            {link.subject}
+                          </span>
+                        </div>
+                        <span className="text-[9px] text-foreground/50 leading-relaxed truncate">
+                          {link.desc}
+                        </span>
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
               <button 
@@ -2692,102 +3164,47 @@ export const UnifiedDashboard: React.FC = () => {
             </div>
 
             {/* Card 3: Tracker Widget */}
-            <div className="glass-card p-5 rounded-2xl border border-border bg-card/30 flex flex-col justify-between">
-              <div>
-                <h4 className="text-xs font-bold text-foreground/50 uppercase tracking-widest pb-2 border-b border-border/40">
-                  {['student', 'parent'].includes(simulatedRole) ? 'Student Study Tracker' : 'Campus Operations Tracker'}
-                </h4>
+            {(() => {
+              const tracker = getTrackerData();
+              return (
+                <div className="glass-card p-5 rounded-2xl border border-border bg-card/30 flex flex-col justify-between">
+                  <div>
+                    <h4 className="text-xs font-bold text-foreground/50 uppercase tracking-widest pb-2 border-b border-border/40">
+                      {tracker.title}
+                    </h4>
 
-                {['student', 'parent'].includes(simulatedRole) ? (
-                  <div className="bg-card/50 border border-border rounded-xl p-3 space-y-2 mt-3">
-                    <div className="flex justify-between items-center text-[10px] font-semibold text-foreground/75">
-                      <span>Weekly Active Study Time</span>
-                      <span className="text-primary font-black">12.5 Hours</span>
-                    </div>
-                    {/* Tiny Bar Chart */}
-                    <div className="flex items-end justify-between h-16 pt-2">
-                      {[
-                        { day: 'M', hours: '2h', hPercent: '50%' },
-                        { day: 'T', hours: '3h', hPercent: '75%' },
-                        { day: 'W', hours: '1.5h', hPercent: '37.5%' },
-                        { day: 'T', hours: '4h', hPercent: '100%' },
-                        { day: 'F', hours: '2h', hPercent: '50%' }
-                      ].map((bar, i) => (
-                        <div key={i} className="flex flex-col items-center gap-1 w-6">
-                          <span className="text-[8px] font-bold text-foreground/50">{bar.hours}</span>
-                          <div className="w-2.5 bg-gradient-to-t from-primary/30 to-primary rounded-t-sm" style={{ height: bar.hPercent }}></div>
-                          <span className="text-[8px] text-foreground/40 font-semibold">{bar.day}</span>
-                        </div>
-                      ))}
-                    </div>
-                    {/* Stats Grid to fill empty space */}
-                    <div className="grid grid-cols-2 gap-2 mt-4 text-[10px] font-bold text-foreground/70">
-                      <div className="flex items-center gap-1.5 p-2 bg-card border border-border rounded-lg">
-                        <span className="text-primary">★</span>
-                        <span>GPA: A- Average</span>
+                    <div className="bg-card/50 border border-border rounded-xl p-3 space-y-2 mt-3">
+                      <div className="flex justify-between items-center text-[10px] font-semibold text-foreground/75">
+                        <span>{tracker.mainLabel}</span>
+                        <span className="text-primary font-black">{tracker.mainValue}</span>
                       </div>
-                      <div className="flex items-center gap-1.5 p-2 bg-card border border-border rounded-lg">
-                        <span className="text-primary">✓</span>
-                        <span>94% Attendance</span>
+                      {/* Tiny Bar Chart */}
+                      <div className="flex items-end justify-between h-16 pt-2">
+                        {tracker.bars.map((bar, i) => (
+                          <div key={i} className="flex flex-col items-center gap-1 w-7">
+                            <span className="text-[8px] font-bold text-foreground/50">{bar.value}</span>
+                            <div className="w-2.5 bg-gradient-to-t from-primary/30 to-primary rounded-t-sm" style={{ height: bar.percent }}></div>
+                            <span className="text-[8px] text-foreground/45 font-semibold">{bar.label}</span>
+                          </div>
+                        ))}
                       </div>
-                      <div className="flex items-center gap-1.5 p-2 bg-card border border-border rounded-lg">
-                        <span className="text-primary">🗂</span>
-                        <span>2 Due Soon</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 p-2 bg-card border border-border rounded-lg">
-                        <span className="text-primary">🏆</span>
-                        <span>Top 10% Rank</span>
+                      {/* Stats Grid */}
+                      <div className="grid grid-cols-2 gap-2 mt-4 text-[10px] font-bold text-foreground/70">
+                        {tracker.stats.map((stat, idx) => (
+                          <div key={idx} className="flex items-center gap-1.5 p-2 bg-card border border-border rounded-lg">
+                            <span className={stat.colorClass}>{stat.icon}</span>
+                            <span>{stat.text}</span>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
-                ) : (
-                  <div className="bg-card/50 border border-border rounded-xl p-3 space-y-2 mt-3">
-                    <div className="flex justify-between items-center text-[10px] font-semibold text-foreground/75">
-                      <span>Server Roster Synced Status</span>
-                      <span className="text-emerald-400 font-black">99.8% Healthy</span>
-                    </div>
-                    {/* Tiny Bar Chart */}
-                    <div className="flex items-end justify-between h-16 pt-2">
-                      {[
-                        { day: 'Mon', count: '1.2k', hPercent: '85%' },
-                        { day: 'Tue', count: '1.3k', hPercent: '92%' },
-                        { day: 'Wed', count: '1.2k', hPercent: '85%' },
-                        { day: 'Thu', count: '1.4k', hPercent: '98%' },
-                        { day: 'Fri', count: '1.4k', hPercent: '100%' }
-                      ].map((bar, i) => (
-                        <div key={i} className="flex flex-col items-center gap-1 w-7">
-                          <span className="text-[8px] font-bold text-foreground/50">{bar.count}</span>
-                          <div className="w-2.5 bg-gradient-to-t from-primary/30 to-primary rounded-t-sm" style={{ height: bar.hPercent }}></div>
-                          <span className="text-[8px] text-foreground/45 font-semibold">{bar.day}</span>
-                        </div>
-                      ))}
-                    </div>
-                    {/* Stats Grid to fill empty space */}
-                    <div className="grid grid-cols-2 gap-2 mt-4 text-[10px] font-bold text-foreground/70">
-                      <div className="flex items-center gap-1.5 p-2 bg-card border border-border rounded-lg">
-                        <span className="text-emerald-400">⚡</span>
-                        <span>8 Sync Nodes</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 p-2 bg-card border border-border rounded-lg">
-                        <span className="text-emerald-400">✓</span>
-                        <span>Backup Verified</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 p-2 bg-card border border-border rounded-lg">
-                        <span className="text-emerald-400">🌐</span>
-                        <span>100% API Uptime</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 p-2 bg-card border border-border rounded-lg">
-                        <span className="text-emerald-400">⚙</span>
-                        <span>System v14.2</span>
-                      </div>
-                    </div>
+                  <div className="pt-2 text-[10px] text-foreground/45 border-t border-border/40 font-semibold uppercase tracking-widest text-center mt-4">
+                    {tracker.footer}
                   </div>
-                )}
-              </div>
-              <div className="pt-2 text-[10px] text-foreground/45 border-t border-border/40 font-semibold uppercase tracking-widest text-center mt-4">
-                Telemetry Logged
-              </div>
-            </div>
+                </div>
+              );
+            })()}
           </div>
 
         </section>
@@ -2832,6 +3249,153 @@ export const UnifiedDashboard: React.FC = () => {
                 Understood
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* MANAGE STUDY LINKS MODAL */}
+      {isLinksModalOpen && (
+        <div className="modal-overlay z-[100]">
+          <div className="modal-container modal-md glass-card glow-purple text-foreground p-6 space-y-4">
+            
+            {/* Modal Header */}
+            <div className="modal-header flex justify-between items-center pb-2 border-b border-border">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🔗</span>
+                <h3 className="text-sm font-black uppercase tracking-wider text-foreground">
+                  Manage Useful Study Links
+                </h3>
+              </div>
+              <button 
+                onClick={() => setIsLinksModalOpen(false)}
+                className="px-2.5 py-1 text-xs font-bold rounded bg-muted border border-border hover:bg-card text-foreground transition-all active:scale-95"
+              >
+                Close
+              </button>
+            </div>
+
+            {/* Modal Body: List of links and form to add */}
+            <div className="modal-body space-y-4 max-h-[380px] overflow-y-auto pr-1">
+              
+              {/* Add New Link Form */}
+              <form 
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (!newLinkTitle || !newLinkUrl) return;
+                  const newLink = {
+                    id: Date.now().toString(),
+                    title: newLinkTitle,
+                    url: newLinkUrl.startsWith('http') ? newLinkUrl : `https://${newLinkUrl}`,
+                    desc: newLinkDesc || 'Useful learning portal resource.',
+                    subject: newLinkSubject
+                  };
+                  updateUsefulLinksState(prev => [newLink, ...prev]);
+                  setNewLinkTitle('');
+                  setNewLinkUrl('');
+                  setNewLinkDesc('');
+                  alert("Link added successfully!");
+                }}
+                className="p-3 bg-muted/30 border border-border rounded-xl space-y-3"
+              >
+                <strong className="text-xs font-black uppercase tracking-wider block text-primary">Add New Study Link</strong>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-black text-foreground/75 uppercase tracking-wider block">Link Title</label>
+                    <input 
+                      type="text" 
+                      required
+                      placeholder="e.g. Khan Academy" 
+                      value={newLinkTitle}
+                      onChange={(e) => setNewLinkTitle(e.target.value)}
+                      className="w-full bg-slate-900 border border-slate-800 text-[11px] text-white rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary font-semibold"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-black text-foreground/75 uppercase tracking-wider block">Subject Tag</label>
+                    <select
+                      value={newLinkSubject}
+                      onChange={(e) => setNewLinkSubject(e.target.value)}
+                      className="w-full bg-slate-900 border border-slate-800 text-[11px] text-white rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary font-semibold"
+                    >
+                      <option value="Maths">Maths</option>
+                      <option value="Science">Science</option>
+                      <option value="English">English</option>
+                      <option value="General">General Study</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[9px] font-black text-foreground/75 uppercase tracking-wider block">Website URL</label>
+                  <input 
+                    type="text" 
+                    required
+                    placeholder="e.g. www.khanacademy.org" 
+                    value={newLinkUrl}
+                    onChange={(e) => setNewLinkUrl(e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-800 text-[11px] text-white rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary font-semibold"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[9px] font-black text-foreground/75 uppercase tracking-wider block">Brief Description</label>
+                  <input 
+                    type="text" 
+                    placeholder="e.g. Interactive math lessons & science topics." 
+                    value={newLinkDesc}
+                    onChange={(e) => setNewLinkDesc(e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-800 text-[11px] text-white rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary font-semibold"
+                  />
+                </div>
+
+                <button 
+                  type="submit"
+                  className="w-full py-1.5 bg-primary hover:bg-primary/95 text-xs font-bold text-white rounded-lg transition-all shadow-md active:scale-95"
+                >
+                  Publish Link to Portals
+                </button>
+              </form>
+
+              {/* Current Links List */}
+              <div className="space-y-2">
+                <strong className="text-xs font-black uppercase tracking-wider block text-foreground/75">Active Resources ({usefulLinks.length})</strong>
+                <div className="divide-y divide-border">
+                  {usefulLinks.map(link => (
+                    <div key={link.id} className="py-2.5 flex justify-between items-start gap-3 text-xs">
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-1.5">
+                          <strong className="text-foreground font-bold">{link.title}</strong>
+                          <span className="px-1.5 py-0.2 bg-primary/10 text-primary border border-primary/20 text-[8px] font-black uppercase rounded">
+                            {link.subject}
+                          </span>
+                        </div>
+                        <span className="text-[9px] text-foreground/50 block font-mono truncate max-w-[200px]">{link.url}</span>
+                        <p className="text-[10px] text-foreground/70">{link.desc}</p>
+                      </div>
+                      <button 
+                        onClick={() => {
+                          updateUsefulLinksState(prev => prev.filter(l => l.id !== link.id));
+                        }}
+                        className="px-2 py-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 text-[9px] font-bold rounded transition-all active:scale-95"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+
+            <div className="modal-footer pt-2 border-t border-border flex justify-end">
+              <button 
+                onClick={() => setIsLinksModalOpen(false)}
+                className="px-4 py-2 text-xs font-bold rounded-lg bg-muted border border-border hover:bg-card text-foreground transition-all active:scale-95"
+              >
+                Done
+              </button>
+            </div>
+
           </div>
         </div>
       )}
@@ -3890,66 +4454,324 @@ export const UnifiedDashboard: React.FC = () => {
               )}
 
               {/* BOOK MANAGEMENT & ISSUE BOOKS & RETURN BOOKS & LIBRARY SYSTEM */}
-              {['Book Management', 'Issue Books', 'Return Books', 'Fine Collection', 'Inventory Tracking', 'Library Desk'].includes(activeFeature) && (
+              {['Book Management', 'Issue Books', 'Return Books', 'Fine Collection', 'Inventory Tracking', 'Library Desk', 'Library Books', 'Library Books Roster'].includes(activeFeature) && (
                 <div className="space-y-4">
-                  <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
-                    📚 Monitor checkout status and library inventory.
-                  </div>
-                  {/* Issue Book Form */}
-                  {isEditor && (
-                    <form
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        alert('Book issued successfully to selected student!');
-                      }}
-                      className="p-4 bg-muted/30 border border-border rounded-xl space-y-3"
-                    >
-                      <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Issue Library Volume</span>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
-                          <option>Advanced Calculus Vol 1</option>
-                          <option>Introduction to Quantum Mechanics</option>
-                          <option>A History of Modern Literature</option>
-                        </select>
-                        <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
-                          {students.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
-                        </select>
+                  {activeFeature === 'Library Books' && (
+                    <div className="space-y-4">
+                      <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                        📚 Your Borrowed Books and Due Dates. You can request due-date extensions here.
                       </div>
-                      <div className="flex justify-end pt-2">
-                        <button type="submit" className="px-6 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md">
-                          + Issue Book
-                        </button>
-                      </div>
-                    </form>
+                      {(!studentLibrary[activeStudentName] || studentLibrary[activeStudentName].length === 0) ? (
+                        <div className="p-8 text-center bg-muted/10 border border-border rounded-2xl">
+                          <span className="text-3xl block mb-2">📖</span>
+                          <p className="text-xs text-foreground/60 font-semibold">No books currently issued to your account.</p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {studentLibrary[activeStudentName].map((book) => {
+                            let statusColor = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+                            if (book.status === 'Overdue') statusColor = "bg-red-500/10 text-red-400 border-red-500/20 animate-pulse";
+                            else if (book.status === 'Due Soon') statusColor = "bg-amber-500/10 text-amber-400 border-amber-500/20";
+                            else if (book.status === 'Extended') statusColor = "bg-blue-500/10 text-blue-400 border-blue-500/20";
+
+                            return (
+                              <div key={book.id} className="p-4 bg-card border border-border rounded-2xl space-y-3 flex flex-col justify-between hover:border-primary/45 transition-all">
+                                <div>
+                                  <div className="flex justify-between items-start gap-2">
+                                    <h4 className="text-xs font-extrabold text-foreground leading-snug">{book.title}</h4>
+                                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider shrink-0 border ${statusColor}`}>
+                                      {book.status}
+                                    </span>
+                                  </div>
+                                  <div className="mt-2 space-y-1 text-[11px] text-foreground/60">
+                                    <p>Issue Date: <span className="font-mono text-foreground">{book.issueDate}</span></p>
+                                    <p>Due Date: <span className="font-mono text-foreground font-bold">{book.dueDate}</span></p>
+                                  </div>
+                                </div>
+                                {book.status !== 'Extended' && (
+                                  <button
+                                    onClick={() => {
+                                      requestSecurityVerification(`Extend the due date of "${book.title}" by 7 days`, () => {
+                                        setStudentLibrary(prev => {
+                                          const studentBooks = prev[activeStudentName] || [];
+                                          const updated = studentBooks.map(b => {
+                                            if (b.id === book.id) {
+                                              const currentDue = new Date(b.dueDate);
+                                              currentDue.setDate(currentDue.getDate() + 7);
+                                              const newDueDateStr = currentDue.toISOString().split('T')[0];
+                                              return { ...b, dueDate: newDueDateStr, status: 'Extended' as const };
+                                            }
+                                            return b;
+                                          });
+                                          return { ...prev, [activeStudentName]: updated };
+                                        });
+                                      });
+                                    }}
+                                    className="w-full py-1.5 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-lg text-[10px] font-black transition-all"
+                                  >
+                                    Extend Due Date (7 Days)
+                                  </button>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
                   )}
 
-                  <div className="space-y-2 max-h-44 overflow-y-auto pr-1">
-                    <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Circulating Books Inventory</span>
-                    <table className="w-full text-left border-collapse text-xs">
-                      <thead>
-                        <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
-                          <th className="p-2">Book Title</th>
-                          <th className="p-2">Issued To</th>
-                          <th className="p-2 text-right">Due Date</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-border text-foreground/85">
-                        <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Advanced Calculus Vol 1</td><td className="p-2">Kamran Shah</td><td className="p-2 text-right text-slate-500">2026-06-15</td></tr>
-                        <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Introduction to Quantum Mechanics</td><td className="p-2">Ayesha Siddiqui</td><td className="p-2 text-right text-slate-500">2026-06-12</td></tr>
-                      </tbody>
-                    </table>
-                  </div>
+                  {activeFeature === 'Library Books Roster' && (
+                    <div className="space-y-4">
+                      <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                        📋 Classroom Library Checkout Roster. Review all active student borrows.
+                      </div>
+                      <div className="space-y-2.5">
+                        {students.map((st) => {
+                          const studentBooks = studentLibrary[st.name] || [];
+                          return (
+                            <div key={st.id} className="p-3 bg-card border border-border rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-3">
+                              <div>
+                                <strong className="text-xs text-foreground font-extrabold">{st.name}</strong>
+                                <span className="text-[10px] text-foreground/50 ml-2">({st.className})</span>
+                              </div>
+                              <div className="flex flex-wrap gap-2">
+                                {studentBooks.length === 0 ? (
+                                  <span className="text-[10px] text-foreground/45 italic">No books checked out</span>
+                                ) : (
+                                  studentBooks.map(b => (
+                                    <span key={b.id} className={`px-2 py-0.5 rounded text-[9px] font-bold border ${
+                                      b.status === 'Overdue' ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-primary/10 text-primary border-primary/20'
+                                    }`}>
+                                      {b.title} (Due: {b.dueDate})
+                                    </span>
+                                  ))
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {!['Library Books', 'Library Books Roster'].includes(activeFeature) && (
+                    <>
+                      <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                        📚 Monitor checkout status and library inventory.
+                      </div>
+                      {/* Issue Book Form */}
+                      {isEditor && (
+                        <form
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            alert('Book issued successfully to selected student!');
+                          }}
+                          className="p-4 bg-muted/30 border border-border rounded-xl space-y-3"
+                        >
+                          <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Issue Library Volume</span>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
+                              <option>Advanced Calculus Vol 1</option>
+                              <option>Introduction to Quantum Mechanics</option>
+                              <option>A History of Modern Literature</option>
+                            </select>
+                            <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
+                              {students.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
+                            </select>
+                          </div>
+                          <div className="flex justify-end pt-2">
+                            <button type="submit" className="px-6 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md">
+                              + Issue Book
+                            </button>
+                          </div>
+                        </form>
+                      )}
+
+                      <div className="space-y-2 max-h-44 overflow-y-auto pr-1">
+                        <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Circulating Books Inventory</span>
+                        <table className="w-full text-left border-collapse text-xs">
+                          <thead>
+                            <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
+                              <th className="p-2">Book Title</th>
+                              <th className="p-2">Issued To</th>
+                              <th className="p-2 text-right">Due Date</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-border text-foreground/85">
+                            <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Advanced Calculus Vol 1</td><td className="p-2">Kamran Shah</td><td className="p-2 text-right text-slate-500">2026-06-15</td></tr>
+                            <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Introduction to Quantum Mechanics</td><td className="p-2">Ayesha Siddiqui</td><td className="p-2 text-right text-slate-500">2026-06-12</td></tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
 
               {/* VEHICLES & ROUTES & DRIVERS & TRANSPORT GPS TRACKING */}
-              {['Vehicles', 'Routes', 'Drivers', 'Student Assignments', 'GPS Tracking', 'Transport Fees', 'Transport GPS Tracking'].includes(activeFeature) && (
+              {['Vehicles', 'Routes', 'Drivers', 'Student Assignments', 'GPS Tracking', 'Transport Fees', 'Transport GPS Tracking', 'School Transport', 'Transport Roster'].includes(activeFeature) && (
                 <div className="space-y-4">
                   {/* Common GPS Header status */}
                   <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed flex items-center justify-between">
                     <span>🚌 Transport Control Desk: <strong className="text-emerald-400 font-mono">ACTIVE</strong>. Fleet synced.</span>
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
                   </div>
+
+                  {activeFeature === 'School Transport' && (
+                    <div className="space-y-4">
+                      {!(studentTransport[activeStudentName]?.active) ? (
+                        <div className="p-6 bg-card border border-border rounded-2xl space-y-4 text-center">
+                          <div className="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-lg mx-auto">
+                            🚌
+                          </div>
+                          <div className="space-y-1">
+                            <h4 className="text-sm font-extrabold text-foreground">Transport Service Inactive</h4>
+                            <p className="text-xs text-foreground/60 max-w-md mx-auto leading-relaxed">
+                              School Transport is currently not enabled for this student profile. Subscriptions include daily secure pickup & drop, GPS tracking access, and certified drivers.
+                            </p>
+                          </div>
+                          <div className="border-t border-border pt-4 text-xs font-semibold text-foreground/70 space-y-1.5 max-w-sm mx-auto text-left">
+                            <div className="flex justify-between"><span>Route:</span><span className="text-foreground">Route Alpha (Main Loop)</span></div>
+                            <div className="flex justify-between"><span>Subscription Fee:</span><span className="text-foreground">{formatCurrency(2500)} / month</span></div>
+                            <div className="flex justify-between"><span>Status:</span><span className="text-amber-400 font-bold">Available</span></div>
+                          </div>
+                          <button
+                            onClick={() => {
+                              requestSecurityVerification(`Subscribe this student profile to School Transport Service for ${formatCurrency(2500)}/mo`, () => {
+                                setStudentTransport(prev => ({
+                                  ...prev,
+                                  [activeStudentName]: { active: true, route: 'Route Alpha (Main Loop)', vehicle: 'BUS-08 (LHR-9876)', driver: 'Ahmed Khan', phone: '0300-1234567', fee: 2500 }
+                                }));
+                              });
+                            }}
+                            className="px-6 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md"
+                          >
+                            Subscribe to Transport Service
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          <div className="p-4 bg-card border border-border rounded-2xl grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <h4 className="text-xs font-black text-primary uppercase tracking-widest">Active Transport Details</h4>
+                              <div className="space-y-1.5 text-xs text-foreground/75">
+                                <p>Route Name: <strong className="text-foreground">{studentTransport[activeStudentName].route}</strong></p>
+                                <p>Assigned Bus: <strong className="text-foreground">{studentTransport[activeStudentName].vehicle}</strong></p>
+                                <p>Driver Name: <strong className="text-foreground">{studentTransport[activeStudentName].driver}</strong></p>
+                                <p>Driver Phone: <strong className="text-foreground">{studentTransport[activeStudentName].phone}</strong></p>
+                                <p>Transport Fee: <strong className="text-foreground">{formatCurrency(studentTransport[activeStudentName].fee || 2500)} / mo</strong></p>
+                              </div>
+                            </div>
+                            <div className="p-3 bg-muted/20 border border-border rounded-xl text-center flex flex-col justify-center">
+                              <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest block mb-1">GPS Status</span>
+                              <strong className="text-xs text-foreground font-black">Driver Synced & En Route</strong>
+                              <span className="text-[9px] text-foreground/50 mt-1 block">Live GPS map simulation shown below</span>
+                            </div>
+                          </div>
+
+                          {/* Render Live GPS Map Simulation */}
+                          <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl space-y-4 shadow-inner">
+                            <div className="flex justify-between items-center text-xs text-slate-300 border-b border-slate-800 pb-2">
+                              <div className="flex items-center gap-2">
+                                <span className="p-1 rounded bg-slate-800 text-yellow-400 font-bold">BUS-08</span>
+                                <span className="font-bold text-white">Route Alpha (Main Loop)</span>
+                              </div>
+                              <span className="text-emerald-400 font-bold font-mono">Speed: 42 km/h</span>
+                            </div>
+
+                            {/* Styled Map Timeline Path */}
+                            <div className="relative py-6 px-2">
+                              {/* Horizontal progress path track line */}
+                              <div className="absolute top-1/2 left-0 right-0 h-1.5 bg-slate-800 -translate-y-1/2 rounded"></div>
+                              <div className="absolute top-1/2 left-0 w-3/5 h-1.5 bg-gradient-to-r from-primary to-emerald-400 -translate-y-1/2 rounded"></div>
+
+                              <div className="relative flex justify-between items-center">
+                                {/* Stop 1 */}
+                                <div className="flex flex-col items-center">
+                                  <div className="w-4 h-4 rounded-full bg-primary border-4 border-slate-900 z-10"></div>
+                                  <span className="text-[10px] text-slate-400 font-bold mt-1.5">Campus</span>
+                                </div>
+
+                                {/* Stop 2 */}
+                                <div className="flex flex-col items-center">
+                                  <div className="w-4 h-4 rounded-full bg-primary border-4 border-slate-900 z-10"></div>
+                                  <span className="text-[10px] text-slate-400 font-bold mt-1.5">Johar Town</span>
+                                </div>
+
+                                {/* Active Bus Icon Marker */}
+                                <div className="flex flex-col items-center -mt-2">
+                                  <div className="px-2 py-1 bg-emerald-400 text-slate-950 rounded text-[9px] font-black z-20 shadow-md animate-bounce">
+                                    🚌 BUS
+                                  </div>
+                                  <div className="w-4 h-4 rounded-full bg-emerald-400 border-4 border-slate-900 z-10 mt-1 shadow shadow-emerald-400/50"></div>
+                                </div>
+
+                                {/* Stop 3 */}
+                                <div className="flex flex-col items-center">
+                                  <div className="w-4 h-4 rounded-full bg-slate-800 border-4 border-slate-900 z-10"></div>
+                                  <span className="text-[10px] text-slate-500 font-semibold mt-1.5">Model Town</span>
+                                </div>
+
+                                {/* Stop 4 */}
+                                <div className="flex flex-col items-center">
+                                  <div className="w-4 h-4 rounded-full bg-slate-800 border-4 border-slate-900 z-10"></div>
+                                  <span className="text-[10px] text-slate-500 font-semibold mt-1.5">DHA Gate</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Real-time Telemetry Stats */}
+                            <div className="grid grid-cols-3 gap-2 bg-slate-950 p-3 rounded-lg border border-slate-800 text-center">
+                              <div>
+                                <span className="block text-[9px] text-slate-500 font-bold uppercase">Stops Remaining</span>
+                                <strong className="text-white text-sm font-black">2 Stops Left</strong>
+                              </div>
+                              <div>
+                                <span className="block text-[9px] text-slate-500 font-bold uppercase">Estimated Distance</span>
+                                <strong className="text-white text-sm font-black">4.8 km</strong>
+                              </div>
+                              <div>
+                                <span className="block text-[9px] text-slate-500 font-bold uppercase">ETA Duration</span>
+                                <strong className="text-emerald-400 text-sm font-black animate-pulse">~ 12 mins</strong>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {activeFeature === 'Transport Roster' && (
+                    <div className="space-y-4">
+                      <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                        📋 Classroom Transport Allocation Roster. Review which students use school transport services.
+                      </div>
+                      <div className="space-y-2.5">
+                        {students.map((st) => {
+                          const transport = studentTransport[st.name] || { active: false };
+                          return (
+                            <div key={st.id} className="p-3 bg-card border border-border rounded-xl flex items-center justify-between">
+                              <div>
+                                <strong className="text-xs text-foreground font-extrabold">{st.name}</strong>
+                                <span className="text-[10px] text-foreground/50 ml-2">({st.className})</span>
+                              </div>
+                              <div>
+                                {transport.active ? (
+                                  <span className="px-2.5 py-1 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                    Active: {transport.route}
+                                  </span>
+                                ) : (
+                                  <span className="px-2.5 py-1 rounded text-[10px] font-bold bg-slate-500/10 text-slate-400 border border-slate-500/25">
+                                    No Transport
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
 
                   {/* GPS Tracking Sub-view */}
                   {(activeFeature === 'GPS Tracking' || activeFeature === 'Transport GPS Tracking') && (
@@ -4259,13 +5081,105 @@ export const UnifiedDashboard: React.FC = () => {
               )}
 
               {/* ROOM ALLOCATION & BED ALLOCATION & MESS MANAGEMENT */}
-              {['Room Allocation', 'Bed Allocation', 'Mess Management', 'Hostel Reports', 'Hostel Fees'].includes(activeFeature) && (
+              {['Room Allocation', 'Bed Allocation', 'Mess Management', 'Hostel Reports', 'Hostel Fees', 'Hostel Portal', 'Hostel Roster'].includes(activeFeature) && (
                 <div className="space-y-4">
                   {/* Common Hostel Status */}
                   <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed flex items-center justify-between">
                     <span>🏠 Hostel Administration: <strong className="text-emerald-400 font-mono">Wing A & B</strong> online. Warden on duty.</span>
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
                   </div>
+
+                  {activeFeature === 'Hostel Portal' && (
+                    <div className="space-y-4">
+                      {!(studentHostel[activeStudentName]?.allocated) ? (
+                        <div className="p-6 bg-card border border-border rounded-2xl space-y-4 text-center">
+                          <div className="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-lg mx-auto">
+                            🏠
+                          </div>
+                          <div className="space-y-1">
+                            <h4 className="text-sm font-extrabold text-foreground">Hostel Boarding Unallocated</h4>
+                            <p className="text-xs text-foreground/60 max-w-md mx-auto leading-relaxed">
+                              This student profile is currently not registered for school hostel boarding. Benefits include fully furnished rooms, study zones, round-the-clock security, and hot mess meals.
+                            </p>
+                          </div>
+                          <div className="border-t border-border pt-4 text-xs font-semibold text-foreground/70 space-y-1.5 max-w-sm mx-auto text-left">
+                            <div className="flex justify-between"><span>Hostel Room Available:</span><span className="text-foreground">Wing B (Shared Room)</span></div>
+                            <div className="flex justify-between"><span>Boarding Fee:</span><span className="text-foreground">{formatCurrency(8500)} / month</span></div>
+                            <div className="flex justify-between"><span>Warden:</span><span className="text-foreground">Sajid Malik</span></div>
+                          </div>
+                          <button
+                            onClick={() => {
+                              requestSecurityVerification(`Request hostel room allocation for ${activeStudentName} at ${formatCurrency(8500)}/mo`, () => {
+                                setStudentHostel(prev => ({
+                                  ...prev,
+                                  [activeStudentName]: { allocated: true, wing: 'Wing B', room: 'Room 202', warden: 'Sajid Malik', phone: '0321-7654321', feeStatus: 'Unpaid' }
+                                }));
+                              });
+                            }}
+                            className="px-6 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md"
+                          >
+                            Request Hostel Room Booking
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="p-4 bg-card border border-border rounded-2xl grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <h4 className="text-xs font-black text-primary uppercase tracking-widest">Active Boarding Details</h4>
+                            <div className="space-y-1.5 text-xs text-foreground/75">
+                              <p>Hostel Wing: <strong className="text-foreground">{studentHostel[activeStudentName].wing}</strong></p>
+                              <p>Room Assigned: <strong className="text-foreground">{studentHostel[activeStudentName].room}</strong></p>
+                              <p>Hostel Warden: <strong className="text-foreground">{studentHostel[activeStudentName].warden}</strong></p>
+                              <p>Warden Phone: <strong className="text-foreground">{studentHostel[activeStudentName].phone}</strong></p>
+                              <p>Monthly Hostel Fee: <strong className="text-foreground">{formatCurrency(8500)} / mo</strong></p>
+                            </div>
+                          </div>
+                          <div className="p-3 bg-muted/20 border border-border rounded-xl text-center flex flex-col justify-center">
+                            <span className="text-[10px] font-black text-primary uppercase tracking-widest block mb-1">Fee Invoice Status</span>
+                            <span className={`px-2.5 py-1 rounded text-xs font-black uppercase tracking-wider border mx-auto ${
+                              studentHostel[activeStudentName].feeStatus === 'Paid'
+                                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25'
+                                : 'bg-red-500/10 text-red-400 border-red-500/25 animate-pulse'
+                            }`}>
+                              {studentHostel[activeStudentName].feeStatus}
+                            </span>
+                            <span className="text-[9px] text-foreground/50 mt-2 block">Dues are billed alongside monthly tuition fees.</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {activeFeature === 'Hostel Roster' && (
+                    <div className="space-y-4">
+                      <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                        📋 Classroom Hostel Roster. Review room allocations for active boarders.
+                      </div>
+                      <div className="space-y-2.5">
+                        {students.map((st) => {
+                          const hostel = studentHostel[st.name] || { allocated: false };
+                          return (
+                            <div key={st.id} className="p-3 bg-card border border-border rounded-xl flex items-center justify-between">
+                              <div>
+                                <strong className="text-xs text-foreground font-extrabold">{st.name}</strong>
+                                <span className="text-[10px] text-foreground/50 ml-2">({st.className})</span>
+                              </div>
+                              <div>
+                                {hostel.allocated ? (
+                                  <span className="px-2.5 py-1 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                    Allocated: {hostel.wing} - {hostel.room}
+                                  </span>
+                                ) : (
+                                  <span className="px-2.5 py-1 rounded text-[10px] font-bold bg-slate-500/10 text-slate-400 border border-slate-500/25">
+                                    Day Scholar
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Mess Management Sub-view */}
                   {activeFeature === 'Mess Management' && (
@@ -4852,83 +5766,185 @@ export const UnifiedDashboard: React.FC = () => {
               {['Marks Sheet', 'Exams Results', 'Exam Grades', 'Academic Oversight', 'Academic Monitoring'].includes(activeFeature || '') && (
                 <div className="space-y-4">
                   {/* Beautiful Result Card Widget */}
-                  <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl space-y-4 shadow-xl text-slate-200">
+                  <div className="p-6 bg-card border border-border rounded-2xl space-y-4 shadow-xl text-card-foreground">
                     
                     {/* Header: Logo & Title */}
-                    <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                    <div className="flex items-center justify-between border-b border-border pb-4">
                       <div className="flex items-center gap-3">
                         {/* Shield Badge Logo Icon */}
-                        <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 flex items-center justify-center">
-                          <GraduationCap className="w-8 h-8" />
-                        </div>
+                        {currentSchool?.logoUrl ? (
+                          <div className="flex items-center justify-center w-12 h-12">
+                            <img src={currentSchool.logoUrl} className="w-12 h-12 object-contain" alt="School Logo" />
+                          </div>
+                        ) : (
+                          <div className="p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-600 dark:text-emerald-400 flex items-center justify-center w-12 h-12">
+                            <GraduationCap className="w-8 h-8" />
+                          </div>
+                        )}
                         <div>
-                          <h4 className="text-base font-black text-white tracking-wide uppercase leading-none">
-                            {currentTenant?.schoolName || 'Beaconhouse'}
+                          <h4 className="text-base font-black text-foreground tracking-wide uppercase leading-none">
+                            {currentSchool?.schoolName || 'Dar-e-Arqam School'}
                           </h4>
-                          <span className="text-[10px] text-slate-400 block font-bold uppercase tracking-wider mt-1">Campus Lahore</span>
+                          <span className="text-[10px] text-muted-foreground block font-bold uppercase tracking-wider mt-1">
+                            {currentSchool?.city ? `Campus ${currentSchool.city}` : 'Campus Lahore'}
+                          </span>
                         </div>
                       </div>
                       <div className="text-right">
-                        <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest leading-none">STUDENT PROGRESS CARD</h3>
-                        <span className="text-sm font-black text-primary uppercase tracking-widest leading-tight block mt-0.5">& TRANSCRIPT</span>
-                        <span className="text-[9px] text-slate-500 block mt-1 font-semibold">Date of Issue: 15 June 2026</span>
+                        <h3 className="text-xs font-black text-muted-foreground uppercase tracking-widest leading-none">STUDENT PROGRESS CARD</h3>
+                        <span className="text-sm font-black text-primary dark:text-purple-400 uppercase tracking-widest leading-tight block mt-0.5">& TRANSCRIPT</span>
+                        <span className="text-[9px] text-muted-foreground/80 block mt-1 font-semibold">Date of Issue: 15 June 2026</span>
                       </div>
                     </div>
 
                     {/* Student Metadata Box */}
-                    <div className="grid grid-cols-4 gap-4 p-3 bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800/80 rounded-xl text-[10px] font-medium">
+                    <div className="grid grid-cols-4 gap-4 p-3 bg-muted border border-border rounded-xl text-[10px] font-medium">
                       <div>
-                        <span className="text-[9px] text-slate-500 block uppercase font-bold tracking-wider mb-0.5">Student Name</span>
-                        <span className="text-white font-black text-xs">Ahmed Khan</span>
+                        <span className="text-[9px] text-muted-foreground block uppercase font-bold tracking-wider mb-0.5">Student Name</span>
+                        {isEditor ? (
+                          <select 
+                            value={activeStudentName}
+                            onChange={(e) => setSelectedReportStudent(e.target.value)}
+                            className="bg-card border border-border rounded text-foreground font-black text-xs px-1 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary w-full"
+                          >
+                            {students.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
+                          </select>
+                        ) : (
+                          <span className="text-foreground font-black text-xs">{activeStudentName}</span>
+                        )}
                       </div>
                       <div>
-                        <span className="text-[9px] text-slate-500 block uppercase font-bold tracking-wider mb-0.5">Admission ID</span>
-                        <span className="text-white font-mono text-xs">12345</span>
+                        <span className="text-[9px] text-muted-foreground block uppercase font-bold tracking-wider mb-0.5">Admission ID</span>
+                        <span className="text-foreground font-mono text-xs">
+                          {`ADM-2026-${(activeStudent?.id || '1').padStart(3, '0')}`}
+                        </span>
                       </div>
                       <div>
-                        <span className="text-[9px] text-slate-500 block uppercase font-bold tracking-wider mb-0.5">Class Group</span>
-                        <span className="text-white font-bold text-xs">Grade 10 Science</span>
+                        <span className="text-[9px] text-muted-foreground block uppercase font-bold tracking-wider mb-0.5">Class Group</span>
+                        <span className="text-foreground font-bold text-xs">
+                          {activeStudent?.className || 'Grade 10 Science'}
+                        </span>
                       </div>
                       <div>
-                        <span className="text-[9px] text-slate-500 block uppercase font-bold tracking-wider mb-0.5">Roll Number</span>
-                        <span className="text-white font-mono text-xs">45</span>
+                        <span className="text-[9px] text-muted-foreground block uppercase font-bold tracking-wider mb-0.5">Roll Number</span>
+                        <span className="text-foreground font-mono text-xs">
+                          {activeStudent?.roll || '45'}
+                        </span>
                       </div>
                     </div>
 
                     {/* Detailed Expanded Subjects Table */}
                     <table className="w-full text-xs text-left border-collapse mt-2">
                       <thead>
-                        <tr className="text-slate-500 font-bold border-b border-slate-800 bg-slate-950/20 text-[9px] uppercase tracking-wider">
+                        <tr className="text-muted-foreground font-bold border-b border-border bg-muted/40 text-[9px] uppercase tracking-wider">
                           <th className="p-2.5">Subject Course</th>
                           <th className="p-2.5 text-center">Midterm Grade</th>
                           <th className="p-2.5 text-center">Marks Obtained</th>
                           <th className="p-2.5 text-right">Status</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-850/60 text-slate-300 font-medium">
-                        <tr className="hover:bg-slate-950/30"><td className="p-2.5 font-bold text-slate-200">Mathematics</td><td className="p-2.5 text-center font-black text-primary">A</td><td className="p-2.5 text-center font-mono">92 / 100</td><td className="p-2.5 text-right"><span className="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-black uppercase tracking-wider">Pass</span></td></tr>
-                        <tr className="hover:bg-slate-950/30"><td className="p-2.5 font-bold text-slate-200">Physics</td><td className="p-2.5 text-center font-black text-primary">A</td><td className="p-2.5 text-center font-mono">88 / 100</td><td className="p-2.5 text-right"><span className="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-black uppercase tracking-wider">Pass</span></td></tr>
-                        <tr className="hover:bg-slate-950/30"><td className="p-2.5 font-bold text-slate-200">Chemistry</td><td className="p-2.5 text-center font-black text-primary">B+</td><td className="p-2.5 text-center font-mono">79 / 100</td><td className="p-2.5 text-right"><span className="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-black uppercase tracking-wider">Pass</span></td></tr>
-                        <tr className="hover:bg-slate-950/30"><td className="p-2.5 font-bold text-slate-200">Biology</td><td className="p-2.5 text-center font-black text-primary">A</td><td className="p-2.5 text-center font-mono">90 / 100</td><td className="p-2.5 text-right"><span className="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-black uppercase tracking-wider">Pass</span></td></tr>
-                        <tr className="hover:bg-slate-950/30"><td className="p-2.5 font-bold text-slate-200">English Language</td><td className="p-2.5 text-center font-black text-primary">A</td><td className="p-2.5 text-center font-mono">94 / 100</td><td className="p-2.5 text-right"><span className="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-black uppercase tracking-wider">Pass</span></td></tr>
-                        <tr className="hover:bg-slate-950/30"><td className="p-2.5 font-bold text-slate-200">Computer Science</td><td className="p-2.5 text-center font-black text-primary">A</td><td className="p-2.5 text-center font-mono">95 / 100</td><td className="p-2.5 text-right"><span className="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-black uppercase tracking-wider">Pass</span></td></tr>
+                      <tbody className="divide-y divide-border text-foreground/80 font-medium">
+                        {getStudentGrades(activeStudentName).map((g, idx) => (
+                          <tr key={idx} className="hover:bg-muted/30">
+                            <td className="p-2.5 font-bold text-foreground">{g.subject}</td>
+                            <td className="p-2.5 text-center">
+                              {isEditor ? (
+                                <select
+                                  value={g.grade}
+                                  onChange={(e) => {
+                                    const newGrade = e.target.value;
+                                    setStudentGrades(prev => {
+                                      const current = getStudentGrades(activeStudentName);
+                                      const updated = current.map((item, i) => i === idx ? { ...item, grade: newGrade } : item);
+                                      return { ...prev, [activeStudentName]: updated };
+                                    });
+                                  }}
+                                  className="bg-card border border-border rounded text-center text-xs p-1 font-black text-primary dark:text-purple-400 focus:outline-none"
+                                >
+                                  {['A+', 'A', 'B+', 'B', 'C+', 'C', 'D', 'F'].map(gr => <option key={gr} value={gr}>{gr}</option>)}
+                                </select>
+                              ) : (
+                                <span className="font-black text-primary dark:text-purple-400">{g.grade}</span>
+                              )}
+                            </td>
+                            <td className="p-2.5 text-center font-mono">
+                              {isEditor ? (
+                                <div className="flex items-center justify-center gap-1">
+                                  <input 
+                                    type="number" 
+                                    value={g.marks} 
+                                    onChange={(e) => {
+                                      const newMarks = parseFloat(e.target.value) || 0;
+                                      let newGrade = 'F';
+                                      if (newMarks >= 90) newGrade = 'A';
+                                      else if (newMarks >= 80) newGrade = 'B+';
+                                      else if (newMarks >= 70) newGrade = 'B';
+                                      else if (newMarks >= 60) newGrade = 'C+';
+                                      else if (newMarks >= 50) newGrade = 'C';
+                                      const newStatus = newMarks >= 50 ? 'Pass' : 'Fail';
+                                      
+                                      setStudentGrades(prev => {
+                                        const current = getStudentGrades(activeStudentName);
+                                        const updated = current.map((item, i) => i === idx ? { ...item, marks: newMarks, grade: newGrade, status: newStatus } : item);
+                                        return { ...prev, [activeStudentName]: updated };
+                                      });
+                                    }}
+                                    className="w-16 bg-card border border-border rounded text-center text-xs p-1"
+                                    min="0"
+                                    max={g.total}
+                                  />
+                                  <span>/ {g.total}</span>
+                                </div>
+                              ) : (
+                                `${g.marks} / ${g.total}`
+                              )}
+                            </td>
+                            <td className="p-2.5 text-right">
+                              {isEditor ? (
+                                <select
+                                  value={g.status}
+                                  onChange={(e) => {
+                                    const newStatus = e.target.value;
+                                    setStudentGrades(prev => {
+                                      const current = getStudentGrades(activeStudentName);
+                                      const updated = current.map((item, i) => i === idx ? { ...item, status: newStatus } : item);
+                                      return { ...prev, [activeStudentName]: updated };
+                                    });
+                                  }}
+                                  className="bg-card border border-border rounded text-xs p-1 font-bold focus:outline-none"
+                                >
+                                  <option value="Pass">Pass</option>
+                                  <option value="Fail">Fail</option>
+                                </select>
+                              ) : (
+                                <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider ${
+                                  g.status === 'Pass' 
+                                    ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400' 
+                                    : 'bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400'
+                                }`}>
+                                  {g.status}
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
                       </tbody>
                     </table>
 
                     {/* Principal Remarks & Evaluation */}
                     <div className="p-3 bg-emerald-500/5 border border-emerald-500/15 rounded-xl space-y-1.5 text-[10px] leading-relaxed">
-                      <span className="block font-black text-emerald-400 uppercase tracking-widest text-[8px]">Principal Remarks & Evaluation</span>
-                      <p className="text-slate-300 font-medium">
-                        Ahmed is an exceptionally hard-working and dedicated student. He has shown remarkable progress across all science subjects this term. His analytical skills and attention to detail are commendable. Continued focus will ensure future success.
+                      <span className="block font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest text-[8px]">Principal Remarks & Evaluation</span>
+                      <p className="text-foreground/90 font-medium">
+                        {activeStudentName} is an exceptionally hard-working and dedicated student. They have shown remarkable progress across all science subjects this term. Their analytical skills and attention to detail are commendable. Continued focus will ensure future success.
                       </p>
                     </div>
 
                     {/* Signatures & Seal Row */}
-                    <div className="flex justify-between items-center pt-3 border-t border-slate-800/80 mt-2 text-[9px] font-bold text-slate-500 text-center">
+                    <div className="flex justify-between items-center pt-3 border-t border-border mt-2 text-[9px] font-bold text-muted-foreground text-center">
                       <div className="w-24 space-y-1">
-                        <span className="block font-mono text-slate-200 italic text-[11px]">Signature</span>
-                        <div className="h-0.5 bg-slate-800 w-full"></div>
-                        <span className="block text-[7px] uppercase tracking-wider text-slate-500">Class Teacher</span>
+                        <span className="block font-mono text-foreground italic text-[11px]">Signature</span>
+                        <div className="h-0.5 bg-border w-full"></div>
+                        <span className="block text-[7px] uppercase tracking-wider text-muted-foreground/80">Class Teacher</span>
                       </div>
                       
                       {/* Premium Gold Stamp Seal */}
@@ -4937,13 +5953,13 @@ export const UnifiedDashboard: React.FC = () => {
                           <span className="absolute inset-0 bg-white/10 rotate-45 transform origin-top-left"></span>
                           SEAL
                         </div>
-                        <span className="text-[7px] uppercase tracking-widest text-amber-500 mt-1 font-black">Official Verification</span>
+                        <span className="text-[7px] uppercase tracking-widest text-amber-600 dark:text-amber-400 mt-1 font-black">Official Verification</span>
                       </div>
                       
                       <div className="w-24 space-y-1">
-                        <span className="block font-mono text-slate-200 italic text-[11px]">Principal</span>
-                        <div className="h-0.5 bg-slate-800 w-full"></div>
-                        <span className="block text-[7px] uppercase tracking-wider text-slate-500">Principal Seal</span>
+                        <span className="block font-mono text-foreground italic text-[11px]">Principal</span>
+                        <div className="h-0.5 bg-border w-full"></div>
+                        <span className="block text-[7px] uppercase tracking-wider text-muted-foreground/80">Principal Seal</span>
                       </div>
                     </div>
 
@@ -4951,14 +5967,46 @@ export const UnifiedDashboard: React.FC = () => {
 
                   {/* Marks input form */}
                   {isEditor && (
-                    <form onSubmit={(e) => { e.preventDefault(); alert('Grades posted successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3 pb-4">
+                    <form 
+                      onSubmit={(e) => { 
+                        e.preventDefault(); 
+                        const formData = new FormData(e.currentTarget);
+                        const studentName = formData.get('student_name') as string;
+                        const subject = formData.get('subject') as string;
+                        const marks = parseFloat(formData.get('marks') as string) || 0;
+                        
+                        let grade = 'F';
+                        if (marks >= 90) grade = 'A';
+                        else if (marks >= 80) grade = 'B+';
+                        else if (marks >= 70) grade = 'B';
+                        else if (marks >= 60) grade = 'C+';
+                        else if (marks >= 50) grade = 'C';
+                        
+                        const status = marks >= 50 ? 'Pass' : 'Fail';
+                        
+                        setStudentGrades(prev => {
+                          const current = getStudentGrades(studentName);
+                          const existsIdx = current.findIndex(g => g.subject.toLowerCase() === subject.toLowerCase());
+                          let updated;
+                          if (existsIdx > -1) {
+                            updated = current.map((item, idx) => idx === existsIdx ? { ...item, marks, grade, status } : item);
+                          } else {
+                            updated = [...current, { subject, grade, marks, total: 100, status }];
+                          }
+                          return { ...prev, [studentName]: updated };
+                        });
+                        alert(`Grades for ${studentName} updated successfully!`);
+                        e.currentTarget.reset();
+                      }} 
+                      className="p-4 bg-muted/30 border border-border rounded-xl space-y-3 pb-4"
+                    >
                       <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Log Midterm Grades & Marks</span>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
+                        <select name="student_name" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
                           {students.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
                         </select>
-                        <input type="text" placeholder="Subject (e.g. Physics)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
-                        <input type="number" placeholder="Marks % (e.g. 85)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
+                        <input name="subject" type="text" placeholder="Subject (e.g. Physics)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
+                        <input name="marks" type="number" placeholder="Marks % (e.g. 85)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
                       </div>
                       <div className="flex justify-center gap-2.5 pt-2 pb-1">
                         <button type="submit" className="px-6 py-2.5 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md">
@@ -4979,16 +6027,16 @@ export const UnifiedDashboard: React.FC = () => {
                 <div className="space-y-4 animate-fadeIn">
                   {/* Print-only branding block containing School Logo & Name */}
                   <div className="hidden print:flex items-center justify-center gap-4 border-b-2 border-slate-200/80 pb-4 mb-4">
-                    {currentTenant?.logoUrl && (
+                    {currentSchool?.logoUrl && (
                       <img 
-                        src={currentTenant.logoUrl} 
+                        src={currentSchool.logoUrl} 
                         alt="School Logo" 
                         className="w-12 h-12 object-contain"
                       />
                     )}
                     <div>
                       <h2 className="text-lg font-black text-slate-800 uppercase tracking-wide">
-                        {currentTenant?.schoolName || 'Academic Hub Partner School'}
+                        {currentSchool?.schoolName || 'Academic Hub Partner School'}
                       </h2>
                       <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">
                         Class Timetable &amp; Roster Layout
@@ -5377,7 +6425,7 @@ export const UnifiedDashboard: React.FC = () => {
                           </div>
                         </div>
                         <a 
-                          href={`data:text/plain;charset=utf-8,Study%20material%20content%20for%20${encodeURIComponent(material.title)}`}
+                          href={`/${material.file}`}
                           download={material.file}
                           target="_blank"
                           rel="noreferrer"
@@ -5540,8 +6588,8 @@ export const UnifiedDashboard: React.FC = () => {
                       const form = e.target as HTMLFormElement;
                       const deliveryChannel = (form.elements.namedItem('deliveryChannel') as HTMLSelectElement).value;
                       const parentLabel = simulatedRole === 'parent' 
-                        ? `Parent of Kamran Shah (${currentUser?.name || 'M. Shah'})` 
-                        : `Broadcast (re: ${newParentMessageStudent})`;
+                        ? `Parent of ${activeStudentName} (${currentUser?.name || 'M. Shah'})` 
+                        : `Broadcast (re: ${newParentMessageStudent || (students[0]?.name || '')})`;
                       
                       const finalStatus = simulatedRole === 'parent'
                         ? 'Sent to Tutors'
@@ -5577,7 +6625,7 @@ export const UnifiedDashboard: React.FC = () => {
                     </span>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                       <select 
-                        value={newParentMessageStudent}
+                        value={newParentMessageStudent || (students[0]?.name || '')}
                         onChange={(e) => setNewParentMessageStudent(e.target.value)}
                         className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold"
                       >
@@ -6542,7 +7590,7 @@ export const UnifiedDashboard: React.FC = () => {
                       <div className="flex-1 flex flex-col justify-between pt-4">
                         <div className="space-y-3 text-center">
                           <div className="inline-flex p-2 bg-primary/20 border border-primary/30 rounded-xl text-primary text-xs font-bold uppercase tracking-wider mt-2">
-                            {currentTenant?.schoolName || "Central School"} Mobile App
+                            {currentSchool?.schoolName || "Central School"} Mobile App
                           </div>
                           <p className="text-[10px] text-foreground/70">Secure Offline Sync Enabled</p>
                         </div>
@@ -6766,7 +7814,7 @@ export const UnifiedDashboard: React.FC = () => {
                               🎓
                             </div>
                             <div>
-                              <strong className="block text-white text-xs font-black">{currentTenant?.schoolName || 'Academic Hub School'}</strong>
+                              <strong className="block text-white text-xs font-black">{currentSchool?.schoolName || 'Academic Hub School'}</strong>
                               <span className="text-[9px] text-slate-500 block">Sponsor Campaign</span>
                             </div>
                           </div>

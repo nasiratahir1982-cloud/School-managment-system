@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useTenantStore } from '../../store/tenantStore';
+import { useSchoolStore } from '../../store/schoolStore';
 import { useAuthStore } from '../../store/authStore';
 import { useStudents } from '../../hooks/useStudents';
 import { useNavigate } from 'react-router-dom';
@@ -23,8 +23,8 @@ import { useThemeStore } from '../../store/themeStore';
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const formatCurrency = useTenantStore((state) => state.formatCurrency);
-  const getRollLabel = useTenantStore((state) => state.getRollLabel);
+  const formatCurrency = useSchoolStore((state) => state.formatCurrency);
+  const getRollLabel = useSchoolStore((state) => state.getRollLabel);
   const currentUser = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const { darkMode, toggleTheme } = useThemeStore();

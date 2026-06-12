@@ -41,7 +41,7 @@ function App() {
           {/* Public authentication portal */}
           <Route path="/" element={<Login />} />
 
-          {/* Super Admin tenant management endpoint */}
+          {/* Super Admin school management endpoint */}
           <Route 
             path="/super-admin" 
             element={

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useTenantStore } from '../../store/tenantStore';
+import { useSchoolStore } from '../../store/schoolStore';
 import { useAuthStore } from '../../store/authStore';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -26,10 +26,10 @@ interface FeeChallan {
 
 export const StudentDashboard: React.FC = () => {
   const navigate = useNavigate();
-  const currentTenant = useTenantStore((state) => state.currentTenant);
-  const formatCurrency = useTenantStore((state) => state.formatCurrency);
-  const getPhonePrefix = useTenantStore((state) => state.getPhonePrefix);
-  const getRollLabel = useTenantStore((state) => state.getRollLabel);
+  const currentSchool = useSchoolStore((state) => state.currentSchool);
+  const formatCurrency = useSchoolStore((state) => state.formatCurrency);
+  const getPhonePrefix = useSchoolStore((state) => state.getPhonePrefix);
+  const getRollLabel = useSchoolStore((state) => state.getRollLabel);
   const currentUser = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const { darkMode, toggleTheme } = useThemeStore();
@@ -92,7 +92,7 @@ export const StudentDashboard: React.FC = () => {
                 {currentUser?.name || 'Student'}
               </h1>
               <span className="text-[10px] text-muted-foreground mt-1 block">
-                Tenant: <strong className="text-foreground">{currentTenant?.schoolName || 'AcaHub'}</strong>
+                School: <strong className="text-foreground">{currentSchool?.schoolName || 'AcaHub'}</strong>
               </span>
             </div>
           </div>

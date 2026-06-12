@@ -18,6 +18,7 @@ class BOA_Ajax {
         add_action( 'wp_ajax_boa_get_students', array( __CLASS__, 'get_students' ) );
         add_action( 'wp_ajax_boa_save_student', array( __CLASS__, 'save_student' ) );
         add_action( 'wp_ajax_boa_delete_student', array( __CLASS__, 'delete_student' ) );
+        add_action( 'wp_ajax_boa_get_next_student_id', array( __CLASS__, 'get_next_student_id' ) );
 
         // Courses
         add_action( 'wp_ajax_boa_get_courses', array( __CLASS__, 'get_courses' ) );
@@ -105,6 +106,8 @@ class BOA_Ajax {
         add_action( 'wp_ajax_boa_get_quiz_questions', array( __CLASS__, 'get_quiz_questions' ) );
         add_action( 'wp_ajax_boa_save_quiz_question', array( __CLASS__, 'save_quiz_question' ) );
         add_action( 'wp_ajax_boa_delete_quiz_question', array( __CLASS__, 'delete_quiz_question' ) );
+        add_action( 'wp_ajax_boa_get_quiz_attempts', array( __CLASS__, 'get_quiz_attempts' ) );
+        add_action( 'wp_ajax_boa_update_quiz_attempt', array( __CLASS__, 'update_quiz_attempt' ) );
         add_action( 'wp_ajax_boa_get_assignments', array( __CLASS__, 'get_assignments' ) );
         add_action( 'wp_ajax_boa_save_assignment', array( __CLASS__, 'save_assignment' ) );
         add_action( 'wp_ajax_boa_delete_assignment', array( __CLASS__, 'delete_assignment' ) );
@@ -578,6 +581,36 @@ class BOA_Ajax {
         wp_send_json_success( array( 'message' => __( 'Question removed.', 'baba-online-academy' ) ) );
     }
 
+    public static function get_quiz_attempts() {
+        check_ajax_referer( 'boa_quizzes_nonce', 'nonce' );
+        if ( ! self::can_manage_instruction() ) {
+            wp_send_json_error( array( 'message' => __( 'Unauthorized', 'baba-online-academy' ) ) );
+        }
+        $quiz_id = isset( $_POST['quiz_id'] ) ? absint( $_POST['quiz_id'] ) : 0;
+        if ( ! $quiz_id ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid quiz.', 'baba-online-academy' ) ) );
+        }
+        $attempts = BOA_DB::get_quiz_attempts( $quiz_id );
+        wp_send_json_success( array( 'attempts' => $attempts ) );
+    }
+
+    public static function update_quiz_attempt() {
+        check_ajax_referer( 'boa_quizzes_nonce', 'nonce' );
+        if ( ! self::can_manage_instruction() ) {
+            wp_send_json_error( array( 'message' => __( 'Unauthorized', 'baba-online-academy' ) ) );
+        }
+        $attempt_id = isset( $_POST['attempt_id'] ) ? absint( $_POST['attempt_id'] ) : 0;
+        $score      = isset( $_POST['score'] ) ? floatval( $_POST['score'] ) : 0.0;
+        if ( ! $attempt_id ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid attempt.', 'baba-online-academy' ) ) );
+        }
+        $result = BOA_DB::update_quiz_attempt_score( $attempt_id, $score );
+        if ( $result === false ) {
+            wp_send_json_error( array( 'message' => __( 'Unable to update score.', 'baba-online-academy' ) ) );
+        }
+        wp_send_json_success( array( 'message' => __( 'Score updated.', 'baba-online-academy' ) ) );
+    }
+
     // ===== Assignments (Admin) =====
     public static function get_assignments() {
         check_ajax_referer( 'boa_assignments_nonce', 'nonce' );
@@ -909,9 +942,21 @@ class BOA_Ajax {
         return true;
     }
 
+    public static function get_next_student_id() {
+        check_ajax_referer( 'boa_students_nonce', 'nonce' );
+        if ( ! current_user_can( 'manage_options' ) && ! current_user_can( 'boa_manage_students' ) ) {
+            wp_send_json_error( array( 'message' => 'Unauthorized access.' ) );
+        }
+        $next_uid = BOA_DB::get_next_student_uid();
+        wp_send_json_success( array( 'next_student_id' => $next_uid ) );
+    }
+
     // ===== Students =====
     public static function get_students() {
         check_ajax_referer( 'boa_students_nonce', 'nonce' );
+        if ( ! current_user_can( 'manage_options' ) && ! current_user_can( 'boa_manage_students' ) ) {
+            wp_send_json_error( array( 'message' => 'Unauthorized access.' ) );
+        }
         $args = array(
             'page'     => isset( $_POST['page'] ) ? max( 1, (int) $_POST['page'] ) : 1,
             'per_page' => isset( $_POST['per_page'] ) ? max( 1, (int) $_POST['per_page'] ) : 10,
@@ -930,6 +975,9 @@ class BOA_Ajax {
     }
     public static function save_student() {
         check_ajax_referer( 'boa_students_nonce', 'nonce' );
+        if ( ! current_user_can( 'manage_options' ) && ! current_user_can( 'boa_manage_students' ) ) {
+            wp_send_json_error( array( 'message' => 'Unauthorized access.' ) );
+        }
         $data = wp_unslash( $_POST );
         if ( empty( $data['name'] ) || empty( $data['email'] ) || empty( $data['course_id'] ) || empty( $data['admission_date'] ) ) {
             wp_send_json_error( array( 'message' => 'Please fill all required fields.' ) );
@@ -961,6 +1009,9 @@ class BOA_Ajax {
     }
     public static function delete_student() {
         check_ajax_referer( 'boa_students_nonce', 'nonce' );
+        if ( ! current_user_can( 'manage_options' ) && ! current_user_can( 'boa_manage_students' ) ) {
+            wp_send_json_error( array( 'message' => 'Unauthorized access.' ) );
+        }
         $student_id = isset( $_POST['student_id'] ) ? absint( $_POST['student_id'] ) : 0;
         if ( $student_id === 0 ) { wp_send_json_error( array( 'message' => 'Invalid Student ID.' ) ); }
         $result = BOA_DB::delete_student( $student_id );

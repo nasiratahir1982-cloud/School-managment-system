@@ -767,6 +767,28 @@ class BOA_DB {
     
     // ===== Students Helpers =====
     public static function get_students( $args = array() ) { global $wpdb; $defaults = array( 'page' => 1, 'per_page' => 10, 'search' => '', 'status' => '', 'course' => '', 'dateFrom' => '', 'dateTo' => '' ); $args = wp_parse_args( $args, $defaults ); $students_table = $wpdb->prefix . 'boa_students'; $courses_table = $wpdb->prefix . 'boa_courses'; $sql_select = "SELECT s.*, c.course_name"; $sql_from = "FROM $students_table AS s LEFT JOIN $courses_table AS c ON s.course_id = c.course_id"; $sql_where = "WHERE 1=1"; $params = array(); if ( ! empty( $args['search'] ) ) { $search = '%' . $wpdb->esc_like( $args['search'] ) . '%'; $sql_where .= " AND (s.name LIKE %s OR s.email LIKE %s OR s.student_uid LIKE %s OR s.phone LIKE %s)"; $params[] = $search; $params[] = $search; $params[] = $search; $params[] = $search; } if ( ! empty( $args['status'] ) ) { $sql_where .= " AND s.status = %s"; $params[] = $args['status']; } if ( ! empty( $args['status__not_in'] ) ) { $status_not_in = $args['status__not_in']; $sql_where .= " AND s.status NOT IN ('" . implode( "','", array_map( 'esc_sql', $status_not_in ) ) . "')"; } if ( ! empty( $args['course'] ) ) { $sql_where .= " AND s.course_id = %d"; $params[] = $args['course']; } if ( ! empty( $args['dateFrom'] ) ) { $sql_where .= " AND s.admission_date >= %s"; $params[] = $args['dateFrom']; } if ( ! empty( $args['dateTo'] ) ) { $sql_where .= " AND s.admission_date <= %s"; $params[] = $args['dateTo']; } $total_items_sql = "SELECT COUNT(s.student_id) $sql_from $sql_where"; if ( ! empty( $params ) ) { $total_items_sql = $wpdb->prepare( $total_items_sql, $params ); } $total_items = $wpdb->get_var( $total_items_sql ); $sql_order = "ORDER BY s.created_at DESC"; $sql_limit = "LIMIT %d, %d"; $params[] = ( $args['page'] - 1 ) * $args['per_page']; $params[] = $args['per_page']; $full_sql = "$sql_select $sql_from $sql_where $sql_order $sql_limit"; if ( ! empty( $params ) ) { $full_sql = $wpdb->prepare( $full_sql, $params ); } $items = $wpdb->get_results( $full_sql, ARRAY_A ); return array( 'items' => $items ? $items : array(), 'total' => (int) $total_items ); }
+    public static function get_next_student_uid() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'boa_students';
+        
+        $uids = $wpdb->get_col( "SELECT student_uid FROM $table_name WHERE student_uid LIKE 'BOA-%'" );
+        
+        $max_num = 1000;
+        if ( ! empty( $uids ) ) {
+            foreach ( $uids as $uid ) {
+                if ( preg_match( '/BOA-(\d+)/i', $uid, $matches ) ) {
+                    $num = intval( $matches[1] );
+                    if ( $num > $max_num ) {
+                        $max_num = $num;
+                    }
+                }
+            }
+        }
+        
+        $next_num = $max_num + 1;
+        return 'BOA-' . $next_num;
+    }
+
     public static function save_student( $data ) {
         global $wpdb;
 
@@ -800,7 +822,12 @@ class BOA_DB {
             return $result !== false ? $student_id : new WP_Error( 'db_update_error', 'Could not update student.' );
         }
 
-        $fields['student_uid'] = 'BOA-' . time();
+        if ( ! empty( $data['student_uid'] ) ) {
+            $fields['student_uid'] = sanitize_text_field( $data['student_uid'] );
+        } else {
+            $fields['student_uid'] = self::get_next_student_uid();
+        }
+        
         $fields['created_at']  = current_time( 'mysql' );
         $formats[]             = '%s';
         $formats[]             = '%s';
@@ -3047,6 +3074,43 @@ class BOA_DB {
             'discount_applied' => floatval( $discount_amount ) - $remaining_discount,
             'records_updated' => $updated_records,
             'remaining_discount' => $remaining_discount
+        );
+    }
+
+    /**
+     * Get all student attempts for a specific quiz
+     */
+    public static function get_quiz_attempts( $quiz_id ) {
+        global $wpdb;
+        $quiz_id = absint( $quiz_id );
+        if ( ! $quiz_id ) {
+            return array();
+        }
+        $attempts_table = $wpdb->prefix . 'boa_quiz_attempts';
+        $students_table = $wpdb->prefix . 'boa_students';
+
+        $sql = $wpdb->prepare(
+            "SELECT a.*, s.name AS student_name, s.email AS student_email
+             FROM $attempts_table a
+             LEFT JOIN $students_table s ON a.student_id = s.student_id
+             WHERE a.quiz_id = %d ORDER BY a.attempt_date DESC",
+            $quiz_id
+        );
+        return $wpdb->get_results( $sql, ARRAY_A ) ?: array();
+    }
+
+    /**
+     * Update/override the score of a quiz attempt
+     */
+    public static function update_quiz_attempt_score( $attempt_id, $score ) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'boa_quiz_attempts';
+        return $wpdb->update(
+            $table,
+            array( 'score' => (float) $score ),
+            array( 'attempt_id' => absint( $attempt_id ) ),
+            array( '%f' ),
+            array( '%d' )
         );
     }
 }
