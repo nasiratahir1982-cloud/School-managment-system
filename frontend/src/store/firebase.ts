@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, onValue, set as dbSet } from 'firebase/database';
+import { getAuth } from 'firebase/auth';
 
 // Firebase configuration using environment variables or standard placeholders
 const firebaseConfig = {
@@ -15,6 +16,9 @@ const firebaseConfig = {
 // Initialize Firebase App
 const app = initializeApp(firebaseConfig);
 export const rtdb = getDatabase(app);
+
+// Initialize Firebase Auth
+export const auth = getAuth(app);
 
 // Check if using dummy placeholder config
 export const isUsingDummyConfig = () => {
@@ -36,6 +40,10 @@ export const setupRealtimeSync = (path: string, callback: (data: any) => void) =
 
 // Utility function to write data to a path in Realtime Database
 export const updateRealtimeData = async (path: string, data: any) => {
+  if (!auth.currentUser) {
+    console.error(`Firebase Realtime write rejected for path "${path}": User is not authenticated.`);
+    return false;
+  }
   try {
     const dbRef = ref(rtdb, path);
     await dbSet(dbRef, data);
