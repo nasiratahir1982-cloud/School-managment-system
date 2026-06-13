@@ -428,7 +428,7 @@ export const SuperAdminDashboard: React.FC = () => {
                             ></span>
                             <span className="text-xs text-muted-foreground font-mono truncate max-w-[80px] xl:max-w-none">HSL: {school.themeSettings.primaryHsl}</span>
                           </span>
-                          <span className="text-[10px] text-purple-600 dark:text-purple-400 font-black opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0 flex items-center gap-0.5 whitespace-nowrap">
+                          <span className="text-[10px] text-purple-600 dark:text-purple-400 font-black transition-all flex items-center gap-0.5 whitespace-nowrap">
                             Manage School <ChevronRight className="w-3 h-3" />
                           </span>
                         </div>
