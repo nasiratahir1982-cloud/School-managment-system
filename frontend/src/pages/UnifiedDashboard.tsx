@@ -5460,9 +5460,11 @@ export const UnifiedDashboard: React.FC = () => {
                             </div>
                             <div className="flex gap-1 transition-opacity">
                               <button onClick={(e) => {
+                                alert(`Leave Request for ${req.name} Approved successfully.`);
                                 e.currentTarget.parentElement.innerHTML = '<span class="text-[10px] font-bold text-emerald-500 px-2">Approved</span>';
                               }} className="px-2 py-1 bg-emerald-500 hover:bg-emerald-600 text-white text-[9px] font-bold rounded cursor-pointer transition-all shadow-sm">Approve</button>
                               <button onClick={(e) => {
+                                alert(`Leave Request for ${req.name} Rejected.`);
                                 e.currentTarget.parentElement.innerHTML = '<span class="text-[10px] font-bold text-rose-500 px-2">Rejected</span>';
                               }} className="px-2 py-1 bg-rose-500 hover:bg-rose-600 text-white text-[9px] font-bold rounded cursor-pointer transition-all shadow-sm">Reject</button>
                             </div>
