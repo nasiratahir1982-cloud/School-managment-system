@@ -37,7 +37,11 @@ import {
   ArrowRight,
   UserPlus,
   Sun,
-  Moon
+  Moon,
+  HeartPulse,
+  Server,
+  Database,
+  Lock
 } from 'lucide-react';
 import { useThemeStore } from '../store/themeStore';
 
@@ -77,6 +81,16 @@ const getFeatureDetails = (featureName: string) => {
       return { desc: 'Resolve queries submitted by campus administrators.', icon: HelpCircle, stats: '0 Pending' };
     case 'Audit Logs':
       return { desc: 'Track database queries and administrative actions.', icon: Shield, stats: 'Protected' };
+    case 'Role Permission Matrix':
+      return { desc: 'Control CRUD access rights across all portal roles.', icon: Lock, stats: 'Active Policy' };
+    case 'Advanced Activity Monitoring':
+      return { desc: 'Detailed log of user sessions, IP trails and global events.', icon: Activity, stats: 'Logging On' };
+    case 'School Health Monitoring':
+      return { desc: 'Check tenant API latency, storage and sync status.', icon: HeartPulse, stats: '100% Optimal' };
+    case 'Server Monitoring':
+      return { desc: 'Hardware metrics, CPU load, and container status.', icon: Server, stats: 'Stable Load' };
+    case 'Database Backup Management':
+      return { desc: 'Manage SQL dumps, retention policies and recovery.', icon: Database, stats: 'Scheduled' };
 
     // Admin / Principal
     case 'Student Management':
@@ -2437,7 +2451,7 @@ export const UnifiedDashboard: React.FC = () => {
         { label: "Total Schools", value: "184 Schools", icon: Layers, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Secure data channels active" },
         { label: "Active Revenue", value: "$48,920/mo", icon: TrendingUp, colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/25", desc: "Monthly collection records" }
       ],
-      features: ["Country Management", "Organization Management", "School Management", "Subscription Plans", "Billing & Invoicing", "Revenue Analytics", "White Label Configuration", "Global Announcements", "Support Tickets", "Audit Logs", "AI Command Center", "AI Content Studio", "Payment Gateway Settings"],
+      features: ["Country Management", "Organization Management", "School Management", "Subscription Plans", "Billing & Invoicing", "Revenue Analytics", "White Label Configuration", "Global Announcements", "Support Tickets", "Audit Logs", "Role Permission Matrix", "Advanced Activity Monitoring", "School Health Monitoring", "Server Monitoring", "Database Backup Management", "AI Command Center", "AI Content Studio", "Payment Gateway Settings"],
       quickActions: [
         { label: "Add New School", desc: "Create school profile", icon: Plus },
         { label: "Broadcast Alert", desc: "Dispatch global notification", icon: MessageSquare }
@@ -7568,7 +7582,7 @@ export const UnifiedDashboard: React.FC = () => {
                 </div>
               )}
               {/* SaaS Admin, Organization & Brand Settings */}
-              {['Country Management', 'Organization Management', 'School Management', 'Subscription Plans', 'Revenue Analytics', 'White Label Configuration', 'Support Tickets', 'Audit Logs', 'Global Announcements'].includes(activeFeature || '') && (
+              {['Country Management', 'Organization Management', 'School Management', 'Subscription Plans', 'Revenue Analytics', 'White Label Configuration', 'Support Tickets', 'Audit Logs', 'Role Permission Matrix', 'Advanced Activity Monitoring', 'School Health Monitoring', 'Server Monitoring', 'Database Backup Management', 'Global Announcements'].includes(activeFeature || '') && (
                 <div className="space-y-6">
                   {/* 1. Country Management */}
                   {activeFeature === 'Country Management' && (
@@ -8023,6 +8037,192 @@ export const UnifiedDashboard: React.FC = () => {
                                 <td className="p-3 text-foreground/80">{log.action}</td>
                               </tr>
                             ))}
+                          </tbody>
+                        </table></div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Super Admin Advanced Feature 1: Role Permission Matrix */}
+                  {activeFeature === 'Role Permission Matrix' && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                        🔒 Define Global Role Permissions. Grant or revoke CRUD access for systemic modules across all connected tenant portals.
+                      </div>
+                      <div className="border border-border rounded-xl bg-card overflow-hidden">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs min-w-[600px]">
+                          <thead>
+                            <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
+                              <th className="p-3">Portal Role</th>
+                              <th className="p-3 text-center">Create</th>
+                              <th className="p-3 text-center">Read</th>
+                              <th className="p-3 text-center">Update</th>
+                              <th className="p-3 text-center">Delete</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-border text-foreground/85">
+                            {['Admin', 'Teacher', 'HR', 'Accountant', 'Reception', 'Student'].map((role) => (
+                              <tr key={role} className="hover:bg-muted/10">
+                                <td className="p-3 font-bold text-primary">{role}</td>
+                                {['create', 'read', 'update', 'delete'].map(perm => (
+                                  <td key={perm} className="p-3 text-center">
+                                    <input type="checkbox" defaultChecked={role === 'Admin' || (role !== 'Student' && perm === 'read')} className="w-3.5 h-3.5 rounded border-border text-primary focus:ring-primary/30 cursor-pointer" />
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table></div>
+                      </div>
+                      <button onClick={() => alert('Role Permission Matrix updated successfully!')} className="w-full sm:w-auto px-4 py-2.5 bg-primary text-white text-xs font-bold rounded-lg shadow hover:bg-primary/90 transition-all flex items-center justify-center gap-2">Save Matrix Configuration</button>
+                    </div>
+                  )}
+
+                  {/* Super Admin Advanced Feature 2: Advanced Activity Monitoring */}
+                  {activeFeature === 'Advanced Activity Monitoring' && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                        📡 Global Activity Stream. Monitor every authenticated session, endpoint interaction, and geolocation IP.
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-2">
+                        <input type="text" placeholder="Filter User/Email..." className="bg-card border border-border rounded-lg text-xs p-2 text-foreground w-full" />
+                        <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground w-full cursor-pointer">
+                          <option value="All">All Severities</option>
+                          <option value="Critical">Critical Alerts</option>
+                          <option value="Warning">Warnings</option>
+                        </select>
+                        <input type="date" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground w-full" />
+                      </div>
+                      <div className="border border-border rounded-xl bg-card overflow-hidden">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs min-w-[700px]">
+                          <thead>
+                            <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
+                              <th className="p-3">Event Time</th>
+                              <th className="p-3">IP Address</th>
+                              <th className="p-3">Identity</th>
+                              <th className="p-3">Event Detail</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-border text-foreground/85 font-mono text-[10px]">
+                            <tr className="hover:bg-muted/10"><td className="p-3 text-foreground/50">2026-06-13 14:02:11</td><td className="p-3">192.168.1.14</td><td className="p-3 font-bold text-primary">superadmin</td><td className="p-3 text-emerald-400">Auth Token Generated [SUCCESS]</td></tr>
+                            <tr className="hover:bg-muted/10"><td className="p-3 text-foreground/50">2026-06-13 13:45:00</td><td className="p-3">10.4.5.21</td><td className="p-3 font-bold text-primary">sys_cron</td><td className="p-3 text-blue-400">Database Auto-Vacuum [COMPLETED]</td></tr>
+                            <tr className="hover:bg-muted/10"><td className="p-3 text-foreground/50">2026-06-13 11:22:45</td><td className="p-3">45.22.11.9</td><td className="p-3 font-bold text-rose-400">unknown_agent</td><td className="p-3 text-rose-400">Rate Limit Exceeded (Login API) [BLOCKED]</td></tr>
+                          </tbody>
+                        </table></div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Super Admin Advanced Feature 3: School Health Monitoring */}
+                  {activeFeature === 'School Health Monitoring' && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                        🏥 Multi-Tenant Health Dashboard. Live metrics for API latency and sync status across all connected school branches.
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {[
+                          { name: 'Allied School Campus A', latency: '24ms', load: '14%', status: 'Optimal' },
+                          { name: 'Beaconhouse UK Branch', latency: '112ms', load: '65%', status: 'Warning' },
+                          { name: 'The Educators Lahore', latency: '45ms', load: '32%', status: 'Optimal' },
+                          { name: 'Roots International', latency: '28ms', load: '19%', status: 'Optimal' }
+                        ].map((school, i) => (
+                          <div key={i} className="p-4 bg-card border border-border rounded-xl space-y-3 shadow-sm hover:border-primary/40 transition-all cursor-pointer group">
+                            <div className="flex justify-between items-center border-b border-border/50 pb-2">
+                              <span className="font-bold text-foreground text-xs group-hover:text-primary transition-colors">{school.name}</span>
+                              <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${school.status === 'Optimal' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'}`}>{school.status}</span>
+                            </div>
+                            <div className="flex justify-between text-[11px] text-foreground/70">
+                              <span>API Latency: <strong className="text-foreground">{school.latency}</strong></span>
+                              <span>DB Load: <strong className="text-foreground">{school.load}</strong></span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Super Admin Advanced Feature 4: Server Monitoring */}
+                  {activeFeature === 'Server Monitoring' && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                        🖥️ Bare-Metal Server & Docker Monitoring. Live visualization of hardware resource consumption.
+                      </div>
+                      <div className="grid grid-cols-1 gap-4">
+                        <div className="p-5 bg-card border border-border rounded-xl space-y-5 shadow-sm">
+                          <div className="space-y-2.5">
+                            <div className="flex justify-between text-xs font-bold">
+                              <span className="text-foreground/80 flex items-center gap-1.5"><Activity size={14} className="text-amber-400"/> CPU Utilization (8 Cores)</span>
+                              <span className="text-amber-400">42%</span>
+                            </div>
+                            <div className="w-full h-2.5 bg-muted rounded-full overflow-hidden border border-border/50">
+                              <div className="h-full bg-amber-400 transition-all duration-1000 w-[42%] shadow-[0_0_10px_rgba(251,191,36,0.5)]"></div>
+                            </div>
+                          </div>
+                          <div className="space-y-2.5">
+                            <div className="flex justify-between text-xs font-bold">
+                              <span className="text-foreground/80 flex items-center gap-1.5"><Server size={14} className="text-emerald-400"/> RAM Allocation (32GB)</span>
+                              <span className="text-emerald-400">18.5GB / 57%</span>
+                            </div>
+                            <div className="w-full h-2.5 bg-muted rounded-full overflow-hidden border border-border/50">
+                              <div className="h-full bg-emerald-400 transition-all duration-1000 w-[57%] shadow-[0_0_10px_rgba(52,211,153,0.5)]"></div>
+                            </div>
+                          </div>
+                          <div className="space-y-2.5">
+                            <div className="flex justify-between text-xs font-bold">
+                              <span className="text-foreground/80 flex items-center gap-1.5"><Database size={14} className="text-blue-400"/> NVMe Storage (Global)</span>
+                              <span className="text-blue-400">140GB / 500GB (28%)</span>
+                            </div>
+                            <div className="w-full h-2.5 bg-muted rounded-full overflow-hidden border border-border/50">
+                              <div className="h-full bg-blue-400 transition-all duration-1000 w-[28%] shadow-[0_0_10px_rgba(96,165,250,0.5)]"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Super Admin Advanced Feature 5: Database Backup Management */}
+                  {activeFeature === 'Database Backup Management' && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                        💾 Automated & Manual Postgres Backups. Ensure data redundancy across all tenant schemas.
+                      </div>
+                      <div className="flex flex-col sm:flex-row gap-3 items-center justify-between p-4 bg-primary/10 border border-primary/20 rounded-xl">
+                        <div className="space-y-1 w-full sm:w-auto text-center sm:text-left">
+                          <span className="block text-xs font-bold text-primary">Production Database (ACADEMICHUB_DB)</span>
+                          <span className="block text-[10px] text-foreground/60">Next automated backup scheduled in 14 hours.</span>
+                        </div>
+                        <button onClick={() => alert('Manual SQL Dump Triggered! Backend process started.')} className="w-full sm:w-auto px-4 py-2.5 bg-primary text-white text-xs font-bold rounded-lg shadow hover:bg-primary/90 transition-all whitespace-nowrap">Trigger Manual Backup</button>
+                      </div>
+                      <div className="border border-border rounded-xl bg-card overflow-hidden mt-4">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs min-w-[500px]">
+                          <thead>
+                            <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
+                              <th className="p-3">Backup ID</th>
+                              <th className="p-3">Type</th>
+                              <th className="p-3">Size</th>
+                              <th className="p-3 text-right">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-border text-foreground/85">
+                            <tr className="hover:bg-muted/10">
+                              <td className="p-3 font-mono text-primary font-bold">bck_20260613_auto</td>
+                              <td className="p-3"><span className="px-2 py-0.5 bg-blue-500/10 text-blue-400 rounded border border-blue-500/20 text-[9px] uppercase tracking-wider font-bold">Automated</span></td>
+                              <td className="p-3 text-foreground/60">42.8 MB</td>
+                              <td className="p-3 text-right space-x-3">
+                                <button className="text-xs font-bold text-foreground/60 hover:text-primary transition-colors">Download</button>
+                                <button className="text-xs font-bold text-foreground/60 hover:text-rose-400 transition-colors">Restore</button>
+                              </td>
+                            </tr>
+                            <tr className="hover:bg-muted/10">
+                              <td className="p-3 font-mono text-primary font-bold">bck_20260612_manual</td>
+                              <td className="p-3"><span className="px-2 py-0.5 bg-purple-500/10 text-purple-400 rounded border border-purple-500/20 text-[9px] uppercase tracking-wider font-bold">Manual</span></td>
+                              <td className="p-3 text-foreground/60">41.2 MB</td>
+                              <td className="p-3 text-right space-x-3">
+                                <button className="text-xs font-bold text-foreground/60 hover:text-primary transition-colors">Download</button>
+                                <button className="text-xs font-bold text-foreground/60 hover:text-rose-400 transition-colors">Restore</button>
+                              </td>
+                            </tr>
                           </tbody>
                         </table></div>
                       </div>
