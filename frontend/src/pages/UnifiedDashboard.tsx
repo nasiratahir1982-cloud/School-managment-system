@@ -902,7 +902,7 @@ export const UnifiedDashboard: React.FC = () => {
             waitingList: [],
             teachers: [
               { id: '1', name: 'Dr. Sajid Malik', subject: 'General Science', className: 'Class 10-A', status: 'Active' },
-              { id: '2', name: 'Mrs. Huma Shah', subject: 'Mathematics', className: 'Class 9-A', status: 'Active' }
+              { id: '2', name: 'Mrs. Huma Shah', subject: 'Mathematics', className: 'Class 9-A', status: 'Active', salary: '55000', qualification: 'B.Sc. Mathematics', phone: '+92 300 9999999', email: 'huma.s@school.edu' }
             ],
             notices: [
               { id: '1', date: '2026-06-12', title: `Welcome to ${schoolName}`, content: `Congratulations on launching the new portal for ${schoolName} in ${city}!` }
