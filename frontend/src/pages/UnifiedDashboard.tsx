@@ -47,7 +47,17 @@ import {
   Smartphone,
   Ban,
   LineChart,
-  AlertOctagon
+  AlertOctagon,
+  Filter,
+  Box,
+  Bus,
+  Building,
+  Fingerprint,
+  FolderKey,
+  Banknote,
+  CalendarDays,
+  Speech,
+  Briefcase
 } from 'lucide-react';
 import { useThemeStore } from '../store/themeStore';
 
@@ -113,8 +123,8 @@ const getFeatureDetails = (featureName: string) => {
     // Admin / Principal
     case 'Student Management':
       return { desc: 'Enroll pupils, update profiles and roll listings.', icon: UserPlus, stats: '480 Enrolled' };
-    case 'Teacher Management':
-      return { desc: 'Register faculty contracts, departments & skills.', icon: Users, stats: '36 Active Staff' };
+    case 'Employee Management':
+      return { desc: 'Register faculty and staff, assign departments & skills.', icon: Briefcase, stats: '36 Active Staff' };
     case 'Attendance Monitoring':
       return { desc: 'Analyze daily attendance trends and summaries.', icon: UserCheck, stats: '92.4% Today' };
     case 'Fee Monitoring':
@@ -125,10 +135,24 @@ const getFeatureDetails = (featureName: string) => {
       return { desc: 'Log behavioral incidents, warnings and rewards.', icon: Shield, stats: 'Conflict-Free' };
     case 'School Notices':
       return { desc: 'Send SMS & Email bulletins to parent contacts.', icon: MessageSquare, stats: 'Sync Complete' };
-    case 'Parent Communications':
-      return { desc: 'Review parent concerns and direct chat logs.', icon: PhoneCall, stats: 'Inbox Clear' };
-    case 'Leave Approvals':
-      return { desc: 'Review faculty leave requests and substitutions.', icon: CheckCircle, stats: '2 Pending' };
+    case 'Parent Communication Center':
+      return { desc: 'Review parent concerns and direct chat logs.', icon: Speech, stats: 'Inbox Clear' };
+    case 'Leave Management':
+      return { desc: 'Review staff leave requests and substitutions.', icon: CalendarDays, stats: '2 Pending' };
+    case 'Admission Funnel Analytics':
+      return { desc: 'Track admission inquiries, applications, and conversions.', icon: Filter, stats: '14 New Leads' };
+    case 'Staff Performance Tracking':
+      return { desc: 'KPI dashboards for teaching and non-teaching staff.', icon: LineChart, stats: 'Top 10%' };
+    case 'Inventory Management':
+      return { desc: 'Master ledger for school assets and lab equipment.', icon: Box, stats: 'Valuation $42k' };
+    case 'Transport Management':
+      return { desc: 'Live route tracking, drivers, and student bus rosters.', icon: Bus, stats: '12 Active Routes' };
+    case 'Hostel Management':
+      return { desc: 'Room allocation, mess fees, and warden logs.', icon: Building, stats: '84% Occupied' };
+    case 'Visitor Management':
+      return { desc: 'Digital logbook for campus security and visitors.', icon: Fingerprint, stats: '12 Guests Today' };
+    case 'Payroll':
+      return { desc: 'Monthly salary disbursements, bonuses, and tax deductions.', icon: Banknote, stats: 'Next: 5th June' };
 
     // Teacher
     case 'My Classes':
@@ -2491,7 +2515,7 @@ export const UnifiedDashboard: React.FC = () => {
         { label: "Collected Today", value: formatCurrency(8400), icon: CreditCard, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Real-time payment logs" },
         { label: "Outstanding Fees", value: formatCurrency(125000), icon: AlertTriangle, colorClass: "text-amber-400 bg-amber-500/10 border-amber-500/25", desc: "5 unpaid students" }
       ],
-      features: ["Student Management", "Teacher Management", "Attendance Monitoring", "Fee Monitoring", "Academic Oversight", "Student Conduct Records", "School Notices", "Parent Communications", "Leave Approvals", "AI Command Center", "AI Content Studio", "Payment Gateway Settings"],
+      features: ["Student Management", "Employee Management", "Attendance Monitoring", "Fee Monitoring", "Academic Oversight", "Student Conduct Records", "School Notices", "Parent Communication Center", "Leave Management", "Admission Funnel Analytics", "Staff Performance Tracking", "Inventory Management", "Transport Management", "Hostel Management", "Visitor Management", "Payroll", "AI Command Center", "AI Content Studio", "Payment Gateway Settings"],
       quickActions: [
         { label: "Enroll Student", desc: "Record new admission registry", icon: UserPlus },
         { label: "Publish Notice", desc: "Send SMS/Email notification", icon: MessageSquare }
@@ -4724,8 +4748,8 @@ export const UnifiedDashboard: React.FC = () => {
                 </div>
               )}
 
-              {/* TEACHER MANAGEMENT */}
-              {activeFeature === 'Teacher Management' && (
+              {/* EMPLOYEE MANAGEMENT */}
+              {(activeFeature === 'Teacher Management' || activeFeature === 'Employee Management') && (
                 <div className="space-y-4">
                   {/* Add Teacher Form */}
                   {isEditor && (
@@ -7417,7 +7441,7 @@ export const UnifiedDashboard: React.FC = () => {
               )}
 
               {/* PARENT COMMUNICATIONS */}
-              {(activeFeature === 'Parent Communications' || activeFeature === 'Parent Communication' || activeFeature === 'Teacher Communication') && (
+              {(activeFeature === 'Parent Communication Center' || activeFeature === 'Parent Communications' || activeFeature === 'Parent Communication' || activeFeature === 'Teacher Communication') && (
                 <div className="space-y-4">
                   <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed flex items-center justify-between">
                     <span>💬 Read incoming parent queries, respond to requests, or broadcast notifications.</span>
@@ -9109,6 +9133,276 @@ export const UnifiedDashboard: React.FC = () => {
                         </div>
                       )}
                     </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ADMIN NEW FEATURES */}
+              
+              {activeFeature === 'Admission Funnel Analytics' && (
+                <div className="space-y-4 animate-fadeIn">
+                  <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                    📊 Track inquiries, applications, interviews, and final enrollments to optimize your admission process.
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="p-4 bg-card border border-border rounded-xl text-center shadow-sm">
+                      <span className="block text-2xl font-black text-primary">145</span>
+                      <span className="text-[10px] font-bold uppercase text-foreground/60 tracking-wider">Inquiries</span>
+                    </div>
+                    <div className="p-4 bg-card border border-border rounded-xl text-center shadow-sm">
+                      <span className="block text-2xl font-black text-amber-500">89</span>
+                      <span className="text-[10px] font-bold uppercase text-foreground/60 tracking-wider">Applications</span>
+                    </div>
+                    <div className="p-4 bg-card border border-border rounded-xl text-center shadow-sm">
+                      <span className="block text-2xl font-black text-blue-500">42</span>
+                      <span className="text-[10px] font-bold uppercase text-foreground/60 tracking-wider">Interviews</span>
+                    </div>
+                    <div className="p-4 bg-card border border-border rounded-xl text-center shadow-sm">
+                      <span className="block text-2xl font-black text-emerald-500">38</span>
+                      <span className="text-[10px] font-bold uppercase text-foreground/60 tracking-wider">Enrolled</span>
+                    </div>
+                  </div>
+                  <div className="w-full bg-muted/30 rounded-full h-3 mt-4 overflow-hidden flex">
+                    <div className="bg-primary h-3" style={{width: '40%'}}></div>
+                    <div className="bg-amber-500 h-3" style={{width: '25%'}}></div>
+                    <div className="bg-blue-500 h-3" style={{width: '15%'}}></div>
+                    <div className="bg-emerald-500 h-3" style={{width: '20%'}}></div>
+                  </div>
+                </div>
+              )}
+
+              {activeFeature === 'Staff Performance Tracking' && (
+                <div className="space-y-4 animate-fadeIn">
+                  <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                    📈 Monitor academic results, punctuality, and syllabus completion metrics for your faculty.
+                  </div>
+                  <div className="border border-border rounded-xl bg-card overflow-hidden">
+                    <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs min-w-[600px]">
+                      <thead>
+                        <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
+                          <th className="p-3">Staff Name</th>
+                          <th className="p-3">Department</th>
+                          <th className="p-3">Punctuality</th>
+                          <th className="p-3">Syllabus %</th>
+                          <th className="p-3 text-right">Avg Grade</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border text-foreground/85">
+                        <tr className="hover:bg-muted/10">
+                          <td className="p-3 font-bold text-primary">Ali Ahmed</td>
+                          <td className="p-3">Science</td>
+                          <td className="p-3 font-mono text-emerald-500">98%</td>
+                          <td className="p-3 font-mono text-emerald-500">85%</td>
+                          <td className="p-3 text-right font-bold text-emerald-500">A-</td>
+                        </tr>
+                        <tr className="hover:bg-muted/10">
+                          <td className="p-3 font-bold text-primary">Sara Khan</td>
+                          <td className="p-3">Mathematics</td>
+                          <td className="p-3 font-mono text-amber-500">82%</td>
+                          <td className="p-3 font-mono text-emerald-500">90%</td>
+                          <td className="p-3 text-right font-bold text-blue-500">B+</td>
+                        </tr>
+                      </tbody>
+                    </table></div>
+                  </div>
+                </div>
+              )}
+
+              {activeFeature === 'Inventory Management' && (
+                <div className="space-y-4 animate-fadeIn">
+                  <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                    📦 Master ledger for tracking school assets, lab equipment, and stationary stock.
+                  </div>
+                  <div className="flex justify-end mb-2">
+                     <button className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg shadow hover:bg-primary/90 transition-all flex items-center gap-2">
+                       <Plus size={14} /> Add Asset
+                     </button>
+                  </div>
+                  <div className="border border-border rounded-xl bg-card overflow-hidden">
+                    <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs min-w-[600px]">
+                      <thead>
+                        <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
+                          <th className="p-3">Item Name</th>
+                          <th className="p-3">Category</th>
+                          <th className="p-3">Location</th>
+                          <th className="p-3">Qty / Status</th>
+                          <th className="p-3 text-right">Value</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border text-foreground/85">
+                        <tr className="hover:bg-muted/10">
+                          <td className="p-3 font-bold text-primary">Dell Optiplex 3020</td>
+                          <td className="p-3">IT Equipment</td>
+                          <td className="p-3">Computer Lab 1</td>
+                          <td className="p-3"><span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 rounded border border-emerald-500/20 font-bold text-[10px]">30 Good</span></td>
+                          <td className="p-3 text-right font-mono text-foreground/60">$6,500</td>
+                        </tr>
+                        <tr className="hover:bg-muted/10">
+                          <td className="p-3 font-bold text-primary">Chemistry Flasks</td>
+                          <td className="p-3">Lab Supplies</td>
+                          <td className="p-3">Science Lab</td>
+                          <td className="p-3"><span className="px-2 py-0.5 bg-amber-500/10 text-amber-500 rounded border border-amber-500/20 font-bold text-[10px]">15 Low Stock</span></td>
+                          <td className="p-3 text-right font-mono text-foreground/60">$150</td>
+                        </tr>
+                      </tbody>
+                    </table></div>
+                  </div>
+                </div>
+              )}
+
+              {activeFeature === 'Transport Management' && (
+                <div className="space-y-4 animate-fadeIn">
+                  <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                    🚌 Live tracking of school buses, driver assignments, and student route rosters.
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[
+                      { route: 'Route A - Downtown', bus: 'LEA-4050', driver: 'Asif Mehmood', students: 42, status: 'In Transit' },
+                      { route: 'Route B - Suburbs', bus: 'LEA-8811', driver: 'Tariq Jameel', students: 38, status: 'Completed' }
+                    ].map((bus, i) => (
+                      <div key={i} className="p-4 bg-card border border-border rounded-xl shadow-sm space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="font-bold text-primary text-sm">{bus.route}</span>
+                          <span className={`px-2 py-0.5 text-[9px] font-black uppercase rounded-full ${bus.status === 'In Transit' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' : 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'}`}>{bus.status}</span>
+                        </div>
+                        <div className="text-xs text-foreground/70 space-y-1">
+                          <p><strong>Bus No:</strong> {bus.bus}</p>
+                          <p><strong>Driver:</strong> {bus.driver}</p>
+                          <p><strong>Students Assigned:</strong> {bus.students}</p>
+                        </div>
+                        <button className="w-full mt-2 py-1.5 border border-border text-[10px] font-bold text-foreground/70 rounded hover:bg-muted/50 transition-colors">View Live Map</button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeFeature === 'Hostel Management' && (
+                <div className="space-y-4 animate-fadeIn">
+                  <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                    🏢 Manage room allocations, track mess fee collections, and view warden logs.
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div className="p-4 bg-card border border-border rounded-xl text-center shadow-sm">
+                      <span className="block text-2xl font-black text-primary">120</span>
+                      <span className="text-[10px] font-bold uppercase text-foreground/60 tracking-wider">Total Beds</span>
+                    </div>
+                    <div className="p-4 bg-card border border-border rounded-xl text-center shadow-sm">
+                      <span className="block text-2xl font-black text-emerald-500">98</span>
+                      <span className="text-[10px] font-bold uppercase text-foreground/60 tracking-wider">Occupied</span>
+                    </div>
+                    <div className="p-4 bg-card border border-border rounded-xl text-center shadow-sm">
+                      <span className="block text-2xl font-black text-amber-500">22</span>
+                      <span className="text-[10px] font-bold uppercase text-foreground/60 tracking-wider">Vacant</span>
+                    </div>
+                  </div>
+                  <div className="border border-border rounded-xl bg-card overflow-hidden">
+                    <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs min-w-[500px]">
+                      <thead>
+                        <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
+                          <th className="p-3">Room No</th>
+                          <th className="p-3">Occupant(s)</th>
+                          <th className="p-3">Mess Fee</th>
+                          <th className="p-3 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border text-foreground/85">
+                        <tr className="hover:bg-muted/10">
+                          <td className="p-3 font-bold text-primary">A-101</td>
+                          <td className="p-3">Bilal, Usama</td>
+                          <td className="p-3"><span className="text-emerald-500 font-bold">Paid</span></td>
+                          <td className="p-3 text-right"><button className="text-xs font-bold text-blue-500">Details</button></td>
+                        </tr>
+                        <tr className="hover:bg-muted/10">
+                          <td className="p-3 font-bold text-primary">A-102</td>
+                          <td className="p-3">Ali (1 Vacant)</td>
+                          <td className="p-3"><span className="text-rose-500 font-bold">Pending</span></td>
+                          <td className="p-3 text-right"><button className="text-xs font-bold text-blue-500">Details</button></td>
+                        </tr>
+                      </tbody>
+                    </table></div>
+                  </div>
+                </div>
+              )}
+
+              {activeFeature === 'Visitor Management' && (
+                <div className="space-y-4 animate-fadeIn">
+                  <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                    📝 Digital logbook for campus security tracking visitor entries and exits.
+                  </div>
+                  <div className="flex justify-end mb-2">
+                     <button className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg shadow hover:bg-primary/90 transition-all flex items-center gap-2">
+                       <Plus size={14} /> Log Visitor
+                     </button>
+                  </div>
+                  <div className="border border-border rounded-xl bg-card overflow-hidden">
+                    <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs min-w-[600px]">
+                      <thead>
+                        <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
+                          <th className="p-3">Visitor Name</th>
+                          <th className="p-3">Purpose</th>
+                          <th className="p-3">Meeting With</th>
+                          <th className="p-3">Entry Time</th>
+                          <th className="p-3 text-right">Exit Time</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border text-foreground/85">
+                        <tr className="hover:bg-muted/10">
+                          <td className="p-3 font-bold text-primary">Saad Malik</td>
+                          <td className="p-3">Admission Query</td>
+                          <td className="p-3">Admin Office</td>
+                          <td className="p-3 text-foreground/60 font-mono">09:15 AM</td>
+                          <td className="p-3 text-right text-emerald-500 font-bold font-mono">10:30 AM</td>
+                        </tr>
+                        <tr className="hover:bg-muted/10 bg-amber-500/5">
+                          <td className="p-3 font-bold text-primary">Mrs. Fatima</td>
+                          <td className="p-3">PTM</td>
+                          <td className="p-3">Class 8 Teacher</td>
+                          <td className="p-3 text-foreground/60 font-mono">11:45 AM</td>
+                          <td className="p-3 text-right"><button className="text-[10px] font-bold px-2 py-1 bg-amber-500 text-white rounded">Mark Exit</button></td>
+                        </tr>
+                      </tbody>
+                    </table></div>
+                  </div>
+                </div>
+              )}
+
+              {activeFeature === 'Payroll' && (
+                <div className="space-y-4 animate-fadeIn">
+                  <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                    💸 Track monthly salary disbursements, generate payslips, and manage deductions.
+                  </div>
+                  <div className="border border-border rounded-xl bg-card overflow-hidden">
+                    <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs min-w-[600px]">
+                      <thead>
+                        <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
+                          <th className="p-3">Employee Name</th>
+                          <th className="p-3">Basic Salary</th>
+                          <th className="p-3">Allowances</th>
+                          <th className="p-3">Deductions</th>
+                          <th className="p-3 text-right">Net Payable</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border text-foreground/85">
+                        <tr className="hover:bg-muted/10">
+                          <td className="p-3 font-bold text-primary">Ali Ahmed</td>
+                          <td className="p-3 font-mono text-foreground/60">Rs 45,000</td>
+                          <td className="p-3 font-mono text-emerald-500">+ Rs 5,000</td>
+                          <td className="p-3 font-mono text-rose-500">- Rs 1,200</td>
+                          <td className="p-3 text-right font-bold text-primary font-mono">Rs 48,800</td>
+                        </tr>
+                        <tr className="hover:bg-muted/10">
+                          <td className="p-3 font-bold text-primary">Sara Khan</td>
+                          <td className="p-3 font-mono text-foreground/60">Rs 52,000</td>
+                          <td className="p-3 font-mono text-emerald-500">+ Rs 2,000</td>
+                          <td className="p-3 font-mono text-rose-500">Rs 0</td>
+                          <td className="p-3 text-right font-bold text-primary font-mono">Rs 54,000</td>
+                        </tr>
+                      </tbody>
+                    </table></div>
+                  </div>
+                  <div className="flex justify-end">
+                    <button className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg shadow hover:bg-primary/90 transition-all">Process All Payroll</button>
                   </div>
                 </div>
               )}
