@@ -1,7 +1,7 @@
 // @ts-nocheck
 // @ts-nocheck
 import React, { useState, useEffect } from 'react';
-import { database } from '../firebase';
+
 import { ref, onValue, set } from 'firebase/database';
 import { Helmet } from 'react-helmet-async';
 import { useAuthStore } from '../store/authStore';
@@ -1159,6 +1159,24 @@ export const UnifiedDashboard: React.FC = () => {
   const [apiKeys, setApiKeys] = useState([{id: '1', appName: 'ZK Teco Biometrics Sync', key: 'sk_live_1234567890abcdefa49b', date: '2026-05-10'}, {id: '2', appName: 'QuickBooks Finance API', key: 'sk_live_0987654321fedcba8f2c', date: '2026-06-01'}]);
   const [isAddingApiKey, setIsAddingApiKey] = useState(false);
   const [newApiKeyForm, setNewApiKeyForm] = useState({appName: '', key: ''});
+
+  // Sync to Firebase whenever these registries change
+  React.useEffect(() => {
+    updateRealtimeData('admin_countries', countries);
+  }, [countries]);
+
+  React.useEffect(() => {
+    updateRealtimeData('admin_organizations', organizations);
+  }, [organizations]);
+
+  React.useEffect(() => {
+    updateRealtimeData('admin_campuses', schoolsList);
+  }, [schoolsList]);
+
+  React.useEffect(() => {
+    updateRealtimeData('admin_apikeys', apiKeys);
+  }, [apiKeys]);
+
 
   const [editSchoolForm, setEditSchoolForm] = useState<any>({});
 
