@@ -513,16 +513,13 @@ export const UnifiedDashboard: React.FC = () => {
       fileData?: string;
       fileType?: string;
     };
+    inventory?: { id: string; name: string; category: string; location: string; qty: string; value: string }[];
   }>>(() => {
+    // DB_VERSION: bump this to force a re-seed when new fields are added
+    const DB_VERSION = '4';
+    const savedVersion = localStorage.getItem('academic_hub_db_version');
     const saved = localStorage.getItem('academic_hub_offline_db');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error('Failed to parse offline db', e);
-      }
-    }
-    return {
+    const freshData = {
     // 1. Dar-e-Arqam School (PK)
     '11111111-1111-1111-1111-111111111111': {
       students: [
@@ -1106,7 +1103,48 @@ export const UnifiedDashboard: React.FC = () => {
       ]
     }
   };
-});
+    // If version mismatch or no saved data, merge freshData inventory into saved data
+    if (!saved || savedVersion !== DB_VERSION) {
+      try {
+        const parsed = saved ? JSON.parse(saved) : {};
+        // Merge: keep user-edited students/teachers, but always inject fresh inventory
+        const merged: any = { ...freshData };
+        Object.keys(parsed).forEach(schoolId => {
+          if (merged[schoolId]) {
+            merged[schoolId] = {
+              ...merged[schoolId],
+              students: parsed[schoolId].students || merged[schoolId].students,
+              teachers: parsed[schoolId].teachers || merged[schoolId].teachers,
+              notices: parsed[schoolId].notices || merged[schoolId].notices,
+              leaves: parsed[schoolId].leaves || merged[schoolId].leaves,
+              invoices: parsed[schoolId].invoices || merged[schoolId].invoices,
+              disciplines: parsed[schoolId].disciplines || merged[schoolId].disciplines,
+              parentMessages: parsed[schoolId].parentMessages || merged[schoolId].parentMessages,
+              assignments: parsed[schoolId].assignments || merged[schoolId].assignments,
+              // Always take fresh inventory if saved one is empty/missing
+              inventory: (parsed[schoolId].inventory && parsed[schoolId].inventory.length > 0)
+                ? parsed[schoolId].inventory
+                : merged[schoolId].inventory,
+            };
+          } else {
+            merged[schoolId] = parsed[schoolId];
+          }
+        });
+        localStorage.setItem('academic_hub_db_version', DB_VERSION);
+        return merged;
+      } catch (e) {
+        console.error('DB merge failed, using fresh data', e);
+        localStorage.setItem('academic_hub_db_version', DB_VERSION);
+        return freshData;
+      }
+    }
+    try {
+      const parsed = JSON.parse(saved);
+      return parsed;
+    } catch (e) {
+      return freshData;
+    }
+  });
 
   React.useEffect(() => {
     localStorage.setItem('academic_hub_offline_db', JSON.stringify(database));
