@@ -355,6 +355,8 @@ export const SUBJECTS_LIST = [
 export const UnifiedDashboard: React.FC = () => {
   const navigate = useNavigate();
   const currentUser = useAuthStore((state) => state.user);
+  const login = useAuthStore((state) => state.login);
+  const returnToken = localStorage.getItem('ah_superadmin_return_token');
   const logout = useAuthStore((state) => state.logout);
   const currentSchool = useSchoolStore((state) => state.currentSchool);
   const { darkMode, toggleTheme } = useThemeStore();
