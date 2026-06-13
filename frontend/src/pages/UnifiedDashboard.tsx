@@ -11935,23 +11935,31 @@ export const UnifiedDashboard: React.FC = () => {
                       <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-500/90 font-bold leading-relaxed flex items-center gap-2">
                         <Ban size={16} /> Extreme Security Protocol. Suspending a school will instantly block all logins and API access for that tenant.
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {[
-                          { name: 'Allied School Campus A', status: 'Active' },
-                          { name: 'Beaconhouse UK Branch', status: 'Active' },
-                          { name: 'Defaulter School Lahore', status: 'Suspended' }
-                        ].map((school, i) => (
-                          <div key={i} className={`p-4 bg-card border ${school.status === 'Suspended' ? 'border-rose-500/50' : 'border-border'} rounded-xl space-y-3 shadow-sm flex items-center justify-between`}>
-                            <div>
-                              <span className="font-bold text-foreground text-xs block">{school.name}</span>
-                              <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full inline-block mt-1 ${school.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>{school.status}</span>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {schoolsList.map((school) => {
+                            const isSuspended = school.status === 'Suspended' || school.status === 'Inactive';
+                            return (
+                            <div key={school.id} className={`p-4 bg-card border ${isSuspended ? 'border-rose-500/50' : 'border-border'} rounded-xl space-y-3 shadow-sm flex items-center justify-between`}>
+                              <div>
+                                <span className="font-bold text-foreground text-xs block">{school.name}</span>
+                                <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full inline-block mt-1 ${!isSuspended ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>{!isSuspended ? 'ACTIVE' : 'SUSPENDED'}</span>
+                              </div>
+                              <button 
+                                onClick={() => {
+                                  requestSecurityVerification(
+                                    `${!isSuspended ? 'Suspend' : 'Revoke Suspension for'} Campus: ${school.name}`,
+                                    () => {
+                                      setSchoolsList(prev => prev.map(s => s.id === school.id ? { ...s, status: !isSuspended ? 'Suspended' : 'Active' } : s));
+                                    }
+                                  );
+                                }}
+                                className={`px-4 py-2 text-white text-[11px] font-bold rounded-lg shadow transition-all ${!isSuspended ? 'bg-rose-500 hover:bg-rose-600' : 'bg-emerald-500 hover:bg-emerald-600'}`}>
+                                {!isSuspended ? 'Suspend School' : 'Revoke Suspension'}
+                              </button>
                             </div>
-                            <button className={`px-4 py-2 text-white text-[11px] font-bold rounded-lg shadow transition-all ${school.status === 'Active' ? 'bg-rose-500 hover:bg-rose-600' : 'bg-emerald-500 hover:bg-emerald-600'}`}>
-                              {school.status === 'Active' ? 'Suspend School' : 'Revoke Suspension'}
-                            </button>
-                          </div>
-                        ))}
-                      </div>
+                            );
+                          })}
+                        </div>
                     </div>
                   )}
 
