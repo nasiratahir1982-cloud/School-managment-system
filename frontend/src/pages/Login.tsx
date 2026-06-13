@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import type { UserRole } from '../store/authStore';
-import { auth } from '../store/firebase';
+import { auth, setupRealtimeSync } from '../store/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useSchoolStore, COUNTRY_CONFIGS } from '../store/schoolStore';
 import type { SupportedCountry } from '../store/schoolStore';
@@ -67,6 +67,19 @@ export const Login: React.FC = () => {
   const [contactSubject, setContactSubject] = useState('');
   const [contactMessage, setContactMessage] = useState('');
   const [selectedCountry, setSelectedCountry] = useState<SupportedCountry | ''>('');
+  const [activeCountries, setActiveCountries] = useState<string[] | null>(null);
+
+  useEffect(() => {
+    const unsub = setupRealtimeSync('admin_countries', (data) => {
+      if (data && Array.isArray(data) && data.length > 0) {
+        setActiveCountries(data.filter(c => c.status === 'Active').map(c => c.code));
+      } else {
+        // Fallback or leave as null if DB is empty to show all default
+        setActiveCountries(null);
+      }
+    });
+    return unsub;
+  }, []);
   const [subdomain, setSubdomain] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -417,7 +430,7 @@ export const Login: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-3 gap-2.5">
-              {(Object.keys(COUNTRY_CONFIGS) as SupportedCountry[]).map((code) => {
+              {(Object.keys(COUNTRY_CONFIGS) as SupportedCountry[]).filter(code => activeCountries === null || activeCountries.includes(code)).map((code) => {
                 const config = COUNTRY_CONFIGS[code];
                 return (
                   <button
