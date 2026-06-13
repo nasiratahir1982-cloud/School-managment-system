@@ -69,7 +69,13 @@ import {
   ShieldAlert,
   Globe,
   List,
-  Trash2
+  Trash2,
+  MessageCircle,
+  BrainCircuit,
+  PieChart,
+  BarChart3,
+  DollarSign,
+  Star
 } from 'lucide-react';
 import { useThemeStore } from '../store/themeStore';
 
@@ -435,6 +441,48 @@ const getFeatureDetails = (featureName: string) => {
     case 'Hostel Roster':
       return { desc: 'Check boarding student room and bed allocations.', icon: Home, stats: 'Hostel Roster' };
 
+
+    // newly added generic features
+    case 'HRMS':
+      return { desc: 'Human Resource Management System central core.', icon: Users, stats: 'Active' };
+    case 'Payroll':
+      return { desc: 'Automated staff salary disbursement and tax calculations.', icon: Banknote, stats: 'Generated' };
+    case 'Leave Management':
+      return { desc: 'Track employee and student leave quotas and calendars.', icon: Calendar, stats: '5 Pending' };
+    case 'Recruitment':
+      return { desc: 'Applicant tracking and hiring pipelines.', icon: UserPlus, stats: '3 Openings' };
+    case 'Timetable Generator':
+      return { desc: 'Auto-generate collision-free class schedules.', icon: CalendarDays, stats: 'Drafted' };
+    case 'Exam Management':
+      return { desc: 'Create exam terms, date sheets, and print hall tickets.', icon: BookOpen, stats: 'Midterms Active' };
+    case 'Result Processing':
+      return { desc: 'Calculate aggregates and compile term report cards.', icon: Award, stats: 'Processing' };
+    case 'SMS Gateway':
+      return { desc: 'Configure Twilio or custom SMS providers.', icon: MessageSquare, stats: 'Connected' };
+    case 'WhatsApp Integration':
+      return { desc: 'Send automated WhatsApp alerts via Meta API.', icon: MessageCircle, stats: 'Live Sync' };
+    case 'Email Automation':
+      return { desc: 'Trigger automated email workflows via SendGrid/AWS.', icon: Mail, stats: 'Active' };
+    case 'Push Notifications':
+      return { desc: 'Mobile and Web Push alerts for parents/students.', icon: Bell, stats: '14k Sent' };
+    case 'AI Attendance Insights':
+      return { desc: 'Predictive analytics on dropout rates based on attendance.', icon: TrendingUp, stats: 'Updated' };
+    case 'AI Fee Defaulter Prediction':
+      return { desc: 'Machine learning model predicting late fee payers.', icon: AlertTriangle, stats: 'High Accuracy' };
+    case 'AI Student Performance Prediction':
+      return { desc: 'Forecast student final grades based on current trajectory.', icon: BrainCircuit, stats: 'Active Model' };
+    case 'AI Admission Analytics':
+      return { desc: 'Predicting enrollment conversion rates and trends.', icon: PieChart, stats: 'Live' };
+    case 'AI Performance Analytics':
+      return { desc: 'Visual graphs predicting student trajectories.', icon: LineChart, stats: 'Synced' };
+    case 'School KPI Dashboard':
+      return { desc: 'Master executive overview of top-level performance.', icon: BarChart3, stats: 'C-Level View' };
+    case 'Revenue Dashboard':
+      return { desc: 'Deep dive into financial health and projections.', icon: DollarSign, stats: 'Stable' };
+    case 'Student Growth Dashboard':
+      return { desc: 'Macro view of student academic and physical growth.', icon: LineChart, stats: 'Upward' };
+    case 'Teacher Performance Dashboard':
+      return { desc: 'Evaluation charts for faculty peer reviews and grades.', icon: Star, stats: 'Evaluated' };
     default:
       return { desc: 'Access operational modules and dashboard logs.', icon: BookOpen, stats: 'Operational' };
   }
@@ -2580,7 +2628,7 @@ export const UnifiedDashboard: React.FC = () => {
         { label: "Total Schools", value: "184 Schools", icon: Layers, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Secure data channels active" },
         { label: "Active Revenue", value: "$48,920/mo", icon: TrendingUp, colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/25", desc: "Monthly collection records" }
       ],
-      features: ["Country Management", "Organization Management", "School Management", "Subscription Plans", "Billing & Invoicing", "Revenue Analytics", "White Label Configuration", "Global Announcements", "Support Tickets", "Audit Logs", "Multi-Level Permissions", "Advanced Activity Monitoring", "School Health Monitoring", "Server Monitoring", "Backup Manager", "API Key Management", "SMS Gateway Settings", "Email Server Settings", "School Suspension System", "School Performance Analytics", "Fraud Detection Dashboard", "Two Factor Authentication", "Device Management", "Session Tracking", "IP Restriction", "Login Audit Trail", "AI Command Center", "AI Content Studio", "Payment Gateway Settings"],
+      features: ["Country Management", "Organization Management", "School Management", "Subscription Plans", "Billing & Invoicing", "Revenue Analytics", "White Label Configuration", "Global Announcements", "Support Tickets", "Audit Logs", "Multi-Level Permissions", "Advanced Activity Monitoring", "School Health Monitoring", "Server Monitoring", "Backup Manager", "API Key Management", "SMS Gateway Settings", "Email Server Settings", "School Suspension System", "School Performance Analytics", "Fraud Detection Dashboard", "Two Factor Authentication", "Device Management", "Session Tracking", "IP Restriction", "Login Audit Trail", "SMS Gateway", "WhatsApp Integration", "Email Automation", "Push Notifications", "AI Attendance Insights", "AI Fee Defaulter Prediction", "AI Student Performance Prediction", "AI Admission Analytics", "School KPI Dashboard", "Revenue Dashboard", "Student Growth Dashboard", "Teacher Performance Dashboard", "AI Command Center", "AI Content Studio", "Payment Gateway Settings"],
       quickActions: [
         { label: "Add New School", desc: "Create school profile", icon: Plus },
         { label: "Broadcast Alert", desc: "Dispatch global notification", icon: MessageSquare }
@@ -2602,7 +2650,7 @@ export const UnifiedDashboard: React.FC = () => {
         { label: "Collected Today", value: formatCurrency(8400), icon: CreditCard, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Real-time payment logs" },
         { label: "Outstanding Fees", value: formatCurrency(125000), icon: AlertTriangle, colorClass: "text-amber-400 bg-amber-500/10 border-amber-500/25", desc: "5 unpaid students" }
       ],
-      features: ["Student Management", "Employee Management", "Attendance Monitoring", "Fee Monitoring", "Academic Oversight", "Student Conduct Records", "School Notices", "Parent Communication Center", "Leave Management", "Admission Funnel Analytics", "Staff Performance Tracking", "Inventory Management", "Transport Management", "Hostel Management", "Visitor Management", "Payroll", "Two Factor Authentication", "Device Management", "Session Tracking", "IP Restriction", "Login Audit Trail", "AI Command Center", "AI Content Studio", "Payment Gateway Settings"],
+      features: ["Student Management", "Employee Management", "Attendance Monitoring", "Fee Monitoring", "Academic Oversight", "Student Conduct Records", "School Notices", "Parent Communication Center", "Leave Management", "Admission Funnel Analytics", "Staff Performance Tracking", "Inventory Management", "Transport Management", "Hostel Management", "Visitor Management", "Payroll", "Two Factor Authentication", "Device Management", "Session Tracking", "IP Restriction", "Login Audit Trail", "Timetable Generator", "Exam Management", "Result Processing", "SMS Gateway", "WhatsApp Integration", "Email Automation", "Push Notifications", "School KPI Dashboard", "Revenue Dashboard", "Student Growth Dashboard", "Teacher Performance Dashboard", "AI Command Center", "AI Content Studio", "Payment Gateway Settings"],
       quickActions: [
         { label: "Enroll Student", desc: "Record new admission registry", icon: UserPlus },
         { label: "Publish Notice", desc: "Send SMS/Email notification", icon: MessageSquare }
@@ -5323,6 +5371,448 @@ export const UnifiedDashboard: React.FC = () => {
               {/* FEE MONITORING & FEE STATUS & FEE PAYMENTS & FEE COLLECTION & FEE DEFAULTERS & INVOICING */}
               
 
+
+
+              {/* MANAGEMENT (HR) & ACADEMIC MODULES */}
+              {(activeFeature === 'HRMS' || activeFeature === 'Recruitment') && (
+                <div className="space-y-4 animate-fadeIn">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="p-4 bg-purple-500/10 border border-purple-500/20 rounded-xl">
+                      <span className="text-purple-400 text-[11px] font-bold uppercase">Total Staff</span>
+                      <strong className="text-foreground text-2xl font-black block mt-1">142</strong>
+                    </div>
+                    <div className="p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
+                      <span className="text-indigo-400 text-[11px] font-bold uppercase">Open Requisitions</span>
+                      <strong className="text-foreground text-2xl font-black block mt-1">3</strong>
+                    </div>
+                    <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+                      <span className="text-emerald-400 text-[11px] font-bold uppercase">Active Candidates</span>
+                      <strong className="text-foreground text-2xl font-black block mt-1">28</strong>
+                    </div>
+                  </div>
+
+                  <div className="p-5 bg-card border border-border rounded-xl space-y-4">
+                    <div className="flex justify-between items-center pb-2 border-b border-border/50">
+                      <strong className="text-xs font-bold text-foreground uppercase tracking-wider">Recruitment Pipeline</strong>
+                      <button className="px-3 py-1 bg-primary text-white rounded text-[10px] font-bold">+ Post Job</button>
+                    </div>
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="border-b border-border text-[10px] font-black text-muted-foreground uppercase tracking-wider">
+                          <th className="p-2">Role</th>
+                          <th className="p-2">Department</th>
+                          <th className="p-2">Applicants</th>
+                          <th className="p-2 text-right">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="text-[11px] font-semibold">
+                        {[
+                          { role: 'Senior Physics Teacher', dept: 'Science Faculty', apps: 12, status: 'Interviewing', color: 'amber' },
+                          { role: 'Accountant', dept: 'Finance Office', apps: 45, status: 'Screening', color: 'blue' },
+                          { role: 'Librarian', dept: 'Administration', apps: 8, status: 'Hired', color: 'emerald' },
+                        ].map((row, i) => (
+                          <tr key={i} className="border-b border-border/50 hover:bg-muted/10 transition-colors">
+                            <td className="p-2 text-primary font-bold">{row.role}</td>
+                            <td className="p-2 text-muted-foreground">{row.dept}</td>
+                            <td className="p-2">{row.apps} Resumes</td>
+                            <td className="p-2 text-right">
+                              <span className={`px-2 py-0.5 bg-${row.color}-500/10 text-${row.color}-500 rounded font-bold`}>{row.status}</span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {(activeFeature === 'Payroll' || activeFeature === 'Leave Management') && (
+                <div className="space-y-4 animate-fadeIn">
+                  <div className="p-5 bg-card border border-border rounded-xl flex flex-col md:flex-row gap-6">
+                    <div className="flex-1 space-y-4">
+                      <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Batch Payroll Generator</span>
+                      <p className="text-[11px] text-muted-foreground">Automatically compute base salaries, tax deductions, and unpaid leave penalties for all 142 employees.</p>
+                      <button 
+                        onClick={(e) => {
+                           const btn = e.currentTarget;
+                           btn.innerHTML = '<span class="animate-pulse">Computing Taxes & Deductions...</span>';
+                           setTimeout(() => btn.innerHTML = '✅ Payroll Processed & Payslips Generated', 2000);
+                        }}
+                        className="w-full px-4 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-colors"
+                      >
+                        Process June Payroll
+                      </button>
+                    </div>
+                    
+                    <div className="w-px bg-border hidden md:block"></div>
+                    
+                    <div className="flex-1 space-y-4">
+                      <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Pending Leave Requests</span>
+                      <div className="space-y-2">
+                        {[
+                          { name: 'Miss Fatima', type: 'Sick Leave', days: '2 Days (Unpaid)' },
+                          { name: 'Mr. Ali Raza', type: 'Casual Leave', days: '1 Day (Paid)' }
+                        ].map((req, i) => (
+                          <div key={i} className="p-3 bg-muted/20 border border-border rounded-lg flex justify-between items-center group">
+                            <div>
+                              <strong className="text-xs text-foreground block">{req.name}</strong>
+                              <span className="text-[10px] text-rose-400 font-semibold">{req.type} | {req.days}</span>
+                            </div>
+                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <button className="px-2 py-1 bg-emerald-500 hover:bg-emerald-600 text-white text-[9px] font-bold rounded">Approve</button>
+                              <button className="px-2 py-1 bg-rose-500 hover:bg-rose-600 text-white text-[9px] font-bold rounded">Reject</button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {(activeFeature === 'Timetable Generator') && (
+                <div className="space-y-4 animate-fadeIn">
+                  <div className="p-5 bg-card border border-border rounded-xl space-y-4">
+                    <div className="flex justify-between items-center pb-2 border-b border-border/50">
+                      <strong className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-2"><CalendarDays className="w-4 h-4 text-primary" /> AI Timetable Generator</strong>
+                      <button className="px-3 py-1 bg-primary text-white rounded text-[10px] font-bold shadow-md">Export PDF</button>
+                    </div>
+                    <div className="bg-muted/10 p-4 border border-dashed border-border rounded-xl text-center space-y-3">
+                      <p className="text-[11px] text-muted-foreground">Select a grade section to automatically distribute subjects without teacher overlaps.</p>
+                      <select className="px-4 py-2 bg-background border border-border rounded-lg text-xs outline-none text-foreground w-64 max-w-full mx-auto block mb-3">
+                        <option>Grade 9 - Science Group</option>
+                        <option>Grade 10 - Arts Group</option>
+                      </select>
+                      <button 
+                         onClick={(e) => {
+                           const btn = e.currentTarget;
+                           btn.innerHTML = '<span class="animate-spin inline-block mr-2">⚙️</span> Resolving Conflicts...';
+                           setTimeout(() => btn.innerHTML = '✅ Timetable Generated', 2500);
+                         }}
+                         className="px-6 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-bold text-xs rounded-lg transition-colors"
+                      >
+                        Generate Optimal Schedule
+                      </button>
+                    </div>
+                    
+                    {/* Mock grid */}
+                    <div className="overflow-x-auto mt-4">
+                       <table className="w-full min-w-[600px] text-center border-collapse">
+                         <thead>
+                           <tr className="border-b border-border text-[10px] font-black text-muted-foreground uppercase">
+                             <th className="p-2 border-r border-border/50">Time</th>
+                             <th className="p-2 border-r border-border/50">Monday</th>
+                             <th className="p-2 border-r border-border/50">Tuesday</th>
+                             <th className="p-2 border-r border-border/50">Wednesday</th>
+                           </tr>
+                         </thead>
+                         <tbody className="text-[10px]">
+                           <tr className="border-b border-border/50">
+                             <td className="p-2 border-r border-border/50 font-bold">08:00 AM</td>
+                             <td className="p-2 border-r border-border/50 bg-blue-500/10 text-blue-500 font-semibold">Physics (Lab)</td>
+                             <td className="p-2 border-r border-border/50 bg-emerald-500/10 text-emerald-500 font-semibold">Maths</td>
+                             <td className="p-2 border-r border-border/50 bg-amber-500/10 text-amber-500 font-semibold">English</td>
+                           </tr>
+                           <tr className="border-b border-border/50">
+                             <td className="p-2 border-r border-border/50 font-bold">09:00 AM</td>
+                             <td className="p-2 border-r border-border/50 bg-emerald-500/10 text-emerald-500 font-semibold">Maths</td>
+                             <td className="p-2 border-r border-border/50 bg-purple-500/10 text-purple-500 font-semibold">Chemistry</td>
+                             <td className="p-2 border-r border-border/50 bg-rose-500/10 text-rose-500 font-semibold">Biology</td>
+                           </tr>
+                         </tbody>
+                       </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {(activeFeature === 'Exam Management' || activeFeature === 'Result Processing') && (
+                <div className="space-y-4 animate-fadeIn">
+                  <div className="p-5 bg-card border border-border rounded-xl flex flex-col md:flex-row gap-6">
+                    <div className="flex-1 space-y-4">
+                      <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Exam Controller</span>
+                      <div className="space-y-2">
+                        <button className="w-full flex justify-between items-center p-3 bg-muted/20 border border-border rounded-lg text-[11px] text-foreground hover:border-primary transition-colors">
+                          <span className="font-bold">Generate Date Sheet</span> <ChevronRight className="w-3 h-3 text-muted-foreground" />
+                        </button>
+                        <button className="w-full flex justify-between items-center p-3 bg-muted/20 border border-border rounded-lg text-[11px] text-foreground hover:border-primary transition-colors">
+                          <span className="font-bold">Print Hall Tickets / Roll No Slips</span> <ChevronRight className="w-3 h-3 text-muted-foreground" />
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div className="w-px bg-border hidden md:block"></div>
+                    
+                    <div className="flex-1 space-y-4">
+                      <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider flex items-center gap-2"><Award className="w-4 h-4 text-emerald-500" /> Result Processing Engine</span>
+                      <p className="text-[11px] text-muted-foreground">Compile mid-term grades from all teachers to generate final report cards.</p>
+                      <button 
+                        onClick={(e) => {
+                           const btn = e.currentTarget;
+                           btn.innerHTML = '<span class="animate-pulse">Aggregating Subject Grades...</span>';
+                           setTimeout(() => btn.innerHTML = '✅ Report Cards Compiled & Ready for Print', 2000);
+                        }}
+                        className="w-full px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-lg transition-colors shadow-lg shadow-emerald-500/20"
+                      >
+                        Compile Final Results
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {(activeFeature === 'AI Performance Analytics') && (
+                <div className="space-y-4 animate-fadeIn">
+                  <div className="p-5 bg-primary/5 border border-primary/20 rounded-xl space-y-4 text-center">
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center text-primary mx-auto">
+                      <LineChart className="w-8 h-8" />
+                    </div>
+                    <strong className="block text-sm font-black text-foreground uppercase tracking-wider">Student Academic Trajectory Prediction</strong>
+                    <p className="text-xs text-muted-foreground max-w-lg mx-auto leading-relaxed">
+                      Based on continuous assessment data, our AI models predict that <strong className="text-primary">12%</strong> of students in Grade 10 are at risk of scoring below a B grade in final board exams.
+                    </p>
+                    <div className="flex justify-center mt-4">
+                      <div className="bg-card border border-border rounded-xl p-4 flex items-end gap-2 h-32">
+                         {/* Mock Graph */}
+                         <div className="w-8 bg-blue-500/40 rounded-t-sm h-[40%]" title="Term 1"></div>
+                         <div className="w-8 bg-blue-500/60 rounded-t-sm h-[55%]" title="Term 2"></div>
+                         <div className="w-8 bg-primary rounded-t-sm h-[75%] relative" title="Predicted Final">
+                            <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[9px] font-bold text-primary">Proj</span>
+                         </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+
+              {/* COMMUNICATION & AI MODULES */}
+              {(activeFeature === 'SMS Gateway' || activeFeature === 'WhatsApp Integration') && (
+                <div className="space-y-4 animate-fadeIn">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-5 bg-card border border-border rounded-xl space-y-4 relative overflow-hidden">
+                      <div className="absolute top-0 right-0 p-3 opacity-20"><MessageSquare className="w-16 h-16" /></div>
+                      <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider relative z-10">SMS Gateway Config</span>
+                      <p className="text-[11px] text-muted-foreground relative z-10">Connect Twilio or custom localized SMS APIs to send bulk text messages to parents.</p>
+                      <div className="space-y-2 relative z-10">
+                        <input type="text" placeholder="API Key" className="w-full px-3 py-2 bg-background border border-border rounded text-[11px] outline-none focus:border-primary" />
+                        <input type="text" placeholder="Sender ID (e.g. ACADEMIC)" className="w-full px-3 py-2 bg-background border border-border rounded text-[11px] outline-none focus:border-primary" />
+                      </div>
+                      <button className="px-4 py-2 bg-foreground hover:bg-foreground/90 text-background font-bold text-[10px] rounded transition-colors relative z-10">Save Configuration</button>
+                    </div>
+
+                    <div className="p-5 bg-gradient-to-br from-[#25D366]/10 to-card border border-[#25D366]/20 rounded-xl space-y-4 relative overflow-hidden">
+                      <div className="absolute top-0 right-0 p-3 opacity-20"><MessageCircle className="w-16 h-16 text-[#25D366]" /></div>
+                      <span className="block text-xs font-bold text-foreground uppercase tracking-wider relative z-10 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-[#25D366] animate-pulse"></div> WhatsApp Business API</span>
+                      <p className="text-[11px] text-muted-foreground relative z-10 max-w-[200px]">Send rich media, fee challans and automated alerts via WhatsApp.</p>
+                      
+                      <div className="flex flex-col gap-2 relative z-10 mt-4">
+                        <span className="text-[10px] font-bold text-[#25D366]">Status: Connected to Meta</span>
+                        <button className="px-4 py-2 bg-[#25D366] hover:bg-[#1DA851] text-white font-bold text-[10px] rounded transition-colors max-w-max shadow-lg shadow-[#25D366]/20">Sync Templates</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {(activeFeature === 'Email Automation' || activeFeature === 'Push Notifications') && (
+                <div className="space-y-4 animate-fadeIn">
+                  <div className="p-5 bg-card border border-border rounded-xl">
+                     <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider mb-4 flex items-center gap-2"><Mail className="w-4 h-4 text-rose-500" /> Automated Communication Triggers</span>
+                     
+                     <div className="space-y-3">
+                       {[
+                         { trigger: 'Fee Due Reminder', desc: 'Sends email 3 days before deadline.', active: true },
+                         { trigger: 'Absent Alert', desc: 'Sends Push Notification to Parent App at 09:00 AM.', active: true },
+                         { trigger: 'Result Announced', desc: 'Email blast with PDF Report Card attachment.', active: false }
+                       ].map((t, i) => (
+                         <div key={i} className="flex justify-between items-center p-3 bg-muted/20 border border-border rounded-lg">
+                           <div>
+                             <strong className="text-xs text-foreground block">{t.trigger}</strong>
+                             <span className="text-[10px] text-muted-foreground">{t.desc}</span>
+                           </div>
+                           <label className="relative inline-flex items-center cursor-pointer group shrink-0">
+                              <input type="checkbox" className="sr-only peer" defaultChecked={t.active} />
+                              <div className="w-9 h-5 bg-muted peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+                           </label>
+                         </div>
+                       ))}
+                     </div>
+                  </div>
+                </div>
+              )}
+
+              {(activeFeature === 'AI Attendance Insights' || activeFeature === 'AI Fee Defaulter Prediction') && (
+                <div className="space-y-4 animate-fadeIn">
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                     {/* Attendance Prediction */}
+                     <div className="p-5 bg-card border border-border rounded-xl space-y-4 flex flex-col justify-between">
+                       <div>
+                         <span className="text-xs font-bold text-foreground/80 uppercase tracking-wider block mb-2 flex items-center gap-2"><TrendingUp className="w-4 h-4 text-purple-500" /> AI Attendance Insights</span>
+                         <p className="text-[11px] text-muted-foreground leading-relaxed">The AI has flagged <strong className="text-rose-500">8 students</strong> who have an irregular attendance pattern indicating a high probability of dropping out.</p>
+                       </div>
+                       <button className="w-full px-4 py-2 bg-purple-500/10 hover:bg-purple-500/20 text-purple-500 font-bold text-xs rounded transition-colors border border-purple-500/30">View At-Risk Students</button>
+                     </div>
+
+                     {/* Fee Prediction */}
+                     <div className="p-5 bg-card border border-border rounded-xl space-y-4 flex flex-col justify-between">
+                       <div>
+                         <span className="text-xs font-bold text-foreground/80 uppercase tracking-wider block mb-2 flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-amber-500" /> AI Fee Defaulter Engine</span>
+                         <p className="text-[11px] text-muted-foreground leading-relaxed">Based on 3-year historical payment trends, <strong className="text-amber-500">15 families</strong> are predicted to default on the upcoming semester fee.</p>
+                       </div>
+                       <button className="w-full px-4 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 font-bold text-xs rounded transition-colors border border-amber-500/30">Auto-Schedule Payment Reminders</button>
+                     </div>
+                   </div>
+                </div>
+              )}
+
+              {(activeFeature === 'AI Student Performance Prediction' || activeFeature === 'AI Admission Analytics') && (
+                <div className="space-y-4 animate-fadeIn">
+                  <div className="p-5 bg-card border border-border rounded-xl">
+                    <span className="text-xs font-bold text-foreground/80 uppercase tracking-wider block mb-4 flex items-center gap-2"><BrainCircuit className="w-4 h-4 text-primary animate-pulse" /> Live AI Inference Server</span>
+                    
+                    <div className="flex flex-col md:flex-row gap-4">
+                      <div className="flex-1 bg-muted/20 border border-border p-4 rounded-xl text-center space-y-2">
+                         <PieChart className="w-8 h-8 text-blue-400 mx-auto" />
+                         <strong className="text-xs text-foreground block">Admission Probability</strong>
+                         <span className="text-xl font-black text-blue-400">72.4%</span>
+                         <p className="text-[9px] text-muted-foreground">Estimated conversion of the 1,240 current leads based on demographic scoring.</p>
+                      </div>
+                      
+                      <div className="flex-1 bg-muted/20 border border-border p-4 rounded-xl text-center space-y-2">
+                         <LineChart className="w-8 h-8 text-emerald-400 mx-auto" />
+                         <strong className="text-xs text-foreground block">Board Exam Projections</strong>
+                         <span className="text-xl font-black text-emerald-400">A+ Average</span>
+                         <p className="text-[9px] text-muted-foreground">Class of 2026 is projected to outperform historical bounds by 4.2%.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+
+              {/* EXECUTIVE DASHBOARDS */}
+              {(activeFeature === 'School KPI Dashboard' || activeFeature === 'Revenue Dashboard' || activeFeature === 'Student Growth Dashboard' || activeFeature === 'Teacher Performance Dashboard') && (
+                <div className="space-y-4 animate-fadeIn">
+                  <div className="flex gap-4 mb-4 overflow-x-auto pb-2">
+                    <button className={`px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${activeFeature === 'School KPI Dashboard' ? 'bg-primary text-white' : 'bg-muted/50 text-foreground hover:bg-muted'}`}>School KPI</button>
+                    <button className={`px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${activeFeature === 'Revenue Dashboard' ? 'bg-emerald-500 text-white' : 'bg-muted/50 text-foreground hover:bg-muted'}`}>Revenue</button>
+                    <button className={`px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${activeFeature === 'Student Growth Dashboard' ? 'bg-blue-500 text-white' : 'bg-muted/50 text-foreground hover:bg-muted'}`}>Student Growth</button>
+                    <button className={`px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${activeFeature === 'Teacher Performance Dashboard' ? 'bg-purple-500 text-white' : 'bg-muted/50 text-foreground hover:bg-muted'}`}>Teacher Performance</button>
+                  </div>
+
+                  {activeFeature === 'School KPI Dashboard' && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="p-5 bg-card border border-border rounded-xl space-y-4">
+                        <strong className="text-xs font-bold text-foreground uppercase tracking-wider block">Enrollment Targets</strong>
+                        <div className="h-32 flex items-end gap-2">
+                          <div className="flex-1 bg-primary/20 rounded-t flex flex-col justify-end items-center text-[10px] font-bold text-primary pb-2 h-[60%]">Q1</div>
+                          <div className="flex-1 bg-primary/40 rounded-t flex flex-col justify-end items-center text-[10px] font-bold text-primary pb-2 h-[80%]">Q2</div>
+                          <div className="flex-1 bg-primary/60 rounded-t flex flex-col justify-end items-center text-[10px] font-bold text-white pb-2 h-[95%]">Q3</div>
+                          <div className="flex-1 bg-primary rounded-t flex flex-col justify-end items-center text-[10px] font-bold text-white pb-2 h-full">Q4 (Proj)</div>
+                        </div>
+                      </div>
+                      
+                      <div className="p-5 bg-card border border-border rounded-xl space-y-4">
+                        <strong className="text-xs font-bold text-foreground uppercase tracking-wider block">Staff Allocation</strong>
+                        <div className="space-y-3">
+                           <div>
+                             <div className="flex justify-between text-[10px] font-bold mb-1"><span>Science Faculty</span><span>45%</span></div>
+                             <div className="w-full bg-muted rounded-full h-2"><div className="bg-blue-500 h-2 rounded-full" style={{width: '45%'}}></div></div>
+                           </div>
+                           <div>
+                             <div className="flex justify-between text-[10px] font-bold mb-1"><span>Arts Faculty</span><span>30%</span></div>
+                             <div className="w-full bg-muted rounded-full h-2"><div className="bg-purple-500 h-2 rounded-full" style={{width: '30%'}}></div></div>
+                           </div>
+                           <div>
+                             <div className="flex justify-between text-[10px] font-bold mb-1"><span>Admin / Support</span><span>25%</span></div>
+                             <div className="w-full bg-muted rounded-full h-2"><div className="bg-emerald-500 h-2 rounded-full" style={{width: '25%'}}></div></div>
+                           </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeFeature === 'Revenue Dashboard' && (
+                    <div className="p-5 bg-card border border-emerald-500/20 rounded-xl space-y-4">
+                       <strong className="text-xs font-bold text-foreground uppercase tracking-wider block flex items-center gap-2"><DollarSign className="w-4 h-4 text-emerald-500" /> Revenue & Receivables Pipeline</strong>
+                       <div className="flex gap-4 items-center p-4 bg-emerald-500/10 rounded-lg">
+                          <div className="text-emerald-500"><TrendingUp className="w-8 h-8" /></div>
+                          <div>
+                            <span className="block text-2xl font-black text-foreground">$1.2M</span>
+                            <span className="text-[11px] text-muted-foreground">Collected YTD (+14% vs Last Year)</span>
+                          </div>
+                       </div>
+                       <table className="w-full text-left border-collapse mt-4">
+                          <thead>
+                            <tr className="border-b border-border text-[10px] font-black text-muted-foreground uppercase">
+                              <th className="p-2">Stream</th>
+                              <th className="p-2">Target</th>
+                              <th className="p-2">Achieved</th>
+                              <th className="p-2 text-right">Status</th>
+                            </tr>
+                          </thead>
+                          <tbody className="text-[11px] font-semibold">
+                            <tr className="border-b border-border/50">
+                              <td className="p-2">Tuition Fees</td>
+                              <td className="p-2">$1.0M</td>
+                              <td className="p-2 text-emerald-500">$980K (98%)</td>
+                              <td className="p-2 text-right"><span className="text-emerald-500">On Track</span></td>
+                            </tr>
+                            <tr className="border-b border-border/50">
+                              <td className="p-2">Transport Fees</td>
+                              <td className="p-2">$150K</td>
+                              <td className="p-2 text-amber-500">$100K (66%)</td>
+                              <td className="p-2 text-right"><span className="text-amber-500">Lagging</span></td>
+                            </tr>
+                          </tbody>
+                       </table>
+                    </div>
+                  )}
+
+                  {activeFeature === 'Student Growth Dashboard' && (
+                    <div className="p-5 bg-card border border-blue-500/20 rounded-xl space-y-4 text-center">
+                       <LineChart className="w-12 h-12 text-blue-500 mx-auto opacity-50" />
+                       <strong className="block text-lg font-black text-foreground">Cohort Progression Analysis</strong>
+                       <p className="text-xs text-muted-foreground max-w-md mx-auto">Visualizing the academic journey of the 2024 batch vs the 2025 batch across all major subjects.</p>
+                       <div className="mt-6 flex justify-center gap-8 text-[11px] font-bold">
+                          <div className="flex items-center gap-2"><div className="w-3 h-3 bg-blue-500 rounded-full"></div> 2024 Batch (+12% Growth)</div>
+                          <div className="flex items-center gap-2"><div className="w-3 h-3 bg-indigo-500 rounded-full"></div> 2025 Batch (+18% Growth)</div>
+                       </div>
+                    </div>
+                  )}
+
+                  {activeFeature === 'Teacher Performance Dashboard' && (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                       <div className="md:col-span-1 p-5 bg-card border border-purple-500/20 rounded-xl space-y-4">
+                          <strong className="text-xs font-bold text-foreground uppercase tracking-wider block">Top Performers</strong>
+                          <ul className="space-y-3 text-[11px]">
+                            <li className="flex justify-between items-center bg-purple-500/10 p-2 rounded text-purple-500 font-bold"><span>1. Miss Ayesha (Math)</span> <span>4.9 ⭐</span></li>
+                            <li className="flex justify-between items-center bg-muted/50 p-2 rounded"><span>2. Mr. Rizwan (Phys)</span> <span>4.7 ⭐</span></li>
+                            <li className="flex justify-between items-center bg-muted/50 p-2 rounded"><span>3. Mrs. Fatima (Eng)</span> <span>4.5 ⭐</span></li>
+                          </ul>
+                       </div>
+                       <div className="md:col-span-2 p-5 bg-card border border-border rounded-xl space-y-4">
+                          <strong className="text-xs font-bold text-foreground uppercase tracking-wider block">Evaluation Metrics</strong>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="bg-muted/20 p-4 rounded-lg text-center">
+                               <span className="text-3xl font-black text-foreground">94%</span>
+                               <span className="block text-[10px] text-muted-foreground mt-1">Syllabus Completion Rate</span>
+                            </div>
+                            <div className="bg-muted/20 p-4 rounded-lg text-center">
+                               <span className="text-3xl font-black text-foreground">8.2/10</span>
+                               <span className="block text-[10px] text-muted-foreground mt-1">Average Peer Review Score</span>
+                            </div>
+                            <div className="col-span-2 bg-emerald-500/10 p-4 rounded-lg text-center border border-emerald-500/20">
+                               <span className="text-emerald-500 font-bold text-sm block">Positive Correlation Detected</span>
+                               <span className="block text-[10px] text-emerald-500/80 mt-1">High peer review scores align directly with higher student exam grades in 85% of cases.</span>
+                            </div>
+                          </div>
+                       </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* SYSTEM SECURITY MODULES */}
               {(activeFeature === 'Two Factor Authentication') && (
