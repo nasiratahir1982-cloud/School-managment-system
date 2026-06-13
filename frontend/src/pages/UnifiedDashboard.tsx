@@ -9419,14 +9419,24 @@ export const UnifiedDashboard: React.FC = () => {
                       >
                         {students.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
                       </select>
-                      <input 
-                        type="text" 
+                        <select 
                         required 
-                        placeholder="Incident Details (e.g. Late Arrival)"
                         value={newDisciplineInfraction}
                         onChange={(e) => setNewDisciplineInfraction(e.target.value)}
-                        className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
-                      />
+                        className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold outline-none focus:border-primary w-full"
+                      >
+                        <option value="" disabled>Select Incident Type</option>
+                        <option value="Late Arrival">Late Arrival</option>
+                        <option value="Uniform/Dress Code Violation">Uniform/Dress Code Violation</option>
+                        <option value="Disruptive Behavior in Class">Disruptive Behavior in Class</option>
+                        <option value="Bullying / Harassment">Bullying / Harassment</option>
+                        <option value="Cheating / Academic Dishonesty">Cheating / Academic Dishonesty</option>
+                        <option value="Use of Mobile Phone">Use of Mobile Phone</option>
+                        <option value="Skipping Class / Bunking">Skipping Class / Bunking</option>
+                        <option value="Incomplete Homework / Assignment">Incomplete Homework / Assignment</option>
+                        <option value="Vandalism / Property Damage">Vandalism / Property Damage</option>
+                        <option value="Other">Other</option>
+                      </select>
                       <select
                         value={newDisciplineAction}
                         onChange={(e) => setNewDisciplineAction(e.target.value)}
