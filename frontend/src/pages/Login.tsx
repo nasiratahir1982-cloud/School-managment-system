@@ -203,7 +203,7 @@ export const Login: React.FC = () => {
         expectedPassword = 'drivepass123';
       } else if (emailLower.includes('hostel')) {
         detectedRole = 'hostel';
-        displayName = 'Hostel Warden';
+        displayName = 'Hostel Administrator';
         expectedPassword = 'hostelpass123';
       } else if (emailLower.includes('principal') || emailLower.includes('admin')) {
         detectedRole = 'admin';
