@@ -1096,6 +1096,15 @@ export const UnifiedDashboard: React.FC = () => {
   const [studentClassFilter, setStudentClassFilter] = useState('All');
   const [editingStudentId, setEditingStudentId] = useState<string | null>(null);
   const [editStudentForm, setEditStudentForm] = useState<any>({});
+  const [secureDeletePrompt, setSecureDeletePrompt] = useState<{isOpen: boolean, entityType: string, entityId: string, entityName: string, passwordAttempt: string, error: string} | null>(null);
+  const MASTER_PASSWORD = 'superadmin';
+  const [editingCountryId, setEditingCountryId] = useState<string | null>(null);
+  const [editCountryForm, setEditCountryForm] = useState<any>({});
+  const [editingOrgId, setEditingOrgId] = useState<string | null>(null);
+  const [editOrgForm, setEditOrgForm] = useState<any>({});
+  const [editingSchoolId, setEditingSchoolId] = useState<string | null>(null);
+  const [editSchoolForm, setEditSchoolForm] = useState<any>({});
+
   const [activeStudentTab, setActiveStudentTab] = useState<'roster' | 'waitlist'>('roster');
   const [newStudentName, setNewStudentName] = useState('');
   const [newStudentClass, setNewStudentClass] = useState('Class 10-A');
@@ -11179,6 +11188,7 @@ export const UnifiedDashboard: React.FC = () => {
                               <th className="p-3">Director</th>
                               <th className="p-3 text-center">Branches</th>
                               <th className="p-3 text-right">Status</th>
+<th className="p-3 text-right">Actions</th>
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-border text-foreground/85">
@@ -11246,6 +11256,7 @@ export const UnifiedDashboard: React.FC = () => {
                               <th className="p-3">Campus Branch</th>
                               <th className="p-3">Access Domain</th>
                               <th className="p-3 text-right">RLS Tenant Status</th>
+<th className="p-3 text-right">Actions</th>
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-border text-foreground/85">
