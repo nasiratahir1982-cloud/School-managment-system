@@ -799,7 +799,7 @@ input:focus, select:focus, textarea:focus {
     @apply bg-muted/30 border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold outline-none transition-all duration-300;
   }
   .modern-input:focus {
-    @apply border-primary ring-1 ring-primary/50 shadow-[0_0_15px_hsl(var(--primary)_/_0.3)] bg-muted/80;
+    @apply border-green-500 ring-[3px] ring-primary/50 bg-muted/80 shadow-none;
   }
   .modern-input:hover:not(:focus) {
     @apply border-primary/50 shadow-[0_0_10px_hsl(var(--primary)_/_0.15)];
