@@ -5693,14 +5693,14 @@ export const UnifiedDashboard: React.FC = () => {
 
 
               {/* TEACHER MODULES */}
-              {(activeFeature === 'Assignment Creation' || activeFeature === 'Quiz Creation') && (
+              {(activeFeature === 'Assignment Creation') && (
                 <div className="space-y-4 animate-fadeIn">
                   <div className="flex flex-col md:flex-row gap-4">
                     <div className="flex-1 p-5 bg-card border border-border rounded-xl space-y-4">
                       <strong className="text-xs font-bold text-foreground uppercase tracking-wider block flex items-center gap-2"><BookOpen className="w-4 h-4 text-primary" /> New Assignment</strong>
                       <div className="space-y-3">
-                        <input type="text" placeholder="Assignment Title (e.g. Physics Chapter 4)" className="w-full px-3 py-2 bg-background border border-border rounded-lg text-xs outline-none focus:border-primary text-foreground" />
-                        <textarea placeholder="Instructions for students..." className="w-full px-3 py-2 bg-background border border-border rounded-lg text-xs outline-none focus:border-primary text-foreground h-20 resize-none"></textarea>
+                        <input type="text" defaultValue="Physics Chapter 4" placeholder="Assignment Title (e.g. Physics Chapter 4)" className="w-full px-3 py-2 bg-background border border-border rounded-lg text-xs outline-none focus:border-primary text-foreground" />
+                        <textarea defaultValue="Please study chapter 4 thoroughly. Upload your notes by tomorrow." placeholder="Instructions for students..." className="w-full px-3 py-2 bg-background border border-border rounded-lg text-xs outline-none focus:border-primary text-foreground h-20 resize-none"></textarea>
                         <div className="flex gap-2">
                            <input type="date" className="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-xs outline-none focus:border-primary text-muted-foreground" />
                            <select className="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-xs outline-none focus:border-primary text-foreground">
@@ -5712,7 +5712,13 @@ export const UnifiedDashboard: React.FC = () => {
                           onClick={(e) => {
                              const btn = e.currentTarget;
                              btn.innerHTML = 'Uploading Resource...';
-                             setTimeout(() => btn.innerHTML = '✅ Assignment Published', 1500);
+                             setTimeout(() => {
+                                btn.innerHTML = '✅ Assignment Published';
+                                setTimeout(() => {
+                                    alert('Assignment Published Successfully!');
+                                    setActiveFeature(null);
+                                }, 800);
+                             }, 1500);
                           }}
                           className="w-full px-4 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-colors flex items-center justify-center gap-2"
                         >
@@ -5733,7 +5739,20 @@ export const UnifiedDashboard: React.FC = () => {
                             </div>
                          </div>
                          <button className="text-xs text-purple-500 font-bold hover:underline">+ Add Another Question</button>
-                         <button className="w-full px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white font-bold text-xs rounded-lg transition-colors">
+                         <button 
+                            onClick={(e) => {
+                               const btn = e.currentTarget;
+                               btn.innerHTML = 'Launching Live Quiz...';
+                               setTimeout(() => {
+                                  btn.innerHTML = '✅ Quiz Launched & Published';
+                                  setTimeout(() => {
+                                      alert('Live Quiz has been successfully launched. Students will be notified instantly.');
+                                      setActiveFeature(null);
+                                  }, 800);
+                               }, 1500);
+                            }}
+                            className="w-full px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white font-bold text-xs rounded-lg transition-colors"
+                         >
                            Launch Live Quiz
                          </button>
                       </div>
@@ -5773,8 +5792,23 @@ export const UnifiedDashboard: React.FC = () => {
                    <div className="p-5 bg-card border border-border rounded-xl">
                       <strong className="text-xs font-bold text-foreground uppercase tracking-wider block mb-4 flex items-center gap-2"><Edit className="w-4 h-4 text-emerald-500" /> Digital Class Diary</strong>
                       <div className="flex gap-4">
-                        <textarea placeholder="Write today's diary note for parents (e.g. Please ensure students bring their geometry boxes tomorrow)..." className="flex-1 px-4 py-3 bg-background border border-border rounded-xl text-xs outline-none focus:border-emerald-500 text-foreground h-24 resize-none"></textarea>
-                        <button className="px-6 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl transition-colors">Publish to Parent Portal</button>
+                        <textarea defaultValue="Please ensure students bring their geometry boxes tomorrow." placeholder="Write today's diary note for parents (e.g. Please ensure students bring their geometry boxes tomorrow)..." className="flex-1 px-4 py-3 bg-background border border-border rounded-xl text-xs outline-none focus:border-emerald-500 text-foreground h-24 resize-none"></textarea>
+                        <button 
+                            onClick={(e) => {
+                               const btn = e.currentTarget;
+                               btn.innerHTML = 'Publishing...';
+                               setTimeout(() => {
+                                  btn.innerHTML = '✅ Published to Portal';
+                                  setTimeout(() => {
+                                      alert('Class diary has been updated. Parents will be notified.');
+                                      setActiveFeature(null);
+                                  }, 800);
+                               }, 1500);
+                            }}
+                            className="px-6 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl transition-colors"
+                        >
+                          Publish to Parent Portal
+                        </button>
                       </div>
                    </div>
                 </div>
@@ -5821,7 +5855,13 @@ export const UnifiedDashboard: React.FC = () => {
                             onClick={(e) => {
                                const btn = e.currentTarget;
                                btn.innerHTML = 'Submitting...';
-                               setTimeout(() => btn.innerHTML = '✅ Attendance Submitted', 1000);
+                               setTimeout(() => {
+                                  btn.innerHTML = '✅ Attendance Submitted';
+                                  setTimeout(() => {
+                                      alert('Attendance has been successfully saved to the system.');
+                                      setActiveFeature(null);
+                                  }, 800);
+                               }, 1000);
                             }}
                             className="px-6 py-2 bg-primary text-white font-bold text-xs rounded-lg transition-colors"
                          >
@@ -5852,7 +5892,22 @@ export const UnifiedDashboard: React.FC = () => {
                              <input type="number" defaultValue="92" className="w-16 px-2 py-1 bg-background border border-border rounded text-xs text-center outline-none focus:border-primary text-foreground" />
                            </div>
                         </div>
-                        <button className="w-full px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary font-bold text-xs rounded-lg transition-colors">Save Marks</button>
+                        <button 
+                            onClick={(e) => {
+                               const btn = e.currentTarget;
+                               btn.innerHTML = 'Saving Marks...';
+                               setTimeout(() => {
+                                  btn.innerHTML = '✅ Marks Saved Successfully';
+                                  setTimeout(() => {
+                                      alert('Grades have been saved to the report card.');
+                                      setActiveFeature(null);
+                                  }, 800);
+                               }, 1500);
+                            }}
+                            className="w-full px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary font-bold text-xs rounded-lg transition-colors"
+                        >
+                          Save Marks
+                        </button>
                      </div>
 
                      {/* Student Remarks */}
@@ -5866,12 +5921,18 @@ export const UnifiedDashboard: React.FC = () => {
                              <option>Badge: 🌟 Excellent Participation</option>
                              <option>Badge: ⚠️ Needs Improvement</option>
                            </select>
-                           <textarea placeholder="Write a custom remark for the parent to see..." className="w-full px-3 py-2 bg-background border border-border rounded-lg text-xs outline-none focus:border-primary text-foreground h-16 resize-none"></textarea>
+                           <textarea defaultValue="Very attentive during the lab experiment. Great job!" placeholder="Write a custom remark for the parent to see..." className="w-full px-3 py-2 bg-background border border-border rounded-lg text-xs outline-none focus:border-primary text-foreground h-16 resize-none"></textarea>
                            <button 
                               onClick={(e) => {
                                  const btn = e.currentTarget;
                                  btn.innerHTML = 'Sending to Parent...';
-                                 setTimeout(() => btn.innerHTML = '✅ Remark Issued', 1000);
+                                 setTimeout(() => {
+                                    btn.innerHTML = '✅ Remark Issued';
+                                    setTimeout(() => {
+                                        alert('Student remark has been logged and sent to parents.');
+                                        setActiveFeature(null);
+                                    }, 800);
+                                 }, 1000);
                               }}
                               className="w-full px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-bold text-xs rounded-lg transition-colors"
                            >
@@ -7177,7 +7238,7 @@ export const UnifiedDashboard: React.FC = () => {
                   </div>
                 </div>
               )}
-\n{/* LEAVE APPROVALS & LEAVE MANAGEMENT & TEACHER LEAVE REQUESTS */}
+{/* LEAVE APPROVALS & LEAVE MANAGEMENT & TEACHER LEAVE REQUESTS */}
               {(activeFeature === 'Leave Approvals' || activeFeature === 'Leave Management' || activeFeature === 'Teacher Leave Requests') && (
                 <div className="space-y-4">
                   <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
