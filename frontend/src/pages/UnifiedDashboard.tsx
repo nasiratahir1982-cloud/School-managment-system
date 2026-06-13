@@ -1160,23 +1160,6 @@ export const UnifiedDashboard: React.FC = () => {
   const [isAddingApiKey, setIsAddingApiKey] = useState(false);
   const [newApiKeyForm, setNewApiKeyForm] = useState({appName: '', key: ''});
 
-  // Sync to Firebase whenever these registries change
-  React.useEffect(() => {
-    updateRealtimeData('admin_countries', countries);
-  }, [countries]);
-
-  React.useEffect(() => {
-    updateRealtimeData('admin_organizations', organizations);
-  }, [organizations]);
-
-  React.useEffect(() => {
-    updateRealtimeData('admin_campuses', schoolsList);
-  }, [schoolsList]);
-
-  React.useEffect(() => {
-    updateRealtimeData('admin_apikeys', apiKeys);
-  }, [apiKeys]);
-
 
   const [editSchoolForm, setEditSchoolForm] = useState<any>({});
 
@@ -1337,6 +1320,24 @@ export const UnifiedDashboard: React.FC = () => {
   ]);
   const [newSchoolName, setNewSchoolName] = useState('');
   const [newSchoolSubdomain, setNewSchoolSubdomain] = useState('');
+
+  // Sync to Firebase whenever these registries change
+  React.useEffect(() => {
+    updateRealtimeData('admin_countries', countries);
+  }, [countries]);
+
+  React.useEffect(() => {
+    updateRealtimeData('admin_organizations', organizations);
+  }, [organizations]);
+
+  React.useEffect(() => {
+    updateRealtimeData('admin_campuses', schoolsList);
+  }, [schoolsList]);
+
+  React.useEffect(() => {
+    updateRealtimeData('admin_apikeys', apiKeys);
+  }, [apiKeys]);
+
 
   const [subscriptionPlans, setSubscriptionPlans] = useState([
     { id: '1', name: 'Basic Academy Plan', price: 99, billing: 'Monthly', subscribers: 14 },
