@@ -41,7 +41,13 @@ import {
   HeartPulse,
   Server,
   Database,
-  Lock
+  Lock,
+  Key,
+  Mail,
+  Smartphone,
+  Ban,
+  LineChart,
+  AlertOctagon
 } from 'lucide-react';
 import { useThemeStore } from '../store/themeStore';
 
@@ -81,7 +87,7 @@ const getFeatureDetails = (featureName: string) => {
       return { desc: 'Resolve queries submitted by campus administrators.', icon: HelpCircle, stats: '0 Pending' };
     case 'Audit Logs':
       return { desc: 'Track database queries and administrative actions.', icon: Shield, stats: 'Protected' };
-    case 'Role Permission Matrix':
+    case 'Multi-Level Permissions':
       return { desc: 'Control CRUD access rights across all portal roles.', icon: Lock, stats: 'Active Policy' };
     case 'Advanced Activity Monitoring':
       return { desc: 'Detailed log of user sessions, IP trails and global events.', icon: Activity, stats: 'Logging On' };
@@ -89,8 +95,20 @@ const getFeatureDetails = (featureName: string) => {
       return { desc: 'Check tenant API latency, storage and sync status.', icon: HeartPulse, stats: '100% Optimal' };
     case 'Server Monitoring':
       return { desc: 'Hardware metrics, CPU load, and container status.', icon: Server, stats: 'Stable Load' };
-    case 'Database Backup Management':
+    case 'Backup Manager':
       return { desc: 'Manage SQL dumps, retention policies and recovery.', icon: Database, stats: 'Scheduled' };
+    case 'API Key Management':
+      return { desc: 'Generate and revoke keys for 3rd-party integrations.', icon: Key, stats: '12 Active Keys' };
+    case 'SMS Gateway Settings':
+      return { desc: 'Configure Twilio and local SMS gateway providers.', icon: Smartphone, stats: 'Connected' };
+    case 'Email Server Settings':
+      return { desc: 'Global SMTP configuration for transactional emails.', icon: Mail, stats: 'TLS Secured' };
+    case 'School Suspension System':
+      return { desc: 'Lockout tenants for non-payment or compliance violations.', icon: Ban, stats: '0 Suspended' };
+    case 'School Performance Analytics':
+      return { desc: 'Global data grid comparing school growth and metrics.', icon: LineChart, stats: 'Real-time' };
+    case 'Fraud Detection Dashboard':
+      return { desc: 'AI-driven anomalies and suspicious activity flags.', icon: AlertOctagon, stats: 'Safe' };
 
     // Admin / Principal
     case 'Student Management':
@@ -2451,7 +2469,7 @@ export const UnifiedDashboard: React.FC = () => {
         { label: "Total Schools", value: "184 Schools", icon: Layers, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Secure data channels active" },
         { label: "Active Revenue", value: "$48,920/mo", icon: TrendingUp, colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/25", desc: "Monthly collection records" }
       ],
-      features: ["Country Management", "Organization Management", "School Management", "Subscription Plans", "Billing & Invoicing", "Revenue Analytics", "White Label Configuration", "Global Announcements", "Support Tickets", "Audit Logs", "Role Permission Matrix", "Advanced Activity Monitoring", "School Health Monitoring", "Server Monitoring", "Database Backup Management", "AI Command Center", "AI Content Studio", "Payment Gateway Settings"],
+      features: ["Country Management", "Organization Management", "School Management", "Subscription Plans", "Billing & Invoicing", "Revenue Analytics", "White Label Configuration", "Global Announcements", "Support Tickets", "Audit Logs", "Multi-Level Permissions", "Advanced Activity Monitoring", "School Health Monitoring", "Server Monitoring", "Backup Manager", "API Key Management", "SMS Gateway Settings", "Email Server Settings", "School Suspension System", "School Performance Analytics", "Fraud Detection Dashboard", "AI Command Center", "AI Content Studio", "Payment Gateway Settings"],
       quickActions: [
         { label: "Add New School", desc: "Create school profile", icon: Plus },
         { label: "Broadcast Alert", desc: "Dispatch global notification", icon: MessageSquare }
@@ -7582,7 +7600,7 @@ export const UnifiedDashboard: React.FC = () => {
                 </div>
               )}
               {/* SaaS Admin, Organization & Brand Settings */}
-              {['Country Management', 'Organization Management', 'School Management', 'Subscription Plans', 'Revenue Analytics', 'White Label Configuration', 'Support Tickets', 'Audit Logs', 'Role Permission Matrix', 'Advanced Activity Monitoring', 'School Health Monitoring', 'Server Monitoring', 'Database Backup Management', 'Global Announcements'].includes(activeFeature || '') && (
+              {['Country Management', 'Organization Management', 'School Management', 'Subscription Plans', 'Revenue Analytics', 'White Label Configuration', 'Support Tickets', 'Audit Logs', 'Multi-Level Permissions', 'Advanced Activity Monitoring', 'School Health Monitoring', 'Server Monitoring', 'Backup Manager', 'API Key Management', 'SMS Gateway Settings', 'Email Server Settings', 'School Suspension System', 'School Performance Analytics', 'Fraud Detection Dashboard', 'Global Announcements'].includes(activeFeature || '') && (
                 <div className="space-y-6">
                   {/* 1. Country Management */}
                   {activeFeature === 'Country Management' && (
@@ -8043,8 +8061,8 @@ export const UnifiedDashboard: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Super Admin Advanced Feature 1: Role Permission Matrix */}
-                  {activeFeature === 'Role Permission Matrix' && (
+                  {/* Super Admin Advanced Feature 1: Multi-Level Permissions */}
+                  {activeFeature === 'Multi-Level Permissions' && (
                     <div className="space-y-4 animate-fadeIn">
                       <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
                         🔒 Define Global Role Permissions. Grant or revoke CRUD access for systemic modules across all connected tenant portals.
@@ -8074,7 +8092,7 @@ export const UnifiedDashboard: React.FC = () => {
                           </tbody>
                         </table></div>
                       </div>
-                      <button onClick={() => alert('Role Permission Matrix updated successfully!')} className="w-full sm:w-auto px-4 py-2.5 bg-primary text-white text-xs font-bold rounded-lg shadow hover:bg-primary/90 transition-all flex items-center justify-center gap-2">Save Matrix Configuration</button>
+                      <button onClick={() => alert('Multi-Level Permissions updated successfully!')} className="w-full sm:w-auto px-4 py-2.5 bg-primary text-white text-xs font-bold rounded-lg shadow hover:bg-primary/90 transition-all flex items-center justify-center gap-2">Save Matrix Configuration</button>
                     </div>
                   )}
 
@@ -8181,8 +8199,8 @@ export const UnifiedDashboard: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Super Admin Advanced Feature 5: Database Backup Management */}
-                  {activeFeature === 'Database Backup Management' && (
+                  {/* Super Admin Advanced Feature 5: Backup Manager */}
+                  {activeFeature === 'Backup Manager' && (
                     <div className="space-y-4 animate-fadeIn">
                       <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
                         💾 Automated & Manual Postgres Backups. Ensure data redundancy across all tenant schemas.
@@ -8222,6 +8240,231 @@ export const UnifiedDashboard: React.FC = () => {
                                 <button className="text-xs font-bold text-foreground/60 hover:text-primary transition-colors">Download</button>
                                 <button className="text-xs font-bold text-foreground/60 hover:text-rose-400 transition-colors">Restore</button>
                               </td>
+                            </tr>
+                          </tbody>
+                        </table></div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Super Admin Advanced Feature 6: API Key Management */}
+                  {activeFeature === 'API Key Management' && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                        🔑 Generate and revoke secure API keys for 3rd-party integrations (Biometric Devices, Accounts Software, etc.).
+                      </div>
+                      <div className="flex justify-end mb-4">
+                         <button className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg shadow hover:bg-primary/90 transition-all flex items-center gap-2">
+                           <Key size={14} /> Generate New Key
+                         </button>
+                      </div>
+                      <div className="border border-border rounded-xl bg-card overflow-hidden">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs min-w-[600px]">
+                          <thead>
+                            <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
+                              <th className="p-3">Application Name</th>
+                              <th className="p-3">API Key (Masked)</th>
+                              <th className="p-3">Created Date</th>
+                              <th className="p-3 text-right">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-border text-foreground/85">
+                            <tr className="hover:bg-muted/10">
+                              <td className="p-3 font-bold text-primary">ZK Teco Biometrics Sync</td>
+                              <td className="p-3 font-mono text-foreground/60">sk_live_****************a49b</td>
+                              <td className="p-3 text-foreground/60">2026-05-10</td>
+                              <td className="p-3 text-right"><button className="text-xs font-bold text-rose-400 hover:text-rose-500 transition-colors">Revoke</button></td>
+                            </tr>
+                            <tr className="hover:bg-muted/10">
+                              <td className="p-3 font-bold text-primary">QuickBooks Finance API</td>
+                              <td className="p-3 font-mono text-foreground/60">sk_live_****************8f2c</td>
+                              <td className="p-3 text-foreground/60">2026-06-01</td>
+                              <td className="p-3 text-right"><button className="text-xs font-bold text-rose-400 hover:text-rose-500 transition-colors">Revoke</button></td>
+                            </tr>
+                          </tbody>
+                        </table></div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Super Admin Advanced Feature 7: SMS Gateway Settings */}
+                  {activeFeature === 'SMS Gateway Settings' && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                        📱 Configure Global SMS Gateway providers (Twilio, Clickatell, Local PK Gateways).
+                      </div>
+                      <div className="p-5 bg-card border border-border rounded-xl space-y-4 shadow-sm max-w-2xl">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                            <label className="text-[11px] font-bold text-foreground/70 uppercase">Active Gateway</label>
+                            <select className="bg-muted/30 border border-border rounded-lg text-xs p-2.5 w-full text-foreground cursor-pointer">
+                              <option>Twilio Global API</option>
+                              <option>Zong PK Business SMS</option>
+                              <option>Custom Webhook</option>
+                            </select>
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[11px] font-bold text-foreground/70 uppercase">Sender ID / Title</label>
+                            <input type="text" defaultValue="ACADEMICHUB" className="bg-muted/30 border border-border rounded-lg text-xs p-2.5 w-full text-foreground" />
+                          </div>
+                          <div className="space-y-1 md:col-span-2">
+                            <label className="text-[11px] font-bold text-foreground/70 uppercase">API Key / Auth Token</label>
+                            <input type="password" defaultValue="************************" className="bg-muted/30 border border-border rounded-lg text-xs p-2.5 w-full text-foreground" />
+                          </div>
+                        </div>
+                        <div className="flex gap-3 justify-end pt-2">
+                          <button onClick={() => alert('Test SMS sent successfully!')} className="px-4 py-2 bg-muted text-foreground border border-border text-xs font-bold rounded-lg shadow-sm hover:bg-muted/80 transition-all">Send Test SMS</button>
+                          <button onClick={() => alert('SMS Settings saved!')} className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg shadow hover:bg-primary/90 transition-all">Save Settings</button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Super Admin Advanced Feature 8: Email Server Settings */}
+                  {activeFeature === 'Email Server Settings' && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                        📧 Global SMTP configuration for transactional emails (Invoices, Notifications, Alerts).
+                      </div>
+                      <div className="p-5 bg-card border border-border rounded-xl space-y-4 shadow-sm max-w-2xl">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                            <label className="text-[11px] font-bold text-foreground/70 uppercase">SMTP Host</label>
+                            <input type="text" defaultValue="smtp.sendgrid.net" className="bg-muted/30 border border-border rounded-lg text-xs p-2.5 w-full text-foreground" />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[11px] font-bold text-foreground/70 uppercase">SMTP Port</label>
+                            <input type="number" defaultValue="587" className="bg-muted/30 border border-border rounded-lg text-xs p-2.5 w-full text-foreground" />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[11px] font-bold text-foreground/70 uppercase">SMTP Username</label>
+                            <input type="text" defaultValue="apikey" className="bg-muted/30 border border-border rounded-lg text-xs p-2.5 w-full text-foreground" />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[11px] font-bold text-foreground/70 uppercase">SMTP Password</label>
+                            <input type="password" defaultValue="************************" className="bg-muted/30 border border-border rounded-lg text-xs p-2.5 w-full text-foreground" />
+                          </div>
+                          <div className="space-y-1 md:col-span-2 flex items-center gap-2 mt-2">
+                            <input type="checkbox" defaultChecked className="w-4 h-4 rounded border-border text-primary cursor-pointer" />
+                            <span className="text-xs font-bold text-foreground/80">Use TLS/SSL Encryption</span>
+                          </div>
+                        </div>
+                        <div className="flex gap-3 justify-end pt-2 border-t border-border/50 mt-4">
+                          <button onClick={() => alert('Email Server Configuration saved!')} className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg shadow hover:bg-primary/90 transition-all mt-4">Save Configuration</button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Super Admin Advanced Feature 9: School Suspension System */}
+                  {activeFeature === 'School Suspension System' && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-500/90 font-bold leading-relaxed flex items-center gap-2">
+                        <Ban size={16} /> Extreme Security Protocol. Suspending a school will instantly block all logins and API access for that tenant.
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {[
+                          { name: 'Allied School Campus A', status: 'Active' },
+                          { name: 'Beaconhouse UK Branch', status: 'Active' },
+                          { name: 'Defaulter School Lahore', status: 'Suspended' }
+                        ].map((school, i) => (
+                          <div key={i} className={`p-4 bg-card border ${school.status === 'Suspended' ? 'border-rose-500/50' : 'border-border'} rounded-xl space-y-3 shadow-sm flex items-center justify-between`}>
+                            <div>
+                              <span className="font-bold text-foreground text-xs block">{school.name}</span>
+                              <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full inline-block mt-1 ${school.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>{school.status}</span>
+                            </div>
+                            <button className={`px-4 py-2 text-white text-[11px] font-bold rounded-lg shadow transition-all ${school.status === 'Active' ? 'bg-rose-500 hover:bg-rose-600' : 'bg-emerald-500 hover:bg-emerald-600'}`}>
+                              {school.status === 'Active' ? 'Suspend School' : 'Revoke Suspension'}
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Super Admin Advanced Feature 10: School Performance Analytics */}
+                  {activeFeature === 'School Performance Analytics' && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                        📊 Global cross-tenant analytical comparison of school growths, admissions, and financial health.
+                      </div>
+                      <div className="border border-border rounded-xl bg-card overflow-hidden">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs min-w-[700px]">
+                          <thead>
+                            <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
+                              <th className="p-3">School Tenant</th>
+                              <th className="p-3 text-right">Total Students</th>
+                              <th className="p-3 text-right">Avg Attendance</th>
+                              <th className="p-3 text-right">Monthly Revenue</th>
+                              <th className="p-3 text-right">Growth (YTD)</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-border text-foreground/85">
+                            <tr className="hover:bg-muted/10">
+                              <td className="p-3 font-bold text-primary">Allied School Campus A</td>
+                              <td className="p-3 text-right font-mono">1,204</td>
+                              <td className="p-3 text-right font-mono text-emerald-400">96.4%</td>
+                              <td className="p-3 text-right font-mono">$12,400</td>
+                              <td className="p-3 text-right font-mono text-emerald-400">+12%</td>
+                            </tr>
+                            <tr className="hover:bg-muted/10">
+                              <td className="p-3 font-bold text-primary">Beaconhouse UK Branch</td>
+                              <td className="p-3 text-right font-mono">850</td>
+                              <td className="p-3 text-right font-mono text-amber-400">89.2%</td>
+                              <td className="p-3 text-right font-mono">$28,500</td>
+                              <td className="p-3 text-right font-mono text-emerald-400">+4%</td>
+                            </tr>
+                            <tr className="hover:bg-muted/10">
+                              <td className="p-3 font-bold text-primary">The Educators Lahore</td>
+                              <td className="p-3 text-right font-mono">3,400</td>
+                              <td className="p-3 text-right font-mono text-emerald-400">92.1%</td>
+                              <td className="p-3 text-right font-mono">$8,200</td>
+                              <td className="p-3 text-right font-mono text-rose-400">-2%</td>
+                            </tr>
+                          </tbody>
+                        </table></div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Super Admin Advanced Feature 11: Fraud Detection Dashboard */}
+                  {activeFeature === 'Fraud Detection Dashboard' && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-xs text-amber-500/90 font-bold leading-relaxed flex items-center gap-2">
+                        <AlertOctagon size={16} /> AI Security AI is monitoring global activities for financial anomalies, IP mismatches, and rapid login failures.
+                      </div>
+                      <div className="border border-border rounded-xl bg-card overflow-hidden">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs min-w-[700px]">
+                          <thead>
+                            <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
+                              <th className="p-3">Detected Anomaly</th>
+                              <th className="p-3">Tenant / User</th>
+                              <th className="p-3">Severity</th>
+                              <th className="p-3">Timestamp</th>
+                              <th className="p-3 text-right">Action Taken</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-border text-foreground/85">
+                            <tr className="hover:bg-muted/10 bg-rose-500/5">
+                              <td className="p-3 font-bold text-rose-400">Unusual High Discount Approved (80%)</td>
+                              <td className="p-3">Beaconhouse UK (acc_user_4)</td>
+                              <td className="p-3"><span className="px-2 py-0.5 bg-rose-500/10 text-rose-400 rounded border border-rose-500/20 text-[9px] uppercase tracking-wider font-bold">Critical</span></td>
+                              <td className="p-3 font-mono text-[10px] text-foreground/60">10 mins ago</td>
+                              <td className="p-3 text-right"><button className="text-[10px] font-bold text-primary hover:underline">Investigate</button></td>
+                            </tr>
+                            <tr className="hover:bg-muted/10">
+                              <td className="p-3 font-bold text-amber-400">7 Failed Login Attempts</td>
+                              <td className="p-3">Allied School (admin_master)</td>
+                              <td className="p-3"><span className="px-2 py-0.5 bg-amber-500/10 text-amber-400 rounded border border-amber-500/20 text-[9px] uppercase tracking-wider font-bold">Warning</span></td>
+                              <td className="p-3 font-mono text-[10px] text-foreground/60">1 hour ago</td>
+                              <td className="p-3 text-right"><button className="text-[10px] font-bold text-foreground/60">IP Blocked</button></td>
+                            </tr>
+                            <tr className="hover:bg-muted/10">
+                              <td className="p-3 font-bold text-amber-400">Simultaneous logins from diff countries</td>
+                              <td className="p-3">Educators (super_admin)</td>
+                              <td className="p-3"><span className="px-2 py-0.5 bg-amber-500/10 text-amber-400 rounded border border-amber-500/20 text-[9px] uppercase tracking-wider font-bold">Warning</span></td>
+                              <td className="p-3 font-mono text-[10px] text-foreground/60">3 hours ago</td>
+                              <td className="p-3 text-right"><button className="text-[10px] font-bold text-primary hover:underline">Investigate</button></td>
                             </tr>
                           </tbody>
                         </table></div>
