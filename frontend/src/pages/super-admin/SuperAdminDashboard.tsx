@@ -281,9 +281,9 @@ export const SuperAdminDashboard: React.FC = () => {
           <div className="flex items-center gap-3">
             <button 
               onClick={() => navigate('/dashboard')}
-              className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-black transition-all shadow-md shadow-purple-500/30 border border-purple-500"
+              className="flex items-center gap-2 bg-purple--white px-4 py-2 rounded-lg text-sm font-black transition-all shadow-md shadow-purple-500/30 border border-purple-500"
             >
-              <Sparkles className="w-4 h-4 text-white fill-white/20 animate-pulse" />
+              <Sparkles className="w-4 h-4 text-foreground fill-white/20 animate-pulse" />
               Manage School Portals
             </button>
             <button
@@ -323,12 +323,12 @@ export const SuperAdminDashboard: React.FC = () => {
             className="glass-card accent-purple p-6 rounded-xl flex flex-col justify-between h-32 cursor-pointer hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-900/10 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
           >
             <div className="flex items-center justify-between">
-              <span className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Active Institutes</span>
+              <span className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">Active Institutes</span>
               <Building2 className="w-5 h-5 text-purple-400" />
             </div>
             <div>
-              <h3 className="text-2xl font-bold text-white">{schoolsList.length}</h3>
-              <p className="text-[10px] text-slate-500 mt-1">Multi-campus isolation active</p>
+              <h3 className="text-2xl font-bold text-foreground">{schoolsList.length}</h3>
+              <p className="text-[10px] text-muted-foreground mt-1">Multi-campus isolation active</p>
             </div>
           </div>
 
@@ -337,11 +337,11 @@ export const SuperAdminDashboard: React.FC = () => {
             className="glass-card accent-emerald p-6 rounded-xl flex flex-col justify-between h-32 cursor-pointer hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-900/10 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
           >
             <div className="flex items-center justify-between">
-              <span className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Database Space</span>
+              <span className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">Database Space</span>
               <Database className="w-5 h-5 text-emerald-400" />
             </div>
             <div>
-              <h3 className="text-2xl font-bold text-white">41.2 MB</h3>
+              <h3 className="text-2xl font-bold text-foreground">41.2 MB</h3>
               <p className="text-[10px] text-emerald-400 mt-1">Shared relational clusters</p>
             </div>
           </div>
@@ -351,12 +351,12 @@ export const SuperAdminDashboard: React.FC = () => {
             className="glass-card accent-amber p-6 rounded-xl flex flex-col justify-between h-32 cursor-pointer hover:border-amber-500/50 hover:shadow-lg hover:shadow-amber-900/10 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
           >
             <div className="flex items-center justify-between">
-              <span className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Job Queues Status</span>
+              <span className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">Job Queues Status</span>
               <Layers className="w-5 h-5 text-amber-400" />
             </div>
             <div>
-              <h3 className="text-2xl font-bold text-white">0 Queue Jobs</h3>
-              <p className="text-[10px] text-slate-500 mt-1">RabbitMQ cluster healthy</p>
+              <h3 className="text-2xl font-bold text-foreground">0 Queue Jobs</h3>
+              <p className="text-[10px] text-muted-foreground mt-1">RabbitMQ cluster healthy</p>
             </div>
           </div>
 
@@ -365,25 +365,25 @@ export const SuperAdminDashboard: React.FC = () => {
             className="glass-card accent-blue p-6 rounded-xl flex flex-col justify-between h-32 cursor-pointer hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-900/10 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
           >
             <div className="flex items-center justify-between">
-              <span className="text-slate-400 text-xs font-semibold uppercase tracking-wider">CPU Average</span>
+              <span className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">CPU Average</span>
               <Cpu className="w-5 h-5 text-blue-400" />
             </div>
             <div>
-              <h3 className="text-2xl font-bold text-white">1.84%</h3>
+              <h3 className="text-2xl font-bold text-foreground">1.84%</h3>
               <p className="text-[10px] text-emerald-400 mt-1">Load balancer: healthy</p>
             </div>
           </div>
         </section>
 
         {/* Action Header bar */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
+        <div className="flex items-center justify-between border-b border-border pb-4">
+          <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
             <Building2 className="w-5 h-5 text-purple-400" />
             SaaS Institute Provisioning Ledger
           </h2>
           <button
             onClick={() => setWizardOpen(true)}
-            className="flex items-center gap-2 bg-purple-650 hover:bg-purple-600 text-white px-4 py-2.5 rounded-xl text-sm font-bold transition-all shadow-lg shadow-purple-550/20"
+            className="flex items-center gap-2 bg-purple--white px-4 py-2.5 rounded-xl text-sm font-bold transition-all shadow-lg shadow-purple-550/20"
           >
             <Plus className="w-4.5 h-4.5" />
             Launch School Setup Wizard
@@ -395,29 +395,29 @@ export const SuperAdminDashboard: React.FC = () => {
           
           {/* Active Tenant List Column */}
           <div className="lg:col-span-2 flex flex-col">
-            <div className="glass-card rounded-xl overflow-hidden border border-slate-800 h-full flex flex-col justify-between">
+            <div className="glass-card rounded-xl overflow-hidden border border-border h-full flex flex-col justify-between">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-800 bg-slate-900/40 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                  <tr className="border-b border-border bg-card/40 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     <th className="px-6 py-4">Domain Prefix</th>
                     <th className="px-6 py-4">School Subdomain</th>
                     <th className="px-6 py-4">Country & Region</th>
                     <th className="px-6 py-4">Theme Configuration</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 text-sm text-slate-300">
+                <tbody className="divide-y divide-border text-sm text-foreground">
                   {schoolsList.map((school) => (
                     <tr 
                       key={school.schoolId} 
                       onClick={() => handleLaunchSchoolPortal(school)}
-                      className="hover:bg-slate-900/35 transition-colors cursor-pointer group"
+                      className="hover:bg-card/35 transition-colors cursor-pointer group"
                       title={`Launch & Administer ${school.schoolName} Portal`}
                     >
-                      <td className="px-6 py-4 font-mono text-xs text-slate-400 group-hover:text-purple-400 transition-colors">{school.domain}</td>
-                      <td className="px-6 py-4 font-bold text-white group-hover:text-purple-300 transition-colors">{school.schoolName}</td>
+                      <td className="px-6 py-4 font-mono text-xs text-muted-foreground group-hover:text-purple-400 transition-colors">{school.domain}</td>
+                      <td className="px-6 py-4 font-bold text-foreground group-hover:text-purple-300 transition-colors">{school.schoolName}</td>
                       <td className="px-6 py-4 flex items-center gap-2">
                         <span>{COUNTRY_CONFIGS[school.country]?.flag}</span>
-                        <span className="font-semibold text-slate-200">{COUNTRY_CONFIGS[school.country]?.countryName}</span>
+                        <span className="font-semibold text-foreground">{COUNTRY_CONFIGS[school.country]?.countryName}</span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-between gap-2">
@@ -426,9 +426,9 @@ export const SuperAdminDashboard: React.FC = () => {
                               className="w-3.5 h-3.5 rounded-full border border-white/20" 
                               style={{ backgroundColor: `hsl(${school.themeSettings.primaryHsl.split(' ')[0]} 70% 50%)` }}
                             ></span>
-                            <span className="text-xs text-slate-400 font-mono">HSL: {school.themeSettings.primaryHsl}</span>
+                            <span className="text-xs text-muted-foreground font-mono truncate max-w-[80px] xl:max-w-none">HSL: {school.themeSettings.primaryHsl}</span>
                           </span>
-                          <span className="text-[10px] text-purple-400 font-black opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0 flex items-center gap-0.5 whitespace-nowrap">
+                          <span className="text-[10px] text-purple-600 dark:text-purple-400 font-black opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0 flex items-center gap-0.5 whitespace-nowrap">
                             Manage School <ChevronRight className="w-3 h-3" />
                           </span>
                         </div>
@@ -442,69 +442,69 @@ export const SuperAdminDashboard: React.FC = () => {
 
           {/* Quick Operations Sidebar Info */}
           <div className="flex flex-col">
-            <div className="glass-card p-6 rounded-xl border border-slate-800 space-y-4 h-full flex flex-col justify-between">
+            <div className="glass-card p-6 rounded-xl border border-border space-y-4 h-full flex flex-col justify-between">
               <div>
-                <h3 className="font-bold text-white m-0 flex items-center gap-2 pb-3 border-b border-slate-800">
+                <h3 className="font-bold text-foreground m-0 flex items-center gap-2 pb-3 border-b border-border">
                   <Settings className="w-5 h-5 text-purple-400" />
                   System Master Controls
                 </h3>
-                <p className="text-xs text-slate-400 mt-3">
+                <p className="text-xs text-muted-foreground mt-3">
                   Perform administrative master tasks across the entire SaaS infrastructure with one click:
                 </p>
                  <div className="space-y-2.5 mt-4">
                   <button
                     onClick={() => setWizardOpen(true)}
-                    className="w-full flex items-center justify-between p-3 bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-purple-500/50 rounded-xl text-left text-xs font-semibold text-slate-200 transition-all active:scale-[0.98]"
+                    className="w-full flex items-center justify-between p-3 bg-card/60 hover:bg-card border border-border hover:border-purple-500/50 rounded-xl text-left text-xs font-semibold text-foreground transition-all active:scale-[0.98]"
                   >
                     <div className="flex items-center gap-2">
                       <span>🚀</span>
                       <div>
-                        <span className="block font-bold text-slate-900 dark:text-white">Create New School</span>
-                        <span className="text-[10px] text-slate-500">Launch provisioning wizard</span>
+                        <span className="block font-bold text-background dark:text-foreground">Create New School</span>
+                        <span className="text-[10px] text-muted-foreground">Launch provisioning wizard</span>
                       </div>
                     </div>
-                    <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
                   </button>
 
                   <button
                     onClick={triggerBackup}
-                    className="w-full flex items-center justify-between p-3 bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-left text-xs font-semibold text-slate-200 transition-all active:scale-[0.98]"
+                    className="w-full flex items-center justify-between p-3 bg-card/60 hover:bg-card border border-border hover:border-emerald-500/50 rounded-xl text-left text-xs font-semibold text-foreground transition-all active:scale-[0.98]"
                   >
                     <div className="flex items-center gap-2">
                       <span>💾</span>
                       <div>
-                        <span className="block font-bold text-slate-900 dark:text-white">Run DB Backup</span>
-                        <span className="text-[10px] text-slate-500">Instant SQL snapshot</span>
+                        <span className="block font-bold text-background dark:text-foreground">Run DB Backup</span>
+                        <span className="text-[10px] text-muted-foreground">Instant SQL snapshot</span>
                       </div>
                     </div>
-                    <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
                   </button>
 
                   <button
                     onClick={triggerSecurityAudit}
-                    className="w-full flex items-center justify-between p-3 bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-blue-500/50 rounded-xl text-left text-xs font-semibold text-slate-200 transition-all active:scale-[0.98]"
+                    className="w-full flex items-center justify-between p-3 bg-card/60 hover:bg-card border border-border hover:border-blue-500/50 rounded-xl text-left text-xs font-semibold text-foreground transition-all active:scale-[0.98]"
                   >
                     <div className="flex items-center gap-2">
                       <span>🛡️</span>
                       <div>
-                        <span className="block font-bold text-slate-900 dark:text-white">Check Security Status</span>
-                        <span className="text-[10px] text-slate-500">Verify RLS constraints</span>
+                        <span className="block font-bold text-background dark:text-foreground">Check Security Status</span>
+                        <span className="text-[10px] text-muted-foreground">Verify RLS constraints</span>
                       </div>
                     </div>
-                    <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
                   </button>
                 </div>
               </div>
 
               {/* Live Telemetry Graph Widget */}
-              <div className="mt-4 border border-slate-800 bg-slate-950/40 p-4 rounded-xl space-y-3">
+              <div className="mt-4 border border-border bg-background/40 p-4 rounded-xl space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                  <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
                     {metricData[selectedMetric].title}
                   </span>
                   
                   {/* Selector tabs */}
-                  <div className="flex gap-1 bg-slate-900 p-0.5 rounded-md border border-slate-800/80">
+                  <div className="flex gap-1 bg-card p-0.5 rounded-md border border-border">
                     {(['cpu', 'memory', 'traffic'] as const).map((m) => (
                       <button
                         key={m}
@@ -516,7 +516,7 @@ export const SuperAdminDashboard: React.FC = () => {
                         className={`px-2 py-1 text-[9px] font-black uppercase tracking-wider rounded transition-all ${
                           selectedMetric === m 
                             ? 'bg-purple-900/60 text-purple-300 border border-purple-800/80' 
-                            : 'text-slate-500 hover:text-slate-300'
+                            : 'text-muted-foreground hover:text-foreground'
                         }`}
                       >
                         {m}
@@ -625,14 +625,14 @@ export const SuperAdminDashboard: React.FC = () => {
                       if (!displayPt) return null;
                       return (
                         <div 
-                          className="absolute bg-slate-900/95 border border-slate-700/80 px-2 py-1.5 rounded text-[9px] text-white shadow-xl z-20 transition-all pointer-events-auto flex flex-col gap-0.5 whitespace-nowrap"
+                          className="absolute bg-card/95 border border-border px-2 py-1.5 rounded text-[9px] text-foreground shadow-xl z-20 transition-all pointer-events-auto flex flex-col gap-0.5 whitespace-nowrap"
                           style={{ 
                             left: `${Math.min(200, Math.max(10, displayPt.x - 45))}px`,
                             top: `${Math.max(-25, displayPt.y - 45)}px`
                           }}
                         >
                           <div className="flex items-center justify-between gap-2">
-                            <span className="text-slate-400 font-medium">{displayPt.label}</span>
+                            <span className="text-muted-foreground font-medium">{displayPt.label}</span>
                             {activeTooltip && (
                               <button 
                                 type="button"
@@ -640,13 +640,13 @@ export const SuperAdminDashboard: React.FC = () => {
                                   e.stopPropagation();
                                   setActiveTooltip(null);
                                 }}
-                                className="text-slate-500 hover:text-slate-300 font-bold"
+                                className="text-muted-foreground hover:text-foreground font-bold"
                               >
                                 ×
                               </button>
                             )}
                           </div>
-                          <span className="font-bold text-white">
+                          <span className="font-bold text-foreground">
                             {displayPt.val}
                             <span className="text-purple-400 font-medium">{metricData[selectedMetric].unit}</span>
                           </span>
@@ -656,7 +656,7 @@ export const SuperAdminDashboard: React.FC = () => {
                   )}
                 </div>
 
-                <div className="flex items-center justify-between text-[8px] text-slate-500 font-mono">
+                <div className="flex items-center justify-between text-[8px] text-muted-foreground font-mono">
                   <span>12:00 PM</span>
                   <span>Click nodes for tooltips</span>
                   <span>06:00 PM</span>
@@ -673,8 +673,8 @@ export const SuperAdminDashboard: React.FC = () => {
         </section>
 
         {/* Recent Actions & Activity Feed */}
-        <section className="glass-card p-6 rounded-xl border border-slate-800 space-y-4">
-          <h3 className="text-sm font-bold text-white flex items-center gap-2">
+        <section className="glass-card p-6 rounded-xl border border-border space-y-4">
+          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
             <Activity className="w-4.5 h-4.5 text-purple-400" />
             Recent Network Activity & Alerts
           </h3>
@@ -682,7 +682,7 @@ export const SuperAdminDashboard: React.FC = () => {
             {activities.map((act) => (
               <div 
                 key={act.id} 
-                className="p-4 rounded-xl bg-slate-900/40 border border-slate-850/50 flex flex-col justify-between gap-4 text-xs hover:border-purple-500/35 transition-all hover:bg-slate-900/60 duration-300 w-full sm:w-[calc(50%-1rem)] md:w-[calc(33.333%-1rem)] min-w-[280px] max-w-[380px]"
+                className="p-4 rounded-xl bg-card/40 border border-slate-850/50 flex flex-col justify-between gap-4 text-xs hover:border-purple-500/35 transition-all hover:bg-card/60 duration-300 w-full sm:w-[calc(50%-1rem)] md:w-[calc(33.333%-1rem)] min-w-[280px] max-w-[380px]"
               >
                 <div className="flex items-start gap-3">
                   <span className="text-base select-none shrink-0">
@@ -690,11 +690,11 @@ export const SuperAdminDashboard: React.FC = () => {
                     {act.type === 'setup' && '⚙️'}
                     {act.type === 'info' && '🔵'}
                   </span>
-                  <p className="text-slate-200 font-medium leading-relaxed">{act.message}</p>
+                  <p className="text-foreground font-medium leading-relaxed">{act.message}</p>
                 </div>
-                <div className="flex items-center justify-between border-t border-slate-800/60 pt-2.5 mt-auto">
+                <div className="flex items-center justify-between border-t border-border pt-2.5 mt-auto">
                   <span className="text-[10px] text-purple-400 font-semibold uppercase tracking-wider">{act.type}</span>
-                  <span className="text-[10px] text-slate-500 font-mono">{act.time}</span>
+                  <span className="text-[10px] text-muted-foreground font-mono">{act.time}</span>
                 </div>
               </div>
             ))}
@@ -711,15 +711,15 @@ export const SuperAdminDashboard: React.FC = () => {
             {/* Modal Header */}
             <div className="modal-header">
               <div>
-                <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
                   <Sparkles className="w-5.5 h-5.5 text-purple-400" />
                   School Setup Wizard
                 </h3>
-                <p className="text-xs text-slate-400 mt-1">Configure your school portal step-by-step</p>
+                <p className="text-xs text-muted-foreground mt-1">Configure your school portal step-by-step</p>
               </div>
               <button 
                 onClick={() => { setWizardOpen(false); setWizardStep(1); }}
-                className="text-slate-400 hover:text-white text-xs font-semibold"
+                className="text-muted-foreground hover:text-foreground text-xs font-semibold"
               >
                 Cancel
               </button>
@@ -729,7 +729,7 @@ export const SuperAdminDashboard: React.FC = () => {
             <div className="modal-body space-y-6">
 
             {/* Wizard Steps indicator */}
-            <div className="flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-800/50 pb-4">
+            <div className="flex items-center justify-between text-[10px] font-bold text-muted-foreground uppercase tracking-widest border-b border-border pb-4">
               <div className={wizardStep === 1 ? 'text-purple-400' : ''}>1. Country</div>
               <div className={wizardStep === 2 ? 'text-purple-400' : ''}>2. Organization</div>
               <div className={wizardStep === 3 ? 'text-purple-400' : ''}>3. Details</div>
@@ -742,7 +742,7 @@ export const SuperAdminDashboard: React.FC = () => {
             {/* STEP 1: Country Setup */}
             {wizardStep === 1 && (
               <div className="space-y-4 animate-fadeIn">
-                <label className="block text-sm font-bold text-white flex items-center gap-1.5">
+                <label className="block text-sm font-bold text-foreground flex items-center gap-1.5">
                   <Globe className="w-4 h-4 text-purple-400" /> Select Country
                 </label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -755,8 +755,8 @@ export const SuperAdminDashboard: React.FC = () => {
                         onClick={() => setCountry(code)}
                         className={`p-4 rounded-xl border flex flex-col items-center justify-center transition-all ${
                           country === code 
-                            ? 'bg-purple-950/20 border-purple-500 text-white shadow-md' 
-                            : 'bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700'
+                            ? 'bg-purple--white shadow-md' 
+                            : 'bg-card border-border text-muted-foreground hover:border-border'
                         }`}
                       >
                         <span className="text-2xl mb-1">{cfg.flag}</span>
@@ -771,7 +771,7 @@ export const SuperAdminDashboard: React.FC = () => {
             {/* STEP 2: Organization Setup */}
             {wizardStep === 2 && (
               <div className="space-y-4 animate-fadeIn">
-                <label className="block text-sm font-bold text-white flex items-center gap-1.5">
+                <label className="block text-sm font-bold text-foreground flex items-center gap-1.5">
                   <Briefcase className="w-4 h-4 text-purple-400" /> Organization Configuration
                 </label>
                 <div>
@@ -781,7 +781,7 @@ export const SuperAdminDashboard: React.FC = () => {
                     required
                     value={organization}
                     onChange={(e) => setOrganization(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-lg text-white text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
+                    className="w-full px-3.5 py-2.5 bg-background border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
                   />
                 </div>
               </div>
@@ -790,7 +790,7 @@ export const SuperAdminDashboard: React.FC = () => {
             {/* STEP 3: School Details */}
             {wizardStep === 3 && (
               <div className="space-y-4 animate-fadeIn">
-                <label className="block text-sm font-bold text-white flex items-center gap-1.5">
+                <label className="block text-sm font-bold text-foreground flex items-center gap-1.5">
                   <Building2 className="w-4 h-4 text-purple-400" /> School Details
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -811,21 +811,21 @@ export const SuperAdminDashboard: React.FC = () => {
                           .replace(/-+/g, '-');
                         setDomain(suggested);
                       }}
-                      className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-lg text-white text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
+                      className="w-full px-3.5 py-2.5 bg-background border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
                     />
                   </div>
                   <div>
                     <label className="block text-xs text-slate-450 mb-1.5 font-semibold">Requested Domain</label>
-                    <div className="flex rounded-lg border border-slate-850 overflow-hidden bg-slate-950">
+                    <div className="flex rounded-lg border border-slate-850 overflow-hidden bg-background">
                       <input
                         type="text"
                         required
                         placeholder="allied-school"
                         value={domain}
                         onChange={(e) => setDomain(e.target.value)}
-                        className="flex-1 px-3.5 py-2.5 bg-transparent text-white text-sm focus:outline-none"
+                        className="flex-1 px-3.5 py-2.5 bg-transparent text-foreground text-sm focus:outline-none"
                       />
-                      <span className="bg-slate-900 px-3 py-2.5 text-xs text-slate-500 flex items-center">
+                      <span className="bg-card px-3 py-2.5 text-xs text-muted-foreground flex items-center">
                         .academichub.com
                       </span>
                     </div>
@@ -839,7 +839,7 @@ export const SuperAdminDashboard: React.FC = () => {
                     placeholder="e.g. Lahore"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-lg text-white text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
+                    className="w-full px-3.5 py-2.5 bg-background border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
                   />
                 </div>
               </div>
@@ -848,7 +848,7 @@ export const SuperAdminDashboard: React.FC = () => {
             {/* STEP 4: Branches & Campuses & Session */}
             {wizardStep === 4 && (
               <div className="space-y-4 animate-fadeIn">
-                <label className="block text-sm font-bold text-white flex items-center gap-1.5">
+                <label className="block text-sm font-bold text-foreground flex items-center gap-1.5">
                   <Layers className="w-4 h-4 text-purple-400" /> Structure Configuration
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -859,7 +859,7 @@ export const SuperAdminDashboard: React.FC = () => {
                       required
                       value={branchName}
                       onChange={(e) => setBranchName(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-lg text-white text-sm focus:outline-none"
+                      className="w-full px-3.5 py-2.5 bg-background border border-border rounded-lg text-foreground text-sm focus:outline-none"
                     />
                   </div>
                   <div>
@@ -869,7 +869,7 @@ export const SuperAdminDashboard: React.FC = () => {
                       required
                       value={campusName}
                       onChange={(e) => setCampusName(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-lg text-white text-sm focus:outline-none"
+                      className="w-full px-3.5 py-2.5 bg-background border border-border rounded-lg text-foreground text-sm focus:outline-none"
                     />
                   </div>
                 </div>
@@ -881,7 +881,7 @@ export const SuperAdminDashboard: React.FC = () => {
                     placeholder="e.g., 2026-2027"
                     value={sessionLabel}
                     onChange={(e) => setSessionLabel(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-lg text-white text-sm focus:outline-none"
+                    className="w-full px-3.5 py-2.5 bg-background border border-border rounded-lg text-foreground text-sm focus:outline-none"
                   />
                 </div>
               </div>
@@ -890,7 +890,7 @@ export const SuperAdminDashboard: React.FC = () => {
             {/* STEP 5: Logo & Branding */}
             {wizardStep === 5 && (
               <div className="space-y-4 animate-fadeIn">
-                <label className="block text-sm font-bold text-white flex items-center gap-1.5">
+                <label className="block text-sm font-bold text-foreground flex items-center gap-1.5">
                   <Sliders className="w-4 h-4 text-purple-400" /> Logo & Theme Settings
                 </label>
                 <div>
@@ -898,7 +898,7 @@ export const SuperAdminDashboard: React.FC = () => {
                   <select
                     value={primaryHsl}
                     onChange={(e) => setPrimaryHsl(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-lg text-white text-sm focus:outline-none"
+                    className="w-full px-3.5 py-2.5 bg-background border border-border rounded-lg text-foreground text-sm focus:outline-none"
                   >
                     <option value="263.4 70% 50.4%">Premium Purple (Default)</option>
                     <option value="142.1 76.2% 36.3%">Emerald Green</option>
@@ -912,7 +912,7 @@ export const SuperAdminDashboard: React.FC = () => {
             {/* STEP 6: Admin Account */}
             {wizardStep === 6 && (
               <div className="space-y-4 animate-fadeIn">
-                <label className="block text-sm font-bold text-white flex items-center gap-1.5">
+                <label className="block text-sm font-bold text-foreground flex items-center gap-1.5">
                   <User className="w-4 h-4 text-purple-400" /> Admin Account details
                 </label>
                 <div className="space-y-3">
@@ -924,7 +924,7 @@ export const SuperAdminDashboard: React.FC = () => {
                       placeholder="Principal Name"
                       value={adminName}
                       onChange={(e) => setAdminName(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-lg text-white text-sm focus:outline-none"
+                      className="w-full px-3.5 py-2.5 bg-background border border-border rounded-lg text-foreground text-sm focus:outline-none"
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -936,7 +936,7 @@ export const SuperAdminDashboard: React.FC = () => {
                         placeholder="principal@school.com"
                         value={adminEmail}
                         onChange={(e) => setAdminEmail(e.target.value)}
-                        className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-lg text-white text-sm focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-background border border-border rounded-lg text-foreground text-sm focus:outline-none"
                       />
                     </div>
                     <div>
@@ -946,7 +946,7 @@ export const SuperAdminDashboard: React.FC = () => {
                         required
                         value={adminPassword}
                         onChange={(e) => setAdminPassword(e.target.value)}
-                        className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-lg text-white text-sm focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-background border border-border rounded-lg text-foreground text-sm focus:outline-none"
                       />
                     </div>
                   </div>
@@ -958,7 +958,7 @@ export const SuperAdminDashboard: React.FC = () => {
             {wizardStep === 7 && (
               <div className="space-y-5 animate-fadeIn">
                 <div className="p-4 rounded-xl bg-purple-950/20 border border-purple-800/30 text-xs text-purple-300">
-                  <span className="font-bold block text-sm mb-2 text-white flex items-center gap-1.5">
+                  <span className="font-bold block text-sm mb-2 text-foreground flex items-center gap-1.5">
                     <Sparkles className="w-4 h-4" />
                     Automatic Settings Configured Natively:
                   </span>
@@ -972,15 +972,15 @@ export const SuperAdminDashboard: React.FC = () => {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 text-xs">
-                  <div className="p-3 bg-slate-950 rounded-lg border border-slate-800">
-                    <span className="text-slate-500 block">School Details</span>
-                    <strong className="text-white block mt-0.5">{schoolName || 'Unnamed School'}</strong>
+                  <div className="p-3 bg-background rounded-lg border border-border">
+                    <span className="text-muted-foreground block">School Details</span>
+                    <strong className="text-foreground block mt-0.5">{schoolName || 'Unnamed School'}</strong>
                     <span className="text-purple-400 font-mono text-[10px] mt-0.5 block">{domain}.academichub.com</span>
                   </div>
-                  <div className="p-3 bg-slate-950 rounded-lg border border-slate-800">
-                    <span className="text-slate-500 block">Branch & Campus</span>
-                    <strong className="text-white block mt-0.5">{branchName} ({campusName})</strong>
-                    <span className="text-slate-400 text-[10px] mt-0.5 block">Session: {sessionLabel}</span>
+                  <div className="p-3 bg-background rounded-lg border border-border">
+                    <span className="text-muted-foreground block">Branch & Campus</span>
+                    <strong className="text-foreground block mt-0.5">{branchName} ({campusName})</strong>
+                    <span className="text-muted-foreground text-[10px] mt-0.5 block">Session: {sessionLabel}</span>
                   </div>
                 </div>
               </div>
@@ -993,7 +993,7 @@ export const SuperAdminDashboard: React.FC = () => {
               {wizardStep > 1 ? (
                 <button
                   onClick={() => setWizardStep(prev => prev - 1)}
-                  className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white py-2 px-4 border border-slate-850 hover:bg-slate-900 rounded-lg transition-all"
+                  className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground py-2 px-4 border border-slate-850 hover:bg-card rounded-lg transition-all"
                 >
                   <ChevronLeft className="w-4 h-4" /> Back
                 </button>
@@ -1002,7 +1002,7 @@ export const SuperAdminDashboard: React.FC = () => {
               {wizardStep < 7 ? (
                 <button
                   onClick={() => setWizardStep(prev => prev + 1)}
-                  className="flex items-center gap-1.5 text-xs bg-purple-650 hover:bg-purple-600 text-white py-2 px-5 rounded-lg font-bold transition-all"
+                  className="flex items-center gap-1.5 text-xs bg-purple--white py-2 px-5 rounded-lg font-bold transition-all"
                 >
                   Continue <ChevronRight className="w-4 h-4" />
                 </button>
@@ -1010,7 +1010,7 @@ export const SuperAdminDashboard: React.FC = () => {
                 <button
                   onClick={handleLaunch}
                   disabled={isProvisioning}
-                  className="flex items-center gap-1.5 text-xs bg-purple-650 hover:bg-purple-600 text-white py-2.5 px-6 rounded-lg font-bold transition-all shadow-md shadow-purple-900/25"
+                  className="flex items-center gap-1.5 text-xs bg-purple--white py-2.5 px-6 rounded-lg font-bold transition-all shadow-md shadow-purple-900/25"
                 >
                   {isProvisioning ? (
                     <>
@@ -1037,7 +1037,7 @@ export const SuperAdminDashboard: React.FC = () => {
             {/* Modal Header */}
             <div className="modal-header">
               <div>
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
                   {activeDetailModal === 'schools' && (
                     <>
                       <Building2 className="w-5 h-5 text-purple-400" />
@@ -1063,11 +1063,11 @@ export const SuperAdminDashboard: React.FC = () => {
                     </>
                   )}
                 </h3>
-                <p className="text-xs text-slate-400 mt-1">Live operational details of your education platform</p>
+                <p className="text-xs text-muted-foreground mt-1">Live operational details of your education platform</p>
               </div>
               <button 
                 onClick={() => setActiveDetailModal(null)}
-                className="text-slate-400 hover:text-white text-xs font-semibold px-2.5 py-1 rounded bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-colors"
+                className="text-muted-foreground hover:text-foreground text-xs font-semibold px-2.5 py-1 rounded bg-muted border border-border hover:bg-slate-700 transition-colors"
               >
                 Close
               </button>
@@ -1077,12 +1077,12 @@ export const SuperAdminDashboard: React.FC = () => {
             <div className="modal-body space-y-4 text-sm">
               {activeDetailModal === 'schools' && (
                 <div className="space-y-3">
-                  <div className="p-3 bg-slate-950 rounded-lg border border-slate-850 space-y-2 text-xs">
-                    <div className="flex justify-between text-slate-400">
+                  <div className="p-3 bg-background rounded-lg border border-slate-850 space-y-2 text-xs">
+                    <div className="flex justify-between text-muted-foreground">
                       <span>Total Registered Institutes</span>
-                      <span className="text-white font-bold">{schoolsList.length}</span>
+                      <span className="text-foreground font-bold">{schoolsList.length}</span>
                     </div>
-                    <div className="flex justify-between text-slate-400">
+                    <div className="flex justify-between text-muted-foreground">
                       <span>School Data Isolation</span>
                       <span className="text-emerald-400 font-semibold">Secured & Active</span>
                     </div>
@@ -1094,8 +1094,8 @@ export const SuperAdminDashboard: React.FC = () => {
                       return (
                         <div 
                           key={t.schoolId} 
-                          className={`p-3 bg-slate-900/40 hover:bg-slate-900/80 rounded-xl border transition-all duration-350 ${
-                            isExpanded ? 'border-purple-500 bg-slate-900/90 shadow-md' : 'border-slate-800/60'
+                          className={`p-3 bg-card/40 hover:bg-card/80 rounded-xl border transition-all duration-350 ${
+                            isExpanded ? 'border-purple-500 bg-card/90 shadow-md' : 'border-border'
                           }`}
                         >
                           <div 
@@ -1109,26 +1109,26 @@ export const SuperAdminDashboard: React.FC = () => {
                                 <span className="text-xl">🏫</span>
                               )}
                               <div>
-                                <span className="block font-bold text-white text-xs">{t.schoolName}</span>
-                                <span className="text-[10px] text-slate-500 font-mono">{t.domain}.academichub.com</span>
+                                <span className="block font-bold text-foreground text-xs">{t.schoolName}</span>
+                                <span className="text-[10px] text-muted-foreground font-mono">{t.domain}.academichub.com</span>
                               </div>
                             </div>
                             <div className="flex items-center gap-2">
                               <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-bold border border-emerald-500/25">Online</span>
-                              <ChevronRight className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                              <ChevronRight className={`w-3.5 h-3.5 text-muted-foreground transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
                             </div>
                           </div>
 
                           {isExpanded && (
-                            <div className="mt-3 pt-3 border-t border-slate-800 text-xs text-slate-300 space-y-2.5 animate-fadeIn">
+                            <div className="mt-3 pt-3 border-t border-border text-xs text-foreground space-y-2.5 animate-fadeIn">
                               <div className="grid grid-cols-2 gap-2 text-[10px] font-semibold text-slate-450">
-                                <div>📍 Location: <strong className="text-white">{t.city}, {t.country}</strong></div>
-                                <div>🏫 Campuses: <strong className="text-white">{t.campusCount}</strong></div>
-                                <div>📅 Session: <strong className="text-white">{t.currentAcademicSession}</strong></div>
-                                <div>🎨 Theme color: <strong className="text-white">HSL {t.themeSettings.primaryHsl.split(' ')[0]}</strong></div>
+                                <div>📍 Location: <strong className="text-foreground">{t.city}, {t.country}</strong></div>
+                                <div>🏫 Campuses: <strong className="text-foreground">{t.campusCount}</strong></div>
+                                <div>📅 Session: <strong className="text-foreground">{t.currentAcademicSession}</strong></div>
+                                <div>🎨 Theme color: <strong className="text-foreground">HSL {t.themeSettings.primaryHsl.split(' ')[0]}</strong></div>
                               </div>
-                              <div className="p-2.5 bg-slate-950 rounded border border-slate-850">
-                                <span className="text-[10px] text-slate-500 block mb-1.5 uppercase font-bold">Activated school features:</span>
+                              <div className="p-2.5 bg-background rounded border border-slate-850">
+                                <span className="text-[10px] text-muted-foreground block mb-1.5 uppercase font-bold">Activated school features:</span>
                                 <div className="flex flex-wrap gap-1.5 text-[9px] font-bold">
                                   {Object.entries(t.modules || { transport: true, library: true }).map(([mod, enabled]) => (
                                     <span 
@@ -1136,7 +1136,7 @@ export const SuperAdminDashboard: React.FC = () => {
                                       className={`px-2 py-0.5 rounded uppercase border ${
                                         enabled 
                                           ? 'bg-purple-950/20 text-purple-400 border-purple-800/30' 
-                                          : 'bg-slate-900 text-slate-650 border-slate-800'
+                                          : 'bg-card text-slate-650 border-border'
                                       }`}
                                     >
                                       {mod}
@@ -1146,7 +1146,7 @@ export const SuperAdminDashboard: React.FC = () => {
                               </div>
                               <button
                                 onClick={() => handleLaunchSchoolPortal(t)}
-                                className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-purple-650 hover:bg-purple-600 text-white font-bold text-xs transition-all shadow-md shadow-purple-900/25 active:scale-98"
+                                className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-purple--white font-bold text-xs transition-all shadow-md shadow-purple-900/25 active:scale-98"
                               >
                                 🚀 Enter School Dashboard (Principal view)
                               </button>
@@ -1161,39 +1161,39 @@ export const SuperAdminDashboard: React.FC = () => {
 
               {activeDetailModal === 'database' && (
                 <div className="space-y-3">
-                  <div className="p-3 bg-slate-950 rounded-lg border border-slate-850 space-y-2 text-xs">
-                    <div className="flex justify-between text-slate-400">
+                  <div className="p-3 bg-background rounded-lg border border-slate-850 space-y-2 text-xs">
+                    <div className="flex justify-between text-muted-foreground">
                       <span>Total Database Size</span>
-                      <span className="text-white font-bold">41.2 MB</span>
+                      <span className="text-foreground font-bold">41.2 MB</span>
                     </div>
-                    <div className="flex justify-between text-slate-400">
+                    <div className="flex justify-between text-muted-foreground">
                       <span>Database Engine Version</span>
-                      <span className="text-white">Postgres 16.2</span>
+                      <span className="text-foreground">Postgres 16.2</span>
                     </div>
-                    <div className="flex justify-between text-slate-400">
+                    <div className="flex justify-between text-muted-foreground">
                       <span>Cache Hit Ratio</span>
                       <span className="text-emerald-400 font-bold">99.85%</span>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <span className="text-xs font-bold text-slate-400 block uppercase tracking-wider">Database Space by Features:</span>
+                    <span className="text-xs font-bold text-muted-foreground block uppercase tracking-wider">Database Space by Features:</span>
                     <div className="space-y-1.5 font-mono text-xs">
-                      <div className="flex justify-between p-2 bg-slate-900/50 rounded border border-slate-850/35">
+                      <div className="flex justify-between p-2 bg-card/50 rounded border border-slate-850/35">
                         <span>public.users (User Credentials)</span>
-                        <span className="text-white font-semibold">12.4 MB</span>
+                        <span className="text-foreground font-semibold">12.4 MB</span>
                       </div>
-                      <div className="flex justify-between p-2 bg-slate-900/50 rounded border border-slate-850/35">
+                      <div className="flex justify-between p-2 bg-card/50 rounded border border-slate-850/35">
                         <span>public.students (Profiles & Ledgers)</span>
-                        <span className="text-white font-semibold">15.1 MB</span>
+                        <span className="text-foreground font-semibold">15.1 MB</span>
                       </div>
-                      <div className="flex justify-between p-2 bg-slate-900/50 rounded border border-slate-850/35">
+                      <div className="flex justify-between p-2 bg-card/50 rounded border border-slate-850/35">
                         <span>public.institutes_config (Schools Metadata)</span>
-                        <span className="text-white font-semibold">2.3 MB</span>
+                        <span className="text-foreground font-semibold">2.3 MB</span>
                       </div>
-                      <div className="flex justify-between p-2 bg-slate-900/50 rounded border border-slate-850/35">
+                      <div className="flex justify-between p-2 bg-card/50 rounded border border-slate-850/35">
                         <span>public.transactions (Fees & Salaries)</span>
-                        <span className="text-white font-semibold">11.4 MB</span>
+                        <span className="text-foreground font-semibold">11.4 MB</span>
                       </div>
                     </div>
                   </div>
@@ -1202,19 +1202,19 @@ export const SuperAdminDashboard: React.FC = () => {
 
               {activeDetailModal === 'queues' && (
                 <div className="space-y-3">
-                  <div className="p-3 bg-slate-950 rounded-lg border border-slate-850 space-y-2 text-xs">
-                    <div className="flex justify-between text-slate-400">
+                  <div className="p-3 bg-background rounded-lg border border-slate-850 space-y-2 text-xs">
+                    <div className="flex justify-between text-muted-foreground">
                       <span>Message Engine</span>
-                      <span className="text-white font-bold">RabbitMQ Active</span>
+                      <span className="text-foreground font-bold">RabbitMQ Active</span>
                     </div>
-                    <div className="flex justify-between text-slate-400">
+                    <div className="flex justify-between text-muted-foreground">
                       <span>Task Traffic Flow</span>
                       <span className="text-emerald-400 font-bold">Active & Balanced</span>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <span className="text-xs font-bold text-slate-400 block uppercase tracking-wider">Active Tasks categories (Click to run):</span>
+                    <span className="text-xs font-bold text-muted-foreground block uppercase tracking-wider">Active Tasks categories (Click to run):</span>
                     <div className="space-y-2">
                       <button
                         onClick={() => {
@@ -1229,11 +1229,11 @@ export const SuperAdminDashboard: React.FC = () => {
                           ]);
                           alert('Email dispatch triggered! 2,480 parent emails delivered successfully.');
                         }}
-                        className="w-full flex justify-between items-center p-3 bg-slate-900/40 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-xl transition-all text-xs font-semibold"
+                        className="w-full flex justify-between items-center p-3 bg-card/40 hover:bg-card border border-border hover:border-amber-500/50 rounded-xl transition-all text-xs font-semibold"
                       >
                         <div className="text-left">
-                          <span className="block text-slate-200">Email Broadcast Tasks</span>
-                          <span className="text-[10px] text-slate-500">Run system announcement emails</span>
+                          <span className="block text-foreground">Email Broadcast Tasks</span>
+                          <span className="text-[10px] text-muted-foreground">Run system announcement emails</span>
                         </div>
                         <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 text-[10px] border border-amber-500/25">Trigger</span>
                       </button>
@@ -1251,11 +1251,11 @@ export const SuperAdminDashboard: React.FC = () => {
                           ]);
                           alert('SMS dispatcher completed! 1,842 notifications sent.');
                         }}
-                        className="w-full flex justify-between items-center p-3 bg-slate-900/40 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-xl transition-all text-xs font-semibold"
+                        className="w-full flex justify-between items-center p-3 bg-card/40 hover:bg-card border border-border hover:border-amber-500/50 rounded-xl transition-all text-xs font-semibold"
                       >
                         <div className="text-left">
-                          <span className="block text-slate-200">SMS Alert Dispatcher</span>
-                          <span className="text-[10px] text-slate-500">Dispatch attendance alerts</span>
+                          <span className="block text-foreground">SMS Alert Dispatcher</span>
+                          <span className="text-[10px] text-muted-foreground">Dispatch attendance alerts</span>
                         </div>
                         <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 text-[10px] border border-amber-500/25">Trigger</span>
                       </button>
@@ -1273,11 +1273,11 @@ export const SuperAdminDashboard: React.FC = () => {
                           ]);
                           alert('Invoice engine executed! 8,500 billing challans generated.');
                         }}
-                        className="w-full flex justify-between items-center p-3 bg-slate-900/40 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-xl transition-all text-xs font-semibold"
+                        className="w-full flex justify-between items-center p-3 bg-card/40 hover:bg-card border border-border hover:border-amber-500/50 rounded-xl transition-all text-xs font-semibold"
                       >
                         <div className="text-left">
-                          <span className="block text-slate-200">Invoice Generation Engine</span>
-                          <span className="text-[10px] text-slate-500">Auto-create monthly invoices</span>
+                          <span className="block text-foreground">Invoice Generation Engine</span>
+                          <span className="text-[10px] text-muted-foreground">Auto-create monthly invoices</span>
                         </div>
                         <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 text-[10px] border border-amber-500/25">Trigger</span>
                       </button>
@@ -1288,19 +1288,19 @@ export const SuperAdminDashboard: React.FC = () => {
 
               {activeDetailModal === 'cpu' && (
                 <div className="space-y-4">
-                  <div className="p-3 bg-slate-950 rounded-lg border border-slate-850 space-y-2 text-xs">
-                    <div className="flex justify-between text-slate-400">
+                  <div className="p-3 bg-background rounded-lg border border-slate-850 space-y-2 text-xs">
+                    <div className="flex justify-between text-muted-foreground">
                       <span>Total CPU Utilization</span>
-                      <span className="text-white font-bold">1.84%</span>
+                      <span className="text-foreground font-bold">1.84%</span>
                     </div>
-                    <div className="flex justify-between text-slate-400">
+                    <div className="flex justify-between text-muted-foreground">
                       <span>Load Balancer Health</span>
                       <span className="text-emerald-400 font-bold">100% Operational</span>
                     </div>
                   </div>
 
                   <div className="space-y-3">
-                    <span className="text-xs font-bold text-slate-400 block uppercase tracking-wider font-semibold">Server Component Performance (Click to Optimize):</span>
+                    <span className="text-xs font-bold text-muted-foreground block uppercase tracking-wider font-semibold">Server Component Performance (Click to Optimize):</span>
                     
                     <div className="space-y-2.5">
                       {[
@@ -1331,12 +1331,12 @@ export const SuperAdminDashboard: React.FC = () => {
                               setOptimizingComponent(null);
                               alert(`Optimized successfully! Cleared inactive processes for ${comp.name}.`);
                             }}
-                            className="p-3 bg-slate-900/40 hover:bg-slate-900 border border-slate-800/60 hover:border-blue-500/50 rounded-xl cursor-pointer transition-all active:scale-[0.99] space-y-2 text-xs"
+                            className="p-3 bg-card/40 hover:bg-card border border-border hover:border-blue-500/50 rounded-xl cursor-pointer transition-all active:scale-[0.99] space-y-2 text-xs"
                           >
                             <div className="flex justify-between items-start">
                               <div>
-                                <span className="block font-bold text-white leading-normal">{comp.name}</span>
-                                <span className="text-[10px] text-slate-400 mt-0.5 block">{comp.desc}</span>
+                                <span className="block font-bold text-foreground leading-normal">{comp.name}</span>
+                                <span className="text-[10px] text-muted-foreground mt-0.5 block">{comp.desc}</span>
                               </div>
                               <span className="text-[10px] text-blue-450 hover:text-blue-400 font-bold shrink-0">
                                 {isOptimizing ? 'Optimizing...' : 'Optimize ⚙️'}
@@ -1347,22 +1347,22 @@ export const SuperAdminDashboard: React.FC = () => {
                             <div className="space-y-1.5 pt-1.5 border-t border-slate-850">
                               {/* CPU Progress Bar */}
                               <div>
-                                <div className="flex justify-between text-[9px] text-slate-500 font-bold font-mono">
+                                <div className="flex justify-between text-[9px] text-muted-foreground font-bold font-mono">
                                   <span>CPU LOAD</span>
                                   <span>{(comp.cpu / 10).toFixed(2)}%</span>
                                 </div>
-                                <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                                <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
                                   <div className="bg-blue-500 h-1.5 rounded-full transition-all duration-500" style={{ width: `${comp.cpu}%` }}></div>
                                 </div>
                               </div>
 
                               {/* RAM Progress Bar */}
                               <div>
-                                <div className="flex justify-between text-[9px] text-slate-500 font-bold font-mono">
+                                <div className="flex justify-between text-[9px] text-muted-foreground font-bold font-mono">
                                   <span>MEM ALLOCATION</span>
                                   <span>{comp.ram} MB / {comp.maxRam} MB ({ramPct.toFixed(0)}%)</span>
                                 </div>
-                                <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                                <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
                                   <div className="bg-purple-500 h-1.5 rounded-full transition-all duration-500" style={{ width: `${ramPct}%` }}></div>
                                 </div>
                               </div>
