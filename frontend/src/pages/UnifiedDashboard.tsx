@@ -11213,10 +11213,14 @@ export const UnifiedDashboard: React.FC = () => {
                       }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3.5">
                         <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Provision New School Campus</span>
                         <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3">
-                          <input value={newSchoolName} onChange={(e) => setNewSchoolName(e.target.value)} type="text" placeholder="School Name (e.g. Allied School Campus A)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
-                          <div className="flex items-center gap-1 bg-card border border-border rounded-lg px-2">
-                            <input value={newSchoolSubdomain} onChange={(e) => setNewSchoolSubdomain(e.target.value)} type="text" placeholder="subdomain" className="bg-transparent text-xs py-2 w-full text-foreground outline-none" required />
-                            <span className="text-[10px] text-foreground/50 font-semibold">.academichub.com</span>
+                          <input value={newSchoolName} onChange={(e) => {
+                            const val = e.target.value;
+                            setNewSchoolName(val);
+                            setNewSchoolSubdomain(val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''));
+                          }} type="text" placeholder="School Name (e.g. Allied School Campus A)" className="modern-input w-full" required />
+                          <div className="flex items-center gap-1 modern-input w-full px-2 py-0">
+                            <input value={newSchoolSubdomain} onChange={(e) => setNewSchoolSubdomain(e.target.value)} type="text" placeholder="subdomain" className="bg-transparent text-xs py-2.5 w-full text-foreground outline-none font-semibold" required />
+                            <span className="text-[10px] text-foreground/50 font-semibold whitespace-nowrap">.academichub.com</span>
                           </div>
                         </div>
                         <div className="flex justify-center">
