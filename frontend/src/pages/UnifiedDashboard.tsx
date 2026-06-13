@@ -9536,14 +9536,37 @@ export const UnifiedDashboard: React.FC = () => {
                           students.map(s => <option key={s.id} value={s.name}>Parent of {s.name}</option>)
                         )}
                       </select>
-                      <input 
-                        type="text" 
+                      <select 
                         required 
-                        placeholder="Subject"
                         value={newParentMessageSubject}
                         onChange={(e) => setNewParentMessageSubject(e.target.value)}
-                        className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
-                      />
+                        className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold outline-none focus:border-primary"
+                      >
+                        <option value="" disabled>Select Subject</option>
+                        {simulatedRole === 'parent' ? (
+                          <>
+                            <option value="Sick Leave / Absence Request">Sick Leave / Absence Request</option>
+                            <option value="Fee Related Query">Fee Related Query</option>
+                            <option value="Academic Progress Query">Academic Progress Query</option>
+                            <option value="Meeting Request with Teacher">Meeting Request with Teacher</option>
+                            <option value="Event / Activity Query">Event / Activity Query</option>
+                            <option value="Other">Other</option>
+                          </>
+                        ) : (
+                          <>
+                            <option value="Fee Reminder / Dues">Fee Reminder / Dues</option>
+                            <option value="Academic Performance / Grades">Academic Performance / Grades</option>
+                            <option value="Student Attendance / Absence">Student Attendance / Absence</option>
+                            <option value="Behavior / Conduct Issue">Behavior / Conduct Issue</option>
+                            <option value="Parent-Teacher Meeting (PTM)">Parent-Teacher Meeting (PTM)</option>
+                            <option value="School Event / Activity">School Event / Activity</option>
+                            <option value="Health / Medical Update">Health / Medical Update</option>
+                            <option value="General Announcement">General Announcement</option>
+                            <option value="Holiday / Vacation Notice">Holiday / Vacation Notice</option>
+                            <option value="Other">Other</option>
+                          </>
+                        )}
+                      </select>
                       <select 
                         name="deliveryChannel"
                         className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold"
