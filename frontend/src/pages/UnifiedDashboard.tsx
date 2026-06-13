@@ -1,6 +1,8 @@
 // @ts-nocheck
 // @ts-nocheck
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { database } from '../firebase';
+import { ref, onValue, set } from 'firebase/database';
 import { Helmet } from 'react-helmet-async';
 import { useAuthStore } from '../store/authStore';
 import type { UserRole } from '../store/authStore';
@@ -1029,6 +1031,57 @@ export const UnifiedDashboard: React.FC = () => {
   const setMinAdmissionAge = (val: any) => updateSchoolDb('minAdmissionAge', val);
 
   const [completedAssignments, setCompletedAssignments] = useState<string[]>([]);
+
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
+
+  useEffect(() => {
+    let loadedCount = 0;
+    const checkLoaded = () => {
+      loadedCount++;
+      if (loadedCount === 4) setInitialLoadDone(true);
+    };
+
+    onValue(ref(database, 'countries'), (snap) => {
+      if (snap.exists()) setCountries(snap.val());
+      else set(ref(database, 'countries'), countries);
+      checkLoaded();
+    }, { onlyOnce: true });
+
+    onValue(ref(database, 'organizations'), (snap) => {
+      if (snap.exists()) setOrganizations(snap.val());
+      else set(ref(database, 'organizations'), organizations);
+      checkLoaded();
+    }, { onlyOnce: true });
+
+    onValue(ref(database, 'campuses'), (snap) => {
+      if (snap.exists()) setSchoolsList(snap.val());
+      else set(ref(database, 'campuses'), schoolsList);
+      checkLoaded();
+    }, { onlyOnce: true });
+
+    onValue(ref(database, 'apiKeys'), (snap) => {
+      if (snap.exists()) setApiKeys(snap.val());
+      else set(ref(database, 'apiKeys'), apiKeys);
+      checkLoaded();
+    }, { onlyOnce: true });
+  }, []);
+
+  useEffect(() => {
+    if (initialLoadDone) set(ref(database, 'countries'), countries);
+  }, [countries, initialLoadDone]);
+
+  useEffect(() => {
+    if (initialLoadDone) set(ref(database, 'organizations'), organizations);
+  }, [organizations, initialLoadDone]);
+
+  useEffect(() => {
+    if (initialLoadDone) set(ref(database, 'campuses'), schoolsList);
+  }, [schoolsList, initialLoadDone]);
+
+  useEffect(() => {
+    if (initialLoadDone) set(ref(database, 'apiKeys'), apiKeys);
+  }, [apiKeys, initialLoadDone]);
+
   const [principalNotifications, setPrincipalNotifications] = useState<string[]>([
     "VP logged Late Arrival warning for Kamran Shah.",
     "VP approved 1-day casual leave for Raza Ahmed."
@@ -1096,57 +1149,6 @@ export const UnifiedDashboard: React.FC = () => {
   const [studentClassFilter, setStudentClassFilter] = useState('All');
   const [editingStudentId, setEditingStudentId] = useState<string | null>(null);
   const [editStudentForm, setEditStudentForm] = useState<any>({});
-  
-  const [initialLoadDone, setInitialLoadDone] = useState(false);
-
-  useEffect(() => {
-    let loadedCount = 0;
-    const checkLoaded = () => {
-      loadedCount++;
-      if (loadedCount === 4) setInitialLoadDone(true);
-    };
-
-    onValue(ref(database, 'countries'), (snap) => {
-      if (snap.exists()) setCountries(snap.val());
-      else set(ref(database, 'countries'), countries);
-      checkLoaded();
-    }, { onlyOnce: true });
-
-    onValue(ref(database, 'organizations'), (snap) => {
-      if (snap.exists()) setOrganizations(snap.val());
-      else set(ref(database, 'organizations'), organizations);
-      checkLoaded();
-    }, { onlyOnce: true });
-
-    onValue(ref(database, 'campuses'), (snap) => {
-      if (snap.exists()) setSchoolsList(snap.val());
-      else set(ref(database, 'campuses'), schoolsList);
-      checkLoaded();
-    }, { onlyOnce: true });
-
-    onValue(ref(database, 'apiKeys'), (snap) => {
-      if (snap.exists()) setApiKeys(snap.val());
-      else set(ref(database, 'apiKeys'), apiKeys);
-      checkLoaded();
-    }, { onlyOnce: true });
-  }, []);
-
-  useEffect(() => {
-    if (initialLoadDone) set(ref(database, 'countries'), countries);
-  }, [countries, initialLoadDone]);
-
-  useEffect(() => {
-    if (initialLoadDone) set(ref(database, 'organizations'), organizations);
-  }, [organizations, initialLoadDone]);
-
-  useEffect(() => {
-    if (initialLoadDone) set(ref(database, 'campuses'), schoolsList);
-  }, [schoolsList, initialLoadDone]);
-
-  useEffect(() => {
-    if (initialLoadDone) set(ref(database, 'apiKeys'), apiKeys);
-  }, [apiKeys, initialLoadDone]);
-
   const [secureDeletePrompt, setSecureDeletePrompt] = useState<{isOpen: boolean, entityType: string, entityId: string, entityName: string, passwordAttempt: string, error: string} | null>(null);
   const MASTER_PASSWORD = 'superadmin';
   const [editingCountryId, setEditingCountryId] = useState<string | null>(null);
