@@ -216,13 +216,19 @@ const getFeatureDetails = (featureName: string) => {
     case 'Child Attendance':
       return { desc: 'Monitor your child\'s daily presence check-ins.', icon: UserCheck, stats: '94% Presence' };
     case 'Exam Grades':
+    case 'Exam Results':
       return { desc: 'View report card transcripts and test scores.', icon: Award, stats: 'Outstanding' };
     case 'Fee Payments':
+    case 'Fee Status':
       return { desc: 'Process billing fees and download invoice receipts.', icon: CreditCard, stats: 'Rs 0 Due' };
     case 'Notifications Log':
+    case 'School Notices':
       return { desc: 'Review school circulars, bulletins and memos.', icon: MessageSquare, stats: 'No Alerts' };
     case 'Teacher Communication':
+    case 'Teacher Messaging':
       return { desc: 'Direct message support channel to class tutors.', icon: PhoneCall, stats: 'Direct Line' };
+    case 'Student Progress Graphs':
+      return { desc: 'Visual analytics of child academic growth and GPA tracking.', icon: LineChart, stats: 'On Track' };
     case 'Leave Requests':
       return { desc: 'Request sick leaves for your child online.', icon: Clock, stats: '0 Active' };
     case 'Transport GPS Tracking':
@@ -2624,7 +2630,7 @@ export const UnifiedDashboard: React.FC = () => {
         { label: "Next Exam", value: "June 12", icon: Calendar, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Physics prep active" },
         { label: "Homework Due", value: pendingCount === 0 ? "All Completed" : `${pendingCount} Tasks pending`, icon: FileText, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: "View assignments" }
       ],
-      features: ["Child Attendance", "Assignments", "Exam Grades", "Fee Payments", "Notifications Log", "Teacher Communication", "Leave Requests", "School Transport", "Library Books", "Hostel Portal"],
+      features: ["Child Attendance", "Fee Status", "Exam Results", "Teacher Messaging", "Leave Requests", "School Notices", "Student Progress Graphs", "School Transport"],
       quickActions: [
         { label: "Pay Fees Online", desc: "Instantly clear fee challan", icon: CreditCard },
         { label: "Contact Class Teacher", desc: "Send message to teacher", icon: MessageSquare }
@@ -5204,7 +5210,82 @@ export const UnifiedDashboard: React.FC = () => {
                 </div>
               )}
 
-              {(activeFeature === 'School Notices' || activeFeature === 'Notifications' || activeFeature === 'Notifications Log' || activeFeature === 'Global Announcements') && (
+              
+              {/* PARENT PROGRESS GRAPHS */}
+              {(activeFeature === 'Student Progress Graphs') && (
+                <div className="space-y-4 animate-fadeIn">
+                  <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed flex items-center justify-between">
+                    <span>📊 Track your child's academic performance, term-by-term GPA growth, and subject-wise proficiency.</span>
+                    <select className="bg-card border border-border text-xs rounded p-1 font-bold text-foreground focus:outline-none">
+                      <option>Kamran Shah (10-A)</option>
+                    </select>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Overall Growth Chart */}
+                    <div className="p-5 bg-card border border-border rounded-xl flex flex-col justify-between h-64">
+                      <div className="flex justify-between items-start mb-4">
+                        <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Overall Academic Growth</span>
+                        <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 text-[10px] rounded font-bold">+0.4 GPA (YTD)</span>
+                      </div>
+                      <div className="flex-1 flex items-end gap-3 px-2">
+                        {[
+                          { term: 'Term 1', gpa: 3.2, max: 4.0 },
+                          { term: 'Term 2', gpa: 3.4, max: 4.0 },
+                          { term: 'Mid-Term', gpa: 3.5, max: 4.0 },
+                          { term: 'Term 3', gpa: 3.6, max: 4.0 },
+                          { term: 'Finals Prep', gpa: 3.8, max: 4.0 },
+                        ].map((stat, i) => (
+                          <div key={i} className="flex-1 flex flex-col justify-end items-center gap-2 group">
+                            <div className="opacity-0 group-hover:opacity-100 text-[11px] font-black text-foreground transition-opacity bg-muted px-2 py-1 rounded shadow-sm">
+                              {stat.gpa}
+                            </div>
+                            <div className="w-full bg-primary/40 group-hover:bg-primary transition-all rounded-t-md relative overflow-hidden" style={{ height: `${(stat.gpa / stat.max) * 100}%` }}>
+                              <div className="absolute bottom-0 w-full bg-gradient-to-t from-primary/50 to-transparent h-1/2"></div>
+                            </div>
+                            <span className="text-[9px] text-muted-foreground font-semibold truncate max-w-full">{stat.term}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Subject Proficiency */}
+                    <div className="p-5 bg-card border border-border rounded-xl h-64 flex flex-col">
+                      <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider mb-4">Subject-wise Proficiency</span>
+                      <div className="flex-1 space-y-4 overflow-y-auto pr-2">
+                        {[
+                          { sub: 'Mathematics', score: 92, avg: 78, color: 'bg-blue-500' },
+                          { sub: 'Physics', score: 88, avg: 72, color: 'bg-purple-500' },
+                          { sub: 'Chemistry', score: 85, avg: 74, color: 'bg-emerald-500' },
+                          { sub: 'English', score: 95, avg: 81, color: 'bg-amber-500' },
+                          { sub: 'Computer Science', score: 98, avg: 85, color: 'bg-rose-500' },
+                        ].map(s => (
+                          <div key={s.sub} className="space-y-1.5 group">
+                            <div className="flex justify-between text-[11px] font-bold text-foreground">
+                              <span className="flex items-center gap-2">
+                                <div className={`w-2 h-2 rounded-full ${s.color}`}></div>
+                                {s.sub}
+                              </span>
+                              <span>{s.score}% <span className="text-[9px] text-foreground/40 font-normal ml-1">(Class Avg: {s.avg}%)</span></span>
+                            </div>
+                            <div className="w-full h-2.5 bg-muted rounded-full overflow-hidden relative">
+                              {/* Class Average Marker */}
+                              <div className="absolute top-0 bottom-0 w-0.5 bg-foreground/30 z-10" style={{ left: `${s.avg}%` }}></div>
+                              {/* Student Score */}
+                              <div className={`h-full ${s.color} transition-all duration-1000`} style={{ width: `${s.score}%` }}></div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-3 text-[9px] text-foreground/50 flex justify-end items-center gap-1">
+                        <div className="w-1 h-3 bg-foreground/30"></div> <span>Class Average Line</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+{(activeFeature === 'School Notices' || activeFeature === 'Notifications' || activeFeature === 'Notifications Log' || activeFeature === 'Global Announcements') && (
                 <div className="space-y-4">
                   {/* Create Notice Form */}
                   {isEditor && (
