@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useAuthStore } from '../store/authStore';
 import type { UserRole } from '../store/authStore';
 import { useSchoolStore, COUNTRY_CONFIGS } from '../store/schoolStore';
@@ -1251,7 +1252,7 @@ export const UnifiedDashboard: React.FC = () => {
             <!-- Left Side: Roster Table -->
             <div>
               <h3 style="margin: 0 0 12px 0; font-size: 12px; font-weight: 800; color: #334155; uppercase tracking-wide;">Academic Grades Summary</h3>
-              <table style="width: 100%; border-collapse: collapse; font-size: 11px; border: 1.5px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 80%, 0.5); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.01);">
+              <div className="w-full overflow-x-auto pb-2"><table style="width: 100%; border-collapse: collapse; font-size: 11px; border: 1.5px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 80%, 0.5); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.01);">
                 <thead>
                   <tr style="background: ${themePrimary}; color: #ffffff;">
                     <th style="padding: 10px 14px; text-align: left; font-weight: 700; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">Subject</th>
@@ -1320,7 +1321,7 @@ export const UnifiedDashboard: React.FC = () => {
                     <td style="padding: 10px 14px; text-align: right; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);"><span style="background: #e2fbf0; color: #10b981; padding: 2px 8px; font-weight: bold; border-radius: 12px; font-size: 9px;">Pass</span></td>
                   </tr>
                 </tbody>
-              </table>
+              </table></div>
             </div>
 
             <!-- Right Side: Performance Gauges -->
@@ -1448,7 +1449,7 @@ export const UnifiedDashboard: React.FC = () => {
             <p style="margin: 4px 0 0 0; font-size: 11px; color: #94a3b8; font-style: italic;">System generated audit logs: ${currentDate}</p>
           </div>
 
-          <table style="width: 100%; border-collapse: collapse; margin-top: 25px; font-size: 13px; border: 1px solid #e2e8f0;">
+          <div className="w-full overflow-x-auto pb-2"><table style="width: 100%; border-collapse: collapse; margin-top: 25px; font-size: 13px; border: 1px solid #e2e8f0;">
             <thead>
               <tr style="background-color: ${themePrimary}; color: #ffffff;">
                 <th style="padding: 12px; text-align: left; font-weight: 600;">Campus Subdomain</th>
@@ -1462,7 +1463,7 @@ export const UnifiedDashboard: React.FC = () => {
               <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 12px; font-weight: 600; color: #334155;">The Educators Main</td><td style="padding: 12px; text-align: center;">340</td><td style="padding: 12px; text-align: center;">28</td><td style="padding: 12px; text-align: right; color: #10b981; font-weight: bold;">28.1%</td></tr>
               <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 12px; font-weight: 600; color: #334155;">Dar-e-Arqam School</td><td style="padding: 12px; text-align: center;">420</td><td style="padding: 12px; text-align: center;">34</td><td style="padding: 12px; text-align: right; color: #10b981; font-weight: bold;">30.5%</td></tr>
             </tbody>
-          </table>
+          </table></div>
           
           <div style="margin-top: 25px; font-size: 13px; font-weight: bold; text-align: right; color: ${themePrimary};">
             Consolidated Network Margin: 30.3% Active ERP Flow
@@ -1500,7 +1501,7 @@ export const UnifiedDashboard: React.FC = () => {
             <p style="margin: 4px 0 0 0; font-size: 11px; color: #94a3b8; font-style: italic;">Statement Generated Date: ${currentDate}</p>
           </div>
 
-          <table style="width: 100%; border-collapse: collapse; margin-top: 25px; font-size: 13px; border: 1px solid #e2e8f0;">
+          <div className="w-full overflow-x-auto pb-2"><table style="width: 100%; border-collapse: collapse; margin-top: 25px; font-size: 13px; border: 1px solid #e2e8f0;">
             <thead>
               <tr style="background-color: ${themePrimary}; color: #ffffff;">
                 <th style="padding: 12px; text-align: left; font-weight: 600;">Transaction ID</th>
@@ -1513,7 +1514,7 @@ export const UnifiedDashboard: React.FC = () => {
               <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 12px; font-family: monospace;">TX-2026-908</td><td style="padding: 12px; color: #334155; font-weight: 600;">Internet DSL Fiber Line</td><td style="padding: 12px; text-align: right; color: #ef4444; font-weight: bold;">-${formatCurrency(4800)}</td><td style="padding: 12px; text-align: center; color: #10b981; font-weight: bold;">Cleared</td></tr>
               <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 12px; font-family: monospace;">TX-2026-907</td><td style="padding: 12px; color: #334155; font-weight: 600;">Monthly Building Rent</td><td style="padding: 12px; text-align: right; color: #ef4444; font-weight: bold;">-${formatCurrency(35000)}</td><td style="padding: 12px; text-align: center; color: #10b981; font-weight: bold;">Cleared</td></tr>
             </tbody>
-          </table>
+          </table></div>
         </div>
       `;
     } else if (reportType === 'leads_funnel') {
@@ -1547,7 +1548,7 @@ export const UnifiedDashboard: React.FC = () => {
             <p style="margin: 4px 0 0 0; font-size: 11px; color: #94a3b8; font-style: italic;">Logs Generated Date: ${currentDate}</p>
           </div>
 
-          <table style="width: 100%; border-collapse: collapse; margin-top: 25px; font-size: 13px; border: 1px solid #e2e8f0;">
+          <div className="w-full overflow-x-auto pb-2"><table style="width: 100%; border-collapse: collapse; margin-top: 25px; font-size: 13px; border: 1px solid #e2e8f0;">
             <thead>
               <tr style="background-color: ${themePrimary}; color: #ffffff;">
                 <th style="padding: 12px; text-align: left; font-weight: 600;">Applicant Candidate</th>
@@ -1559,7 +1560,7 @@ export const UnifiedDashboard: React.FC = () => {
               <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 12px; font-weight: 600; color: #334155;">Haris Khan</td><td style="padding: 12px; text-align: center;">Class 9</td><td style="padding: 12px; text-align: center; color: #8b5cf6; font-weight: bold;">Interview Pending</td></tr>
               <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 12px; font-weight: 600; color: #334155;">Mona Siddiqui</td><td style="padding: 12px; text-align: center;">Class 10</td><td style="padding: 12px; text-align: center; color: #10b981; font-weight: bold;">Enrolled</td></tr>
             </tbody>
-          </table>
+          </table></div>
         </div>
       `;
     } else if (reportType === 'timetable') {
@@ -1708,7 +1709,7 @@ export const UnifiedDashboard: React.FC = () => {
           </div>
 
           <!-- Timetable Table -->
-          <table style="width: 100%; border-collapse: collapse; margin-bottom: 12px; table-layout: fixed;">
+          <div className="w-full overflow-x-auto pb-2"><table style="width: 100%; border-collapse: collapse; margin-bottom: 12px; table-layout: fixed;">
             <thead>
               <tr style="background: ${themePrimary}; color: #ffffff;">
                 <th style="padding: 8px; border: 1px solid #cbd5e1; font-weight: 800; font-size: 11px; width: 12%; text-align: left;">Period</th>
@@ -1722,7 +1723,7 @@ export const UnifiedDashboard: React.FC = () => {
             <tbody>
               ${rowsHtml}
             </tbody>
-          </table>
+          </table></div>
 
           <!-- Footer/Legend -->
           <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 9px; color: #64748b; font-weight: 600;">
@@ -2768,6 +2769,11 @@ export const UnifiedDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans relative overflow-hidden">
+      <Helmet>
+        <title>{simulatedRole.charAt(0).toUpperCase() + simulatedRole.slice(1)} Portal | Academic Hub</title>
+        <meta name="description" content={`Academic Hub ${simulatedRole} Dashboard. Manage your school operations seamlessly.`} />
+      </Helmet>
+
       {/* Floating dynamic backdrop orbs */}
       <div className="bg-glow-circle-1" />
       <div className="bg-glow-circle-2" />
@@ -3060,7 +3066,7 @@ export const UnifiedDashboard: React.FC = () => {
         })()}
         
         {/* Dynamic KPIs Block */}
-        <section className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <section className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {spec.kpis.map((kpi, index) => {
             const Icon = kpi.icon;
             return (
@@ -3153,7 +3159,7 @@ export const UnifiedDashboard: React.FC = () => {
         </section>
 
         {/* Middle Section: Quick Operations & Live System Telemetry */}
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch w-full">
+        <section className="grid grid-cols-1 lg:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch w-full">
           {/* Card 1: Quick Operations (Left side, col-span-2 or col-span-3) */}
           <div className={`${showSystemTelemetry ? 'lg:col-span-2' : 'lg:col-span-3'} glass-card p-6 rounded-2xl border border-border bg-card/30 space-y-4 flex flex-col justify-between`}>
             <div>
@@ -3162,7 +3168,7 @@ export const UnifiedDashboard: React.FC = () => {
                 Quick Operations
               </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4 mt-3">
                 {spec.quickActions.map((action, idx) => {
                   const ActionIcon = action.icon;
                   return (
@@ -3295,7 +3301,7 @@ export const UnifiedDashboard: React.FC = () => {
                       </svg>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-1.5 pt-2 border-t border-border/40 text-[9px] font-semibold text-foreground/60">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1.5 pt-2 border-t border-border/40 text-[9px] font-semibold text-foreground/60">
                       <div className="text-center bg-muted/40 p-1 rounded">
                         <span className="block text-foreground/45 text-[8px] uppercase">CPU Load</span>
                         <strong className="text-foreground text-[10px]">12%</strong>
@@ -3326,7 +3332,7 @@ export const UnifiedDashboard: React.FC = () => {
              simulatedRole === 'hostel' ? 'Hostel Boarding & Food Safety Registry' :
              'Recent Administrative Activity & Operational Telemetry'}
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
             
             {/* ----------------- TRANSPORT ROLE CUSTOM CARDS ----------------- */}
             {simulatedRole === 'transport' && (
@@ -3485,7 +3491,7 @@ export const UnifiedDashboard: React.FC = () => {
                       <div className="text-[9.5px] font-black uppercase tracking-widest text-primary">{foodCert.authority}</div>
                       <div className="text-[7.5px] text-foreground/50 font-bold mt-1">LICENSE: {foodCert.licenseCode}</div>
                       
-                      <div className="grid grid-cols-2 gap-1.5 w-full mt-3.5 border-t border-border/40 pt-3 text-[8.5px] font-extrabold text-foreground/75">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 w-full mt-3.5 border-t border-border/40 pt-3 text-[8.5px] font-extrabold text-foreground/75">
                         <div className="bg-muted p-1 rounded">Grade: <span className="text-primary font-black">{foodCert.grade}</span></div>
                         <div className="bg-muted p-1 rounded">Status: <span className={`${foodCert.status.toLowerCase() === 'valid' ? 'text-emerald-500' : 'text-amber-500'} font-black`}>{foodCert.status}</span></div>
                       </div>
@@ -3604,7 +3610,7 @@ export const UnifiedDashboard: React.FC = () => {
                         </p>
 
                         {/* Diagnostics Grid to fill empty space */}
-                        <div className="grid grid-cols-2 gap-3 mt-6 text-[11px] font-extrabold text-foreground/80">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-6 text-[11px] font-extrabold text-foreground/80">
                           {opData.diagnostics.map((diag, idx) => (
                             <div key={idx} className="flex items-center gap-2 p-2.5 bg-card border border-border rounded-xl shadow-inner hover:scale-[1.02] transition-transform">
                               <span className="text-emerald-400 text-xs">{diag.icon}</span>
@@ -3736,7 +3742,7 @@ export const UnifiedDashboard: React.FC = () => {
                           </div>
 
                           {/* Stats Grid */}
-                          <div className="grid grid-cols-2 gap-3 mt-5 text-[11px] font-extrabold text-foreground/80">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-5 text-[11px] font-extrabold text-foreground/80">
                             {tracker.stats.map((stat, idx) => (
                               <div key={idx} className="flex items-center gap-2 p-2.5 bg-card border border-border rounded-xl shadow-inner hover:scale-[1.02] transition-transform">
                                 <span className={`${stat.colorClass} text-xs`}>{stat.icon}</span>
@@ -3860,7 +3866,7 @@ export const UnifiedDashboard: React.FC = () => {
                     required
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <label className="text-[10px] text-foreground/60 uppercase">Inspection Grade</label>
                     <input 
@@ -3884,7 +3890,7 @@ export const UnifiedDashboard: React.FC = () => {
                     </select>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <label className="text-[10px] text-foreground/60 uppercase">Issue Date</label>
                     <input 
@@ -4078,7 +4084,7 @@ export const UnifiedDashboard: React.FC = () => {
                 className="p-3 bg-muted/30 border border-border rounded-xl space-y-3"
               >
                 <strong className="text-xs font-black uppercase tracking-wider block text-primary">Add New Study Link</strong>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <label className="text-[9px] font-black text-foreground/75 uppercase tracking-wider block">Link Title</label>
                     <input 
@@ -4380,7 +4386,7 @@ export const UnifiedDashboard: React.FC = () => {
               className="contents"
             >
               <div className="modal-body space-y-4 text-xs">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="font-bold text-foreground/75">Select Subject Course</label>
                   <select 
@@ -4535,7 +4541,7 @@ export const UnifiedDashboard: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="font-bold text-foreground/75">Publication Date (Send Date)</label>
                   <input 
@@ -4619,7 +4625,7 @@ export const UnifiedDashboard: React.FC = () => {
                       className="p-4 bg-muted/30 border border-border rounded-xl space-y-3"
                     >
                       <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Enroll New Student</span>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         <input 
                           type="text" 
                           required 
@@ -4707,7 +4713,7 @@ export const UnifiedDashboard: React.FC = () => {
                       className="p-4 bg-muted/30 border border-border rounded-xl space-y-3"
                     >
                       <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Add New Teacher</span>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         <input 
                           type="text" 
                           required 
@@ -4790,13 +4796,13 @@ export const UnifiedDashboard: React.FC = () => {
                   </div>
 
                   {/* Side-by-Side Attendance & Performance Analytics */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-1">
+                  <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-5 pt-1">
                     
                     {/* Attendance Tracking Grid */}
                     <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl space-y-3 flex flex-col text-slate-200">
                       <span className="text-[11px] font-bold text-primary uppercase tracking-wider block text-center">Attendance Tracking (Weekly)</span>
                       <div className="overflow-x-auto">
-                        <table className="w-full text-left text-[11px] border-collapse">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left text-[11px] border-collapse">
                           <thead>
                             <tr className="text-slate-500 font-bold border-b border-slate-800/80">
                               <th className="pb-1.5">Student</th>
@@ -4821,7 +4827,7 @@ export const UnifiedDashboard: React.FC = () => {
                               </tr>
                             ))}
                           </tbody>
-                        </table>
+                        </table></div>
                       </div>
                     </div>
 
@@ -4950,10 +4956,10 @@ export const UnifiedDashboard: React.FC = () => {
               {(activeFeature === 'Fee Monitoring' || activeFeature === 'Fee Status' || activeFeature === 'Fee Payments' || activeFeature === 'Fee Collection' || activeFeature === 'Fee Defaulters' || activeFeature === 'Invoicing') && (
                 <div className="space-y-4 animate-fadeIn">
                   {/* Side-by-Side Fee Stats & Monthly Bar Chart */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-3">
                       <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Fee Collection Overview</span>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                         <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex flex-col justify-center">
                           <span className="text-slate-400 block font-semibold">
                             {isEditor ? "Total Fees Collected" : "Total Fees Paid"}
@@ -5020,7 +5026,7 @@ export const UnifiedDashboard: React.FC = () => {
                       className="p-4 bg-muted/30 border border-border rounded-xl space-y-3"
                     >
                       <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Issue Fee Challan</span>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3">
                         <select 
                           value={newInvoiceStudent} 
                           onChange={(e) => setNewInvoiceStudent(e.target.value)}
@@ -5181,7 +5187,7 @@ export const UnifiedDashboard: React.FC = () => {
                       className="p-4 bg-muted/30 border border-border rounded-xl space-y-3"
                     >
                       <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Submit Leave Application</span>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3">
                         <input 
                           type="date" 
                           name="leaveDate" 
@@ -5273,7 +5279,7 @@ export const UnifiedDashboard: React.FC = () => {
                           <p className="text-xs text-foreground/60 font-semibold">No books currently issued to your account.</p>
                         </div>
                       ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                           {studentLibrary[activeStudentName].map((book) => {
                             let statusColor = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
                             if (book.status === 'Overdue') statusColor = "bg-red-500/10 text-red-400 border-red-500/20 animate-pulse";
@@ -5375,7 +5381,7 @@ export const UnifiedDashboard: React.FC = () => {
                           className="p-4 bg-muted/30 border border-border rounded-xl space-y-3"
                         >
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Issue Library Volume</span>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3">
                             <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
                               <option>Advanced Calculus Vol 1</option>
                               <option>Introduction to Quantum Mechanics</option>
@@ -5395,7 +5401,7 @@ export const UnifiedDashboard: React.FC = () => {
 
                       <div className="space-y-2 max-h-44 overflow-y-auto pr-1">
                         <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Circulating Books Inventory</span>
-                        <table className="w-full text-left border-collapse text-xs">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
                           <thead>
                             <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
                               <th className="p-2">Book Title</th>
@@ -5407,7 +5413,7 @@ export const UnifiedDashboard: React.FC = () => {
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Advanced Calculus Vol 1</td><td className="p-2">Kamran Shah</td><td className="p-2 text-right text-slate-500">2026-06-15</td></tr>
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Introduction to Quantum Mechanics</td><td className="p-2">Ayesha Siddiqui</td><td className="p-2 text-right text-slate-500">2026-06-12</td></tr>
                           </tbody>
-                        </table>
+                        </table></div>
                       </div>
                     </>
                   )}
@@ -5457,7 +5463,7 @@ export const UnifiedDashboard: React.FC = () => {
                         </div>
                       ) : (
                         <div className="space-y-4">
-                          <div className="p-4 bg-card border border-border rounded-2xl grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="p-4 bg-card border border-border rounded-2xl grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                               <h4 className="text-xs font-black text-primary uppercase tracking-widest">Active Transport Details</h4>
                               <div className="space-y-1.5 text-xs text-foreground/75">
@@ -5527,7 +5533,7 @@ export const UnifiedDashboard: React.FC = () => {
                             </div>
 
                             {/* Real-time Telemetry Stats */}
-                            <div className="grid grid-cols-3 gap-2 bg-slate-950 p-3 rounded-lg border border-slate-800 text-center">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 bg-slate-950 p-3 rounded-lg border border-slate-800 text-center">
                               <div>
                                 <span className="block text-[9px] text-slate-500 font-bold uppercase">Stops Remaining</span>
                                 <strong className="text-white text-sm font-black">2 Stops Left</strong>
@@ -5634,7 +5640,7 @@ export const UnifiedDashboard: React.FC = () => {
                         </div>
 
                         {/* Real-time Telemetry Stats */}
-                        <div className="grid grid-cols-3 gap-2 bg-slate-950 p-3 rounded-lg border border-slate-800 text-center">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 bg-slate-950 p-3 rounded-lg border border-slate-800 text-center">
                           <div>
                             <span className="block text-[9px] text-slate-500 font-bold uppercase">Stops Remaining</span>
                             <strong className="text-white text-sm font-black">2 Stops Left</strong>
@@ -5655,7 +5661,7 @@ export const UnifiedDashboard: React.FC = () => {
                   {/* Vehicles Sub-view */}
                   {activeFeature === 'Vehicles' && (
                     <div className="space-y-3">
-                      <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 text-center text-xs">
                         <div className="p-2.5 bg-muted/30 border border-border rounded-xl">
                           <span className="block text-[9px] text-foreground/60 font-bold uppercase">Total Fleet</span>
                           <strong className="text-foreground text-sm font-black">8 Buses</strong>
@@ -5673,7 +5679,7 @@ export const UnifiedDashboard: React.FC = () => {
                       {isEditor && (
                         <form onSubmit={(e) => { e.preventDefault(); alert('New vehicle added to fleet!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Register New Fleet Vehicle</span>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                          <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                             <input type="text" placeholder="Vehicle Reg No (e.g. BUS-09)" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
                             <input type="text" placeholder="Model (e.g. Toyota Coaster)" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
                             <input type="number" placeholder="Seating Capacity" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
@@ -5688,7 +5694,7 @@ export const UnifiedDashboard: React.FC = () => {
 
                       <div className="space-y-2">
                         <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Fleet Directory</span>
-                        <table className="w-full text-left border-collapse text-xs">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
                           <thead>
                             <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
                               <th className="p-2">Reg ID</th>
@@ -5702,7 +5708,7 @@ export const UnifiedDashboard: React.FC = () => {
                             <tr className="hover:bg-muted/10"><td className="p-2 font-mono font-bold">BUS-04</td><td className="p-2">Hino Premium Wing</td><td className="p-2">50 Seats</td><td className="p-2 text-right text-emerald-400 font-semibold">Active</td></tr>
                             <tr className="hover:bg-muted/10"><td className="p-2 font-mono font-bold">BUS-02</td><td className="p-2">Suzuki Carry Bolan</td><td className="p-2">12 Seats</td><td className="p-2 text-right text-amber-400 font-semibold">In Maintenance</td></tr>
                           </tbody>
-                        </table>
+                        </table></div>
                       </div>
                     </div>
                   )}
@@ -5713,7 +5719,7 @@ export const UnifiedDashboard: React.FC = () => {
                       {isEditor && (
                         <form onSubmit={(e) => { e.preventDefault(); alert('New route saved!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Create New Bus Route</span>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-2">
                             <input type="text" placeholder="Route Title (e.g. Route Gamma)" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
                             <input type="text" placeholder="Stops Path (comma-separated)" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
                           </div>
@@ -5727,7 +5733,7 @@ export const UnifiedDashboard: React.FC = () => {
 
                       <div className="space-y-2">
                         <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Active Transport Loops</span>
-                        <table className="w-full text-left border-collapse text-xs">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
                           <thead>
                             <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
                               <th className="p-2">Bus Loop Route</th>
@@ -5739,7 +5745,7 @@ export const UnifiedDashboard: React.FC = () => {
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold text-primary">Route Alpha</td><td className="p-2 text-foreground/70">Campus → Johar Town → Model Town → DHA Gate</td><td className="p-2 text-right font-mono font-bold">12 Stops</td></tr>
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold text-primary">Route Beta</td><td className="p-2 text-foreground/70">Campus → Faisal Town → Barkat Market → Metro Link</td><td className="p-2 text-right font-mono font-bold">8 Stops</td></tr>
                           </tbody>
-                        </table>
+                        </table></div>
                       </div>
                     </div>
                   )}
@@ -5750,7 +5756,7 @@ export const UnifiedDashboard: React.FC = () => {
                       {isEditor && (
                         <form onSubmit={(e) => { e.preventDefault(); alert('Driver registered successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Add Bus Driver</span>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                          <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                             <input type="text" placeholder="Driver Name (e.g. Aslam Khan)" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
                             <input type="text" placeholder="License Class (e.g. HTV)" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
                             <input type="text" placeholder="Phone Number" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
@@ -5765,7 +5771,7 @@ export const UnifiedDashboard: React.FC = () => {
 
                       <div className="space-y-2">
                         <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Driver Directory Roster</span>
-                        <table className="w-full text-left border-collapse text-xs">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
                           <thead>
                             <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
                               <th className="p-2">Driver Name</th>
@@ -5779,7 +5785,7 @@ export const UnifiedDashboard: React.FC = () => {
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Nadeem Iqbal</td><td className="p-2 font-mono text-foreground/75">+92-312-9876543</td><td className="p-2 text-yellow-500 font-bold">HTV Heavy</td><td className="p-2 text-right text-emerald-400 font-semibold">On Duty (BUS-04)</td></tr>
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Zahid Rasheed</td><td className="p-2 font-mono text-foreground/75">+92-345-4455667</td><td className="p-2 text-yellow-500 font-bold">LTV Light</td><td className="p-2 text-right text-foreground/50">Off Duty</td></tr>
                           </tbody>
-                        </table>
+                        </table></div>
                       </div>
                     </div>
                   )}
@@ -5790,7 +5796,7 @@ export const UnifiedDashboard: React.FC = () => {
                       {isEditor && (
                         <form onSubmit={(e) => { e.preventDefault(); alert('Student transport route assigned!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Assign Student to Route</span>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                          <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                             <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
                               {students.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
                             </select>
@@ -5810,7 +5816,7 @@ export const UnifiedDashboard: React.FC = () => {
 
                       <div className="space-y-2">
                         <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Assigned Students</span>
-                        <table className="w-full text-left border-collapse text-xs">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
                           <thead>
                             <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
                               <th className="p-2">Student Name</th>
@@ -5823,7 +5829,7 @@ export const UnifiedDashboard: React.FC = () => {
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Kamran Shah</td><td className="p-2">Route Alpha (BUS-08)</td><td className="p-2">Johar Town Stop</td><td className="p-2 text-right text-emerald-400 font-bold">Paid</td></tr>
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Ayesha Siddiqui</td><td className="p-2">Route Beta (BUS-04)</td><td className="p-2">Barkat Market</td><td className="p-2 text-right text-red-400 font-bold">Pending</td></tr>
                           </tbody>
-                        </table>
+                        </table></div>
                       </div>
                     </div>
                   )}
@@ -5831,7 +5837,7 @@ export const UnifiedDashboard: React.FC = () => {
                   {/* Transport Fees Sub-view */}
                   {activeFeature === 'Transport Fees' && (
                     <div className="space-y-3">
-                      <div className="grid grid-cols-2 gap-2 text-center text-xs">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-center text-xs">
                         <div className="p-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl">
                           <span className="block text-[9px] uppercase font-bold">Monthly Collection</span>
                           <strong className="text-sm font-black">Rs. 185,000</strong>
@@ -5845,7 +5851,7 @@ export const UnifiedDashboard: React.FC = () => {
                       {isEditor && (
                         <form onSubmit={(e) => { e.preventDefault(); alert('Fee payment recorded!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Record Transport Fee Payment</span>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                          <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                             <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
                               {students.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
                             </select>
@@ -5865,7 +5871,7 @@ export const UnifiedDashboard: React.FC = () => {
 
                       <div className="space-y-2">
                         <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Recent Transport Fee Ledger</span>
-                        <table className="w-full text-left border-collapse text-xs">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
                           <thead>
                             <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
                               <th className="p-2">Student</th>
@@ -5879,7 +5885,7 @@ export const UnifiedDashboard: React.FC = () => {
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Ayesha Siddiqui</td><td className="p-2">Route Beta</td><td className="p-2 font-mono">Rs. 4,500</td><td className="p-2 text-right text-amber-500 font-bold">Pending (June)</td></tr>
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Imran Khan</td><td className="p-2">Route Alpha</td><td className="p-2 font-mono">Rs. 5,000</td><td className="p-2 text-right text-emerald-400 font-bold">Paid (June)</td></tr>
                           </tbody>
-                        </table>
+                        </table></div>
                       </div>
                     </div>
                   )}
@@ -5928,7 +5934,7 @@ export const UnifiedDashboard: React.FC = () => {
                           </button>
                         </div>
                       ) : (
-                        <div className="p-4 bg-card border border-border rounded-2xl grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="p-4 bg-card border border-border rounded-2xl grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <h4 className="text-xs font-black text-primary uppercase tracking-widest">Active Boarding Details</h4>
                             <div className="space-y-1.5 text-xs text-foreground/75">
@@ -6000,7 +6006,7 @@ export const UnifiedDashboard: React.FC = () => {
                       {isEditor && (
                         <form onSubmit={(e) => { e.preventDefault(); alert('Mess menu updated successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Update Today's Mess Menu</span>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                          <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                             <input type="text" placeholder="Breakfast Menu" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
                             <input type="text" placeholder="Lunch Menu" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
                             <input type="text" placeholder="Dinner Menu" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
@@ -6021,7 +6027,7 @@ export const UnifiedDashboard: React.FC = () => {
                       {isEditor && (
                         <form onSubmit={(e) => { e.preventDefault(); alert('Dorm room assigned successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Assign Dorm Room</span>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3">
                             <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
                               <option disabled className="text-foreground/40 bg-muted/30">Dorm Wing A - Room 104 (Full - Unavailable)</option>
                               <option value="Wing B - Room 202">Dorm Wing B - Room 202 (2 Vacant)</option>
@@ -6040,7 +6046,7 @@ export const UnifiedDashboard: React.FC = () => {
 
                       <div className="space-y-2">
                         <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Dorm Rooms Occupancy Directory</span>
-                        <table className="w-full text-left border-collapse text-xs">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
                           <thead>
                             <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
                               <th className="p-2">Room / Wing</th>
@@ -6053,7 +6059,7 @@ export const UnifiedDashboard: React.FC = () => {
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Wing A - Room 104</td><td className="p-2">Double Bed</td><td className="p-2 font-mono">2 / 2 Beds</td><td className="p-2 text-right text-red-400 font-bold">Full</td></tr>
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Wing B - Room 202</td><td className="p-2">Triple Bed</td><td className="p-2 font-mono">1 / 3 Beds</td><td className="p-2 text-right text-emerald-400 font-bold">2 Vacant</td></tr>
                           </tbody>
-                        </table>
+                        </table></div>
                       </div>
                     </div>
                   )}
@@ -6064,7 +6070,7 @@ export const UnifiedDashboard: React.FC = () => {
                       {isEditor && (
                         <form onSubmit={(e) => { e.preventDefault(); alert('Hostel Bed allocation logged successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Allocate Bed</span>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                          <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                             <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
                               <option>Wing A - Bed 104-A</option>
                               <option>Wing A - Bed 104-B</option>
@@ -6091,7 +6097,7 @@ export const UnifiedDashboard: React.FC = () => {
 
                       <div className="space-y-2 max-h-44 overflow-y-auto pr-1">
                         <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Dorm Bed Allocations</span>
-                        <table className="w-full text-left border-collapse text-xs">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
                           <thead>
                             <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
                               <th className="p-2">Dorm Bed</th>
@@ -6103,7 +6109,7 @@ export const UnifiedDashboard: React.FC = () => {
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Wing A - Bed 104-A</td><td className="p-2">Kamran Shah</td><td className="p-2 text-right text-emerald-400 font-bold">Allocated</td></tr>
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Wing A - Bed 104-B</td><td className="p-2">Ayesha Siddiqui</td><td className="p-2 text-right text-emerald-400 font-bold">Allocated</td></tr>
                           </tbody>
-                        </table>
+                        </table></div>
                       </div>
                     </div>
                   )}
@@ -6111,7 +6117,7 @@ export const UnifiedDashboard: React.FC = () => {
                   {/* Hostel Reports Sub-view */}
                   {activeFeature === 'Hostel Reports' && (
                     <div className="space-y-3">
-                      <div className="grid grid-cols-2 gap-2 text-center text-xs">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-center text-xs">
                         <div className="p-3 bg-muted/30 border border-border rounded-xl">
                           <span className="block text-[10px] text-foreground/60 font-bold uppercase">Total Dorm Occupancy</span>
                           <strong className="text-foreground text-sm font-black">78%</strong>
@@ -6248,7 +6254,7 @@ export const UnifiedDashboard: React.FC = () => {
                         className="p-4 bg-muted/30 border border-border rounded-xl space-y-3"
                       >
                         <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Log New Visitor Entry</span>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3">
                           <input type="text" placeholder="Visitor Name" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
                           <input type="text" placeholder="Purpose of Visit (e.g. Admission Enquiry)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
                         </div>
@@ -6261,7 +6267,7 @@ export const UnifiedDashboard: React.FC = () => {
 
                       <div className="space-y-2">
                         <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Today's Visitor Log</span>
-                        <table className="w-full text-left border-collapse text-xs">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
                           <thead>
                             <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
                               <th className="p-2">Visitor</th>
@@ -6274,7 +6280,7 @@ export const UnifiedDashboard: React.FC = () => {
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Haris Mehmood</td><td className="p-2">Parent Meeting</td><td className="p-2 font-mono">10:15 AM</td><td className="p-2 text-right text-emerald-400 font-bold">Checked In</td></tr>
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Zainab Bibi</td><td className="p-2">Fee Collection Desk</td><td className="p-2 font-mono">09:45 AM</td><td className="p-2 text-right text-foreground/50">Checked Out</td></tr>
                           </tbody>
-                        </table>
+                        </table></div>
                       </div>
                     </div>
                   )}
@@ -6304,7 +6310,7 @@ export const UnifiedDashboard: React.FC = () => {
                         className="p-4 bg-muted/30 border border-border rounded-xl space-y-3"
                       >
                         <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Schedule Meeting Appointment</span>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                           <input name="visitor" type="text" placeholder="Visitor Name" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
                           <input name="host" type="text" placeholder="Meeting With (e.g. Principal)" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
                           <input name="dateTime" type="datetime-local" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
@@ -6318,7 +6324,7 @@ export const UnifiedDashboard: React.FC = () => {
 
                       <div className="space-y-2">
                         <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Upcoming Scheduled Meetings</span>
-                        <table className="w-full text-left border-collapse text-xs">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
                           <thead>
                             <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
                               <th className="p-2">Visitor</th>
@@ -6345,7 +6351,7 @@ export const UnifiedDashboard: React.FC = () => {
                               </tr>
                             ))}
                           </tbody>
-                        </table>
+                        </table></div>
                       </div>
                     </div>
                   )}
@@ -6361,7 +6367,7 @@ export const UnifiedDashboard: React.FC = () => {
                         className="p-4 bg-muted/30 border border-border rounded-xl space-y-3"
                       >
                         <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Register Call Registry Log</span>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                           <input type="text" placeholder="Caller Phone / Name" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
                           <input type="text" placeholder="Recipient / Dept" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
                           <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
@@ -6378,7 +6384,7 @@ export const UnifiedDashboard: React.FC = () => {
 
                       <div className="space-y-2">
                         <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Today's Call Logs</span>
-                        <table className="w-full text-left border-collapse text-xs">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
                           <thead>
                             <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
                               <th className="p-2">Caller / Number</th>
@@ -6391,7 +6397,7 @@ export const UnifiedDashboard: React.FC = () => {
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold">+92-321-4455881</td><td className="p-2">Admissions Office</td><td className="p-2 font-mono">02:40 PM</td><td className="p-2 text-right text-emerald-400 font-bold">Incoming</td></tr>
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Principal Office</td><td className="p-2">Education Board Punjab</td><td className="p-2 font-mono">11:15 AM</td><td className="p-2 text-right text-blue-400 font-bold">Outgoing</td></tr>
                           </tbody>
-                        </table>
+                        </table></div>
                       </div>
                     </div>
                   )}
@@ -6413,7 +6419,7 @@ export const UnifiedDashboard: React.FC = () => {
                       {isEditor && (
                         <form onSubmit={(e) => { e.preventDefault(); alert('Employee record registered!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Register New Employee</span>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                          <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                             <input type="text" placeholder="Full Name" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
                             <input type="text" placeholder="Designation (e.g. Maths Teacher)" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
                             <input type="number" placeholder="Salary Base" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
@@ -6428,7 +6434,7 @@ export const UnifiedDashboard: React.FC = () => {
 
                       <div className="space-y-2">
                         <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Staff Directory</span>
-                        <table className="w-full text-left border-collapse text-xs">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
                           <thead>
                             <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
                               <th className="p-2">Name</th>
@@ -6440,7 +6446,7 @@ export const UnifiedDashboard: React.FC = () => {
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Raza Ahmed</td><td className="p-2 text-foreground/85">Physics Lecturer</td><td className="p-2 text-right text-slate-500 font-mono">2021-08-15</td></tr>
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Sarah Khan</td><td className="p-2 text-foreground/85">English Instructor</td><td className="p-2 text-right text-slate-500 font-mono">2023-02-10</td></tr>
                           </tbody>
-                        </table>
+                        </table></div>
                       </div>
                     </div>
                   )}
@@ -6451,7 +6457,7 @@ export const UnifiedDashboard: React.FC = () => {
                       {isEditor && (
                         <form onSubmit={(e) => { e.preventDefault(); alert('Job vacancy opening posted successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Post New Job Vacancy</span>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                          <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-2">
                             <input type="text" placeholder="Job Title (e.g. Chemistry Lecturer)" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
                             <input type="text" placeholder="Requirements Summary" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
                           </div>
@@ -6482,7 +6488,7 @@ export const UnifiedDashboard: React.FC = () => {
                       {isEditor && (
                         <form onSubmit={(e) => { e.preventDefault(); alert('Performance score logged!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Log Teacher Performance Score</span>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                          <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                             <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
                               <option>Raza Ahmed (Physics)</option>
                               <option>Sarah Khan (English)</option>
@@ -6504,7 +6510,7 @@ export const UnifiedDashboard: React.FC = () => {
 
                       <div className="space-y-2">
                         <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Evaluation Audit Trail</span>
-                        <table className="w-full text-left border-collapse text-xs">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
                           <thead>
                             <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
                               <th className="p-2">Employee</th>
@@ -6516,7 +6522,7 @@ export const UnifiedDashboard: React.FC = () => {
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Raza Ahmed</td><td className="p-2 text-emerald-400 font-bold">Excellent (94%)</td><td className="p-2 text-right text-slate-400">Great student engagement</td></tr>
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Sarah Khan</td><td className="p-2 text-emerald-400 font-bold">Satisfactory (82%)</td><td className="p-2 text-right text-slate-400">Timetable targets matched</td></tr>
                           </tbody>
-                        </table>
+                        </table></div>
                       </div>
                     </div>
                   )}
@@ -6527,7 +6533,7 @@ export const UnifiedDashboard: React.FC = () => {
                       {isEditor && (
                         <form onSubmit={(e) => { e.preventDefault(); alert('Monthly payroll disbursement initiated!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Disburse Monthly Pay Slip</span>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                          <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                             <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
                               <option>Raza Ahmed</option>
                               <option>Sarah Khan</option>
@@ -6548,7 +6554,7 @@ export const UnifiedDashboard: React.FC = () => {
 
                       <div className="space-y-2">
                         <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Recent Payroll Ledger Logs</span>
-                        <table className="w-full text-left border-collapse text-xs">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
                           <thead>
                             <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
                               <th className="p-2">Employee</th>
@@ -6561,7 +6567,7 @@ export const UnifiedDashboard: React.FC = () => {
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Raza Ahmed</td><td className="p-2 font-mono">June 2026</td><td className="p-2 font-mono">Rs. 85,000</td><td className="p-2 text-right text-emerald-400 font-bold">Disbursed</td></tr>
                             <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Sarah Khan</td><td className="p-2 font-mono">June 2026</td><td className="p-2 font-mono">Rs. 72,000</td><td className="p-2 text-right text-emerald-400 font-bold">Disbursed</td></tr>
                           </tbody>
-                        </table>
+                        </table></div>
                       </div>
                     </div>
                   )}
@@ -6604,7 +6610,7 @@ export const UnifiedDashboard: React.FC = () => {
                     </div>
 
                     {/* Student Metadata Box */}
-                    <div className="grid grid-cols-4 gap-4 p-3 bg-muted border border-border rounded-xl text-[10px] font-medium">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-3 bg-muted border border-border rounded-xl text-[10px] font-medium">
                       <div>
                         <span className="text-[9px] text-muted-foreground block uppercase font-bold tracking-wider mb-0.5">Student Name</span>
                         {isEditor ? (
@@ -6640,7 +6646,7 @@ export const UnifiedDashboard: React.FC = () => {
                     </div>
 
                     {/* Detailed Expanded Subjects Table */}
-                    <table className="w-full text-xs text-left border-collapse mt-2">
+                    <div className="w-full overflow-x-auto pb-2"><table className="w-full text-xs text-left border-collapse mt-2">
                       <thead>
                         <tr className="text-muted-foreground font-bold border-b border-border bg-muted/40 text-[9px] uppercase tracking-wider">
                           <th className="p-2.5">Subject Course</th>
@@ -6735,7 +6741,7 @@ export const UnifiedDashboard: React.FC = () => {
                           </tr>
                         ))}
                       </tbody>
-                    </table>
+                    </table></div>
 
                     {/* Principal Remarks & Evaluation */}
                     <div className="p-3 bg-emerald-500/5 border border-emerald-500/15 rounded-xl space-y-1.5 text-[10px] leading-relaxed">
@@ -6807,7 +6813,7 @@ export const UnifiedDashboard: React.FC = () => {
                       className="p-4 bg-muted/30 border border-border rounded-xl space-y-3 pb-4"
                     >
                       <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Log Midterm Grades & Marks</span>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         <select name="student_name" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
                           {students.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
                         </select>
@@ -6905,7 +6911,7 @@ export const UnifiedDashboard: React.FC = () => {
                       </div>
 
                       {/* Daily Schedule List */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
+                      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 mt-2">
                         {(WEEKLY_SCHEDULE_DATA[activeTimetableDay] || []).map((period, index) => {
                           const subjectColor = getSubjectColor(period.subject);
                           return (
@@ -6943,7 +6949,7 @@ export const UnifiedDashboard: React.FC = () => {
                   {timetableTab === 'weekly' && (
                     <div className="border border-border rounded-2xl overflow-hidden bg-muted/10 shadow-sm">
                       <div className="overflow-x-auto pb-2">
-                        <table className="w-full text-left border-collapse text-[11px] min-w-[850px] table-fixed">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-[11px] min-w-[850px] table-fixed">
                           <thead>
                             <tr className="border-b border-border bg-muted/30 font-extrabold text-foreground/75 uppercase tracking-wider">
                               <th className="p-3.5 border-r border-border/60 w-[12%] text-left sticky left-0 z-20 bg-slate-900 dark:bg-[#0b0f19] shadow-[2px_0_5px_rgba(0,0,0,0.2)]">Period & Time</th>
@@ -6999,7 +7005,7 @@ export const UnifiedDashboard: React.FC = () => {
                               );
                             })}
                           </tbody>
-                        </table>
+                        </table></div>
                       </div>
                     </div>
                   )}
@@ -7329,7 +7335,7 @@ export const UnifiedDashboard: React.FC = () => {
                     className="p-4 bg-muted/30 border border-border rounded-xl space-y-3"
                   >
                     <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Log Student Conduct Incident</span>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                       <select 
                         value={newDisciplineStudent}
                         onChange={(e) => setNewDisciplineStudent(e.target.value)}
@@ -7429,7 +7435,7 @@ export const UnifiedDashboard: React.FC = () => {
                     <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">
                       {simulatedRole === 'parent' ? 'Send message to Tutors / School' : 'Send message to parents'}
                     </span>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                       <select 
                         value={newParentMessageStudent || (students[0]?.name || '')}
                         onChange={(e) => setNewParentMessageStudent(e.target.value)}
@@ -7580,7 +7586,7 @@ export const UnifiedDashboard: React.FC = () => {
                         alert(`Country ${newCountryName} successfully registered!`);
                       }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3.5">
                         <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Register New Country</span>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                           <input value={newCountryName} onChange={(e) => setNewCountryName(e.target.value)} type="text" placeholder="Country Name (e.g. Canada)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
                           <input value={newCountryCode} onChange={(e) => setNewCountryCode(e.target.value)} type="text" placeholder="ISO Code (e.g. CA)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" maxLength={3} required />
                           <select value={newCountryCurrency} onChange={(e) => setNewCountryCurrency(e.target.value)} className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold">
@@ -7639,7 +7645,7 @@ export const UnifiedDashboard: React.FC = () => {
                         alert(`Organization ${newOrgName} has been registered!`);
                       }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3.5">
                         <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Add School Chain / Organization</span>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                           <input value={newOrgName} onChange={(e) => setNewOrgName(e.target.value)} type="text" placeholder="Organization Name" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
                           <input value={newOrgOwner} onChange={(e) => setNewOrgOwner(e.target.value)} type="text" placeholder="Owner / Director" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
                           <input value={newOrgBranches} onChange={(e) => setNewOrgBranches(e.target.value)} type="number" min={1} placeholder="Active Branches count" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
@@ -7652,7 +7658,7 @@ export const UnifiedDashboard: React.FC = () => {
                       </form>
 
                       <div className="border border-border rounded-xl bg-card overflow-hidden">
-                        <table className="w-full text-left border-collapse text-xs">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
                           <thead>
                             <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
                               <th className="p-3">Organization Chain</th>
@@ -7680,7 +7686,7 @@ export const UnifiedDashboard: React.FC = () => {
                               </tr>
                             ))}
                           </tbody>
-                        </table>
+                        </table></div>
                       </div>
                     </div>
                   )}
@@ -7701,7 +7707,7 @@ export const UnifiedDashboard: React.FC = () => {
                         alert(`School Campus ${newSchoolName} successfully created!`);
                       }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3.5">
                         <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Provision New School Campus</span>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3">
                           <input value={newSchoolName} onChange={(e) => setNewSchoolName(e.target.value)} type="text" placeholder="School Name (e.g. Allied School Campus A)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
                           <div className="flex items-center gap-1 bg-card border border-border rounded-lg px-2">
                             <input value={newSchoolSubdomain} onChange={(e) => setNewSchoolSubdomain(e.target.value)} type="text" placeholder="subdomain" className="bg-transparent text-xs py-2 w-full text-foreground outline-none" required />
@@ -7716,7 +7722,7 @@ export const UnifiedDashboard: React.FC = () => {
                       </form>
 
                       <div className="border border-border rounded-xl bg-card overflow-hidden">
-                        <table className="w-full text-left border-collapse text-xs">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
                           <thead>
                             <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
                               <th className="p-3">Campus Branch</th>
@@ -7737,7 +7743,7 @@ export const UnifiedDashboard: React.FC = () => {
                               </tr>
                             ))}
                           </tbody>
-                        </table>
+                        </table></div>
                       </div>
                     </div>
                   )}
@@ -7758,7 +7764,7 @@ export const UnifiedDashboard: React.FC = () => {
                         alert(`Subscription plan ${newPlanName} has been configured!`);
                       }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3.5">
                         <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Configure SaaS Pricing Plan</span>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                           <input value={newPlanName} onChange={(e) => setNewPlanName(e.target.value)} type="text" placeholder="Plan Title" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
                           <input value={newPlanPrice} onChange={(e) => setNewPlanPrice(e.target.value)} type="number" placeholder="Price (USD)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
                           <select value={newPlanBilling} onChange={(e) => setNewPlanBilling(e.target.value)} className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold">
@@ -7773,7 +7779,7 @@ export const UnifiedDashboard: React.FC = () => {
                         </div>
                       </form>
 
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {subscriptionPlans.map(plan => (
                           <div key={plan.id} className="p-4 bg-card border border-border rounded-2xl flex flex-col justify-between items-center text-center space-y-3 shadow-md hover:border-primary/50 transition-all duration-300">
                             <span className="font-black text-foreground text-sm uppercase tracking-wide">{plan.name}</span>
@@ -7799,7 +7805,7 @@ export const UnifiedDashboard: React.FC = () => {
                         📈 Consolidated Group financial indicators, net profitability margins, and software subscriber growth metrics.
                       </div>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-center space-y-1 shadow-lg">
                           <span className="text-xs text-slate-400 font-bold block uppercase tracking-wider">Consolidated Inflow</span>
                           <span className="text-2xl font-black text-white">$12,450 / mo</span>
@@ -7859,7 +7865,7 @@ export const UnifiedDashboard: React.FC = () => {
                       }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-4">
                         <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">White-Label DNS Pointer & Theme settings</span>
                         
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-1.5">
                             <label className="text-[10px] text-foreground/60 font-bold uppercase block">Custom Domain Pointer</label>
                             <input value={dnsInput} onChange={(e) => setDnsInput(e.target.value)} type="text" placeholder="portal.yourschool.com" className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
@@ -7946,7 +7952,7 @@ export const UnifiedDashboard: React.FC = () => {
                       )}
                       
                       <div className="border border-border rounded-xl bg-card overflow-hidden">
-                        <table className="w-full text-left border-collapse text-xs">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
                           <thead>
                             <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
                               <th className="p-3">Ticket ID</th>
@@ -7988,7 +7994,7 @@ export const UnifiedDashboard: React.FC = () => {
                               </tr>
                             ))}
                           </tbody>
-                        </table>
+                        </table></div>
                       </div>
                     </div>
                   )}
@@ -8001,7 +8007,7 @@ export const UnifiedDashboard: React.FC = () => {
                       </div>
                       
                       <div className="border border-border rounded-xl bg-card overflow-hidden">
-                        <table className="w-full text-left border-collapse text-xs">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
                           <thead>
                             <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
                               <th className="p-3">Timestamp (UTC)</th>
@@ -8018,7 +8024,7 @@ export const UnifiedDashboard: React.FC = () => {
                               </tr>
                             ))}
                           </tbody>
-                        </table>
+                        </table></div>
                       </div>
                     </div>
                   )}
@@ -8081,7 +8087,7 @@ export const UnifiedDashboard: React.FC = () => {
                   <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl space-y-4 shadow-xl text-slate-200">
                     <span className="block text-xs font-black text-primary uppercase tracking-widest text-center">Your School at a Glance</span>
                     
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    <div className="grid grid-cols-1 md:grid-cols-2 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
                       <div className="p-4 bg-slate-950/80 border border-slate-800 rounded-xl space-y-1">
                         <span className="text-xl">🎓</span>
                         <strong className="block text-lg text-white font-bold">150</strong>
@@ -8128,7 +8134,7 @@ export const UnifiedDashboard: React.FC = () => {
 
                   <form onSubmit={(e) => { e.preventDefault(); alert('Prospective lead added successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                     <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Add New Admission Inquiry</span>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                       <input type="text" placeholder="Parent Name" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
                       <input type="text" placeholder="Child Grade (e.g. Grade 8)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
                       <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
@@ -8146,7 +8152,7 @@ export const UnifiedDashboard: React.FC = () => {
 
                   <div className="space-y-2 max-h-44 overflow-y-auto pr-1">
                     <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Inquiries List</span>
-                    <table className="w-full text-left border-collapse text-xs">
+                    <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
                       <thead>
                         <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
                           <th className="p-2">Applicant</th>
@@ -8159,7 +8165,7 @@ export const UnifiedDashboard: React.FC = () => {
                         <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Haris Khan</td><td className="p-2">Class 9</td><td className="p-2"><span className="px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 font-bold border border-purple-500/20">Interview Pending</span></td><td className="p-2 text-right text-slate-500">2026-06-08</td></tr>
                         <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Mona Siddiqui</td><td className="p-2">Class 10</td><td className="p-2"><span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20">Enrolled</span></td><td className="p-2 text-right text-slate-500">2026-06-05</td></tr>
                       </tbody>
-                    </table>
+                    </table></div>
                   </div>
 
                   <button onClick={() => handlePrintPdf('leads_funnel')} className="w-full py-2 bg-muted hover:bg-muted/80 border border-border text-foreground text-xs font-bold rounded-lg transition-all shadow-md">
@@ -8178,7 +8184,7 @@ export const UnifiedDashboard: React.FC = () => {
                   {isEditor && (
                     <form onSubmit={(e) => { e.preventDefault(); alert('Expense payout logged!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                       <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Add School Expense</span>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         <input type="text" placeholder="Expense Category (e.g. Electricity, Water)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
                         <input type="number" placeholder="Expenditure Amount" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
                         <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
@@ -8197,7 +8203,7 @@ export const UnifiedDashboard: React.FC = () => {
 
                   <div className="space-y-2 max-h-44 overflow-y-auto pr-1">
                     <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Expense Logs</span>
-                    <table className="w-full text-left border-collapse text-xs">
+                    <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
                       <thead>
                         <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
                           <th className="p-2">Transaction ID</th>
@@ -8210,7 +8216,7 @@ export const UnifiedDashboard: React.FC = () => {
                         <tr className="hover:bg-muted/10"><td className="p-2 font-mono">TX-2026-908</td><td className="p-2">Internet DSL Fiber Line</td><td className="p-2 text-right font-semibold text-rose-400">- {formatCurrency(4800)}</td><td className="p-2 text-center"><span className="text-emerald-400 font-bold">Cleared</span></td></tr>
                         <tr className="hover:bg-muted/10"><td className="p-2 font-mono">TX-2026-907</td><td className="p-2">Monthly Building Rent</td><td className="p-2 text-right font-semibold text-rose-400">- {formatCurrency(35000)}</td><td className="p-2 text-center"><span className="text-emerald-400 font-bold">Cleared</span></td></tr>
                       </tbody>
-                    </table>
+                    </table></div>
                   </div>
 
                   <button onClick={() => handlePrintPdf('financial_statement')} className="w-full py-2 bg-muted hover:bg-muted/80 border border-border text-foreground text-xs font-bold rounded-lg transition-all shadow-md">
@@ -8227,7 +8233,7 @@ export const UnifiedDashboard: React.FC = () => {
                   </div>                  {isEditor && (
                     <form onSubmit={(e) => { e.preventDefault(); alert('Staff profile created successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                       <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Add New Staff</span>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         <input type="text" placeholder="Staff Name" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
                         <input type="text" placeholder="Role (e.g. Teacher)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
                         <input type="number" placeholder="Monthly Salary" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
@@ -8241,7 +8247,7 @@ export const UnifiedDashboard: React.FC = () => {
                   )}
                   <div className="space-y-2 max-h-44 overflow-y-auto pr-1">
                     <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Payroll Coordination Logs</span>
-                    <table className="w-full text-left border-collapse text-xs">
+                    <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
                       <thead>
                         <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
                           <th className="p-2">Employee</th>
@@ -8254,7 +8260,7 @@ export const UnifiedDashboard: React.FC = () => {
                         <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Sarah Khan</td><td className="p-2">Senior Lecturer</td><td className="p-2 text-right">{formatCurrency(45000)}</td><td className="p-2 text-center text-emerald-400">98% Synced</td></tr>
                         <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Raza Ahmed</td><td className="p-2">Physics Head</td><td className="p-2 text-right">{formatCurrency(48000)}</td><td className="p-2 text-center text-emerald-400">97% Synced</td></tr>
                       </tbody>
-                    </table>
+                    </table></div>
                   </div>
                 </div>
               )}
@@ -8271,7 +8277,7 @@ export const UnifiedDashboard: React.FC = () => {
                   {/* AI Prediction Tool Simulator */}
                   <div className="p-4 bg-card border border-border rounded-xl space-y-4">
                     <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">AI Predictive Modeling Simulator</span>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="p-3 bg-muted/20 border border-border rounded-lg space-y-2">
                         <span className="text-[11px] font-bold text-foreground/70 block">Dropout Risk Prediction</span>
                         <div className="flex items-center justify-between text-xs">
@@ -8322,7 +8328,7 @@ export const UnifiedDashboard: React.FC = () => {
                     className="p-4 bg-muted/30 border border-border rounded-xl space-y-3"
                   >
                     <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Launch Marketing Campaign</span>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3">
                       <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold font-sans">
                         <option>WhatsApp Campaign (Direct Chat)</option>
                         <option>Email Campaign (HTML Newsletter)</option>
@@ -8347,7 +8353,7 @@ export const UnifiedDashboard: React.FC = () => {
 
                   <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
                     <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Active Support Tickets</span>
-                    <table className="w-full text-left border-collapse text-xs">
+                    <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
                       <thead>
                         <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
                           <th className="p-2">Ticket ID</th>
@@ -8374,7 +8380,7 @@ export const UnifiedDashboard: React.FC = () => {
                           </td>
                         </tr>
                       </tbody>
-                    </table>
+                    </table></div>
                   </div>
                 </div>
               )}
@@ -8429,7 +8435,7 @@ export const UnifiedDashboard: React.FC = () => {
                     <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-[9px] font-black uppercase tracking-wider border border-purple-500/30">Active</span>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Academic Analyst */}
                     <div className="p-5 bg-card/60 border border-border rounded-2xl space-y-3 flex flex-col justify-between hover:border-primary/45 transition-all">
                       <div className="space-y-1">
@@ -8511,7 +8517,7 @@ export const UnifiedDashboard: React.FC = () => {
                     ✨ Generate custom admission campaigns, event greetings, and graduation announcements in 8 localized languages.
                   </div>
 
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                  <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 gap-6 items-start">
                     {/* Input configuration */}
                     <div className="p-5 bg-card border border-border rounded-2xl space-y-4">
                       <span className="block text-xs font-black text-foreground uppercase tracking-wider">Configure Post Details</span>
