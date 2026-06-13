@@ -3,6 +3,7 @@ import { useSchoolStore, COUNTRY_CONFIGS } from '../../store/schoolStore';
 import type { SupportedCountry, SchoolInfo } from '../../store/schoolStore';
 import { useAuthStore } from '../../store/authStore';
 import { useNavigate } from 'react-router-dom';
+import { useActivityStore } from '../../store/activityStore';
 import { 
   Building2, 
   Layers, 
@@ -37,33 +38,14 @@ export const SuperAdminDashboard: React.FC = () => {
   const addSchoolToStore = useSchoolStore((state) => state.addSchool);
   const resolveSchool = useSchoolStore((state) => state.resolveSchool);
 
-  interface ActivityLog {
-    id: string;
-    time: string;
-    type: 'success' | 'info' | 'setup';
-    message: string;
-  }
+  const { activities, addActivity, refreshTimes } = useActivityStore();
 
-  const [activities, setActivities] = useState<ActivityLog[]>([
-    {
-      id: '1',
-      time: 'Just now',
-      type: 'info',
-      message: 'System databases secured & regional compliance checks active.'
-    },
-    {
-      id: '2',
-      time: '15 mins ago',
-      type: 'setup',
-      message: 'Roots International Toronto portal initialized with Canada compliance configuration.'
-    },
-    {
-      id: '3',
-      time: '1 hour ago',
-      type: 'success',
-      message: 'Completed system backup and cleared cache memory pools.'
-    }
-  ]);
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      refreshTimes();
+    }, 60000); // refresh time every minute
+    return () => clearInterval(interval);
+  }, [refreshTimes]);
 
   // Wizard States
   const [wizardStep, setWizardStep] = useState(1);
@@ -158,6 +140,7 @@ export const SuperAdminDashboard: React.FC = () => {
         city: finalCity,
         campusCount: 1,
         currentAcademicSession: sessionLabel,
+        schoolLevel: 'both' as const,
         themeSettings: {
           primaryHsl: primaryHsl,
           secondaryHsl: '217.2 32.6% 16%'
@@ -173,27 +156,18 @@ export const SuperAdminDashboard: React.FC = () => {
       };
 
       addSchoolToStore(newSchool);
-      setActivities(prev => [
-        {
-          id: `act-${Date.now()}-1`,
-          time: 'Just now',
-          type: 'success',
-          message: `🎉 School Portal for ${finalSchoolName} (${finalCity}) registered and live successfully!`
-        },
-        {
-          id: `act-${Date.now()}-2`,
-          time: 'Just now',
-          type: 'setup',
-          message: `👤 Admin account configured for ${finalAdminName} (${finalAdminEmail}).`
-        },
-        {
-          id: `act-${Date.now()}-3`,
-          time: 'Just now',
-          type: 'info',
-          message: `🎨 Applied brand color scheme to ${finalDomain}.academichub.com.`
-        },
-        ...prev
-      ]);
+      addActivity({
+        type: 'success',
+        message: `🎉 School Portal for ${finalSchoolName} (${finalCity}) registered and live successfully!`
+      });
+      addActivity({
+        type: 'setup',
+        message: `👤 Admin account configured for ${finalAdminName} (${finalAdminEmail}).`
+      });
+      addActivity({
+        type: 'info',
+        message: `🎨 Applied brand color scheme to ${finalDomain}.academichub.com.`
+      });
 
       try {
         await resolveSchool(newSchool.domain);
@@ -224,28 +198,18 @@ export const SuperAdminDashboard: React.FC = () => {
   };
 
   const triggerBackup = () => {
-    setActivities(prev => [
-      {
-        id: `backup-${Date.now()}`,
-        time: 'Just now',
-        type: 'success',
-        message: '💾 Manual Database Backup: Successfully backed up Postgres RLS schemas to system archive.'
-      },
-      ...prev
-    ]);
+    addActivity({
+      type: 'success',
+      message: '💾 Manual Database Backup: Successfully backed up Postgres RLS schemas to system archive.'
+    });
     alert('System Backup Complete! Log has been recorded in the activity feed.');
   };
 
   const triggerSecurityAudit = () => {
-    setActivities(prev => [
-      {
-        id: `audit-${Date.now()}`,
-        time: 'Just now',
-        type: 'info',
-        message: '🛡️ Security Audit: Row-Level Security (RLS) policies verified for all school portals.'
-      },
-      ...prev
-    ]);
+    addActivity({
+      type: 'info',
+      message: '🛡️ Security Audit: Row-Level Security (RLS) policies verified for all school portals.'
+    });
     alert('Security check passed: 100% data isolation verified.');
   };
 
@@ -1218,37 +1182,27 @@ export const SuperAdminDashboard: React.FC = () => {
                     <div className="space-y-2">
                       <button
                         onClick={() => {
-                          setActivities(prev => [
-                            {
-                              id: `task-email-${Date.now()}`,
-                              time: 'Just now',
-                              type: 'success',
-                              message: '✉️ Bulk Email Dispatch: Successfully sent weekly reports to 2,480 parents.'
-                            },
-                            ...prev
-                          ]);
-                          alert('Email dispatch triggered! 2,480 parent emails delivered successfully.');
+                          addActivity({
+                            type: 'success',
+                            message: '📢 Portal Broadcast: Successfully synced weekly announcements to 2,480 linked portals.'
+                          });
+                          alert('Portal dispatch triggered! Announcements synced to 2,480 parent portals successfully.');
                         }}
                         className="w-full flex justify-between items-center p-3 bg-card/40 hover:bg-card border border-border hover:border-amber-500/50 rounded-xl transition-all text-xs font-semibold"
                       >
                         <div className="text-left">
-                          <span className="block text-foreground">Email Broadcast Tasks</span>
-                          <span className="text-[10px] text-muted-foreground">Run system announcement emails</span>
+                          <span className="block text-foreground">Portal Notifications Dispatcher</span>
+                          <span className="text-[10px] text-muted-foreground">Sync system announcements to portals</span>
                         </div>
                         <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 text-[10px] border border-amber-500/25">Trigger</span>
                       </button>
 
                       <button
                         onClick={() => {
-                          setActivities(prev => [
-                            {
-                              id: `task-sms-${Date.now()}`,
-                              time: 'Just now',
-                              type: 'success',
-                              message: '📱 SMS Alerts: Successfully sent daily attendance status to 1,842 phones.'
-                            },
-                            ...prev
-                          ]);
+                          addActivity({
+                            type: 'success',
+                            message: '📱 SMS Alerts: Successfully sent daily attendance status to 1,842 phones.'
+                          });
                           alert('SMS dispatcher completed! 1,842 notifications sent.');
                         }}
                         className="w-full flex justify-between items-center p-3 bg-card/40 hover:bg-card border border-border hover:border-amber-500/50 rounded-xl transition-all text-xs font-semibold"
@@ -1262,15 +1216,10 @@ export const SuperAdminDashboard: React.FC = () => {
 
                       <button
                         onClick={() => {
-                          setActivities(prev => [
-                            {
-                              id: `task-invoice-${Date.now()}`,
-                              time: 'Just now',
-                              type: 'success',
-                              message: '💳 Invoice Engine: Generated fee challans for 8,500 students.'
-                            },
-                            ...prev
-                          ]);
+                          addActivity({
+                            type: 'success',
+                            message: '💳 Invoice Engine: Generated fee challans for 8,500 students.'
+                          });
                           alert('Invoice engine executed! 8,500 billing challans generated.');
                         }}
                         className="w-full flex justify-between items-center p-3 bg-card/40 hover:bg-card border border-border hover:border-amber-500/50 rounded-xl transition-all text-xs font-semibold"
@@ -1319,15 +1268,10 @@ export const SuperAdminDashboard: React.FC = () => {
                               if (isOptimizing) return;
                               setOptimizingComponent(comp.key);
                               await new Promise(r => setTimeout(r, 1000));
-                              setActivities(prev => [
-                                {
-                                  id: `opt-${Date.now()}`,
-                                  time: 'Just now',
-                                  type: 'success',
-                                  message: `🧹 Cleaned up temporary caches for server component: ${comp.name}.`
-                                },
-                                ...prev
-                              ]);
+                              addActivity({
+                                type: 'success',
+                                message: `🧹 Cleaned up temporary caches for server component: ${comp.name}.`
+                              });
                               setOptimizingComponent(null);
                               alert(`Optimized successfully! Cleared inactive processes for ${comp.name}.`);
                             }}

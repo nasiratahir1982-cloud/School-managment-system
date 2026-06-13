@@ -7,6 +7,8 @@ export interface SchoolTheme {
   secondaryHsl: string; // e.g. "217.2 32.6% 16%"
 }
 
+export type SchoolLevel = 'primary' | 'secondary' | 'both';
+
 export interface SchoolInfo {
   schoolId: string;
   schoolName: string;
@@ -17,6 +19,7 @@ export interface SchoolInfo {
   campusCount: number;
   currentAcademicSession: string;
   themeSettings: SchoolTheme;
+  schoolLevel: SchoolLevel;
   currencyOverride?: string;
   modules?: {
     transport: boolean;
@@ -158,6 +161,7 @@ export const INITIAL_SCHOOLS: SchoolInfo[] = [
     city: 'Lahore',
     campusCount: 3,
     currentAcademicSession: '2026-2027',
+    schoolLevel: 'both',
     themeSettings: {
       primaryHsl: '263.4 70% 50.4%', // Purple theme
       secondaryHsl: '217.2 32.6% 16%',
@@ -180,6 +184,7 @@ export const INITIAL_SCHOOLS: SchoolInfo[] = [
     city: 'Lahore',
     campusCount: 5,
     currentAcademicSession: '2026-2027',
+    schoolLevel: 'secondary',
     themeSettings: {
       primaryHsl: '142.1 76.2% 36.3%', // Green theme
       secondaryHsl: '222.2 47.4% 11.2%',
@@ -202,6 +207,7 @@ export const INITIAL_SCHOOLS: SchoolInfo[] = [
     city: 'Karachi',
     campusCount: 12,
     currentAcademicSession: '2026-2027',
+    schoolLevel: 'primary',
     themeSettings: {
       primaryHsl: '217.2 91.2% 59.8%', // Blue
       secondaryHsl: '222.2 47.4% 11.2%',
@@ -216,6 +222,7 @@ export const INITIAL_SCHOOLS: SchoolInfo[] = [
     city: 'London',
     campusCount: 2,
     currentAcademicSession: '2026-2027',
+    schoolLevel: 'both',
     themeSettings: {
       primaryHsl: '43 96% 50%', // Golden Amber theme
       secondaryHsl: '222.2 47.4% 11.2%',
@@ -230,6 +237,7 @@ export const INITIAL_SCHOOLS: SchoolInfo[] = [
     city: 'Dubai',
     campusCount: 4,
     currentAcademicSession: '2026-2027',
+    schoolLevel: 'secondary',
     themeSettings: {
       primaryHsl: '24.6 95% 53.1%', // Amber
       secondaryHsl: '222.2 47.4% 11.2%',
@@ -244,6 +252,7 @@ export const INITIAL_SCHOOLS: SchoolInfo[] = [
     city: 'Riyadh',
     campusCount: 1,
     currentAcademicSession: '2026-2027',
+    schoolLevel: 'primary',
     themeSettings: {
       primaryHsl: '172 66% 50%', // Teal
       secondaryHsl: '222.2 47.4% 11.2%',
@@ -258,6 +267,7 @@ export const INITIAL_SCHOOLS: SchoolInfo[] = [
     city: 'Toronto',
     campusCount: 2,
     currentAcademicSession: '2026-2027',
+    schoolLevel: 'both',
     themeSettings: {
       primaryHsl: '280 85% 60%', // Purple-blue
       secondaryHsl: '222.2 47.4% 11.2%',
@@ -272,6 +282,7 @@ export const INITIAL_SCHOOLS: SchoolInfo[] = [
     city: 'New York',
     campusCount: 1,
     currentAcademicSession: '2026-2027',
+    schoolLevel: 'primary',
     themeSettings: {
       primaryHsl: '217.2 91.2% 59.8%', // Blue theme
       secondaryHsl: '222.2 47.4% 11.2%',

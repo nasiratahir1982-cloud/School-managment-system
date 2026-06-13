@@ -75,9 +75,12 @@ import {
   PieChart,
   BarChart3,
   DollarSign,
-  Star
+  Star,
+  MapPin
 } from 'lucide-react';
 import { useThemeStore } from '../store/themeStore';
+import { AcademicCalendar } from './AcademicCalendar';
+import { useCalendarStore } from '../store/calendarStore';
 
 interface PortalSpec {
   title: string;
@@ -589,6 +592,42 @@ const WEEKLY_SCHEDULE_DATA: Record<string, PeriodInfo[]> = {
   ]
 };
 
+export const CLASSES_LIST = [
+  'Playgroup',
+  'Nursery',
+  'Prep',
+  'Class 1-A',
+  'Class 2-A',
+  'Class 3-A',
+  'Class 4-A',
+  'Class 5-A',
+  'Class 6-A',
+  'Class 7-A',
+  'Class 8-A',
+  'Class 9-A',
+  'Class 9-B',
+  'Class 10-A',
+  'Class 10-B'
+];
+
+export const PRIMARY_CLASSES = ['Playgroup', 'Nursery', 'Prep', 'Class 1-A', 'Class 2-A', 'Class 3-A', 'Class 4-A', 'Class 5-A'];
+export const SECONDARY_CLASSES = ['Class 6-A', 'Class 7-A', 'Class 8-A', 'Class 9-A', 'Class 9-B', 'Class 10-A', 'Class 10-B'];
+
+export const SUBJECTS_LIST = [
+  'English',
+  'Urdu',
+  'Islamic Studies',
+  'Pakistan Studies',
+  'Mathematics',
+  'Physics',
+  'Chemistry',
+  'Biology',
+  'Computer Science',
+  'General Science',
+  'Arts & Craft',
+  'Physical Education'
+];
+
 export const UnifiedDashboard: React.FC = () => {
   const navigate = useNavigate();
   const currentUser = useAuthStore((state) => state.user);
@@ -601,7 +640,22 @@ export const UnifiedDashboard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFeature, setActiveFeature] = useState<string | null>(null);
   const [activeGuide, setActiveGuide] = useState<{ title: string; answerTitle: string; answerContent: string } | null>(null);
+  const [activeFunnelView, setActiveFunnelView] = useState<string | null>(null);
+  const [activeSection, setActiveSection] = useState<'primary' | 'secondary'>('primary');
   const [selectedReportStudent, setSelectedReportStudent] = useState('');
+  const [activeExamView, setActiveExamView] = useState<string | null>(null);
+  const [showSubstituteForm, setShowSubstituteForm] = useState(false);
+  const [substitutes, setSubstitutes] = useState<{ id: string; date: string; absentTeacher: string; substituteTeacher: string; period: string }[]>([
+    { id: '1', date: new Date().toISOString().split('T')[0], absentTeacher: 'Mr. Ali (Physics)', substituteTeacher: 'Ms. Sana (Science)', period: '08:00 AM' }
+  ]);
+  const [showAddInventory, setShowAddInventory] = useState(false);
+  const [inventoryItems, setInventoryItems] = useState([
+    { id: '1', name: 'Dell Optiplex 3020', category: 'IT Equipment', location: 'Computer Lab 1', qty: '30 Good', value: '$6,500' },
+    { id: '2', name: 'Chemistry Flasks', category: 'Lab Supplies', location: 'Science Lab', qty: '15 Low Stock', value: '$150' },
+    { id: '3', name: 'Wooden Desks & Chairs', category: 'School Furniture', location: 'Class 10-A', qty: '40 Good', value: '$2,000' },
+    { id: '4', name: 'Interactive Smart Board', category: 'Electronics', location: 'Lecture Hall', qty: '1 Good', value: '$1,200' },
+    { id: '5', name: 'Swing Sets & Slides', category: 'Play Area Things', location: 'Kindergarten Yard', qty: '1 Set Good', value: '$800' }
+  ]);
 
   const [isCertModalOpen, setIsCertModalOpen] = useState(false);
   const [isCertEditMode, setIsCertEditMode] = useState(false);
@@ -615,6 +669,7 @@ export const UnifiedDashboard: React.FC = () => {
   const [editCertFileName, setEditCertFileName] = useState<string | undefined>(undefined);
   const [editCertFileType, setEditCertFileType] = useState<string | undefined>(undefined);
 
+  const [examStatus, setExamStatus] = useState<'Upcoming' | 'Conducted'>('Upcoming');
   const [studentGrades, setStudentGrades] = useState<Record<string, { subject: string; grade: string; marks: number; total: number; status: string }[]>>({
     'Kamran Shah': [
       { subject: 'Mathematics', grade: 'A', marks: 92, total: 100, status: 'Pass' },
@@ -702,14 +757,31 @@ export const UnifiedDashboard: React.FC = () => {
 
   // Core functional database state partitioned by school schoolId
   const [database, setDatabase] = useState<Record<string, {
-    students: { id: string; name: string; roll: string; className: string; status: string }[];
-    teachers: { id: string; name: string; subject: string; className: string; status: string }[];
+    students: { id: string; name: string; roll: string; className: string; status: string; borrowedBooks?: string[]; bookedTransport?: string; hostelStatus?: string; }[];
+    waitingList?: any[];
+    teachers: { 
+      id: string; 
+      name: string; 
+      subject: string; 
+      className: string; 
+      status: string; 
+      role?: string;
+      qualification?: string; 
+      salary?: string; 
+      experience?: string; 
+      email?: string; 
+      phone?: string; 
+      photo?: string | null; 
+      doc?: string | null 
+    }[];
     notices: { id: string; date: string; title: string; content: string }[];
     leaves: { id: string; name: string; date: string; reason: string; status: string }[];
     invoices: { id: string; student: string; amount: number; status: string }[];
     assignments: any[];
     disciplines: { id: string; name: string; date: string; infraction: string; action: string }[];
     parentMessages: { id: string; parent: string; date: string; subject: string; message: string }[];
+    classes?: string[];
+    subjects?: string[];
     foodCert?: {
       authority: string;
       licenseCode: string;
@@ -718,21 +790,56 @@ export const UnifiedDashboard: React.FC = () => {
       issueDate: string;
       expiryDate: string;
       fileData?: string;
-      fileName?: string;
       fileType?: string;
     };
-  }>>(() => ({
+  }>>(() => {
+    const saved = localStorage.getItem('academic_hub_offline_db');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Failed to parse offline db', e);
+      }
+    }
+    return {
     // 1. Dar-e-Arqam School (PK)
     '11111111-1111-1111-1111-111111111111': {
       students: [
         { id: '1', name: 'Kamran Shah', roll: '12', className: 'Class 10-A', status: 'Present' },
         { id: '2', name: 'Ayesha Siddiqui', roll: '04', className: 'Class 10-B', status: 'Present' },
-        { id: '3', name: 'Zainab Ali', roll: '22', className: 'Class 9-A', status: 'Absent' }
+        { id: '3', name: 'Zainab Ali', roll: '22', className: 'Class 9-A', status: 'Absent' },
+        { id: '4', name: 'Bilal Ahmed', roll: '08', className: 'Class 10-A', status: 'Present' },
+        { id: '5', name: 'Fatima Noor', roll: '15', className: 'Class 8-C', status: 'Present' },
+        { id: '6', name: 'Saad Tariq', roll: '31', className: 'Class 9-B', status: 'Late' },
+        { id: '7', name: 'Hassan Raza', roll: '02', className: 'Class 7-A', status: 'Present' },
+        { id: '8', name: 'Mariam Khan', roll: '19', className: 'Class 10-A', status: 'Present' },
+        { id: '9', name: 'Usman Ghani', roll: '27', className: 'Class 8-B', status: 'Absent' },
+        { id: '10', name: 'Hira Malik', roll: '11', className: 'Class 9-A', status: 'Present' },
+        { id: '11', name: 'Ali Zafar', roll: '05', className: 'Class 7-B', status: 'Present' },
+        { id: '12', name: 'Sana Javed', roll: '14', className: 'Class 10-B', status: 'Late' },
+        { id: '13', name: 'Omar Farooq', roll: '21', className: 'Class 8-A', status: 'Present' },
+        { id: '14', name: 'Amina Baig', roll: '09', className: 'Class 9-B', status: 'Present' },
+        { id: '15', name: 'Zeeshan Qureshi', roll: '33', className: 'Class 10-A', status: 'Absent' },
+        { id: '16', name: 'Nida Yasir', roll: '18', className: 'Class 7-A', status: 'Present' },
+        { id: '17', name: 'Hamza Ali', roll: '25', className: 'Class 8-C', status: 'Present' },
+        { id: '18', name: 'Rabia Aslam', roll: '07', className: 'Class 9-A', status: 'Present' },
+        { id: '19', name: 'Danish Nawaz', roll: '30', className: 'Class 10-B', status: 'Present' },
+        { id: '20', name: 'Iqra Aziz', roll: '16', className: 'Class 8-B', status: 'Late' },
+        { id: '21', name: 'Imran Abbas', roll: '03', className: 'Class 7-B', status: 'Present' },
+        { id: '22', name: 'Mahira Khan', roll: '28', className: 'Class 10-A', status: 'Present' }
       ],
       teachers: [
-        { id: '1', name: 'Sarah Khan', subject: 'English', className: 'Class 10-A', status: 'Active' },
-        { id: '2', name: 'Raza Ahmed', subject: 'Physics', className: 'Class 10-B', status: 'Active' },
-        { id: '3', name: 'Hina Malik', subject: 'Mathematics', className: 'Class 9-A', status: 'Active' }
+        { id: '1', name: 'Sarah Khan', role: 'Teacher', subject: 'English', className: 'Class 10-A', status: 'Active' },
+        { id: '2', name: 'Raza Ahmed', role: 'Teacher', subject: 'Physics', className: 'Class 10-B', status: 'Active' },
+        { id: '3', name: 'Hina Malik', role: 'Teacher', subject: 'Mathematics', className: 'Class 9-A', status: 'Active' },
+        { id: '4', name: 'Tariq Mehmood', role: 'Vice Principal', subject: 'Administration', className: 'N/A', status: 'Active' },
+        { id: '5', name: 'Ayesha Bibi', role: 'Coordinator', subject: 'Academics', className: 'N/A', status: 'Active' },
+        { id: '6', name: 'Bashir Ahmed', role: 'Guard', subject: 'Security', className: 'Main Gate', status: 'Active' },
+        { id: '7', name: 'Sajid Ali', role: 'Electrician', subject: 'Maintenance', className: 'Campus', status: 'Active' },
+        { id: '8', name: 'Ghafoor Khan', role: 'Plumber', subject: 'Maintenance', className: 'Campus', status: 'Active' },
+        { id: '9', name: 'Munir', role: 'Gardener', subject: 'Maintenance', className: 'Grounds', status: 'Active' },
+        { id: '10', name: 'Zubaida', role: 'Domestic Staff', subject: 'Cleaning', className: 'Block A', status: 'Active' },
+        { id: '11', name: 'Faizan', role: 'Helper', subject: 'Support', className: 'Admin Block', status: 'Active' }
       ],
       notices: [
         { id: '1', date: '2026-06-08', title: 'Summer Vacation Announcement', content: 'School will remain closed from June 15 to August 15 for summer holidays.' },
@@ -745,7 +852,18 @@ export const UnifiedDashboard: React.FC = () => {
       invoices: [
         { id: 'INV-001', student: 'Kamran Shah', amount: 8500, status: 'Unpaid' },
         { id: 'INV-002', student: 'Ayesha Siddiqui', amount: 8500, status: 'Paid' },
-        { id: 'INV-003', student: 'Zainab Ali', amount: 7200, status: 'Unpaid' }
+        { id: 'INV-003', student: 'Zainab Ali', amount: 7200, status: 'Unpaid' },
+        { id: 'INV-004', student: 'Bilal Ahmed', amount: 8500, status: 'Paid' },
+        { id: 'INV-005', student: 'Fatima Noor', amount: 6500, status: 'Unpaid' },
+        { id: 'INV-006', student: 'Saad Tariq', amount: 7200, status: 'Paid' },
+        { id: 'INV-007', student: 'Hassan Raza', amount: 6000, status: 'Paid' },
+        { id: 'INV-008', student: 'Mariam Khan', amount: 8500, status: 'Unpaid' },
+        { id: 'INV-009', student: 'Usman Ghani', amount: 6500, status: 'Paid' },
+        { id: 'INV-010', student: 'Hira Malik', amount: 7200, status: 'Paid' },
+        { id: 'INV-011', student: 'Ali Zafar', amount: 6000, status: 'Unpaid' },
+        { id: 'INV-012', student: 'Sana Javed', amount: 8500, status: 'Paid' },
+        { id: 'INV-013', student: 'Omar Farooq', amount: 6500, status: 'Unpaid' },
+        { id: 'INV-014', student: 'Amina Baig', amount: 7200, status: 'Paid' }
       ],
       assignments: [
         { 
@@ -830,13 +948,25 @@ export const UnifiedDashboard: React.FC = () => {
         { id: '2', name: 'Khalid Butt', subject: 'Science', className: 'Class 9-A', status: 'Active' }
       ],
       notices: [
-        { id: '1', date: '2026-06-06', title: 'Parent Teacher Meeting', content: 'PTM is scheduled for Saturday. Report cards will be distributed.' }
+        { id: '1', date: '2026-06-06 10:00 AM', title: 'Parent Teacher Meeting', content: 'PTM is scheduled for Saturday. Report cards will be distributed.' }
       ],
       leaves: [],
       invoices: [
         { id: 'INV-201', student: 'Hamza Sohail', amount: 5000, status: 'Unpaid' }
       ],
-      assignments: [],
+      assignments: [
+        { 
+          id: 'demo-1', 
+          title: 'Demo Class Homework Assignment', 
+          subject: 'English', 
+          publishDate: '2026-06-05', 
+          dueDate: '2026-06-25', 
+          fileName: 'demo_assignment_guidelines.pdf', 
+          fileType: 'pdf', 
+          status: 'Published', 
+          fileUrl: 'data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvUmVzb3VyY2VzIDw8IC9Gb250IDw8IC9GMSA8PCAvVHlwZSAvRm9udCAvU3VidHlwZSAvVHlwZTEgL0Jhc2VGb250IC9IZWx2ZXRpY2EgPj4gPj4gPj4gL0NvbnRlbnRzIDQgMCBSID4+CmVuZG9iago0IDAgb2JqCjw8IC9MZW5ndGggNjAgPj4Kc3RyZWFtCkJUCi9GMSAxNCBUZgo1MCA3NTAgVGQKKEFjYWRlbWljIEh1YiAtIERlbW8gUGFzdCBQYXBlciBhbmQgSG9tZXdvcmsgQXNzaWdubWVudCkgVGoKRVQKZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgNQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTE1IDAwMDAwIG4gCjAwMDAwMDAyMjQgMDAwMDAgbiAKdHJhaWxlcgo8PCAvU2l6ZSA1IC9Sb290IDEgMCBSID4+CnN0YXJ0eHJlZgozMzMKJSVFT0Y='
+        }
+      ],
       disciplines: [],
       parentMessages: []
     },
@@ -857,7 +987,19 @@ export const UnifiedDashboard: React.FC = () => {
       invoices: [
         { id: 'INV-301', student: 'George Harrison', amount: 1200, status: 'Unpaid' }
       ],
-      assignments: [],
+      assignments: [
+        { 
+          id: 'demo-1', 
+          title: 'Demo Class Homework Assignment', 
+          subject: 'English', 
+          publishDate: '2026-06-05', 
+          dueDate: '2026-06-25', 
+          fileName: 'demo_assignment_guidelines.pdf', 
+          fileType: 'pdf', 
+          status: 'Published', 
+          fileUrl: 'data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvUmVzb3VyY2VzIDw8IC9Gb250IDw8IC9GMSA8PCAvVHlwZSAvRm9udCAvU3VidHlwZSAvVHlwZTEgL0Jhc2VGb250IC9IZWx2ZXRpY2EgPj4gPj4gPj4gL0NvbnRlbnRzIDQgMCBSID4+CmVuZG9iago0IDAgb2JqCjw8IC9MZW5ndGggNjAgPj4Kc3RyZWFtCkJUCi9GMSAxNCBUZgo1MCA3NTAgVGQKKEFjYWRlbWljIEh1YiAtIERlbW8gUGFzdCBQYXBlciBhbmQgSG9tZXdvcmsgQXNzaWdubWVudCkgVGoKRVQKZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgNQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTE1IDAwMDAwIG4gCjAwMDAwMDAyMjQgMDAwMDAgbiAKdHJhaWxlcgo8PCAvU2l6ZSA1IC9Sb290IDEgMCBSID4+CnN0YXJ0eHJlZgozMzMKJSVFT0Y='
+        }
+      ],
       disciplines: [],
       parentMessages: []
     },
@@ -878,7 +1020,19 @@ export const UnifiedDashboard: React.FC = () => {
       invoices: [
         { id: 'INV-401', student: 'Omar Al-Mansoori', amount: 2500, status: 'Unpaid' }
       ],
-      assignments: [],
+      assignments: [
+        { 
+          id: 'demo-1', 
+          title: 'Demo Class Homework Assignment', 
+          subject: 'English', 
+          publishDate: '2026-06-05', 
+          dueDate: '2026-06-25', 
+          fileName: 'demo_assignment_guidelines.pdf', 
+          fileType: 'pdf', 
+          status: 'Published', 
+          fileUrl: 'data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvUmVzb3VyY2VzIDw8IC9Gb250IDw8IC9GMSA8PCAvVHlwZSAvRm9udCAvU3VidHlwZSAvVHlwZTEgL0Jhc2VGb250IC9IZWx2ZXRpY2EgPj4gPj4gPj4gL0NvbnRlbnRzIDQgMCBSID4+CmVuZG9iago0IDAgb2JqCjw8IC9MZW5ndGggNjAgPj4Kc3RyZWFtCkJUCi9GMSAxNCBUZgo1MCA3NTAgVGQKKEFjYWRlbWljIEh1YiAtIERlbW8gUGFzdCBQYXBlciBhbmQgSG9tZXdvcmsgQXNzaWdubWVudCkgVGoKRVQKZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgNQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTE1IDAwMDAwIG4gCjAwMDAwMDAyMjQgMDAwMDAgbiAKdHJhaWxlcgo8PCAvU2l6ZSA1IC9Sb290IDEgMCBSID4+CnN0YXJ0eHJlZgozMzMKJSVFT0Y='
+        }
+      ],
       disciplines: [],
       parentMessages: []
     },
@@ -897,7 +1051,19 @@ export const UnifiedDashboard: React.FC = () => {
       invoices: [
         { id: 'INV-501', student: 'Yasser Qahtani', amount: 3000, status: 'Unpaid' }
       ],
-      assignments: [],
+      assignments: [
+        { 
+          id: 'demo-1', 
+          title: 'Demo Class Homework Assignment', 
+          subject: 'English', 
+          publishDate: '2026-06-05', 
+          dueDate: '2026-06-25', 
+          fileName: 'demo_assignment_guidelines.pdf', 
+          fileType: 'pdf', 
+          status: 'Published', 
+          fileUrl: 'data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvUmVzb3VyY2VzIDw8IC9Gb250IDw8IC9GMSA8PCAvVHlwZSAvRm9udCAvU3VidHlwZSAvVHlwZTEgL0Jhc2VGb250IC9IZWx2ZXRpY2EgPj4gPj4gPj4gL0NvbnRlbnRzIDQgMCBSID4+CmVuZG9iago0IDAgb2JqCjw8IC9MZW5ndGggNjAgPj4Kc3RyZWFtCkJUCi9GMSAxNCBUZgo1MCA3NTAgVGQKKEFjYWRlbWljIEh1YiAtIERlbW8gUGFzdCBQYXBlciBhbmQgSG9tZXdvcmsgQXNzaWdubWVudCkgVGoKRVQKZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgNQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTE1IDAwMDAwIG4gCjAwMDAwMDAyMjQgMDAwMDAgbiAKdHJhaWxlcgo8PCAvU2l6ZSA1IC9Sb290IDEgMCBSID4+CnN0YXJ0eHJlZgozMzMKJSVFT0Y='
+        }
+      ],
       disciplines: [],
       parentMessages: []
     },
@@ -916,7 +1082,19 @@ export const UnifiedDashboard: React.FC = () => {
       invoices: [
         { id: 'INV-601', student: 'Jack Miller', amount: 1500, status: 'Unpaid' }
       ],
-      assignments: [],
+      assignments: [
+        { 
+          id: 'demo-1', 
+          title: 'Demo Class Homework Assignment', 
+          subject: 'English', 
+          publishDate: '2026-06-05', 
+          dueDate: '2026-06-25', 
+          fileName: 'demo_assignment_guidelines.pdf', 
+          fileType: 'pdf', 
+          status: 'Published', 
+          fileUrl: 'data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvUmVzb3VyY2VzIDw8IC9Gb250IDw8IC9GMSA8PCAvVHlwZSAvRm9udCAvU3VidHlwZSAvVHlwZTEgL0Jhc2VGb250IC9IZWx2ZXRpY2EgPj4gPj4gPj4gL0NvbnRlbnRzIDQgMCBSID4+CmVuZG9iago0IDAgb2JqCjw8IC9MZW5ndGggNjAgPj4Kc3RyZWFtCkJUCi9GMSAxNCBUZgo1MCA3NTAgVGQKKEFjYWRlbWljIEh1YiAtIERlbW8gUGFzdCBQYXBlciBhbmQgSG9tZXdvcmsgQXNzaWdubWVudCkgVGoKRVQKZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgNQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTE1IDAwMDAwIG4gCjAwMDAwMDAyMjQgMDAwMDAgbiAKdHJhaWxlcgo8PCAvU2l6ZSA1IC9Sb290IDEgMCBSID4+CnN0YXJ0eHJlZgozMzMKJSVFT0Y='
+        }
+      ],
       disciplines: [],
       parentMessages: []
     },
@@ -935,11 +1113,28 @@ export const UnifiedDashboard: React.FC = () => {
       invoices: [
         { id: 'INV-701', student: 'John Doe', amount: 1800, status: 'Unpaid' }
       ],
-      assignments: [],
+      assignments: [
+        { 
+          id: 'demo-1', 
+          title: 'Demo Class Homework Assignment', 
+          subject: 'English', 
+          publishDate: '2026-06-05', 
+          dueDate: '2026-06-25', 
+          fileName: 'demo_assignment_guidelines.pdf', 
+          fileType: 'pdf', 
+          status: 'Published', 
+          fileUrl: 'data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvUmVzb3VyY2VzIDw8IC9Gb250IDw8IC9GMSA8PCAvVHlwZSAvRm9udCAvU3VidHlwZSAvVHlwZTEgL0Jhc2VGb250IC9IZWx2ZXRpY2EgPj4gPj4gPj4gL0NvbnRlbnRzIDQgMCBSID4+CmVuZG9iago0IDAgb2JqCjw8IC9MZW5ndGggNjAgPj4Kc3RyZWFtCkJUCi9GMSAxNCBUZgo1MCA3NTAgVGQKKEFjYWRlbWljIEh1YiAtIERlbW8gUGFzdCBQYXBlciBhbmQgSG9tZXdvcmsgQXNzaWdubWVudCkgVGoKRVQKZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgNQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTE1IDAwMDAwIG4gCjAwMDAwMDAyMjQgMDAwMDAgbiAKdHJhaWxlcgo8PCAvU2l6ZSA1IC9Sb290IDEgMCBSID4+CnN0YXJ0eHJlZgozMzMKJSVFT0Y='
+        }
+      ],
       disciplines: [],
       parentMessages: []
     }
-  }));
+  };
+});
+
+  React.useEffect(() => {
+    localStorage.setItem('academic_hub_offline_db', JSON.stringify(database));
+  }, [database]);
 
   // Resolve current active database partition
   const activeSchoolId = currentSchool?.schoolId || '11111111-1111-1111-1111-111111111111';
@@ -955,10 +1150,18 @@ export const UnifiedDashboard: React.FC = () => {
           ...prev,
           [activeSchoolId]: {
             students: [
-              { id: '1', name: 'Ahmad Raza', roll: '01', className: 'Class 10-A', status: 'Present' },
-              { id: '2', name: 'Zainab Fatima', roll: '02', className: 'Class 10-A', status: 'Present' },
-              { id: '3', name: 'Muhammad Ali', roll: '03', className: 'Class 9-A', status: 'Absent' }
+              { id: '1', name: 'Ahmad Raza', roll: '01', className: 'Class 10-A', status: 'Present', borrowedBooks: ['Physics Vol 1', 'Advanced Mathematics'], bookedTransport: 'Route A', hostelStatus: 'Room 101' },
+              { id: '2', name: 'Zainab Fatima', roll: '02', className: 'Class 10-A', status: 'Present', borrowedBooks: ['English Literature'], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+              { id: '3', name: 'Muhammad Ali', roll: '03', className: 'Class 9-A', status: 'Absent', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+              { id: '4', name: 'Sarah Khan', roll: '04', className: 'Class 10-A', status: 'Present', borrowedBooks: ['Biology Concepts'], bookedTransport: 'Route A', hostelStatus: 'Room 102' },
+              { id: '5', name: 'Omer Farooq', roll: '05', className: 'Class 8-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route C', hostelStatus: 'Day Scholar' },
+              { id: '6', name: 'Ayesha Tariq', roll: '06', className: 'Class 10-A', status: 'Present', borrowedBooks: ['Chemistry Essentials'], bookedTransport: 'None', hostelStatus: 'Room 205' },
+              { id: '7', name: 'Usman Ghani', roll: '07', className: 'Class 9-A', status: 'Present', borrowedBooks: ['World History'], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+              { id: '8', name: 'Fatima Noor', roll: '08', className: 'Class 10-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route D', hostelStatus: 'Room 110' },
+              { id: '9', name: 'Bilal Ahmed', roll: '09', className: 'Class 8-A', status: 'Absent', borrowedBooks: ['Intro to Computer Science'], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+              { id: '10', name: 'Khadija Umar', roll: '10', className: 'Class 10-A', status: 'Present', borrowedBooks: ['Geography Workbook'], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' }
             ],
+            waitingList: [],
             teachers: [
               { id: '1', name: 'Dr. Sajid Malik', subject: 'General Science', className: 'Class 10-A', status: 'Active' },
               { id: '2', name: 'Mrs. Huma Shah', subject: 'Mathematics', className: 'Class 9-A', status: 'Active' }
@@ -971,7 +1174,19 @@ export const UnifiedDashboard: React.FC = () => {
               { id: 'INV-1001', student: 'Ahmad Raza', amount: 5000, status: 'Unpaid' },
               { id: 'INV-1002', student: 'Zainab Fatima', amount: 5000, status: 'Paid' }
             ],
-            assignments: [],
+            assignments: [
+              { 
+                id: 'demo-1', 
+                title: 'Demo Class Homework Assignment', 
+                subject: 'English', 
+                publishDate: '2026-06-05', 
+                dueDate: '2026-06-25', 
+                fileName: 'demo_assignment_guidelines.pdf', 
+                fileType: 'pdf', 
+                status: 'Published', 
+                fileUrl: 'data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvUmVzb3VyY2VzIDw8IC9Gb250IDw8IC9GMSA8PCAvVHlwZSAvRm9udCAvU3VidHlwZSAvVHlwZTEgL0Jhc2VGb250IC9IZWx2ZXRpY2EgPj4gPj4gPj4gL0NvbnRlbnRzIDQgMCBSID4+CmVuZG9iago0IDAgb2JqCjw8IC9MZW5ndGggNjAgPj4Kc3RyZWFtCkJUCi9GMSAxNCBUZgo1MCA3NTAgVGQKKEFjYWRlbWljIEh1YiAtIERlbW8gUGFzdCBQYXBlciBhbmQgSG9tZXdvcmsgQXNzaWdubWVudCkgVGoKRVQKZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgNQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTE1IDAwMDAwIG4gCjAwMDAwMDAyMjQgMDAwMDAgbiAKdHJhaWxlcgo8PCAvU2l6ZSA1IC9Sb290IDEgMCBSID4+CnN0YXJ0eHJlZgozMzMKJSVFT0Y='
+              }
+            ],
             disciplines: [],
             parentMessages: []
           }
@@ -981,17 +1196,34 @@ export const UnifiedDashboard: React.FC = () => {
   }, [activeSchoolId, currentSchool]);
 
   const schoolDb = database[activeSchoolId] || {
-    students: [],
-    teachers: [],
-    notices: [],
+    students: [] as any[],
+    waitingList: [] as any[],
+    teachers: [] as any[],
+    notices: [] as any[],
     leaves: [],
     invoices: [],
-    assignments: [],
+    assignments: [
+      { 
+        id: 'demo-1', 
+        title: 'Demo Class Homework Assignment', 
+        subject: 'English', 
+        publishDate: '2026-06-05', 
+        dueDate: '2026-06-25', 
+        fileName: 'demo_assignment_guidelines.pdf', 
+        fileType: 'pdf', 
+        status: 'Published', 
+        fileUrl: 'data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvUmVzb3VyY2VzIDw8IC9Gb250IDw8IC9GMSA8PCAvVHlwZSAvRm9udCAvU3VidHlwZSAvVHlwZTEgL0Jhc2VGb250IC9IZWx2ZXRpY2EgPj4gPj4gPj4gL0NvbnRlbnRzIDQgMCBSID4+CmVuZG9iago0IDAgb2JqCjw8IC9MZW5ndGggNjAgPj4Kc3RyZWFtCkJUCi9GMSAxNCBUZgo1MCA3NTAgVGQKKEFjYWRlbWljIEh1YiAtIERlbW8gUGFzdCBQYXBlciBhbmQgSG9tZXdvcmsgQXNzaWdubWVudCkgVGoKRVQKZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgNQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTE1IDAwMDAwIG4gCjAwMDAwMDAyMjQgMDAwMDAgbiAKdHJhaWxlcgo8PCAvU2l6ZSA1IC9Sb290IDEgMCBSID4+CnN0YXJ0eHJlZgozMzMKJSVFT0Y='
+      }
+    ],
     disciplines: [],
-    parentMessages: []
+    parentMessages: [],
+    classes: CLASSES_LIST,
+    subjects: SUBJECTS_LIST,
+    foodCert: null
   };
 
   const students = schoolDb.students;
+  const waitingList = schoolDb.waitingList || [];
   const teachers = schoolDb.teachers;
   const notices = schoolDb.notices;
   const leaves = schoolDb.leaves;
@@ -999,6 +1231,22 @@ export const UnifiedDashboard: React.FC = () => {
   const assignments = schoolDb.assignments;
   const disciplines = schoolDb.disciplines;
   const parentMessages = schoolDb.parentMessages;
+  const schoolClasses = schoolDb.classes || CLASSES_LIST;
+  const schoolSubjects = schoolDb.subjects || SUBJECTS_LIST;
+
+  // Level-aware class filtering
+  const schoolLevel = currentSchool?.schoolLevel || 'both';
+  const filteredClasses = React.useMemo(() => {
+    if (schoolLevel === 'primary') return schoolClasses.filter(c => PRIMARY_CLASSES.includes(c));
+    if (schoolLevel === 'secondary') return schoolClasses.filter(c => SECONDARY_CLASSES.includes(c));
+    // 'both' → filter by active section
+    if (activeSection === 'primary') return schoolClasses.filter(c => PRIMARY_CLASSES.includes(c));
+    return schoolClasses.filter(c => SECONDARY_CLASSES.includes(c));
+  }, [schoolLevel, activeSection, schoolClasses]);
+
+  // Level-aware student filtering (only show students whose class is in filtered list)
+  const filteredStudents = React.useMemo(() => students.filter(s => filteredClasses.includes(s.className)), [students, filteredClasses]);
+  const filteredTeachers = React.useMemo(() => teachers.filter(t => filteredClasses.includes(t.className) || t.className === 'N/A'), [teachers, filteredClasses]);
 
   const foodCert = schoolDb.foodCert || {
     authority: 'Punjab Food Authority',
@@ -1010,9 +1258,9 @@ export const UnifiedDashboard: React.FC = () => {
   };
 
   const activeStudentName = currentUser?.role === 'student' || currentUser?.role === 'parent'
-    ? (students[0]?.name || 'Kamran Shah')
-    : (selectedReportStudent || students[0]?.name || 'Kamran Shah');
-  const activeStudent = students.find(s => s.name === activeStudentName) || students[0] || { id: '1', name: 'Kamran Shah', roll: '12', className: 'Class 10-A', status: 'Present' };
+    ? (currentUser?.name || students[0]?.name || 'Student')
+    : (selectedReportStudent || currentUser?.name || students[0]?.name || 'Student');
+  const activeStudent = students.find(s => s.name === activeStudentName) || students[0] || { id: '1', name: currentUser?.name || 'Student', roll: '12', className: 'Class 10-A', status: 'Present' };
 
   // Sync state updaters to target the selected tenant database partition
   const updateSchoolDb = (key: string, updater: any) => {
@@ -1032,6 +1280,7 @@ export const UnifiedDashboard: React.FC = () => {
   };
 
   const setStudents = (val: any) => updateSchoolDb('students', val);
+  const setWaitingList = (val: any) => updateSchoolDb('waitingList', val);
   const setTeachers = (val: any) => updateSchoolDb('teachers', val);
   const setNotices = (val: any) => updateSchoolDb('notices', val);
   const setLeaves = (val: any) => updateSchoolDb('leaves', val);
@@ -1040,8 +1289,14 @@ export const UnifiedDashboard: React.FC = () => {
   const setDisciplines = (val: any) => updateSchoolDb('disciplines', val);
   const setParentMessages = (val: any) => updateSchoolDb('parentMessages', val);
   const setFoodCert = (val: any) => updateSchoolDb('foodCert', val);
+  const setSchoolClasses = (val: any) => updateSchoolDb('classes', val);
+  const setSchoolSubjects = (val: any) => updateSchoolDb('subjects', val);
 
   const [completedAssignments, setCompletedAssignments] = useState<string[]>([]);
+  const [principalNotifications, setPrincipalNotifications] = useState<string[]>([
+    "VP logged Late Arrival warning for Kamran Shah.",
+    "VP approved 1-day casual leave for Raza Ahmed."
+  ]);
 
   // Realtime Sync Subscription with Firebase RTDB
   React.useEffect(() => {
@@ -1080,32 +1335,58 @@ export const UnifiedDashboard: React.FC = () => {
       window.removeEventListener('ah_mock_db_update', handleMockUpdate);
     };
   }, []);
+  const todayStr = new Date().toISOString().split('T')[0];
+  const nextWeekStr = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+  const calendarStore = useCalendarStore();
+  const { isWeekend, getTomorrow24h } = calendarStore;
+
   const [activeVideoStreamUrl, setActiveVideoStreamUrl] = useState<string | null>(null);
   const [assignmentModalOpen, setAssignmentModalOpen] = useState(false);
   const [newAssignmentTitle, setNewAssignmentTitle] = useState('');
   const [newAssignmentSubject, setNewAssignmentSubject] = useState('Physics');
-  const [newAssignmentPublishDate, setNewAssignmentPublishDate] = useState('2026-06-08');
-  const [newAssignmentDueDate, setNewAssignmentDueDate] = useState('2026-06-15');
+  const [newAssignmentPublishDate, setNewAssignmentPublishDate] = useState(todayStr);
+  const [newAssignmentDueDate, setNewAssignmentDueDate] = useState(nextWeekStr);
   const [newAssignmentFileName, setNewAssignmentFileName] = useState('');
   const [newAssignmentFileType, setNewAssignmentFileType] = useState('pdf');
   const [newAssignmentFileUrl, setNewAssignmentFileUrl] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [leaveFormDate, setLeaveFormDate] = useState('');
+  const [leaveFormError, setLeaveFormError] = useState('');
 
   // Form Inputs
+  const [studentSearchTerm, setStudentSearchTerm] = useState('');
+  const [activeStudentTab, setActiveStudentTab] = useState<'roster' | 'waitlist'>('roster');
   const [newStudentName, setNewStudentName] = useState('');
-  const [newStudentRoll, setNewStudentRoll] = useState('');
   const [newStudentClass, setNewStudentClass] = useState('Class 10-A');
+  const [newStudentAge, setNewStudentAge] = useState('');
+  const [newStudentMarks, setNewStudentMarks] = useState('');
+  const [enrollmentError, setEnrollmentError] = useState('');
 
   const [newTeacherName, setNewTeacherName] = useState('');
-  const [newTeacherSubject, setNewTeacherSubject] = useState('');
-  const [newTeacherClass, setNewTeacherClass] = useState('Class 10-A');
+  const [newEmployeeRole, setNewEmployeeRole] = useState('Teacher');
+  const [newTeacherSubject, setNewTeacherSubject] = useState(schoolSubjects[0] || '');
+  const [newTeacherClass, setNewTeacherClass] = useState(schoolClasses[0] || '');
+  const [newTeacherQualification, setNewTeacherQualification] = useState('');
+  const [newTeacherSalary, setNewTeacherSalary] = useState('');
+  const [newTeacherExperience, setNewTeacherExperience] = useState('Fresh');
+  const [newTeacherEmail, setNewTeacherEmail] = useState('');
+  const [newTeacherPhone, setNewTeacherPhone] = useState('');
+  const [newTeacherPhoto, setNewTeacherPhoto] = useState<string | null>(null);
+  const [newTeacherDoc, setNewTeacherDoc] = useState<string | null>(null);
+  const [selectedDetailedTeacher, setSelectedDetailedTeacher] = useState<any | null>(null);
+  const [recycleBin, setRecycleBin] = useState<{ id: string; type: 'teacher' | 'student'; data: any; labelName: string }[]>([]);
 
   const [newNoticeTitle, setNewNoticeTitle] = useState('');
   const [newNoticeContent, setNewNoticeContent] = useState('');
 
   const [newInvoiceStudent, setNewInvoiceStudent] = useState('Kamran Shah');
   const [newInvoiceAmount, setNewInvoiceAmount] = useState('8500');
+  const [editingInvoiceId, setEditingInvoiceId] = useState<string | null>(null);
+  const [editingInvoiceStudent, setEditingInvoiceStudent] = useState('');
+  const [editingInvoiceAmount, setEditingInvoiceAmount] = useState('');
+  const [editingInvoiceStatus, setEditingInvoiceStatus] = useState<'Paid' | 'Unpaid'>('Unpaid');
 
   const [newDisciplineStudent, setNewDisciplineStudent] = useState('Kamran Shah');
   const [newDisciplineInfraction, setNewDisciplineInfraction] = useState('');
@@ -1115,6 +1396,9 @@ export const UnifiedDashboard: React.FC = () => {
   const [newParentMessageSubject, setNewParentMessageSubject] = useState('');
   const [newParentMessageText, setNewParentMessageText] = useState('');
   const [newParentMessageImage, setNewParentMessageImage] = useState<string | null>(null);
+
+  const [newSetupClass, setNewSetupClass] = useState('');
+  const [newSetupSubject, setNewSetupSubject] = useState('');
 
   // Student Advanced Features States
   const [studentGoals, setStudentGoals] = useState([
@@ -1144,6 +1428,8 @@ export const UnifiedDashboard: React.FC = () => {
   const [studioGeneratedCaption, setStudioGeneratedCaption] = useState('');
   const [studioGeneratedHashtags, setStudioGeneratedHashtags] = useState('');
   const [studioLoading, setStudioLoading] = useState(false);
+  const [studioPrompt, setStudioPrompt] = useState('');
+  const [studioSavedPosts, setStudioSavedPosts] = useState<any[]>([]);
   const [gatewaysList, setGatewaysList] = useState([
     { name: "Stripe", active: true, localOnly: false },
     { name: "PayPal", active: true, localOnly: false },
@@ -1362,12 +1648,74 @@ export const UnifiedDashboard: React.FC = () => {
 
       const primaryHslFormatted = toCommaHsl(primaryHsl);
       const secondaryHslFormatted = toCommaHsl(secondaryHsl);
-
       let themePrimary = `hsl(${primaryHslFormatted})`;
       let themeAccent = `hsl(${secondaryHslFormatted})`;
       let themeAccentLight = `hsla(${primaryHslFormatted.split(',')[0]}, 70%, 97%, 0.95)`;
       let themeSeal = `radial-gradient(circle, hsla(${primaryHslFormatted.split(',')[0]}, 80%, 75%, 0.9) 0%, hsl(${secondaryHslFormatted}) 100%)`;
       reportTitle = `${currentSchoolName} - Student Progress Card`;
+
+      let gradesRowsHtml = "";
+      let totalM = 0;
+      let totalMax = 0;
+      const currentGrades = studentGrades[activeStudentName] || [];
+      
+      if (examStatus === 'Upcoming') {
+        currentGrades.forEach(g => {
+          gradesRowsHtml += `<tr style="border-bottom: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">
+              <td style="padding: 10px 14px; font-weight: 700; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">${g.subject}</td>
+              <td style="padding: 10px 14px; text-align: center; font-style: italic; color: #94a3b8; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">-</td>
+              <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">${g.total}</td>
+              <td style="padding: 10px 14px; text-align: center; color: #94a3b8; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">-</td>
+              <td style="padding: 10px 14px; text-align: center; font-weight: 800; color: #94a3b8; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">-</td>
+              <td style="padding: 10px 14px; text-align: right; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);"><span style="background: #f1f5f9; color: #64748b; padding: 2px 8px; font-weight: bold; border-radius: 12px; font-size: 9px;">Due</span></td>
+            </tr>`;
+          totalMax += g.total;
+        });
+        gradesRowsHtml += `<tr style="background: #f8fafc; font-weight: bold; border-top: 2px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 80%, 0.6);">
+            <td style="padding: 10px 14px; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4); font-weight: 800;">Total Summary</td>
+            <td style="padding: 10px 14px; text-align: center; font-style: italic; color: #94a3b8; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">-</td>
+            <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4); font-weight: 800;">${totalMax}</td>
+            <td style="padding: 10px 14px; text-align: center; color: #94a3b8; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">-</td>
+            <td style="padding: 10px 14px; text-align: center; font-weight: 800; color: #94a3b8; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">-</td>
+            <td style="padding: 10px 14px; text-align: right; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);"><span style="background: #f1f5f9; color: #64748b; padding: 2px 8px; font-weight: bold; border-radius: 12px; font-size: 9px;">Due</span></td>
+          </tr>`;
+      } else {
+        currentGrades.forEach(g => {
+          const pct = ((g.marks / g.total) * 100).toFixed(1);
+          const statusBg = g.status === 'Pass' ? '#e2fbf0' : '#fee2e2';
+          const statusColor = g.status === 'Pass' ? '#10b981' : '#ef4444';
+          gradesRowsHtml += `<tr style="border-bottom: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">
+              <td style="padding: 10px 14px; font-weight: 700; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">${g.subject}</td>
+              <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">${g.marks}</td>
+              <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">${g.total}</td>
+              <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">${pct}%</td>
+              <td style="padding: 10px 14px; text-align: center; font-weight: 800; color: ${themeAccent}; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">${g.grade}</td>
+              <td style="padding: 10px 14px; text-align: right; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);"><span style="background: ${statusBg}; color: ${statusColor}; padding: 2px 8px; font-weight: bold; border-radius: 12px; font-size: 9px;">${g.status}</span></td>
+            </tr>`;
+          totalM += g.marks;
+          totalMax += g.total;
+        });
+        const overallPct = totalMax > 0 ? ((totalM / totalMax) * 100).toFixed(1) : '0.0';
+        const numP = parseFloat(overallPct);
+        let totalGrade = 'F';
+        if (numP >= 90) totalGrade = 'A+';
+        else if (numP >= 80) totalGrade = 'A';
+        else if (numP >= 70) totalGrade = 'B+';
+        else if (numP >= 60) totalGrade = 'B';
+        else if (numP >= 50) totalGrade = 'C';
+        const statusBg = numP >= 50 ? '#e2fbf0' : '#fee2e2';
+        const statusColor = numP >= 50 ? '#10b981' : '#ef4444';
+        const statusLabel = numP >= 50 ? 'Pass' : 'Fail';
+        gradesRowsHtml += `<tr style="background: #f8fafc; font-weight: bold; border-top: 2px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 80%, 0.6);">
+            <td style="padding: 10px 14px; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4); font-weight: 800;">Total Summary</td>
+            <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4); font-weight: 800; color: ${themePrimary};">${totalM}</td>
+            <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4); font-weight: 800;">${totalMax}</td>
+            <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4); font-weight: 800;">${overallPct}%</td>
+            <td style="padding: 10px 14px; text-align: center; font-weight: 800; color: ${themeAccent}; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">${totalGrade}</td>
+            <td style="padding: 10px 14px; text-align: right; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);"><span style="background: ${statusBg}; color: ${statusColor}; padding: 2px 8px; font-weight: bold; border-radius: 12px; font-size: 9px;">${statusLabel}</span></td>
+          </tr>`;
+      }
+
       reportHtml = `
         <div class="print-container" style="
           border: 3px solid ${themePrimary};
@@ -1455,62 +1803,7 @@ export const UnifiedDashboard: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody style="background: #ffffff; color: #334155;">
-                  <tr style="border-bottom: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">
-                    <td style="padding: 10px 14px; font-weight: 700; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">Mathematics</td>
-                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">92</td>
-                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">100</td>
-                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">92%</td>
-                    <td style="padding: 10px 14px; text-align: center; font-weight: 800; color: ${themeAccent}; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">A+</td>
-                    <td style="padding: 10px 14px; text-align: right; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);"><span style="background: #e2fbf0; color: #10b981; padding: 2px 8px; font-weight: bold; border-radius: 12px; font-size: 9px;">Pass</span></td>
-                  </tr>
-                  <tr style="border-bottom: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">
-                    <td style="padding: 10px 14px; font-weight: 700; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">Physics</td>
-                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">88</td>
-                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">100</td>
-                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">88%</td>
-                    <td style="padding: 10px 14px; text-align: center; font-weight: 800; color: ${themeAccent}; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">A</td>
-                    <td style="padding: 10px 14px; text-align: right; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);"><span style="background: #e2fbf0; color: #10b981; padding: 2px 8px; font-weight: bold; border-radius: 12px; font-size: 9px;">Pass</span></td>
-                  </tr>
-                  <tr style="border-bottom: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">
-                    <td style="padding: 10px 14px; font-weight: 700; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">Chemistry</td>
-                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">79</td>
-                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">100</td>
-                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">79%</td>
-                    <td style="padding: 10px 14px; text-align: center; font-weight: 800; color: ${themeAccent}; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">B+</td>
-                    <td style="padding: 10px 14px; text-align: right; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);"><span style="background: #e2fbf0; color: #10b981; padding: 2px 8px; font-weight: bold; border-radius: 12px; font-size: 9px;">Pass</span></td>
-                  </tr>
-                  <tr style="border-bottom: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">
-                    <td style="padding: 10px 14px; font-weight: 700; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">Biology</td>
-                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">90</td>
-                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">100</td>
-                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">90%</td>
-                    <td style="padding: 10px 14px; text-align: center; font-weight: 800; color: ${themeAccent}; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">A</td>
-                    <td style="padding: 10px 14px; text-align: right; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);"><span style="background: #e2fbf0; color: #10b981; padding: 2px 8px; font-weight: bold; border-radius: 12px; font-size: 9px;">Pass</span></td>
-                  </tr>
-                  <tr style="border-bottom: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">
-                    <td style="padding: 10px 14px; font-weight: 700; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">English Language</td>
-                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">94</td>
-                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">100</td>
-                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">94%</td>
-                    <td style="padding: 10px 14px; text-align: center; font-weight: 800; color: ${themeAccent}; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">A</td>
-                    <td style="padding: 10px 14px; text-align: right; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);"><span style="background: #e2fbf0; color: #10b981; padding: 2px 8px; font-weight: bold; border-radius: 12px; font-size: 9px;">Pass</span></td>
-                  </tr>
-                  <tr style="border-bottom: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">
-                    <td style="padding: 10px 14px; font-weight: 700; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">Computer Science</td>
-                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">95</td>
-                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">100</td>
-                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">95%</td>
-                    <td style="padding: 10px 14px; text-align: center; font-weight: 800; color: ${themeAccent}; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">A+</td>
-                    <td style="padding: 10px 14px; text-align: right; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);"><span style="background: #e2fbf0; color: #10b981; padding: 2px 8px; font-weight: bold; border-radius: 12px; font-size: 9px;">Pass</span></td>
-                  </tr>
-                  <tr style="background: #f8fafc; font-weight: bold; border-top: 2px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 80%, 0.6);">
-                    <td style="padding: 10px 14px; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4); font-weight: 800;">Total Summary</td>
-                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4); font-weight: 800; color: ${themePrimary};">538</td>
-                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4); font-weight: 800;">600</td>
-                    <td style="padding: 10px 14px; text-align: center; font-family: monospace; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4); font-weight: 800;">89.6%</td>
-                    <td style="padding: 10px 14px; text-align: center; font-weight: 800; color: ${themeAccent}; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);">A</td>
-                    <td style="padding: 10px 14px; text-align: right; border: 1px solid hsla(${primaryHslFormatted.split(',')[0]}, 70%, 90%, 0.4);"><span style="background: #e2fbf0; color: #10b981; padding: 2px 8px; font-weight: bold; border-radius: 12px; font-size: 9px;">Pass</span></td>
-                  </tr>
+                  ${gradesRowsHtml}
                 </tbody>
               </table></div>
             </div>
@@ -2568,6 +2861,139 @@ export const UnifiedDashboard: React.FC = () => {
   const [deleteConfirmMessage, setDeleteConfirmMessage] = useState('');
   const [deletePassword, setDeletePassword] = useState('');
   const [deletePasswordError, setDeletePasswordError] = useState('');
+  const generateFeeChallanHtml = (inv: { id: string; student: string; amount: number; status: string }) => {
+    const schoolName = currentSchool?.schoolName || "Academic Hub School";
+    const hasLogo = !!currentSchool?.logoUrl;
+    const logoHtml = hasLogo 
+      ? `<img src="${currentSchool.logoUrl}" style="height: 50px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));" />`
+      : `<div style="display: flex; justify-content: center; align-items: center; width: 50px; height: 50px; border-radius: 12px; border: 2px solid #e2e8f0; font-size: 24px; background: #f8fafc;">🎓</div>`;
+      
+    const primaryHsl = currentSchool?.themeSettings?.primaryHsl || '263.4 70% 50.4%';
+    let themePrimary = `hsl(${primaryHsl.includes(',') ? primaryHsl : primaryHsl.trim().split(/\s+/).join(', ')})`;
+    const currencySym = currentSchool?.country === 'UK' ? '£' : currentSchool?.country === 'US' ? '$' : currentSchool?.country === 'AE' ? 'AED' : currentSchool?.country === 'SA' ? 'SAR' : 'Rs';
+    const cityText = currentSchool?.city || 'Main Campus';
+    
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Fee Challan - ${inv.id}</title>
+        <style>
+          body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f1f5f9; margin: 0; padding: 20px; color: #0f172a; box-sizing: border-box; }
+          * { box-sizing: border-box; }
+          .a4-container { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; background: white; padding: 20px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); border-radius: 8px; }
+          .challan-part { border: 2px dashed #cbd5e1; padding: 20px; position: relative; border-radius: 12px; display: flex; flex-direction: column; background: #fff; overflow: hidden; }
+          .header { display: flex; gap: 12px; align-items: center; border-bottom: 2px solid ${themePrimary}; padding-bottom: 12px; margin-bottom: 15px; }
+          .header-text h1 { margin: 0; font-size: 14px; color: ${themePrimary}; text-transform: uppercase; font-weight: 900; line-height: 1.2; word-break: break-word; }
+          .header-text p { margin: 2px 0 0; font-size: 10px; color: #64748b; font-weight: 600; line-height: 1.3; }
+          .copy-type { position: absolute; top: -1px; left: 50%; transform: translateX(-50%); background: ${themePrimary}; color: white; padding: 3px 12px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+          .info-grid { display: grid; grid-template-columns: auto 1fr; gap: 6px 10px; font-size: 11px; margin-bottom: 15px; }
+          .info-label { font-weight: 700; color: #475569; }
+          .info-val { font-weight: 600; color: #0f172a; border-bottom: 1px dotted #94a3b8; }
+          .fee-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 15px; flex-grow: 1; }
+          .fee-table th { background: #f8fafc; text-align: left; padding: 6px; border: 1px solid #e2e8f0; color: #475569; font-weight: 700; text-transform: uppercase; font-size: 9px; }
+          .fee-table td { padding: 6px; border: 1px solid #e2e8f0; font-weight: 600; }
+          .fee-table td.amount { text-align: right; font-family: monospace; font-size: 12px; }
+          .total-row td { background: #f8fafc; font-weight: 800; font-size: 12px; border-top: 2px solid ${themePrimary}; }
+          .total-row td.amount { color: ${themePrimary}; font-size: 13px; }
+          .instructions { font-size: 9px; color: #64748b; line-height: 1.4; border: 1px solid #e2e8f0; padding: 8px; background: #f8fafc; border-radius: 6px; margin-bottom: 20px; }
+          .signatures { display: flex; justify-content: space-between; margin-top: auto; padding-top: 30px; font-size: 10px; font-weight: 700; color: #475569; }
+          .sig-box { border-top: 1px solid #cbd5e1; width: 100px; text-align: center; padding-top: 4px; }
+          .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 40px; color: rgba(0,0,0,0.02); font-weight: 900; text-transform: uppercase; white-space: nowrap; pointer-events: none; z-index: 0; }
+          .content-z { position: relative; z-index: 1; }
+          [contenteditable="true"] { transition: all 0.2s; min-width: 20px; display: inline-block; }
+          [contenteditable="true"]:hover { background: #fef08a; cursor: text; outline: 1px dashed #eab308; }
+          [contenteditable="true"]:focus { background: #fff; outline: 2px solid #3b82f6; border-radius: 2px; }
+          @media print {
+            body { background: white; padding: 0; }
+            .a4-container { box-shadow: none; padding: 0; gap: 15px; }
+            .challan-part { border-color: #94a3b8; }
+            [contenteditable="true"] { outline: none !important; background: transparent !important; }
+            button { display: none !important; }
+            @page { margin: 10mm; size: landscape; }
+          }
+          .print-btn { position: fixed; bottom: 20px; right: 20px; background: ${themePrimary}; color: white; border: none; padding: 12px 24px; border-radius: 50px; font-size: 14px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: transform 0.2s; z-index: 1000; }
+          .print-btn:hover { transform: translateY(-2px); }
+          .status-badge { position: absolute; right: 20px; top: 35px; padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 900; text-transform: uppercase; border: 2px solid; transform: rotate(15deg); opacity: 0.8; z-index: 2; pointer-events: none; }
+          .status-paid { color: #10b981; border-color: #10b981; }
+          .status-unpaid { color: #ef4444; border-color: #ef4444; }
+        </style>
+      </head>
+      <body>
+        <button class="print-btn" onclick="window.print()">🖨️ Print Challan</button>
+        <div class="a4-container">
+          ${['Bank Copy', 'School Copy', 'Student Copy'].map(copyName => `
+            <div class="challan-part">
+              <div class="watermark">${schoolName}</div>
+              <div class="copy-type">${copyName}</div>
+              ${inv.status === 'Paid' ? '<div class="status-badge status-paid">PAID</div>' : ''}
+              
+              <div class="header content-z">
+                ${logoHtml}
+                <div class="header-text">
+                  <h1 contenteditable="true">${schoolName}</h1>
+                  <p contenteditable="true">${cityText} Campus • Ph: +92-123-4567</p>
+                </div>
+              </div>
+
+              <div class="info-grid content-z">
+                <div class="info-label">Challan No:</div> <div class="info-val">${inv.id}</div>
+                <div class="info-label">Issue Date:</div> <div class="info-val" contenteditable="true">${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
+                <div class="info-label">Due Date:</div> <div class="info-val" contenteditable="true" style="color: #ef4444;">${new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
+                <div class="info-label">Student:</div> <div class="info-val" contenteditable="true">${inv.student}</div>
+                <div class="info-label">Class/Sec:</div> <div class="info-val" contenteditable="true">Class 10-A</div>
+              </div>
+
+              <table class="fee-table content-z">
+                <thead>
+                  <tr>
+                    <th>Description</th>
+                    <th style="text-align: right;">Amount (${currencySym})</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td contenteditable="true">Tuition Fee (Monthly)</td>
+                    <td class="amount" contenteditable="true">${inv.amount.toLocaleString()}</td>
+                  </tr>
+                  <tr>
+                    <td contenteditable="true">Computer / Lab Fee</td>
+                    <td class="amount" contenteditable="true">0</td>
+                  </tr>
+                  <tr>
+                    <td contenteditable="true">Transport Charges</td>
+                    <td class="amount" contenteditable="true">0</td>
+                  </tr>
+                  <tr>
+                    <td contenteditable="true">Previous Arrears</td>
+                    <td class="amount" contenteditable="true">0</td>
+                  </tr>
+                  <tr class="total-row">
+                    <td>Total Payable</td>
+                    <td class="amount" contenteditable="true">${inv.amount.toLocaleString()}</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="instructions content-z" contenteditable="true">
+                <strong>Instructions:</strong><br/>
+                1. Pay dues before due date to avoid late fee fine (${currencySym} 50/day).<br/>
+                2. Fee can be deposited in any branch of Allied Bank Ltd.<br/>
+                3. Bank timing: 9:00 AM to 1:30 PM.
+              </div>
+
+              <div class="signatures content-z">
+                <div class="sig-box">Cashier</div>
+                <div class="sig-box">Depositor</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </body>
+      </html>
+    `;
+  };
   const [pendingDeleteAction, setPendingDeleteAction] = useState<(() => void) | null>(null);
 
   const getExpectedPasskey = () => {
@@ -2611,11 +3037,11 @@ export const UnifiedDashboard: React.FC = () => {
     }
   };
 
-  const kamranStatus = students.find(s => s.name === 'Kamran Shah')?.status || 'Present';
-  const studentAttendanceVal = kamranStatus === 'Present' ? '96.7%' : '93.3%';
-  const parentAttendanceVal = kamranStatus === 'Present' ? '96.7% Present' : '93.3% Absent';
+  const currentStudentStatus = students.find(s => s.name === currentUser?.name)?.status || 'Present';
+  const studentAttendanceVal = currentStudentStatus === 'Present' ? '96.7%' : '93.3%';
+  const parentAttendanceVal = currentStudentStatus === 'Present' ? '96.7% Present' : '93.3% Absent';
 
-  const pendingCount = assignments.filter(a => a.publishDate <= '2026-06-08' && !completedAssignments.includes(a.id)).length;
+  const pendingCount = assignments.filter(a => a.publishDate <= todayStr && !completedAssignments.includes(a.id)).length;
 
   // Map each role to their unique KPIs, features list, and context
   const portalSpecs: Record<UserRole, PortalSpec> = {
@@ -2628,7 +3054,7 @@ export const UnifiedDashboard: React.FC = () => {
         { label: "Total Schools", value: "184 Schools", icon: Layers, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Secure data channels active" },
         { label: "Active Revenue", value: "$48,920/mo", icon: TrendingUp, colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/25", desc: "Monthly collection records" }
       ],
-      features: ["Country Management", "Organization Management", "School Management", "Subscription Plans", "Billing & Invoicing", "Revenue Analytics", "White Label Configuration", "Global Announcements", "Support Tickets", "Audit Logs", "Multi-Level Permissions", "Advanced Activity Monitoring", "School Health Monitoring", "Server Monitoring", "Backup Manager", "API Key Management", "SMS Gateway Settings", "Email Server Settings", "School Suspension System", "School Performance Analytics", "Fraud Detection Dashboard", "Two Factor Authentication", "Device Management", "Session Tracking", "IP Restriction", "Login Audit Trail", "SMS Gateway", "WhatsApp Integration", "Email Automation", "Push Notifications", "AI Attendance Insights", "AI Fee Defaulter Prediction", "AI Student Performance Prediction", "AI Admission Analytics", "School KPI Dashboard", "Revenue Dashboard", "Student Growth Dashboard", "Teacher Performance Dashboard", "AI Command Center", "AI Content Studio", "Payment Gateway Settings"],
+      features: ["Country Management", "Organization Management", "School Management", "Subscription Plans", "Billing & Invoicing", "Revenue Analytics", "White Label Configuration", "Global Announcements", "Support Tickets", "Audit Logs", "Multi-Level Permissions", "Advanced Activity Monitoring", "School Health Monitoring", "Server Monitoring", "Backup Manager", "API Key Management", "SMS Gateway Settings", "Email Server Settings", "School Suspension System", "School Performance Analytics", "Fraud Detection Dashboard", "Two Factor Authentication", "Device Management", "Session Tracking", "IP Restriction", "Login Audit Trail", "SMS Gateway", "WhatsApp Integration", "Email Automation", "Push Notifications", "AI Attendance Insights", "AI Fee Defaulter Prediction", "AI Student Performance Prediction", "AI Admission Analytics", "School KPI Dashboard", "Revenue Dashboard", "Student Growth Dashboard", "Teacher Performance Dashboard", "AI Command Center", "AI Content Studio", "Payment Gateway Settings", "Term Dates & Academic Calendar"],
       quickActions: [
         { label: "Add New School", desc: "Create school profile", icon: Plus },
         { label: "Broadcast Alert", desc: "Dispatch global notification", icon: MessageSquare }
@@ -2650,7 +3076,7 @@ export const UnifiedDashboard: React.FC = () => {
         { label: "Collected Today", value: formatCurrency(8400), icon: CreditCard, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Real-time payment logs" },
         { label: "Outstanding Fees", value: formatCurrency(125000), icon: AlertTriangle, colorClass: "text-amber-400 bg-amber-500/10 border-amber-500/25", desc: "5 unpaid students" }
       ],
-      features: ["Student Management", "Employee Management", "Attendance Monitoring", "Fee Monitoring", "Academic Oversight", "Student Conduct Records", "School Notices", "Parent Communication Center", "Leave Management", "Admission Funnel Analytics", "Staff Performance Tracking", "Inventory Management", "Transport Management", "Hostel Management", "Visitor Management", "Payroll", "Two Factor Authentication", "Device Management", "Session Tracking", "IP Restriction", "Login Audit Trail", "Timetable Generator", "Exam Management", "Result Processing", "SMS Gateway", "WhatsApp Integration", "Email Automation", "Push Notifications", "School KPI Dashboard", "Revenue Dashboard", "Student Growth Dashboard", "Teacher Performance Dashboard", "AI Command Center", "AI Content Studio", "Payment Gateway Settings"],
+      features: ["Student Management", "Employee Management", "Academic Setup", "Attendance Monitoring", "Fee Monitoring", "Academic Oversight", "Student Conduct Records", "School Notices", "Parent Communication Center", "Leave Management", "Admission Funnel Analytics", "Staff Performance Tracking", "Inventory Management", "Transport Management", "Hostel Management", "Visitor Management", "Payroll", "Two Factor Authentication", "Device Management", "Session Tracking", "IP Restriction", "Login Audit Trail", "Timetable Generator", "Exam Management", "Result Processing", "SMS Gateway", "WhatsApp Integration", "Email Automation", "Push Notifications", "School KPI Dashboard", "Revenue Dashboard", "Student Growth Dashboard", "Teacher Performance Dashboard", "AI Command Center", "AI Content Studio", "Payment Gateway Settings"],
       quickActions: [
         { label: "Enroll Student", desc: "Record new admission registry", icon: UserPlus },
         { label: "Publish Notice", desc: "Send SMS/Email notification", icon: MessageSquare }
@@ -2672,7 +3098,7 @@ export const UnifiedDashboard: React.FC = () => {
         { label: "Assignments Due", value: "14 Submissions", icon: FileText, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Class 10 English essays" },
         { label: "Upcoming Exams", value: "3 Days left", icon: Award, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: "Midterm grading active" }
       ],
-      features: ["My Classes", "Lesson Planner", "Class Diary", "Attendance Entry", "Assignment Creation", "Quiz Creation", "Grade Book", "Student Remarks", "Parent Communication", "Teacher Leave Requests"],
+      features: ["My Classes", "Lesson Planner", "Class Diary", "Attendance Entry", "Assignment Creation", "Quiz Creation", "Grade Book", "Student Remarks", "Parent Communication", "Teacher Leave Requests", "Term Dates & Academic Calendar"],
       quickActions: [
         { label: "Mark Attendance", desc: "Take attendance for 10-A", icon: UserCheck },
         { label: "Create Assignment", desc: "Upload assignment details", icon: Plus }
@@ -2694,7 +3120,7 @@ export const UnifiedDashboard: React.FC = () => {
         { label: "Assignments Due", value: pendingCount === 0 ? "All Clear!" : `${pendingCount} Pending`, icon: FileText, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Physics and Chemistry tasks" },
         { label: "Upcoming Exams", value: "Physics - June 12", icon: Calendar, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: "Syllabus updated" }
       ],
-      features: ["Attendance Ledger", "Assignments", "Exams Results", "Timetable", "Study Material", "Recorded Lectures", "Fee Status", "Notifications", "School Transport", "Library Books", "Hostel Portal", "Student Goal Tracking", "GPA & Progress Analytics", "Achievement System", "Digital Certificates", "Study Planner", "AI Study Assistant", "Exam Preparation Tracker", "Homework Reminder"],
+      features: ["Attendance Ledger", "Assignments", "Exams Results", "Timetable", "Study Material", "Recorded Lectures", "Fee Status", "Notifications", "School Transport", "Library Books", "Hostel Portal", "Student Goal Tracking", "GPA & Progress Analytics", "Achievement System", "Digital Certificates", "Study Planner", "AI Study Assistant", "Exam Preparation Tracker", "Homework Reminder", "Term Dates & Academic Calendar"],
       quickActions: [
         { label: "View Assignments", desc: "Download homework instructions", icon: FileText },
         { label: "Recorded Lectures", desc: "Play previous class video streams", icon: BookOpen }
@@ -2716,7 +3142,7 @@ export const UnifiedDashboard: React.FC = () => {
         { label: "Next Exam", value: "June 12", icon: Calendar, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Physics prep active" },
         { label: "Homework Due", value: pendingCount === 0 ? "All Completed" : `${pendingCount} Tasks pending`, icon: FileText, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: "View assignments" }
       ],
-      features: ["Child Attendance", "Fee Status", "Exam Results", "Teacher Messaging", "Leave Requests", "School Notices", "Student Progress Graphs", "School Transport"],
+      features: ["Child Attendance", "Fee Status", "Exam Results", "Teacher Messaging", "Leave Requests", "School Notices", "Student Progress Graphs", "School Transport", "Term Dates & Academic Calendar"],
       quickActions: [
         { label: "Pay Fees Online", desc: "Instantly clear fee challan", icon: CreditCard },
         { label: "Contact Class Teacher", desc: "Send message to teacher", icon: MessageSquare }
@@ -2738,7 +3164,7 @@ export const UnifiedDashboard: React.FC = () => {
         { label: "Total Campuses", value: "34 Locations", icon: Layers, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Active class structures" },
         { label: "Consolidated Revenue", value: formatCurrency(450000), icon: TrendingUp, colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/25", desc: "Consolidated monthly ledger" }
       ],
-      features: ["Organization Overview", "School Performance Matrix", "Branch Performance Ledger", "Campus Performance Analytics", "Group Revenue Reports", "Expansion Planning Wizard", "Branding Customizer Engine", "Organization Core Users", "AI Command Center", "Payment Gateway Settings"],
+      features: ["Organization Overview", "School Performance Matrix", "Branch Performance Ledger", "Campus Performance Analytics", "Group Revenue Reports", "Expansion Planning Wizard", "Branding Customizer Engine", "Organization Core Users", "AI Command Center", "Payment Gateway Settings", "Term Dates & Academic Calendar"],
       quickActions: [
         { label: "Compare Campuses", desc: "Load attendance & revenue graphs", icon: Activity },
         { label: "Manage Sub-Admins", desc: "Authorize branch managers", icon: Users }
@@ -2760,7 +3186,7 @@ export const UnifiedDashboard: React.FC = () => {
         { label: "Monthly Revenue", value: formatCurrency(185000), icon: CreditCard, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Collected fee challans" },
         { label: "Net Profit Margin", value: "32.4%", icon: TrendingUp, colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/25", desc: "Net operational margin" }
       ],
-      features: ["School Overview Analytics", "Revenue Tracker Details", "Expense Audit Logs", "Profitability Statements", "Staff Lifecycle Directory", "Student Growth Reports", "Academic Grade Summaries", "Subscription Preferences", "School Logo & Branding Customizer", "AI Command Center", "Payment Gateway Settings"],
+      features: ["School Overview Analytics", "Revenue Tracker Details", "Expense Audit Logs", "Profitability Statements", "Staff Lifecycle Directory", "Student Growth Reports", "Academic Grade Summaries", "Subscription Preferences", "School Logo & Branding Customizer", "AI Command Center", "Payment Gateway Settings", "Term Dates & Academic Calendar"],
       quickActions: [
         { label: "View Profit Reports", desc: "Launch audit sheets", icon: FileText },
         { label: "Branding Overrides", desc: "Configure theme colors & logos", icon: Settings }
@@ -2782,7 +3208,7 @@ export const UnifiedDashboard: React.FC = () => {
         { label: "Active Discipline Files", value: "2 Cases", icon: AlertTriangle, colorClass: "text-amber-400 bg-amber-500/10 border-amber-500/25", desc: "Needs evaluation" },
         { label: "Timetable Status", value: "Conflict-Free", icon: Calendar, colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/25", desc: "AI optimization verified" }
       ],
-      features: ["Academic Monitoring", "Teacher Performance", "Attendance Monitoring", "Timetable Oversight", "Discipline Management", "Parent Concerns", "AI Command Center"],
+      features: ["Academic Monitoring", "Teacher Performance", "Attendance Monitoring", "Timetable Oversight", "Discipline Management", "Parent Concerns", "AI Command Center", "Term Dates & Academic Calendar"],
       quickActions: [
         { label: "Audit Syllabus Progress", desc: "Verify course completion index", icon: FileText },
         { label: "Timetable Optimizer", desc: "Resolve class schedule conflicts", icon: Calendar }
@@ -2870,7 +3296,7 @@ export const UnifiedDashboard: React.FC = () => {
         { label: "Staff Attendance", value: "98.1% today", icon: UserCheck, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Staff Bio-sync functional" },
         { label: "Recruitment Active", value: "3 Job Openings", icon: UserPlus, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: "Vetting candidates" }
       ],
-      features: ["Employee Records", "Recruitment", "Leave Management", "Performance Reviews", "Payroll Coordination"],
+      features: ["Employee Records", "Recruitment", "Leave Management", "Performance Reviews", "Payroll Coordination", "Term Dates & Academic Calendar"],
       quickActions: [
         { label: "Add Employee", desc: "Onboard new teacher or staff", icon: UserPlus },
         { label: "Approve Leaves", desc: "Review teacher leave requests", icon: CheckCircle }
@@ -3008,31 +3434,44 @@ export const UnifiedDashboard: React.FC = () => {
                 <span className={`text-[9px] font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
                   darkMode ? 'text-purple-300' : 'text-purple-700'
                 }`}>Portal:</span>
-                <select
-                  value={simulatedRole}
-                  onChange={(e) => setSimulatedRole(e.target.value as UserRole)}
-                  className={`text-[10px] rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-purple-500 font-semibold transition-all shrink-0 ${
-                    darkMode 
-                      ? 'bg-slate-950 border-slate-800 text-white' 
-                      : 'bg-white border-purple-200 text-purple-900'
-                  }`}
-                >
-                  <option value="admin">Principal / School Admin</option>
-                  <option value="teacher">Teacher Portal</option>
-                  <option value="student">Student Portal</option>
-                  <option value="parent">Parent Portal</option>
-                  <option value="org_owner">Organization Owner</option>
-                  <option value="school_owner">School Network Owner</option>
-                  <option value="vice_principal">Vice Principal</option>
-                  <option value="admissions">Admission and CRM</option>
-                  <option value="reception">Reception and Visitor Desk</option>
-                  <option value="accountant">Accounts & Fees Department</option>
-                  <option value="hr">HR Department</option>
-                  <option value="librarian">Librarian Desk</option>
-                  <option value="transport">Transport Manager</option>
-                  <option value="hostel">Hotel Warden</option>
-                  <option value="super_admin">Super Admin Master Control</option>
-                </select>
+                {(() => {
+                  const getUnifiedPortalValue = (role: UserRole): string => {
+                    if (['admin', 'vice_principal'].includes(role)) return 'leadership_hub';
+                    if (['school_owner', 'org_owner'].includes(role)) return 'executive_hub';
+                    if (['accountant', 'hr'].includes(role)) return 'business_hub';
+                    if (['admissions', 'reception', 'librarian', 'transport', 'hostel'].includes(role)) return 'operations_hub';
+                    return role;
+                  };
+
+                  return (
+                    <select
+                      value={getUnifiedPortalValue(simulatedRole)}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setActiveFeature(null);
+                        if (val === 'leadership_hub') setSimulatedRole('admin');
+                        else if (val === 'executive_hub') setSimulatedRole('school_owner');
+                        else if (val === 'business_hub') setSimulatedRole('accountant');
+                        else if (val === 'operations_hub') setSimulatedRole('admissions');
+                        else setSimulatedRole(val as UserRole);
+                      }}
+                      className={`text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-purple-500 font-bold transition-all shrink-0 cursor-pointer ${
+                        darkMode 
+                          ? 'bg-slate-950 border-slate-800 text-white' 
+                          : 'bg-white border-purple-200 text-purple-900 shadow-sm'
+                      }`}
+                    >
+                      <option value="leadership_hub">School Leadership Hub (Principal/VP)</option>
+                      <option value="executive_hub">Executive Management Hub (Owner)</option>
+                      <option value="teacher">Teacher Portal</option>
+                      <option value="student">Student Portal</option>
+                      <option value="parent">Parent Portal</option>
+                      <option value="business_hub">Business & HR Hub (Finance/HR)</option>
+                      <option value="operations_hub">Campus Operations Hub</option>
+                      <option value="super_admin">Super Admin Control Panel</option>
+                    </select>
+                  );
+                })()}
               </div>
             )}
 
@@ -3079,14 +3518,159 @@ export const UnifiedDashboard: React.FC = () => {
 
       {/* Main Layout Grid */}
       <main className="flex-1 max-w-full w-full px-4 sm:px-8 lg:px-12 py-8 space-y-8">
+        
+        {/* Department/Sub-role Navigation Tabs for Consolidated Portals */}
+        {(() => {
+          const isOperations = ['admissions', 'reception', 'librarian', 'transport', 'hostel'].includes(simulatedRole);
+          const isBusiness = ['accountant', 'hr'].includes(simulatedRole);
+          const isLeadership = ['admin', 'vice_principal'].includes(simulatedRole);
+          const isExecutive = ['org_owner', 'school_owner'].includes(simulatedRole);
+
+          if (!isOperations && !isBusiness && !isLeadership && !isExecutive) return null;
+
+          let tabs: { role: UserRole; label: string; icon: string }[] = [];
+          let activeTab = simulatedRole;
+          let hubTitle = "";
+          let hubColor = "from-purple-600 to-indigo-600";
+
+          if (isOperations) {
+            hubTitle = "Campus Operations & Logistics Hub";
+            hubColor = "from-blue-600 to-cyan-600";
+            tabs = [
+              { role: 'admissions', label: 'Admissions & CRM', icon: '📞' },
+              { role: 'reception', label: 'Reception & Visitor Desk', icon: '👤' },
+              { role: 'librarian', label: 'Librarian Desk', icon: '📚' },
+              { role: 'transport', label: 'Transport Manager', icon: '🚌' },
+              { role: 'hostel', label: 'Hostel Warden', icon: '🏢' },
+            ];
+          } else if (isBusiness) {
+            hubTitle = "Business & HR Operations Hub";
+            hubColor = "from-emerald-600 to-teal-600";
+            tabs = [
+              { role: 'accountant', label: 'Accounts & Finance', icon: '💳' },
+              { role: 'hr', label: 'HR & Personnel', icon: '👥' },
+            ];
+          } else if (isLeadership) {
+            hubTitle = "School Leadership & Academic Hub";
+            hubColor = "from-purple-600 to-pink-600";
+            tabs = [
+              { role: 'admin', label: 'Principal Desk', icon: '🎓' },
+              { role: 'vice_principal', label: 'Academic & Discipline (VP)', icon: '⚖️' },
+            ];
+          } else if (isExecutive) {
+            hubTitle = "Executive Management Hub";
+            hubColor = "from-indigo-600 to-purple-600";
+            tabs = [
+              { role: 'school_owner', label: 'School Network Owner', icon: '🏢' },
+              { role: 'org_owner', label: 'Franchise/Organization Owner', icon: '🌍' },
+            ];
+          }
+
+          return (
+            <div className={`p-4 sm:p-5 rounded-2xl border transition-all duration-300 relative overflow-hidden ${
+              darkMode 
+                ? 'bg-slate-900/60 border-slate-800' 
+                : 'bg-white/90 border-slate-200 shadow-md'
+            }`}>
+              {/* Subtle background glow */}
+              <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${hubColor} rounded-full filter blur-3xl opacity-10`} />
+              
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                <div>
+                  <span className="text-[9px] font-black tracking-widest text-primary uppercase block mb-1">Unified Department Hub</span>
+                  <h2 className="text-sm sm:text-base font-black text-foreground m-0 flex items-center gap-1.5">
+                    <span className="inline-block w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
+                    {hubTitle}
+                  </h2>
+                </div>
+                <p className="text-[10px] text-foreground/50 font-semibold max-w-md m-0">
+                  You are viewing a consolidated department view. Toggle tabs below to switch workspaces seamlessly.
+                </p>
+              </div>
+
+              {/* Tabs container */}
+              <div className="flex flex-wrap gap-2.5">
+                {tabs.map((tab) => {
+                  const isActive = activeTab === tab.role;
+                  return (
+                    <button
+                      key={tab.role}
+                      onClick={() => {
+                        setSimulatedRole(tab.role);
+                        setActiveFeature(null);
+                      }}
+                      className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all border duration-250 cursor-pointer ${
+                        isActive
+                          ? darkMode
+                            ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20 scale-[1.02]'
+                            : 'bg-primary border-primary text-white shadow-lg shadow-primary/15 scale-[1.02]'
+                          : darkMode
+                            ? 'bg-slate-950/40 border-slate-800 text-slate-300 hover:bg-slate-800/60 hover:text-white'
+                            : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-black'
+                      }`}
+                    >
+                      <span className="text-sm leading-none">{tab.icon}</span>
+                      <span>{tab.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* Principal Alerts & Notification Center */}
+        {simulatedRole === 'admin' && (
+          <div className={`p-4 sm:p-5 rounded-2xl border transition-all duration-300 relative overflow-hidden ${
+            darkMode 
+              ? 'bg-slate-900/40 border-slate-800' 
+              : 'bg-white/70 border-slate-200 shadow-sm'
+          }`}>
+            <div className="flex items-center gap-2 mb-3.5 pb-2 border-b border-border/40">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+              </span>
+              <span className="text-xs font-bold text-foreground/85 uppercase tracking-wider">Principal Alert & Notification Center</span>
+            </div>
+            
+            {principalNotifications.length === 0 ? (
+              <p className="text-[11px] text-foreground/50 italic m-0">No new alerts from the Vice Principal Desk.</p>
+            ) : (
+              <div className="space-y-2 max-h-36 overflow-y-auto pr-1">
+                {principalNotifications.map((note, index) => (
+                  <div 
+                    key={index}
+                    className={`p-2.5 rounded-lg border text-[11px] flex items-center justify-between gap-3 ${
+                      darkMode 
+                        ? 'bg-slate-950/45 border-slate-900 text-slate-350' 
+                        : 'bg-slate-50 border-slate-100 text-slate-705'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs">🔔</span>
+                      <span>{note}</span>
+                    </div>
+                    <button 
+                      onClick={() => setPrincipalNotifications(prev => prev.filter((_, i) => i !== index))}
+                      className="text-[9px] font-bold text-red-500 hover:text-red-450 hover:underline cursor-pointer"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
         {/* Role-Specific Live Status Banners */}
         {(() => {
-          const unpaidFees = invoices.filter(i => (isEditor ? true : i.student === 'Kamran Shah') && i.status === 'Unpaid');
+          const unpaidFees = invoices.filter(i => (isEditor ? true : i.student === currentUser?.name) && i.status === 'Unpaid');
           const hasUnpaidFees = unpaidFees.length > 0;
           
           if (simulatedRole === 'student') {
-            const overdueAssignmentsCount = assignments.filter(a => a.publishDate <= '2026-06-08' && !completedAssignments.includes(a.id)).length;
-            const isAllCompleted = overdueAssignmentsCount === 0 && kamranStatus === 'Present';
+            const overdueAssignmentsCount = assignments.filter(a => a.publishDate <= todayStr && !completedAssignments.includes(a.id)).length;
+            const isAllCompleted = overdueAssignmentsCount === 0 && currentStudentStatus === 'Present';
             
             if (isAllCompleted) {
               return (
@@ -3106,7 +3690,7 @@ export const UnifiedDashboard: React.FC = () => {
             } else {
               return (
                 <div className="flex flex-col gap-3">
-                  {kamranStatus === 'Absent' && (
+                  {currentStudentStatus === 'Absent' && (
                     <div className={`p-4 rounded-xl flex items-center justify-center gap-2.5 text-xs shadow border transition-all animate-pulse ${
                       darkMode 
                         ? 'bg-red-500/10 border-red-500/25 text-red-300' 
@@ -3143,10 +3727,10 @@ export const UnifiedDashboard: React.FC = () => {
           }
 
           if (simulatedRole === 'parent') {
-            const pendingTasksCount = assignments.filter(a => a.publishDate <= '2026-06-08' && !completedAssignments.includes(a.id)).length;
+            const pendingTasksCount = assignments.filter(a => a.publishDate <= todayStr && !completedAssignments.includes(a.id)).length;
             const teacherMessages = parentMessages.filter(m => m.parent.startsWith('Broadcast') || m.parent.startsWith('Teacher'));
             const hasTeacherMessages = teacherMessages.length > 0;
-            const isAllClear = !hasUnpaidFees && pendingTasksCount === 0 && kamranStatus === 'Present' && !hasTeacherMessages;
+            const isAllClear = !hasUnpaidFees && pendingTasksCount === 0 && currentStudentStatus === 'Present' && !hasTeacherMessages;
 
             if (isAllClear) {
               return (
@@ -3183,7 +3767,7 @@ export const UnifiedDashboard: React.FC = () => {
                       <button onClick={() => setActiveFeature('Teacher Communication')} className="px-3.5 py-1 bg-purple-700 hover:bg-purple-800 text-white rounded-lg font-bold transition-all shadow text-[10px] whitespace-nowrap">Open / View Message</button>
                     </div>
                   )}
-                  {kamranStatus === 'Absent' && (
+                  {currentStudentStatus === 'Absent' && (
                     <div className={`p-4 rounded-xl flex items-center justify-between gap-3 text-xs shadow border transition-all animate-bounce ${
                       darkMode 
                         ? 'bg-red-500/10 border-red-500/25 text-red-300' 
@@ -3291,6 +3875,36 @@ export const UnifiedDashboard: React.FC = () => {
 
         {/* Features Navigation Section (Full Width) */}
         <section className="glass-card rounded-2xl overflow-hidden border border-border bg-card/30 flex flex-col w-full">
+          {/* School Level Section Selector */}
+          {schoolLevel === 'both' && (
+            <div className="mx-6 mt-4 mb-2 p-1 bg-muted/30 border border-border rounded-2xl flex items-center gap-1 shadow-sm">
+              <button
+                onClick={() => setActiveSection('primary')}
+                className={`flex-1 flex items-center justify-center gap-2.5 py-3.5 rounded-xl text-sm font-black transition-all duration-300 ${activeSection === 'primary' ? 'bg-gradient-to-br from-sky-500 to-blue-600 text-white shadow-lg shadow-sky-500/30 scale-[1.02]' : 'text-foreground/60 hover:bg-muted/50 hover:text-foreground'}`}
+              >
+                <span className="text-lg">🎒</span>
+                <span>Primary Section</span>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-black ${activeSection === 'primary' ? 'bg-white/20' : 'bg-muted border border-border'}`}>Playgroup - Class 5</span>
+              </button>
+              <button
+                onClick={() => setActiveSection('secondary')}
+                className={`flex-1 flex items-center justify-center gap-2.5 py-3.5 rounded-xl text-sm font-black transition-all duration-300 ${activeSection === 'secondary' ? 'bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-lg shadow-violet-500/30 scale-[1.02]' : 'text-foreground/60 hover:bg-muted/50 hover:text-foreground'}`}
+              >
+                <span className="text-lg">🎓</span>
+                <span>Secondary Section</span>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-black ${activeSection === 'secondary' ? 'bg-white/20' : 'bg-muted border border-border'}`}>Class 6 - Class 10</span>
+              </button>
+            </div>
+          )}
+          {schoolLevel !== 'both' && (
+            <div className="mx-6 mt-4 mb-2">
+              <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black border ${schoolLevel === 'primary' ? 'bg-sky-500/10 border-sky-500/30 text-sky-500' : 'bg-violet-500/10 border-violet-500/30 text-violet-400'}`}>
+                <span>{schoolLevel === 'primary' ? '🎒' : '🎓'}</span>
+                {schoolLevel === 'primary' ? 'Primary Level School (Playgroup - Class 5)' : 'Secondary Level School (Class 6 - Class 10)'}
+              </div>
+            </div>
+          )}
+
           <div className="px-6 py-4 border-b border-border bg-muted/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <h3 className="font-bold text-foreground m-0 flex items-center gap-2">
               <BookOpen className="w-5 h-5 text-primary" />
@@ -4564,7 +5178,7 @@ export const UnifiedDashboard: React.FC = () => {
                       fileName: finalFileName,
                       fileType: newAssignmentFileType,
                       fileUrl: newAssignmentFileUrl,
-                      status: newAssignmentPublishDate <= '2026-06-08' ? 'Published' : 'Scheduled'
+                      status: newAssignmentPublishDate <= todayStr ? 'Published' : 'Scheduled'
                     }
                   ]);
                   setAssignmentModalOpen(false);
@@ -4799,163 +5413,580 @@ export const UnifiedDashboard: React.FC = () => {
               {activeFeature === 'Student Management' && (
                 <div className="space-y-4">
                   {/* Add Student Form */}
-                  {isEditor && (
+                  {isEditor && (() => {
+                    const nextRollNo = (Math.max(0, ...students.map(s => parseInt(s.roll) || 0)) + 1).toString().padStart(3, '0');
+                    return (
                     <form 
                       onSubmit={(e) => {
                         e.preventDefault();
-                        if (!newStudentName || !newStudentRoll) return;
-                        requestSecurityVerification(`Enroll new student: "${newStudentName}" (Roll No: ${newStudentRoll}) to class ${newStudentClass}`, () => {
+                        setEnrollmentError('');
+                        
+                        if (!newStudentName) return;
+                        
+                        // Validation Criteria
+                        const age = parseInt(newStudentAge);
+                        const marks = parseInt(newStudentMarks);
+                        
+                        if (isNaN(age) || age < 4) {
+                          setEnrollmentError('Admission Criteria Failed: Student must be at least 4 years old.');
+                          return;
+                        }
+                        
+                        if (isNaN(marks) || marks < 50) {
+                          setEnrollmentError('Admission Criteria Failed: Previous academic score must be at least 50% for admission.');
+                          return;
+                        }
+
+                        // Document validation
+                        const formElements = (e.target as HTMLFormElement).elements;
+                        const birthCert = (formElements.namedItem('birthCert') as HTMLInputElement)?.files;
+                        if (!birthCert || birthCert.length === 0) {
+                          setEnrollmentError('Missing Document: Birth Certificate / B-Form is required.');
+                          return;
+                        }
+
+                        if (students.some(s => s.name.toLowerCase() === newStudentName.toLowerCase() && s.className === newStudentClass)) {
+                          setEnrollmentError(`Student ${newStudentName} already exists in ${newStudentClass}.`);
+                          return;
+                        }
+
+                        // Check Class Capacity
+                        const currentCount = students.filter(s => s.className === newStudentClass).length;
+                        if (currentCount >= 30) {
+                          setWaitingList(prev => [...prev, {
+                            id: `wl-${Date.now()}`,
+                            name: newStudentName,
+                            className: newStudentClass,
+                            dateAdded: new Date().toISOString(),
+                            status: 'Waiting'
+                          }]);
+                          setEnrollmentError(`Admission Closed: ${newStudentClass} has reached maximum capacity (30). ${newStudentName} has been automatically added to the Waiting List.`);
+                          (e.target as HTMLFormElement).reset();
+                          setNewStudentName('');
+                          return;
+                        }
+                        
+                        requestSecurityVerification(`Enroll new student: "${newStudentName}" (Roll No: ${nextRollNo}) to class ${newStudentClass}`, () => {
                           setStudents(prev => [
                             ...prev,
-                            { id: `s-${Date.now()}`, name: newStudentName, roll: newStudentRoll, className: newStudentClass, status: 'Present' }
+                            { id: `s-${Date.now()}`, name: newStudentName, roll: nextRollNo, className: newStudentClass, status: 'Present' }
                           ]);
                           setNewStudentName('');
-                          setNewStudentRoll('');
+                          setNewStudentAge('');
+                          setNewStudentMarks('');
+                          setEnrollmentError('');
+                          (e.target as HTMLFormElement).reset();
                         });
                       }}
-                      className="p-4 bg-muted/30 border border-border rounded-xl space-y-3"
+                      className="p-4 bg-muted/30 border border-border rounded-xl space-y-4"
                     >
                       <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Enroll New Student</span>
-                      <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                        <input 
-                          type="text" 
-                          required 
-                          placeholder="Student Name"
-                          value={newStudentName}
-                          onChange={(e) => setNewStudentName(e.target.value)}
-                          className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
-                        />
-                        <input 
-                          type="text" 
-                          required 
-                          placeholder={getRollLabel()}
-                          value={newStudentRoll}
-                          onChange={(e) => setNewStudentRoll(e.target.value)}
-                          className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
-                        />
-                        <select 
-                          value={newStudentClass} 
-                          onChange={(e) => setNewStudentClass(e.target.value)}
-                          className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold"
-                        >
-                          <option value="Class 10-A">Class 10-A</option>
-                          <option value="Class 10-B">Class 10-B</option>
-                          <option value="Class 9-A">Class 9-A</option>
-                        </select>
+                      
+                      {enrollmentError && (
+                        <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-lg text-rose-500 text-xs font-bold flex items-center gap-2 animate-fadeIn">
+                          <AlertTriangle className="w-4 h-4 shrink-0" /> {enrollmentError}
+                        </div>
+                      )}
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-foreground/60 uppercase">Full Name</label>
+                          <input type="text" required placeholder="Student Name" value={newStudentName} onChange={(e) => setNewStudentName(e.target.value)} className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-foreground/60 uppercase">Age (Years)</label>
+                          <input type="number" required placeholder="Minimum 4 years" value={newStudentAge} onChange={(e) => setNewStudentAge(e.target.value)} className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-foreground/60 uppercase">Previous Marks (%)</label>
+                          <input type="number" required placeholder="Minimum 50%" value={newStudentMarks} onChange={(e) => setNewStudentMarks(e.target.value)} className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-foreground/60 uppercase">Class Group</label>
+                          <select value={newStudentClass} onChange={(e) => setNewStudentClass(e.target.value)} className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold">
+                            {filteredClasses.map((cls) => <option key={cls} value={cls}>{cls}</option>)}
+                          </select>
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-foreground/60 uppercase">Auto Roll No</label>
+                          <input type="text" disabled value={`${getRollLabel()}: ${nextRollNo}`} className="w-full bg-card/50 border border-border/50 rounded-lg text-xs p-2.5 text-foreground/60 cursor-not-allowed font-mono" />
+                        </div>
                       </div>
-                      <div className="flex justify-end pt-2">
+
+                      <div className="border-t border-border/50 pt-3">
+                        <span className="block text-[10px] font-black text-foreground/50 uppercase tracking-wider mb-3">Required Documents (PDF/Images)</span>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="bg-muted/20 border border-dashed border-border rounded-lg p-3 flex flex-col justify-center gap-2 hover:bg-muted/30 transition-colors cursor-pointer">
+                            <label className="text-xs font-bold text-foreground/80 flex items-center gap-1 cursor-pointer"><FileText className="w-3 h-3 text-primary" /> Birth Certificate / B-Form <span className="text-rose-500">*</span></label>
+                            <input name="birthCert" type="file" accept="image/*,.pdf" className="text-[10px] file:mr-3 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer text-foreground/60 w-full" />
+                          </div>
+                          <div className="bg-muted/20 border border-dashed border-border rounded-lg p-3 flex flex-col justify-center gap-2 hover:bg-muted/30 transition-colors cursor-pointer">
+                            <label className="text-xs font-bold text-foreground/80 flex items-center gap-1 cursor-pointer"><FileText className="w-3 h-3 text-primary" /> Previous School Leaving Cert</label>
+                            <input type="file" accept="image/*,.pdf" className="text-[10px] file:mr-3 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer text-foreground/60 w-full" />
+                          </div>
+                          <div className="bg-muted/20 border border-dashed border-border rounded-lg p-3 flex flex-col justify-center gap-2 hover:bg-muted/30 transition-colors cursor-pointer">
+                            <label className="text-xs font-bold text-foreground/80 flex items-center gap-1 cursor-pointer"><FileText className="w-3 h-3 text-primary" /> Parent/Guardian ID</label>
+                            <input type="file" accept="image/*,.pdf" className="text-[10px] file:mr-3 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer text-foreground/60 w-full" />
+                          </div>
+                          <div className="bg-muted/20 border border-dashed border-border rounded-lg p-3 flex flex-col justify-center gap-2 hover:bg-muted/30 transition-colors cursor-pointer">
+                            <label className="text-xs font-bold text-foreground/80 flex items-center gap-1 cursor-pointer"><FileText className="w-3 h-3 text-primary" /> Student Photo (Passport Size)</label>
+                            <input type="file" accept="image/*" className="text-[10px] file:mr-3 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer text-foreground/60 w-full" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-end pt-3">
                         <button type="submit" className="px-6 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md">
-                          + Add Student
+                          + Verify & Enroll Student
                         </button>
                       </div>
                     </form>
-                  )}
+                    );
+                  })()}
 
+                  {/* Tab Navigation for Roster / Waitlist */}
+                  <div className="flex gap-2 border-b border-border/50 pb-2 mt-4">
+                    <button onClick={() => setActiveStudentTab('roster')} className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeStudentTab === 'roster' ? 'bg-primary text-white' : 'bg-muted/30 hover:bg-muted/50 text-foreground/70'}`}>Active Roster</button>
+                    <button onClick={() => setActiveStudentTab('waitlist')} className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeStudentTab === 'waitlist' ? 'bg-primary text-white' : 'bg-muted/30 hover:bg-muted/50 text-foreground/70'}`}>
+                      Waiting List ({waitingList.length})
+                    </button>
+                  </div>
+
+                  {activeStudentTab === 'roster' ? (
+                  <>
                   {/* Beautiful Student Roster Grid */}
-                  <div className="space-y-3 pt-2 border-t border-border/60">
-                    <span className="block text-xs font-bold text-foreground/75 uppercase tracking-wider">Student Roster</span>
+                  <div className="space-y-3 pt-2">
+                    <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                      <span className="block text-xs font-bold text-foreground/75 uppercase tracking-wider">Student Roster</span>
+                      <input type="text" placeholder="Search students by name..." value={studentSearchTerm} onChange={e => setStudentSearchTerm(e.target.value)} className="bg-card border border-border rounded-lg text-[11px] p-2 px-3 w-full sm:w-64 text-foreground outline-none focus:border-primary transition-colors" />
+                    </div>
                     <div className="flex flex-wrap justify-center gap-3">
-                      {students.map((stud) => {
+                      {filteredStudents.filter(s => s.name.toLowerCase().includes(studentSearchTerm.toLowerCase())).map((stud) => {
                         const initials = stud.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
                         return (
-                          <div key={stud.id} className="p-3 bg-card/65 border border-border rounded-xl flex flex-col items-center justify-center text-center gap-1.5 hover:border-primary/45 transition-all w-[calc(50%-6px)] sm:w-[calc(25%-9px)]">
-                            <div className="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-xs font-black text-primary">
+                          <div key={stud.id} className="p-4 bg-card/65 border border-border rounded-xl flex flex-col items-center text-center gap-2 hover:border-primary/45 transition-all w-[calc(50%-6px)] sm:w-[calc(33.33%-9px)] lg:w-[calc(25%-9px)] shadow-sm group">
+                            <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-sm font-black text-primary group-hover:bg-primary/20 transition-colors">
                               {initials}
                             </div>
-                            <div className="text-[11px] font-bold text-foreground truncate w-full">{stud.name}</div>
-                            <div className="text-[9px] text-foreground/60">{stud.className}</div>
+                            <div className="w-full">
+                              <div className="text-xs font-bold text-foreground truncate w-full" title={stud.name}>{stud.name}</div>
+                              <div className="text-[10px] text-foreground/60 font-semibold">{stud.className} | Roll: {stud.roll}</div>
+                            </div>
+                            <div className="w-full space-y-1 mt-1 border-t border-border/30 pt-2 text-left px-1">
+                               <div className="text-[9px] text-slate-400 flex justify-between items-center"><span className="uppercase tracking-wider">Hostel</span> <span className="font-semibold text-foreground/80 truncate max-w-[60px]" title={stud.hostelStatus || 'Day Scholar'}>{stud.hostelStatus || 'Day Scholar'}</span></div>
+                               <div className="text-[9px] text-slate-400 flex justify-between items-center"><span className="uppercase tracking-wider">Transport</span> <span className="font-semibold text-foreground/80 truncate max-w-[60px]" title={stud.bookedTransport || 'None'}>{stud.bookedTransport || 'None'}</span></div>
+                               <div className="text-[9px] text-slate-400 flex justify-between items-center"><span className="uppercase tracking-wider">Books</span> <span className="font-semibold text-foreground/80">{stud.borrowedBooks?.length > 0 ? stud.borrowedBooks.length : '0'}</span></div>
+                            </div>
                             {isEditor && (
                               <button 
                                 onClick={() => requestSecureDelete(
-                                  `Are you sure you want to permanently delete the student registry enrollment for ${stud.name}?`,
-                                  () => setStudents(prev => prev.filter(s => s.id !== stud.id))
+                                  `Are you sure you want to permanently delete the student registry enrollment for ${stud.name}? This will check for waiting list availability.`,
+                                  () => {
+                                    setRecycleBin(prev => [...prev, { id: stud.id, type: 'student', data: stud, labelName: stud.name }]);
+                                    setStudents((prev: any[]) => prev.filter(s => s.id !== stud.id));
+
+                                    // Check Waitlist automatically
+                                    const classWaitlist = waitingList.filter(w => w.className === stud.className);
+                                    if (classWaitlist.length > 0) {
+                                       const topCandidate = classWaitlist[0];
+                                       if (window.confirm(`Space is now available in ${stud.className}! The top waiting student is ${topCandidate.name}. Send Congratulations message to parents to follow admission formalities?`)) {
+                                          setWaitingList(prev => prev.filter(w => w.id !== topCandidate.id));
+                                          alert(`Congratulations message sent to ${topCandidate.name}'s parents via SMS/Email!`);
+                                       }
+                                    }
+                                  }
                                 )}
-                                className="text-[10px] text-red-400 hover:text-red-300 font-medium mt-1"
+                                className="text-[10px] text-red-400 hover:text-red-300 font-bold border border-red-500/20 px-3 py-1.5 rounded w-full mt-2 bg-red-500/5 hover:bg-red-500/10 transition-colors"
                               >
-                                Delete
+                                Delete & Free Seat
                               </button>
                             )}
                           </div>
                         );
                       })}
+                      {filteredStudents.filter(s => s.name.toLowerCase().includes(studentSearchTerm.toLowerCase())).length === 0 && (
+                        <div className="p-6 text-center text-xs text-foreground/50 w-full bg-muted/20 rounded-xl">No students match your search.</div>
+                      )}
                     </div>
                   </div>
+                  </>
+                  ) : (
+                    <div className="space-y-4 pt-2">
+                      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 border-b border-border/50 pb-3">
+                         <span className="block text-xs font-bold text-foreground/75 uppercase tracking-wider">Admission Waiting List</span>
+                         {isEditor && (
+                           <button onClick={() => {
+                             if(window.confirm('Discard all waiting list entries older than 6 months? This will send an SMS to parents to re-apply if still interested.')) {
+                               alert('Old entries discarded. "Re-apply" SMS sent to parents successfully.');
+                               // Assuming all are discarded for demo
+                               setWaitingList([]);
+                             }
+                           }} className="px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/20 text-[10px] font-bold rounded-lg transition-colors">
+                             Discard &gt;6 Months &amp; Notify Parents
+                           </button>
+                         )}
+                      </div>
+                      {waitingList.length === 0 ? (
+                        <div className="p-6 text-center text-xs text-foreground/50 italic bg-muted/20 rounded-xl">No students currently in the waiting list. Classes have available capacity.</div>
+                      ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {waitingList.map(w => (
+                             <div key={w.id} className="p-3 border border-border bg-card rounded-xl flex justify-between items-center shadow-sm">
+                               <div>
+                                 <strong className="block text-xs font-bold text-foreground">{w.name}</strong>
+                                 <span className="text-[10px] text-foreground/60">{w.className} • Waitlisted on: {new Date(w.dateAdded).toLocaleDateString()}</span>
+                               </div>
+                               {isEditor && (
+                                 <button onClick={() => setWaitingList(prev => prev.filter(x => x.id !== w.id))} className="text-[10px] text-red-500 hover:text-red-400 font-bold bg-red-500/10 px-2 py-1 rounded transition-colors">Remove</button>
+                               )}
+                             </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Recycle Bin for Students */}
+                  {isEditor && recycleBin.filter(x => x.type === 'student').length > 0 && (
+                    <div className="mt-4 p-4 bg-red-500/5 border border-red-500/10 rounded-xl space-y-3">
+                      <span className="block text-xs font-bold text-red-400 uppercase tracking-wider flex items-center gap-1.5">
+                        ♻️ Recycle Bin: Recently Deleted Students
+                      </span>
+                      <div className="space-y-2">
+                        {recycleBin.filter(x => x.type === 'student').map((item) => (
+                          <div key={item.id} className="p-3 bg-card/40 border border-border/60 rounded-xl flex items-center justify-between gap-3 text-xs">
+                            <div>
+                              <strong className="block text-foreground font-bold">{item.labelName}</strong>
+                              <span className="text-[10px] text-foreground/50">{item.data.className} | Roll: {item.data.roll}</span>
+                            </div>
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setStudents((prev: any[]) => [...prev, item.data]);
+                                  setRecycleBin((prev: any[]) => prev.filter(x => x.id !== item.id));
+                                }}
+                                className="px-3 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-bold rounded border border-emerald-500/20 text-[10px] cursor-pointer"
+                              >
+                                Restore Data
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setRecycleBin((prev: any[]) => prev.filter(x => x.id !== item.id));
+                                }}
+                                className="px-3 py-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold rounded border border-red-500/20 text-[10px] cursor-pointer"
+                              >
+                                Purge
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
               {/* EMPLOYEE MANAGEMENT */}
               {(activeFeature === 'Teacher Management' || activeFeature === 'Employee Management') && (
                 <div className="space-y-4">
-                  {/* Add Teacher Form */}
+                  {/* Add Employee Form */}
                   {isEditor && (
                     <form 
                       onSubmit={(e) => {
                         e.preventDefault();
-                        if (!newTeacherName || !newTeacherSubject) return;
-                        requestSecurityVerification(`Register new teacher: "${newTeacherName}" for subject ${newTeacherSubject}`, () => {
+                        if (!newTeacherName) return;
+                        requestSecurityVerification(`Register new employee: "${newTeacherName}" as ${newEmployeeRole}`, () => {
                           setTeachers(prev => [
                             ...prev,
-                            { id: `t-${Date.now()}`, name: newTeacherName, subject: newTeacherSubject, className: newTeacherClass, status: 'Active' }
+                            { 
+                              id: `t-${Date.now()}`, 
+                              name: newTeacherName, 
+                              role: newEmployeeRole,
+                              subject: newTeacherSubject || 'N/A',
+                              className: newEmployeeRole === 'Teacher' ? newTeacherClass : 'N/A', 
+                              qualification: newTeacherQualification || 'N/A',
+                              salary: newTeacherSalary || 'N/A',
+                              experience: newTeacherExperience,
+                              email: newTeacherEmail || 'N/A',
+                              phone: newTeacherPhone || 'N/A',
+                              photo: newTeacherPhoto,
+                              doc: newTeacherDoc,
+                              status: 'Active' 
+                            }
                           ]);
                           setNewTeacherName('');
-                          setNewTeacherSubject('');
+                          setNewEmployeeRole('Teacher');
+                          setNewTeacherSubject(schoolSubjects[0]);
+                          setNewTeacherQualification('');
+                          setNewTeacherSalary('');
+                          setNewTeacherExperience('Fresh');
+                          setNewTeacherEmail('');
+                          setNewTeacherPhone('');
+                          setNewTeacherPhoto(null);
+                          setNewTeacherDoc(null);
                         });
                       }}
-                      className="p-4 bg-muted/30 border border-border rounded-xl space-y-3"
+                      className="p-5 bg-muted/30 border border-border rounded-xl space-y-4 shadow-inner"
                     >
-                      <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Add New Teacher</span>
-                      <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                        <input 
-                          type="text" 
-                          required 
-                          placeholder="Teacher Name"
-                          value={newTeacherName}
-                          onChange={(e) => setNewTeacherName(e.target.value)}
-                          className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
-                        />
-                        <input 
-                          type="text" 
-                          required 
-                          placeholder="Subject (e.g. Science)"
-                          value={newTeacherSubject}
-                          onChange={(e) => setNewTeacherSubject(e.target.value)}
-                          className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
-                        />
-                        <select 
-                          value={newTeacherClass} 
-                          onChange={(e) => setNewTeacherClass(e.target.value)}
-                          className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold"
-                        >
-                          <option value="Class 10-A">Class 10-A</option>
-                          <option value="Class 10-B">Class 10-B</option>
-                          <option value="Class 9-A">Class 9-A</option>
-                        </select>
+                      <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Add New Employee</span>
+                      
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] text-foreground/70 font-semibold">Employee Name</label>
+                          <input 
+                            type="text" 
+                            required 
+                            placeholder="Full Name"
+                            value={newTeacherName}
+                            onChange={(e) => setNewTeacherName(e.target.value)}
+                            className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] text-foreground/70 font-semibold">Designation / Role</label>
+                          <select 
+                            value={newEmployeeRole}
+                            onChange={(e) => setNewEmployeeRole(e.target.value)}
+                            className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold"
+                          >
+                            {['Teacher', 'Vice Principal', 'Coordinator', 'Domestic Staff', 'Helper', 'Guard', 'Electrician', 'Plumber', 'Gardener', 'Librarian', 'Accountant', 'Admin Staff'].map((role) => (
+                              <option key={role} value={role}>{role}</option>
+                            ))}
+                          </select>
+                        </div>
+
+                        {newEmployeeRole === 'Teacher' && (
+                          <>
+                            <div className="flex flex-col gap-1 animate-fadeIn">
+                              <label className="text-[10px] text-foreground/70 font-semibold">Subject</label>
+                              <select 
+                                value={newTeacherSubject}
+                                onChange={(e) => setNewTeacherSubject(e.target.value)}
+                                className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold"
+                              >
+                                {schoolSubjects.map((sub) => (
+                                  <option key={sub} value={sub}>{sub}</option>
+                                ))}
+                              </select>
+                            </div>
+
+                            <div className="flex flex-col gap-1 animate-fadeIn">
+                              <label className="text-[10px] text-foreground/70 font-semibold">Assigned Class Room</label>
+                              <select 
+                                value={newTeacherClass} 
+                                onChange={(e) => setNewTeacherClass(e.target.value)}
+                                className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold"
+                              >
+                                {filteredClasses.map((cls) => (
+                                  <option key={cls} value={cls}>{cls}</option>
+                                ))}
+                              </select>
+                            </div>
+                          </>
+                        )}
+                        {newEmployeeRole !== 'Teacher' && (
+                          <div className="flex flex-col gap-1 animate-fadeIn">
+                            <label className="text-[10px] text-foreground/70 font-semibold">Department / Field / Area</label>
+                            <input 
+                              type="text" 
+                              value={newTeacherSubject}
+                              onChange={(e) => setNewTeacherSubject(e.target.value)}
+                              placeholder="e.g. Maintenance, Security, Admin"
+                              className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold"
+                            />
+                          </div>
+                        )}
+
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] text-foreground/70 font-semibold">Academic Qualification</label>
+                          <input 
+                            type="text" 
+                            placeholder="e.g. M.Phil Physics, B.Ed"
+                            value={newTeacherQualification}
+                            onChange={(e) => setNewTeacherQualification(e.target.value)}
+                            className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] text-foreground/70 font-semibold">Decided Salary (Monthly)</label>
+                          <input 
+                            type="text" 
+                            placeholder="e.g. 45,000"
+                            value={newTeacherSalary}
+                            onChange={(e) => setNewTeacherSalary(e.target.value)}
+                            className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] text-foreground/70 font-semibold">Teaching Experience</label>
+                          <select 
+                            value={newTeacherExperience} 
+                            onChange={(e) => setNewTeacherExperience(e.target.value)}
+                            className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold"
+                          >
+                            <option value="Fresh">Fresh Graduate / Entry Level</option>
+                            <option value="1 Year">1 Year</option>
+                            <option value="2-3 Years">2-3 Years</option>
+                            <option value="5+ Years">5+ Years</option>
+                            <option value="10+ Years">10+ Years</option>
+                          </select>
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] text-foreground/70 font-semibold">Email Address</label>
+                          <input 
+                            type="email" 
+                            placeholder="e.g. teacher@school.com"
+                            value={newTeacherEmail}
+                            onChange={(e) => setNewTeacherEmail(e.target.value)}
+                            className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] text-foreground/70 font-semibold">Contact / Phone Number</label>
+                          <input 
+                            type="text" 
+                            placeholder="e.g. +92 300 1234567"
+                            value={newTeacherPhone}
+                            onChange={(e) => setNewTeacherPhone(e.target.value)}
+                            className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
+                          />
+                        </div>
                       </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                        {/* Profile Photo */}
+                        <div className="flex flex-col gap-2">
+                          <span className="text-[10px] font-bold text-foreground/70 uppercase">Teacher Profile Photo</span>
+                          <div className="relative border-2 border-dashed border-border rounded-xl p-4 bg-card/40 flex flex-col items-center justify-center text-center hover:border-primary/50 transition-colors h-[110px]">
+                            {newTeacherPhoto ? (
+                              <div className="flex items-center gap-3">
+                                <img src={newTeacherPhoto} alt="Preview" className="w-14 h-14 rounded-full object-cover border border-primary/30" />
+                                <button 
+                                  type="button" 
+                                  onClick={() => setNewTeacherPhoto(null)}
+                                  className="px-2.5 py-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-[10px] font-bold rounded-lg border border-red-500/20"
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            ) : (
+                              <>
+                                <label className="cursor-pointer flex flex-col items-center gap-1">
+                                  <Upload className="w-5 h-5 text-muted-foreground" />
+                                  <span className="text-[11px] text-foreground font-semibold">Upload Photo</span>
+                                  <span className="text-[9px] text-muted-foreground">PNG, JPG up to 2MB</span>
+                                  <input 
+                                    type="file" 
+                                    accept="image/*" 
+                                    className="hidden" 
+                                    onChange={(e) => {
+                                      const file = e.target.files?.[0];
+                                      if (file) {
+                                        const reader = new FileReader();
+                                        reader.onloadend = () => setNewTeacherPhoto(reader.result as string);
+                                        reader.readAsDataURL(file);
+                                      }
+                                    }} 
+                                  />
+                                </label>
+                              </>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Certificate / Application Doc */}
+                        <div className="flex flex-col gap-2">
+                          <span className="text-[10px] font-bold text-foreground/70 uppercase">Application Letter / Certificate</span>
+                          <div className="relative border-2 border-dashed border-border rounded-xl p-4 bg-card/40 flex flex-col items-center justify-center text-center hover:border-primary/50 transition-colors h-[110px]">
+                            {newTeacherDoc ? (
+                              <div className="flex items-center gap-3">
+                                <div className="p-2 bg-primary/10 border border-primary/20 rounded-lg text-primary">
+                                  <FileText className="w-6 h-6" />
+                                </div>
+                                <div className="text-left">
+                                  <span className="text-[10px] text-foreground font-bold block truncate max-w-[120px]">Document Loaded</span>
+                                  <button 
+                                    type="button" 
+                                    onClick={() => setNewTeacherDoc(null)}
+                                    className="text-[9px] text-red-400 hover:text-red-300 font-bold mt-0.5 underline block"
+                                  >
+                                    Remove Doc
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <label className="cursor-pointer flex flex-col items-center gap-1">
+                                  <Upload className="w-5 h-5 text-muted-foreground" />
+                                  <span className="text-[11px] text-foreground font-semibold">Attach Application / Degree</span>
+                                  <span className="text-[9px] text-muted-foreground">Upload Image Scan</span>
+                                  <input 
+                                    type="file" 
+                                    accept="image/*" 
+                                    className="hidden" 
+                                    onChange={(e) => {
+                                      const file = e.target.files?.[0];
+                                      if (file) {
+                                        const reader = new FileReader();
+                                        reader.onloadend = () => setNewTeacherDoc(reader.result as string);
+                                        reader.readAsDataURL(file);
+                                      }
+                                    }} 
+                                  />
+                                </label>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
                       <div className="flex justify-end pt-2">
-                        <button type="submit" className="px-6 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md">
-                          + Add Teacher
+                        <button type="submit" className="px-6 py-2.5 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md">
+                          + Appoint New Employee
                         </button>
                       </div>
                     </form>
                   )}
 
-                  {/* Teaching Staff Roster */}
+                  {/* Employee Staff Roster */}
                   <div className="space-y-3 pt-2 border-t border-border/60">
-
-                    <span className="block text-xs font-bold text-foreground/75 uppercase tracking-wider">Teaching Staff Roster</span>
+                    <span className="block text-xs font-bold text-foreground/75 uppercase tracking-wider">Employee Staff Roster</span>
                     <div className="flex flex-wrap justify-center gap-3">
-                      {teachers.map((teach) => (
-                        <div key={teach.id} className="p-4 bg-card/60 border border-border rounded-xl flex items-center justify-between gap-3 hover:border-primary/45 transition-all w-full md:w-[calc(50%-6px)]">
+                      {filteredTeachers.map((teach) => (
+                        <div 
+                          key={teach.id} 
+                          onClick={() => setSelectedDetailedTeacher(teach)}
+                          className="p-4 bg-card/60 border border-border rounded-xl flex items-center justify-between gap-3 hover:border-primary/45 hover:bg-card/80 transition-all w-full md:w-[calc(50%-6px)] cursor-pointer group shadow-sm"
+                        >
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-black text-primary text-xs shrink-0">
-                              {teach.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
-                            </div>
+                            {teach.photo ? (
+                              <img src={teach.photo} alt={teach.name} className="w-10 h-10 rounded-full object-cover border border-primary/20 shrink-0" />
+                            ) : (
+                              <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-black text-primary text-xs shrink-0 group-hover:scale-105 transition-transform">
+                                {teach.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()}
+                              </div>
+                            )}
                             <div>
-                              <strong className="block text-xs text-foreground font-bold">{teach.name}</strong>
-                              <span className="text-[10px] text-foreground/60 block">{teach.subject} | {teach.className}</span>
+                              <strong className="block text-xs text-foreground font-bold group-hover:text-primary transition-colors">{teach.name}</strong>
+                              <span className="text-[10px] font-bold text-primary block my-0.5">{teach.role || 'Teacher'}</span>
+                              {(!teach.role || teach.role === 'Teacher') ? (
+                                <span className="text-[10px] text-foreground/60 block">{teach.subject} | {teach.className}</span>
+                              ) : (
+                                <span className="text-[10px] text-foreground/60 block">Dep/Area: {teach.subject}</span>
+                              )}
+                              {teach.qualification && (
+                                <span className="text-[9px] font-semibold text-primary block mt-0.5">{teach.qualification}</span>
+                              )}
                             </div>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                             <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20 text-[9px] uppercase tracking-wider shrink-0">
                               Verified
                             </span>
@@ -4963,7 +5994,13 @@ export const UnifiedDashboard: React.FC = () => {
                               <button 
                                 onClick={() => requestSecureDelete(
                                   `Are you sure you want to dismiss and delete the teacher record for ${teach.name}?`,
-                                  () => setTeachers(prev => prev.filter(t => t.id !== teach.id))
+                                  () => {
+                                    setRecycleBin(prev => [...prev, { id: teach.id, type: 'teacher', data: teach, labelName: teach.name }]);
+                                    setTeachers((prev: any[]) => prev.filter(t => t.id !== teach.id));
+                                    if (selectedDetailedTeacher?.id === teach.id) {
+                                      setSelectedDetailedTeacher(null);
+                                    }
+                                  }
                                 )}
                                 className="text-[10px] text-red-400 hover:text-red-300 font-medium"
                               >
@@ -4975,6 +6012,133 @@ export const UnifiedDashboard: React.FC = () => {
                       ))}
                     </div>
                   </div>
+
+                  {/* Recycle Bin for Teachers */}
+                  {isEditor && recycleBin.filter(x => x.type === 'teacher').length > 0 && (
+                    <div className="mt-4 p-4 bg-red-500/5 border border-red-500/10 rounded-xl space-y-3">
+                      <span className="block text-xs font-bold text-red-400 uppercase tracking-wider flex items-center gap-1.5">
+                        ♻️ Recycle Bin: Recently Dismissed Teachers
+                      </span>
+                      <div className="space-y-2">
+                        {recycleBin.filter(x => x.type === 'teacher').map((item) => (
+                          <div key={item.id} className="p-3 bg-card/40 border border-border/60 rounded-xl flex items-center justify-between gap-3 text-xs" onClick={(e) => e.stopPropagation()}>
+                            <div>
+                              <strong className="block text-foreground font-bold">{item.labelName}</strong>
+                              <span className="text-[10px] text-foreground/50">{item.data.subject} | {item.data.className}</span>
+                            </div>
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setTeachers((prev: any[]) => [...prev, item.data]);
+                                  setRecycleBin((prev: any[]) => prev.filter(x => x.id !== item.id));
+                                }}
+                                className="px-3 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-bold rounded border border-emerald-500/20 text-[10px] cursor-pointer"
+                              >
+                                Restore Data
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setRecycleBin((prev: any[]) => prev.filter(x => x.id !== item.id));
+                                }}
+                                className="px-3 py-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold rounded border border-red-500/20 text-[10px] cursor-pointer"
+                              >
+                                Purge
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Teacher Details Modal */}
+                  {selectedDetailedTeacher && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+                      <div className="bg-background/95 border border-border w-full max-w-lg rounded-2xl shadow-2xl p-6 relative overflow-hidden flex flex-col max-h-[85vh]">
+                        {/* Modal Header */}
+                        <div className="flex items-center justify-between border-b border-border/80 pb-4 mb-4">
+                          <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">Teacher Profile File</h3>
+                          <button 
+                            onClick={() => setSelectedDetailedTeacher(null)}
+                            className="p-1 hover:bg-muted rounded-lg text-foreground/60 hover:text-foreground transition-colors text-xs font-semibold px-2"
+                          >
+                            Close
+                          </button>
+                        </div>
+
+                        {/* Modal Content */}
+                        <div className="space-y-4 overflow-y-auto pr-1 flex-1">
+                          <div className="flex items-center gap-4 p-3 bg-muted/20 border border-border/60 rounded-xl">
+                            {selectedDetailedTeacher.photo ? (
+                              <img src={selectedDetailedTeacher.photo} alt={selectedDetailedTeacher.name} className="w-16 h-16 rounded-full object-cover border-2 border-primary/30" />
+                            ) : (
+                              <div className="w-16 h-16 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center font-black text-primary text-xl">
+                                {selectedDetailedTeacher.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()}
+                              </div>
+                            )}
+                            <div>
+                              <h4 className="text-sm font-bold text-foreground">{selectedDetailedTeacher.name}</h4>
+                              <p className="text-xs text-foreground/60">{selectedDetailedTeacher.subject} Teacher</p>
+                              <span className="inline-block mt-1 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-[9px] font-bold">
+                                Assigned to {selectedDetailedTeacher.className}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-3.5">
+                            <div className="p-3 bg-card border border-border rounded-xl">
+                              <span className="block text-[9px] uppercase font-bold text-foreground/60">Qualification</span>
+                              <strong className="text-xs text-foreground block mt-0.5">{selectedDetailedTeacher.qualification || 'N/A'}</strong>
+                            </div>
+                            <div className="p-3 bg-card border border-border rounded-xl">
+                              <span className="block text-[9px] uppercase font-bold text-foreground/60">Decided Salary</span>
+                              <strong className="text-xs text-emerald-400 block mt-0.5 font-bold">
+                                {selectedDetailedTeacher.salary ? `Rs. ${selectedDetailedTeacher.salary}` : 'N/A'}
+                              </strong>
+                            </div>
+                            <div className="p-3 bg-card border border-border rounded-xl">
+                              <span className="block text-[9px] uppercase font-bold text-foreground/60">Experience</span>
+                              <strong className="text-xs text-foreground block mt-0.5">{selectedDetailedTeacher.experience || 'Fresh'}</strong>
+                            </div>
+                            <div className="p-3 bg-card border border-border rounded-xl">
+                              <span className="block text-[9px] uppercase font-bold text-foreground/60">Contract Status</span>
+                              <strong className="text-xs text-emerald-400 block mt-0.5 font-bold">{selectedDetailedTeacher.status || 'Active'}</strong>
+                            </div>
+                          </div>
+
+                          <div className="space-y-2 p-3 bg-card border border-border rounded-xl">
+                            <span className="block text-[9px] uppercase font-bold text-foreground/60">Contact Details</span>
+                            <div className="text-xs space-y-1 text-foreground/80 font-medium">
+                              <div className="flex justify-between">
+                                <span>Email:</span>
+                                <span className="text-primary hover:underline cursor-pointer">{selectedDetailedTeacher.email || 'N/A'}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span>Phone:</span>
+                                <span>{selectedDetailedTeacher.phone || 'N/A'}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Attached Certificate / Application Preview */}
+                          <div className="space-y-2">
+                            <span className="block text-[10px] font-bold text-foreground/75 uppercase tracking-wider">Attached Application / Degree Certificate Scan:</span>
+                            {selectedDetailedTeacher.doc ? (
+                              <div className="border border-border/80 rounded-xl overflow-hidden bg-card p-1">
+                                <img src={selectedDetailedTeacher.doc} alt="Attachment Preview" className="w-full h-auto max-h-[300px] object-contain rounded-lg" />
+                              </div>
+                            ) : (
+                              <div className="p-6 text-center bg-muted/20 border border-dashed border-border rounded-xl text-xs text-muted-foreground">
+                                No certificate or application scan document was uploaded.
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
               )}
@@ -5208,121 +6372,94 @@ export const UnifiedDashboard: React.FC = () => {
 {(activeFeature === 'Attendance Monitoring' || activeFeature === 'Attendance Marking' || activeFeature === 'Child Attendance' || activeFeature === 'Attendance Ledger') && (
                 <div className="space-y-4 animate-fadeIn">
                   <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
-                    📊 View and log weekly attendance records {isEditor ? "alongside average campus attendance trends" : "and monitor child presence stats"}.
+                    {isEditor ? "📊 View and log weekly attendance records alongside average campus attendance trends." : "📅 Track your daily attendance, monitor overall presence, and review leave history."}
                   </div>
 
-                  {/* Side-by-Side Attendance & Performance Analytics */}
-                  <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-5 pt-1">
-                    
-                    {/* Attendance Tracking Grid */}
-                    <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl space-y-3 flex flex-col text-slate-200">
-                      <span className="text-[11px] font-bold text-primary uppercase tracking-wider block text-center">Attendance Tracking (Weekly)</span>
-                      <div className="overflow-x-auto">
-                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left text-[11px] border-collapse">
-                          <thead>
-                            <tr className="text-slate-500 font-bold border-b border-slate-800/80">
-                              <th className="pb-1.5">Student</th>
-                              <th className="pb-1.5 text-center">M</th>
-                              <th className="pb-1.5 text-center">T</th>
-                              <th className="pb-1.5 text-center">W</th>
-                              <th className="pb-1.5 text-center">T</th>
-                              <th className="pb-1.5 text-center">F</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-slate-800/50">
-                            {students
-                              .filter(s => isEditor || s.name === 'Kamran Shah')
-                              .map((s) => (
-                              <tr key={s.id}>
-                                <td className="py-2.5 font-semibold text-slate-300">{s.name.split(' ')[0]}</td>
-                                <td className="py-2.5 text-center text-emerald-400 font-bold">✓</td>
-                                <td className="py-2.5 text-center text-emerald-400 font-bold">✓</td>
-                                <td className="py-2.5 text-center text-emerald-400 font-bold">✓</td>
-                                <td className="py-2.5 text-center text-rose-500 font-bold">{s.id === '3' ? '✗' : '✓'}</td>
-                                <td className="py-2.5 text-center text-emerald-400 font-bold">✓</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table></div>
-                      </div>
-                    </div>
+                  {isEditor ? (
+                    <>
+                      {/* Side-by-Side Attendance & Performance Analytics */}
+                      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-5 pt-1">
+                        
+                        {/* Attendance Tracking Grid */}
+                        <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl space-y-3 flex flex-col text-slate-200 shadow-xl">
+                          <span className="text-[11px] font-bold text-primary uppercase tracking-wider block text-center">Attendance Tracking (Weekly)</span>
+                          <div className="overflow-x-auto">
+                            <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left text-[11px] border-collapse">
+                              <thead>
+                                <tr className="text-slate-500 font-bold border-b border-slate-800/80">
+                                  <th className="pb-1.5">Student</th>
+                                  <th className="pb-1.5 text-center">M</th>
+                                  <th className="pb-1.5 text-center">T</th>
+                                  <th className="pb-1.5 text-center">W</th>
+                                  <th className="pb-1.5 text-center">T</th>
+                                  <th className="pb-1.5 text-center">F</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-slate-800/50">
+                                {students
+                                  .map((s) => (
+                                  <tr key={s.id}>
+                                    <td className="py-2.5 font-semibold text-slate-300">{s.name.split(' ')[0]}</td>
+                                    <td className="py-2.5 text-center text-emerald-400 font-bold">✓</td>
+                                    <td className="py-2.5 text-center text-emerald-400 font-bold">✓</td>
+                                    <td className="py-2.5 text-center text-emerald-400 font-bold">✓</td>
+                                    <td className={`py-2.5 text-center font-bold ${s.id === '3' ? 'text-rose-500' : 'text-emerald-400'}`}>{s.id === '3' ? '✗' : '✓'}</td>
+                                    <td className="py-2.5 text-center text-emerald-400 font-bold">✓</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table></div>
+                          </div>
+                        </div>
 
-                    {/* Attendance Analytics or Personal Metrics */}
-                    {isEditor ? (
-                      <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl space-y-3 flex flex-col justify-between text-slate-200">
-                        <span className="text-[11px] font-bold text-primary uppercase tracking-wider block text-center">Campus Attendance Trends</span>
-                        <div className="flex items-end justify-between h-36 pt-4 px-2">
-                          {[
-                            { label: '10-A', val: 94 },
-                            { label: '10-B', val: 98 },
-                            { label: '9-A', val: 90 },
-                            { label: '9-B', val: 95 },
-                            { label: '8-A', val: 92 }
-                          ].map((bar, i) => {
-                            const isHighlyRewarded = bar.val >= 95;
-                            return (
-                              <div key={i} className="flex flex-col items-center justify-end h-full w-12 group relative">
-                                {/* Hover tooltip */}
-                                <div className="absolute -top-6 bg-slate-950 text-[9px] text-white px-2 py-0.5 rounded shadow opacity-0 group-hover:opacity-100 transition-all font-bold pointer-events-none z-10 whitespace-nowrap">
-                                  {bar.val}% Attendance
+                        {/* Attendance Analytics or Personal Metrics */}
+                        <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl space-y-3 flex flex-col justify-between text-slate-200 shadow-xl">
+                          <span className="text-[11px] font-bold text-primary uppercase tracking-wider block text-center">Campus Attendance Trends</span>
+                          <div className="flex items-end justify-between h-36 pt-4 px-2">
+                            {[
+                              { label: '10-A', val: 94 },
+                              { label: '10-B', val: 98 },
+                              { label: '9-A', val: 90 },
+                              { label: '9-B', val: 95 },
+                              { label: '8-A', val: 92 }
+                            ].map((bar, i) => {
+                              const isHighlyRewarded = bar.val >= 95;
+                              return (
+                                <div key={i} className="flex flex-col items-center justify-end h-full w-12 group relative">
+                                  {/* Hover tooltip */}
+                                  <div className="absolute -top-6 bg-slate-950 text-[9px] text-white px-2 py-0.5 rounded shadow opacity-0 group-hover:opacity-100 transition-all font-bold pointer-events-none z-10 whitespace-nowrap">
+                                    {bar.val}% Attendance
+                                  </div>
+                                  <span className={`text-[9px] font-extrabold mb-1 transition-all ${
+                                    isHighlyRewarded ? 'text-emerald-400 font-black scale-105' : 'text-purple-400'
+                                  }`}>{bar.val}%</span>
+                                  {/* Background slot */}
+                                  <div className="w-5 bg-slate-800/60 rounded-t-md h-20 relative overflow-hidden flex items-end border border-slate-700/30">
+                                    {/* Colored Bar */}
+                                    <div 
+                                      className={`w-full rounded-t-sm transition-all duration-700 bg-gradient-to-t ${
+                                        isHighlyRewarded 
+                                          ? 'from-emerald-600 to-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.4)]' 
+                                          : 'from-purple-600/90 to-purple-400 shadow-[0_0_8px_rgba(168,85,247,0.3)]'
+                                      }`}
+                                      style={{ height: `${bar.val}%` }}
+                                    ></div>
+                                  </div>
+                                  <span className="text-[9px] text-slate-400 font-bold mt-1.5">{bar.label}</span>
                                 </div>
-                                <span className={`text-[9px] font-extrabold mb-1 transition-all ${
-                                  isHighlyRewarded ? 'text-emerald-400 font-black scale-105' : 'text-purple-400'
-                                }`}>{bar.val}%</span>
-                                {/* Background slot */}
-                                <div className="w-5 bg-slate-800/60 rounded-t-md h-20 relative overflow-hidden flex items-end border border-slate-700/30">
-                                  {/* Colored Bar */}
-                                  <div 
-                                    className={`w-full rounded-t-sm transition-all duration-700 bg-gradient-to-t ${
-                                      isHighlyRewarded 
-                                        ? 'from-emerald-600 to-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.4)]' 
-                                        : 'from-purple-600/90 to-purple-400 shadow-[0_0_8px_rgba(168,85,247,0.3)]'
-                                    }`}
-                                    style={{ height: `${bar.val}%` }}
-                                  ></div>
-                                </div>
-                                <span className="text-[9px] text-slate-400 font-bold mt-1.5">{bar.label}</span>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl space-y-3 flex flex-col justify-between text-slate-200">
-                        <span className="text-[11px] font-bold text-primary uppercase tracking-wider block text-center">Attendance Ledger Overview</span>
-                        <div className="space-y-3 py-2 text-xs">
-                          <div className="flex justify-between border-b border-slate-800 pb-1.5">
-                            <span className="text-slate-400">Total Present Days</span>
-                            <span className="font-bold text-emerald-400">46 Days (96.5%)</span>
-                          </div>
-                          <div className="flex justify-between border-b border-slate-800 pb-1.5">
-                            <span className="text-slate-400">Approved Leaves</span>
-                            <span className="font-bold text-blue-400">2 Days</span>
-                          </div>
-                          <div className="flex justify-between border-b border-slate-800 pb-1.5">
-                            <span className="text-slate-400">Unexcused Absences</span>
-                            <span className="font-bold text-rose-500">1 Day</span>
-                          </div>
-                          <div className="text-[10px] text-slate-500 italic text-center pt-1">
-                            Your attendance is within the standard requirements. Keep it up!
+                              );
+                            })}
                           </div>
                         </div>
                       </div>
-                    )}
-
-                  </div>
-                  <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
-                    {students
-                      .filter(s => isEditor || s.name === 'Kamran Shah') // Only show own attendance details to student/parent
-                      .map((stud) => (
-                      <div key={stud.id} className="p-3.5 bg-card border border-border rounded-xl flex items-center justify-between">
-                        <div>
-                          <strong className="block text-sm text-foreground">{stud.name}</strong>
-                          <span className="text-xs text-foreground/50">{stud.className} | {getRollLabel()}: {stud.roll}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          {isEditor ? (
-                            <>
+                      <div className="space-y-2 max-h-72 overflow-y-auto pr-1 mt-4">
+                        {students.map((stud) => (
+                          <div key={stud.id} className="p-3.5 bg-card border border-border rounded-xl flex items-center justify-between shadow-sm">
+                            <div>
+                              <strong className="block text-sm text-foreground">{stud.name}</strong>
+                              <span className="text-xs text-foreground/50">{stud.className} | {getRollLabel()}: {stud.roll}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
                               <button
                                 onClick={() => {
                                   requestSecurityVerification(`Mark student "${stud.name}" as Present`, () => {
@@ -5351,20 +6488,102 @@ export const UnifiedDashboard: React.FC = () => {
                               >
                                 Absent
                               </button>
-                            </>
-                          ) : (
-                            <span className={`px-3 py-1.5 rounded-lg text-xs font-bold border ${
-                              stud.status === 'Present'
-                                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                                : 'bg-red-500/10 text-red-400 border-red-500/20'
-                            }`}>
-                              {stud.status}
-                            </span>
-                          )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 pt-1 w-full">
+                      
+                      {/* Left: Key Stats & Beautiful Circular Progress */}
+                      <div className="lg:col-span-5 p-6 bg-gradient-to-br from-indigo-500/10 to-purple-500/5 border border-indigo-500/20 rounded-3xl flex flex-col justify-between space-y-6 shadow-xl">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2.5 bg-indigo-500/20 rounded-xl text-indigo-400">
+                            <UserCheck className="w-6 h-6" />
+                          </div>
+                          <div>
+                            <h3 className="text-base font-black text-foreground">Attendance Overview</h3>
+                            <p className="text-[11px] font-medium text-foreground/60">Current Semester</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center justify-center py-4 relative">
+                          {/* Simulated SVG Donut Chart */}
+                          <div className="relative w-40 h-40 flex items-center justify-center">
+                            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                              <circle cx="50" cy="50" r="40" fill="transparent" stroke="currentColor" strokeWidth="12" className="text-muted/40" />
+                              <circle cx="50" cy="50" r="40" fill="transparent" stroke="currentColor" strokeWidth="12" className="text-emerald-500 drop-shadow-[0_0_8px_rgba(16,185,129,0.6)] transition-all duration-1000 ease-out" strokeDasharray="251.2" strokeDashoffset={251.2 * (1 - 0.965)} strokeLinecap="round" />
+                            </svg>
+                            <div className="absolute flex flex-col items-center justify-center text-center">
+                              <strong className="text-3xl font-black text-foreground">96<span className="text-xl">.5%</span></strong>
+                              <span className="text-[10px] font-bold text-foreground/50 uppercase tracking-widest mt-0.5">Present</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="bg-card/80 backdrop-blur-sm border border-border/60 p-4 rounded-2xl flex flex-col justify-center items-center text-center shadow-sm hover:border-emerald-500/30 transition-colors">
+                            <span className="text-[10px] uppercase font-bold text-foreground/60 tracking-wider">Total Present</span>
+                            <strong className="text-2xl font-black text-emerald-500 mt-1">46</strong>
+                            <span className="text-[9px] font-semibold text-emerald-500/70">DAYS</span>
+                          </div>
+                          <div className="bg-card/80 backdrop-blur-sm border border-border/60 p-4 rounded-2xl flex flex-col justify-center items-center text-center shadow-sm hover:border-rose-500/30 transition-colors">
+                            <span className="text-[10px] uppercase font-bold text-foreground/60 tracking-wider">Absences</span>
+                            <strong className="text-2xl font-black text-rose-500 mt-1">1</strong>
+                            <span className="text-[9px] font-semibold text-rose-500/70">DAY</span>
+                          </div>
                         </div>
                       </div>
-                    ))}
-                  </div>
+
+                      {/* Right: Weekly Log & Status Tracker */}
+                      <div className="lg:col-span-7 flex flex-col gap-5">
+                        
+                        <div className="p-6 bg-card border border-border rounded-3xl flex-1 flex flex-col shadow-xl hover:shadow-primary/5 transition-all">
+                          <h4 className="text-sm font-bold text-foreground flex items-center gap-2 mb-4">
+                            <Calendar className="w-4 h-4 text-primary" />
+                            This Week's Activity
+                          </h4>
+                          <div className="flex-1 flex flex-col justify-between space-y-2">
+                            {[
+                              { day: 'Monday', date: 'June 08', status: 'Present', color: 'emerald' },
+                              { day: 'Tuesday', date: 'June 09', status: 'Present', color: 'emerald' },
+                              { day: 'Wednesday', date: 'June 10', status: 'Present', color: 'emerald' },
+                              { day: 'Thursday', date: 'June 11', status: 'Absent', color: 'rose' },
+                              { day: 'Friday', date: 'June 12', status: 'Present', color: 'emerald' }
+                            ].map((row, idx) => (
+                              <div key={idx} className="flex items-center justify-between p-3.5 rounded-2xl bg-muted/20 border border-border/40 hover:bg-muted/40 transition-colors">
+                                <div className="flex items-center gap-3">
+                                  <div className={`w-2 h-2 rounded-full ${row.color === 'emerald' ? 'bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.6)]' : 'bg-rose-500 shadow-[0_0_6px_rgba(244,63,94,0.6)]'}`}></div>
+                                  <div>
+                                    <span className="text-sm font-bold text-foreground block">{row.day}</span>
+                                    <span className="text-[10px] text-foreground/50 font-semibold">{row.date}</span>
+                                  </div>
+                                </div>
+                                <span className={`px-3 py-1 bg-${row.color}-500/10 text-${row.color}-500 border border-${row.color}-500/20 text-[11px] font-bold rounded-lg uppercase tracking-wider`}>
+                                  {row.status}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="p-5 bg-card/60 border border-border rounded-2xl flex items-center gap-4">
+                           <div className="p-3 bg-blue-500/10 rounded-xl text-blue-500 shrink-0">
+                             <AlertTriangle className="w-5 h-5" />
+                           </div>
+                           <div>
+                             <h4 className="text-xs font-bold text-foreground">Need to take a day off?</h4>
+                             <p className="text-[11px] text-foreground/60 mt-0.5 leading-relaxed">Submit a leave request in advance to ensure it counts as an "Approved Leave" rather than an unexcused absence.</p>
+                           </div>
+                           <button onClick={() => setActiveFeature('Leave Management')} className="ml-auto px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold rounded-xl transition-colors shrink-0 shadow-md">
+                             Request Leave
+                           </button>
+                        </div>
+                      </div>
+
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -5503,13 +6722,15 @@ export const UnifiedDashboard: React.FC = () => {
                     
                     {/* Mock grid */}
                     <div className="overflow-x-auto mt-4">
-                       <table className="w-full min-w-[600px] text-center border-collapse">
+                       <table className="w-full min-w-[800px] text-center border-collapse">
                          <thead>
                            <tr className="border-b border-border text-[10px] font-black text-muted-foreground uppercase">
                              <th className="p-2 border-r border-border/50">Time</th>
                              <th className="p-2 border-r border-border/50">Monday</th>
                              <th className="p-2 border-r border-border/50">Tuesday</th>
                              <th className="p-2 border-r border-border/50">Wednesday</th>
+                             <th className="p-2 border-r border-border/50">Thursday</th>
+                             <th className="p-2 border-r border-border/50">Friday</th>
                            </tr>
                          </thead>
                          <tbody className="text-[10px]">
@@ -5518,15 +6739,91 @@ export const UnifiedDashboard: React.FC = () => {
                              <td className="p-2 border-r border-border/50 bg-blue-500/10 text-blue-500 font-semibold">Physics (Lab)</td>
                              <td className="p-2 border-r border-border/50 bg-emerald-500/10 text-emerald-500 font-semibold">Maths</td>
                              <td className="p-2 border-r border-border/50 bg-amber-500/10 text-amber-500 font-semibold">English</td>
+                             <td className="p-2 border-r border-border/50 bg-purple-500/10 text-purple-500 font-semibold">Chemistry</td>
+                             <td className="p-2 border-r border-border/50 bg-rose-500/10 text-rose-500 font-semibold">Biology</td>
                            </tr>
                            <tr className="border-b border-border/50">
                              <td className="p-2 border-r border-border/50 font-bold">09:00 AM</td>
                              <td className="p-2 border-r border-border/50 bg-emerald-500/10 text-emerald-500 font-semibold">Maths</td>
                              <td className="p-2 border-r border-border/50 bg-purple-500/10 text-purple-500 font-semibold">Chemistry</td>
                              <td className="p-2 border-r border-border/50 bg-rose-500/10 text-rose-500 font-semibold">Biology</td>
+                             <td className="p-2 border-r border-border/50 bg-blue-500/10 text-blue-500 font-semibold">Physics</td>
+                             <td className="p-2 border-r border-border/50 bg-amber-500/10 text-amber-500 font-semibold">English</td>
+                           </tr>
+                           <tr className="border-b border-border/50">
+                             <td className="p-2 border-r border-border/50 font-bold">10:00 AM</td>
+                             <td className="p-2 border-r border-border/50 bg-amber-500/10 text-amber-500 font-semibold">English</td>
+                             <td className="p-2 border-r border-border/50 bg-rose-500/10 text-rose-500 font-semibold">Biology</td>
+                             <td className="p-2 border-r border-border/50 bg-blue-500/10 text-blue-500 font-semibold">Physics</td>
+                             <td className="p-2 border-r border-border/50 bg-emerald-500/10 text-emerald-500 font-semibold">Maths</td>
+                             <td className="p-2 border-r border-border/50 bg-purple-500/10 text-purple-500 font-semibold">Chemistry</td>
                            </tr>
                          </tbody>
                        </table>
+                    </div>
+
+                    {/* Manage Substitutes Section */}
+                    <div className="mt-6 pt-4 border-t border-border/50">
+                      <div className="flex justify-between items-center mb-4">
+                        <strong className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-2">👨‍🏫 Teacher Substitutes (Proxies)</strong>
+                        <button 
+                          onClick={() => setShowSubstituteForm(!showSubstituteForm)}
+                          className="px-3 py-1.5 bg-amber-500 text-white rounded text-[10px] font-bold shadow-md hover:bg-amber-600 transition-colors"
+                        >
+                          {showSubstituteForm ? 'Cancel' : '+ Add Substitute'}
+                        </button>
+                      </div>
+
+                      {showSubstituteForm && (
+                        <form onSubmit={(e) => {
+                          e.preventDefault();
+                          const form = e.target as any;
+                          setSubstitutes([{
+                            id: Date.now().toString(),
+                            date: form.subDate.value,
+                            absentTeacher: form.absentTeacher.value,
+                            substituteTeacher: form.subTeacher.value,
+                            period: form.subPeriod.value
+                          }, ...substitutes]);
+                          setShowSubstituteForm(false);
+                          form.reset();
+                        }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3 mb-4 animate-fadeIn">
+                          <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Assign Alternative Teacher</span>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                            <input name="subDate" type="date" required defaultValue={new Date().toISOString().split('T')[0]} className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" />
+                            <select name="absentTeacher" required className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
+                              <option value="">Select Absent Teacher</option>
+                              {teachers.map(t => <option key={t.id} value={`${t.name} (${t.subject})`}>{t.name} ({t.subject})</option>)}
+                              <option value="Mr. Ali (Physics)">Mr. Ali (Physics)</option>
+                            </select>
+                            <select name="subTeacher" required className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
+                              <option value="">Select Substitute Teacher</option>
+                              {teachers.map(t => <option key={`sub-${t.id}`} value={`${t.name} (${t.subject})`}>{t.name} ({t.subject})</option>)}
+                              <option value="Ms. Sana (Science)">Ms. Sana (Science)</option>
+                            </select>
+                            <input name="subPeriod" required placeholder="Period / Time (e.g. 09:00 AM)" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" />
+                          </div>
+                          <div className="flex justify-end pt-2">
+                            <button type="submit" className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary/90">Assign Substitute</button>
+                          </div>
+                        </form>
+                      )}
+
+                      {substitutes.length > 0 ? (
+                        <div className="space-y-2">
+                          {substitutes.map(sub => (
+                            <div key={sub.id} className="flex justify-between items-center p-3 border border-border rounded-lg bg-card shadow-sm">
+                              <div className="flex flex-col gap-0.5">
+                                <span className="text-xs font-bold text-amber-500">Absent: {sub.absentTeacher}</span>
+                                <span className="text-[10px] text-foreground/70">Replaced by <strong className="text-emerald-500">{sub.substituteTeacher}</strong> at {sub.period}</span>
+                              </div>
+                              <span className="text-[10px] font-mono text-muted-foreground">{sub.date}</span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-xs text-muted-foreground text-center py-4 italic">No substitutes assigned currently.</p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -5538,10 +6835,16 @@ export const UnifiedDashboard: React.FC = () => {
                     <div className="flex-1 space-y-4">
                       <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Exam Controller</span>
                       <div className="space-y-2">
-                        <button className="w-full flex justify-between items-center p-3 bg-muted/20 border border-border rounded-lg text-[11px] text-foreground hover:border-primary transition-colors">
+                        <button 
+                          onClick={() => setActiveExamView('datesheet')}
+                          className={`w-full flex justify-between items-center p-3 border rounded-lg text-[11px] transition-colors ${activeExamView === 'datesheet' ? 'bg-primary/10 border-primary text-primary' : 'bg-muted/20 border-border text-foreground hover:border-primary'}`}
+                        >
                           <span className="font-bold">Generate Date Sheet</span> <ChevronRight className="w-3 h-3 text-muted-foreground" />
                         </button>
-                        <button className="w-full flex justify-between items-center p-3 bg-muted/20 border border-border rounded-lg text-[11px] text-foreground hover:border-primary transition-colors">
+                        <button 
+                          onClick={() => setActiveExamView('halltickets')}
+                          className={`w-full flex justify-between items-center p-3 border rounded-lg text-[11px] transition-colors ${activeExamView === 'halltickets' ? 'bg-primary/10 border-primary text-primary' : 'bg-muted/20 border-border text-foreground hover:border-primary'}`}
+                        >
                           <span className="font-bold">Print Hall Tickets / Roll No Slips</span> <ChevronRight className="w-3 h-3 text-muted-foreground" />
                         </button>
                       </div>
@@ -5555,8 +6858,13 @@ export const UnifiedDashboard: React.FC = () => {
                       <button 
                         onClick={(e) => {
                            const btn = e.currentTarget;
+                           const originalText = btn.innerHTML;
                            btn.innerHTML = '<span class="animate-pulse">Aggregating Subject Grades...</span>';
-                           setTimeout(() => btn.innerHTML = '✅ Report Cards Compiled & Ready for Print', 2000);
+                           setTimeout(() => {
+                             btn.innerHTML = '✅ Report Cards Compiled & Ready for Print';
+                             setActiveExamView('results');
+                             setTimeout(() => btn.innerHTML = originalText, 3000);
+                           }, 1500);
                         }}
                         className="w-full px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-lg transition-colors shadow-lg shadow-emerald-500/20"
                       >
@@ -5564,6 +6872,144 @@ export const UnifiedDashboard: React.FC = () => {
                       </button>
                     </div>
                   </div>
+
+                  {activeExamView === 'datesheet' && (
+                    <div className="mt-4 p-4 border border-border rounded-xl bg-card animate-fadeIn">
+                      <div className="flex justify-between items-center mb-4">
+                        <h4 className="text-sm font-bold text-foreground">Mid-Term Examination Date Sheet</h4>
+                        <button onClick={() => setActiveExamView(null)} className="text-xs text-muted-foreground hover:text-foreground">Close</button>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-[11px] border-collapse min-w-[500px]">
+                          <thead>
+                            <tr className="border-b border-border/50 text-muted-foreground bg-muted/20">
+                              <th className="p-3">Date</th>
+                              <th className="p-3">Day</th>
+                              <th className="p-3">Grade 9</th>
+                              <th className="p-3">Grade 10</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className="border-b border-border/50 hover:bg-muted/10 transition-colors">
+                              <td className="p-3 font-bold text-foreground">15 Oct 2026</td>
+                              <td className="p-3 text-foreground/80">Monday</td>
+                              <td className="p-3 text-blue-500 font-semibold">Physics</td>
+                              <td className="p-3 text-emerald-500 font-semibold">Maths</td>
+                            </tr>
+                            <tr className="border-b border-border/50 hover:bg-muted/10 transition-colors">
+                              <td className="p-3 font-bold text-foreground">16 Oct 2026</td>
+                              <td className="p-3 text-foreground/80">Tuesday</td>
+                              <td className="p-3 text-amber-500 font-semibold">English</td>
+                              <td className="p-3 text-rose-500 font-semibold">Biology</td>
+                            </tr>
+                            <tr className="border-b border-border/50 hover:bg-muted/10 transition-colors">
+                              <td className="p-3 font-bold text-foreground">17 Oct 2026</td>
+                              <td className="p-3 text-foreground/80">Wednesday</td>
+                              <td className="p-3 text-emerald-500 font-semibold">Maths</td>
+                              <td className="p-3 text-purple-500 font-semibold">Chemistry</td>
+                            </tr>
+                            <tr className="border-b border-border/50 hover:bg-muted/10 transition-colors">
+                              <td className="p-3 font-bold text-foreground">18 Oct 2026</td>
+                              <td className="p-3 text-foreground/80">Thursday</td>
+                              <td className="p-3 text-rose-500 font-semibold">Biology</td>
+                              <td className="p-3 text-amber-500 font-semibold">English</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div className="flex justify-end mt-4">
+                        <button className="px-4 py-2 bg-primary hover:bg-primary/90 transition-colors text-white text-xs font-bold rounded-lg shadow-sm">Export PDF</button>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeExamView === 'halltickets' && (
+                    <div className="mt-4 p-4 border border-border rounded-xl bg-card animate-fadeIn">
+                      <div className="flex justify-between items-center mb-4">
+                        <h4 className="text-sm font-bold text-foreground">Generated Hall Tickets (Grade 9 & 10)</h4>
+                        <button onClick={() => setActiveExamView(null)} className="text-xs text-muted-foreground hover:text-foreground">Close</button>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {[
+                          { roll: '1042', name: 'Ali Khan', grade: 'Grade 10-A', center: 'Hall A' },
+                          { roll: '1043', name: 'Sarah Ahmed', grade: 'Grade 9-B', center: 'Hall B' },
+                          { roll: '1044', name: 'Zainab Bibi', grade: 'Grade 10-B', center: 'Hall A' },
+                          { roll: '1045', name: 'Hamza Tariq', grade: 'Grade 9-A', center: 'Hall C' }
+                        ].map((ticket, idx) => (
+                          <div key={idx} className="p-4 border border-border rounded-xl bg-muted/10 hover:bg-muted/30 transition-colors">
+                            <div className="flex justify-between items-center border-b border-border/50 pb-3 mb-3">
+                              <div className="flex flex-col">
+                                <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Roll No</span>
+                                <strong className="text-sm text-foreground">{ticket.roll}</strong>
+                              </div>
+                              <span className="text-[10px] font-bold px-2.5 py-1 bg-primary/10 text-primary rounded-full">{ticket.grade}</span>
+                            </div>
+                            <p className="text-sm font-bold text-primary mb-1">{ticket.name}</p>
+                            <p className="text-xs text-muted-foreground flex items-center gap-1"><MapPin size={12} /> Center: {ticket.center}</p>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="flex justify-end mt-4">
+                        <button className="px-4 py-2 bg-primary hover:bg-primary/90 transition-colors text-white text-xs font-bold rounded-lg shadow-sm">Print All Slips</button>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeExamView === 'results' && (
+                    <div className="mt-4 p-4 border border-border rounded-xl bg-card animate-fadeIn">
+                      <div className="flex justify-between items-center mb-4">
+                        <h4 className="text-sm font-bold text-foreground">Compiled Final Results</h4>
+                        <button onClick={() => setActiveExamView(null)} className="text-xs text-muted-foreground hover:text-foreground">Close</button>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-[11px] border-collapse min-w-[600px]">
+                          <thead>
+                            <tr className="border-b border-border/50 text-muted-foreground bg-muted/20">
+                              <th className="p-3">Roll No</th>
+                              <th className="p-3">Student Name</th>
+                              <th className="p-3">Grade</th>
+                              <th className="p-3">Total Marks</th>
+                              <th className="p-3">Percentage</th>
+                              <th className="p-3">Status</th>
+                              <th className="p-3 text-right">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className="border-b border-border/50 hover:bg-muted/10 transition-colors">
+                              <td className="p-3 text-foreground/80">1042</td>
+                              <td className="p-3 font-bold text-primary">Ali Khan</td>
+                              <td className="p-3 text-foreground/80">10-A</td>
+                              <td className="p-3 text-foreground/80">850/1100</td>
+                              <td className="p-3 font-mono font-bold text-foreground">77.2%</td>
+                              <td className="p-3"><span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 font-bold rounded border border-emerald-500/20 text-[9px] uppercase tracking-wider">Pass</span></td>
+                              <td className="p-3 text-right"><button className="text-primary hover:text-primary/80 font-bold text-[10px]">Print Card</button></td>
+                            </tr>
+                            <tr className="border-b border-border/50 hover:bg-muted/10 transition-colors">
+                              <td className="p-3 text-foreground/80">1043</td>
+                              <td className="p-3 font-bold text-primary">Sarah Ahmed</td>
+                              <td className="p-3 text-foreground/80">9-B</td>
+                              <td className="p-3 text-foreground/80">920/1100</td>
+                              <td className="p-3 font-mono font-bold text-foreground">83.6%</td>
+                              <td className="p-3"><span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 font-bold rounded border border-emerald-500/20 text-[9px] uppercase tracking-wider">Pass</span></td>
+                              <td className="p-3 text-right"><button className="text-primary hover:text-primary/80 font-bold text-[10px]">Print Card</button></td>
+                            </tr>
+                            <tr className="border-b border-border/50 hover:bg-muted/10 transition-colors">
+                              <td className="p-3 text-foreground/80">1044</td>
+                              <td className="p-3 font-bold text-primary">Zainab Bibi</td>
+                              <td className="p-3 text-foreground/80">10-B</td>
+                              <td className="p-3 text-foreground/80">410/1100</td>
+                              <td className="p-3 font-mono font-bold text-foreground">37.2%</td>
+                              <td className="p-3"><span className="px-2 py-0.5 bg-rose-500/10 text-rose-500 font-bold rounded border border-rose-500/20 text-[9px] uppercase tracking-wider">Fail</span></td>
+                              <td className="p-3 text-right"><button className="text-primary hover:text-primary/80 font-bold text-[10px]">Print Card</button></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div className="flex justify-end mt-4">
+                        <button className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 transition-colors text-white text-xs font-bold rounded-lg shadow-sm">Publish All Results</button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -5954,10 +7400,10 @@ export const UnifiedDashboard: React.FC = () => {
               {(activeFeature === 'School KPI Dashboard' || activeFeature === 'Revenue Dashboard' || activeFeature === 'Student Growth Dashboard' || activeFeature === 'Teacher Performance Dashboard') && (
                 <div className="space-y-4 animate-fadeIn">
                   <div className="flex gap-4 mb-4 overflow-x-auto pb-2">
-                    <button className={`px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${activeFeature === 'School KPI Dashboard' ? 'bg-primary text-white' : 'bg-muted/50 text-foreground hover:bg-muted'}`}>School KPI</button>
-                    <button className={`px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${activeFeature === 'Revenue Dashboard' ? 'bg-emerald-500 text-white' : 'bg-muted/50 text-foreground hover:bg-muted'}`}>Revenue</button>
-                    <button className={`px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${activeFeature === 'Student Growth Dashboard' ? 'bg-blue-500 text-white' : 'bg-muted/50 text-foreground hover:bg-muted'}`}>Student Growth</button>
-                    <button className={`px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${activeFeature === 'Teacher Performance Dashboard' ? 'bg-purple-500 text-white' : 'bg-muted/50 text-foreground hover:bg-muted'}`}>Teacher Performance</button>
+                    <button onClick={() => setActiveFeature('School KPI Dashboard')} className={`px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${activeFeature === 'School KPI Dashboard' ? 'bg-primary text-white' : 'bg-muted/50 text-foreground hover:bg-muted'}`}>School KPI</button>
+                    <button onClick={() => setActiveFeature('Revenue Dashboard')} className={`px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${activeFeature === 'Revenue Dashboard' ? 'bg-emerald-500 text-white' : 'bg-muted/50 text-foreground hover:bg-muted'}`}>Revenue</button>
+                    <button onClick={() => setActiveFeature('Student Growth Dashboard')} className={`px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${activeFeature === 'Student Growth Dashboard' ? 'bg-blue-500 text-white' : 'bg-muted/50 text-foreground hover:bg-muted'}`}>Student Growth</button>
+                    <button onClick={() => setActiveFeature('Teacher Performance Dashboard')} className={`px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${activeFeature === 'Teacher Performance Dashboard' ? 'bg-purple-500 text-white' : 'bg-muted/50 text-foreground hover:bg-muted'}`}>Teacher Performance</button>
                   </div>
 
                   {activeFeature === 'School KPI Dashboard' && (
@@ -6656,7 +8102,7 @@ export const UnifiedDashboard: React.FC = () => {
                           <strong className="text-emerald-400 text-xl block mt-1 font-black">
                             {formatCurrency(
                               invoices
-                                .filter(i => (isEditor || i.student === 'Kamran Shah') && i.status === 'Paid')
+                                .filter(i => (isEditor || i.student === currentUser?.name) && i.status === 'Paid')
                                 .reduce((sum, inv) => sum + inv.amount, 0)
                             )}
                           </strong>
@@ -6668,7 +8114,7 @@ export const UnifiedDashboard: React.FC = () => {
                           <strong className="text-amber-400 text-xl block mt-1 font-black">
                             {formatCurrency(
                               invoices
-                                .filter(i => (isEditor || i.student === 'Kamran Shah') && i.status === 'Unpaid')
+                                .filter(i => (isEditor || i.student === currentUser?.name) && i.status === 'Unpaid')
                                 .reduce((sum, inv) => sum + inv.amount, 0)
                             )}
                           </strong>
@@ -6706,88 +8152,200 @@ export const UnifiedDashboard: React.FC = () => {
                         e.preventDefault();
                         const amt = parseFloat(newInvoiceAmount);
                         if (!newInvoiceStudent || isNaN(amt)) return;
-                        setInvoices(prev => [
-                          ...prev,
-                          { id: `INV-${Date.now()}`, student: newInvoiceStudent, amount: amt, status: 'Unpaid' }
-                        ]);
-                        setNewInvoiceAmount('8500');
+                        
+                        // Prevent duplicate unpaid invoices for same amount
+                        if (invoices.some(i => i.student === newInvoiceStudent && i.amount === amt && i.status === 'Unpaid')) {
+                          alert(`An unpaid invoice of Rs ${amt} already exists for ${newInvoiceStudent}.`);
+                          return;
+                        }
+
+                        const newInv = { id: `INV-${Date.now()}`, student: newInvoiceStudent, amount: amt, status: 'Unpaid' };
+                        setInvoices(prev => [...prev, newInv]);
+                        setNewInvoiceAmount('');
+                        setNewInvoiceStudent('');
+
+                        // Auto-generate PDF/Print preview
+                        const html = generateFeeChallanHtml(newInv);
+                        const blob = new Blob([html], { type: 'text/html' });
+                        const url = URL.createObjectURL(blob);
+                        const win = window.open(url, '_blank');
+                        if (win) {
+                          win.onload = () => win.print();
+                        } else {
+                          alert('Invoice generated and shared to student portal! (Popup blocked: Allow popups to auto-print PDF)');
+                        }
                       }}
-                      className="p-4 bg-muted/30 border border-border rounded-xl space-y-3"
+                      className="p-5 bg-card border border-border rounded-2xl space-y-4 shadow-sm"
                     >
-                      <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Issue Fee Challan</span>
-                      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3">
-                        <select 
+                      <span className="block text-xs font-black text-foreground/80 uppercase tracking-wider">Issue Fee Challan / Invoice</span>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <input
+                          list="feeStudentsList"
                           value={newInvoiceStudent} 
                           onChange={(e) => setNewInvoiceStudent(e.target.value)}
-                          className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold"
-                        >
+                          placeholder="-- Select or Type Student Name --"
+                          className="bg-muted border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold outline-none focus:border-primary transition-colors"
+                          required
+                          onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Please enter a student name!')}
+                          onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
+                        />
+                        <datalist id="feeStudentsList">
                           {students.map(s => <option key={s.id} value={s.name}>{s.name} ({s.className})</option>)}
-                        </select>
+                        </datalist>
                         <input 
                           type="number" 
                           required 
-                          placeholder="Challan Amount"
+                          placeholder="Challan Amount (e.g. 8500)"
                           value={newInvoiceAmount}
                           onChange={(e) => setNewInvoiceAmount(e.target.value)}
-                          className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
+                          className="bg-muted border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold outline-none focus:border-primary transition-colors"
+                          onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Please enter a valid amount for the invoice!')}
+                          onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
                         />
                       </div>
                       <div className="flex justify-end pt-2">
-                        <button type="submit" className="px-6 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md">
-                          + Create Invoice
+                        <button type="submit" className="px-6 py-2.5 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md flex items-center gap-2">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path></svg>
+                          Create & Generate PDF
                         </button>
                       </div>
                     </form>
                   )}
 
                   {/* Invoice list */}
-                  <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                  <div className="space-y-3 max-h-64 overflow-y-auto pr-1">
                     <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Fee Ledgers</span>
                     {invoices
-                      .filter(i => isEditor || i.student === 'Kamran Shah') // Parents/Students only view own invoices
+                      .filter(i => isEditor || i.student === currentUser?.name) // Parents/Students only view own invoices
                       .map((inv) => (
-                      <div key={inv.id} className="p-3 bg-card border border-border rounded-xl flex items-center justify-between">
-                        <div>
-                          <strong className="block text-sm text-foreground">{inv.student}</strong>
-                          <span className="text-[10px] text-slate-500 font-mono">{inv.id} | {formatCurrency(inv.amount)}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {isEditor ? (
-                            <button
-                              onClick={() => {
-                                setInvoices(prev => prev.map(i => i.id === inv.id ? { ...i, status: i.status === 'Paid' ? 'Unpaid' : 'Paid' } : i));
-                              }}
-                              className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${
-                                inv.status === 'Paid'
-                                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                                  : 'bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20'
-                              }`}
-                            >
-                              {inv.status}
-                            </button>
-                          ) : (
-                            <div className="flex items-center gap-2">
-                              <span className={`px-3 py-1.5 rounded-lg text-xs font-bold border ${
-                                inv.status === 'Paid'
-                                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                                  : 'bg-red-500/10 text-red-400 border-red-500/20'
-                              }`}>
-                                {inv.status}
-                              </span>
-                              {!isEditor && inv.status === 'Unpaid' && (
-                                <button
-                                  onClick={() => {
-                                    setInvoices(prev => prev.map(i => i.id === inv.id ? { ...i, status: 'Paid' } : i));
-                                    alert(`Fee Payment of ${formatCurrency(inv.amount)} Processed Successfully via online banking!`);
-                                  }}
-                                  className="px-3 py-1.5 bg-primary hover:bg-primary/95 text-white rounded-lg text-xs font-bold transition-all shadow"
-                                >
-                                  Pay Online
-                                </button>
+                      <div key={inv.id} className="p-4 bg-card border border-border rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm hover:shadow-md transition-shadow">
+                        {editingInvoiceId === inv.id ? (
+                          <div className="flex-1 w-full space-y-2">
+                            <input
+                              type="text"
+                              value={editingInvoiceStudent}
+                              onChange={e => setEditingInvoiceStudent(e.target.value)}
+                              className="w-full bg-muted border border-border rounded-md text-xs p-2 text-foreground font-semibold"
+                              placeholder="Student Name"
+                            />
+                            <div className="flex gap-2">
+                              <input
+                                type="number"
+                                value={editingInvoiceAmount}
+                                onChange={e => setEditingInvoiceAmount(e.target.value)}
+                                className="w-1/2 bg-muted border border-border rounded-md text-xs p-2 text-foreground font-semibold"
+                                placeholder="Amount"
+                              />
+                              <select
+                                value={editingInvoiceStatus}
+                                onChange={e => setEditingInvoiceStatus(e.target.value as 'Paid' | 'Unpaid')}
+                                className="w-1/2 bg-muted border border-border rounded-md text-xs p-2 text-foreground font-semibold"
+                              >
+                                <option value="Unpaid">Unpaid</option>
+                                <option value="Paid">Paid</option>
+                              </select>
+                            </div>
+                            <div className="flex gap-2 pt-1">
+                              <button
+                                onClick={() => {
+                                  const amt = parseFloat(editingInvoiceAmount);
+                                  if (!editingInvoiceStudent || isNaN(amt)) return;
+                                  setInvoices(prev => prev.map(i => i.id === inv.id ? { ...i, student: editingInvoiceStudent, amount: amt, status: editingInvoiceStatus } : i));
+                                  setEditingInvoiceId(null);
+                                }}
+                                className="px-3 py-1.5 bg-emerald-500/20 text-emerald-500 hover:bg-emerald-500/30 rounded-lg text-xs font-bold transition-colors"
+                              >
+                                Save
+                              </button>
+                              <button
+                                onClick={() => setEditingInvoiceId(null)}
+                                className="px-3 py-1.5 bg-slate-500/20 text-slate-400 hover:bg-slate-500/30 rounded-lg text-xs font-bold transition-colors"
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                onClick={() => {
+                                  if (confirm('Are you sure you want to delete this invoice?')) {
+                                    setInvoices(prev => prev.filter(i => i.id !== inv.id));
+                                  }
+                                }}
+                                className="px-3 py-1.5 ml-auto bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 border border-rose-500/20 rounded-lg text-xs font-bold transition-colors"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <div>
+                              <strong className="block text-[13px] font-black text-foreground">{inv.student}</strong>
+                              <span className="text-[11px] text-slate-500 font-bold tracking-wide mt-0.5 block">{inv.id} | Rs {inv.amount.toLocaleString()}</span>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                              <button 
+                                type="button"
+                                onClick={() => {
+                                  const html = generateFeeChallanHtml(inv);
+                                  const blob = new Blob([html], { type: 'text/html' });
+                                  const url = URL.createObjectURL(blob);
+                                  const win = window.open(url, '_blank');
+                                  if (win) win.onload = () => win.print();
+                                }}
+                                className="px-3 py-1.5 bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 rounded-lg text-[10px] font-bold transition-colors uppercase tracking-wider flex-1 sm:flex-none text-center"
+                              >
+                                PDF
+                              </button>
+                              {isEditor ? (
+                                <>
+                                  <button
+                                    onClick={() => {
+                                      setEditingInvoiceId(inv.id);
+                                      setEditingInvoiceStudent(inv.student);
+                                      setEditingInvoiceAmount(inv.amount.toString());
+                                      setEditingInvoiceStatus(inv.status);
+                                    }}
+                                    className="px-3 py-1.5 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 rounded-lg text-xs font-bold transition-colors flex-1 sm:flex-none text-center"
+                                  >
+                                    Edit
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setInvoices(prev => prev.map(i => i.id === inv.id ? { ...i, status: i.status === 'Paid' ? 'Unpaid' : 'Paid' } : i));
+                                    }}
+                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors flex-1 sm:flex-none text-center ${
+                                      inv.status === 'Paid'
+                                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                                        : 'bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20'
+                                    }`}
+                                  >
+                                    {inv.status}
+                                  </button>
+                                </>
+                              ) : (
+                                <div className="flex items-center gap-2 flex-1 sm:flex-none">
+                                  <span className={`px-3 py-1.5 rounded-lg text-xs font-bold border text-center flex-1 sm:flex-none ${
+                                    inv.status === 'Paid'
+                                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                                      : 'bg-red-500/10 text-red-400 border-red-500/20'
+                                  }`}>
+                                    {inv.status}
+                                  </span>
+                                  {!isEditor && inv.status === 'Unpaid' && (
+                                    <button
+                                      onClick={() => {
+                                        setInvoices(prev => prev.map(i => i.id === inv.id ? { ...i, status: 'Paid' } : i));
+                                        alert(`Fee Payment of Rs ${inv.amount} Processed Successfully via online banking!`);
+                                      }}
+                                      className="px-3 py-1.5 bg-primary hover:bg-primary/95 text-white rounded-lg text-xs font-bold transition-all shadow flex-1 sm:flex-none text-center"
+                                    >
+                                      Pay Online
+                                    </button>
+                                  )}
+                                </div>
                               )}
                             </div>
-                          )}
-                        </div>
+                          </>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -6880,7 +8438,7 @@ export const UnifiedDashboard: React.FC = () => {
                         requestSecurityVerification(`Publish notice board broadcast alert: "${newNoticeTitle}"`, () => {
                           setNotices(prev => [
                             ...prev,
-                            { id: `n-${Date.now()}`, date: new Date().toISOString().split('T')[0], title: newNoticeTitle, content: newNoticeContent }
+                            { id: `n-${Date.now()}`, date: new Date().toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }), title: newNoticeTitle, content: newNoticeContent }
                           ]);
                           setNewNoticeTitle('');
                           setNewNoticeContent('');
@@ -7257,23 +8815,52 @@ export const UnifiedDashboard: React.FC = () => {
                         e.preventDefault();
                         const form = e.target as HTMLFormElement;
                         const reason = (form.elements.namedItem('leaveReason') as HTMLInputElement).value;
-                        const date = (form.elements.namedItem('leaveDate') as HTMLInputElement).value;
+                        const date = leaveFormDate;
                         if (!reason || !date) return;
+
+                        if (isWeekend(date)) {
+                          alert("Error: Leaves cannot be requested on weekends!");
+                          return;
+                        }
+
+                        const minDate = getTomorrow24h().slice(0, 10);
+                        if (date < minDate) {
+                          alert("Error: Leaves must be requested at least 24 hours in advance!");
+                          return;
+                        }
+
                         setLeaves(prev => [
                           ...prev,
                           { id: `l-${Date.now()}`, name: currentUser?.name || 'Teacher/Staff Member', date, reason, status: 'Pending' }
                         ]);
+                        setLeaveFormDate('');
+                        setLeaveFormError('');
                         form.reset();
                         alert("Leave application successfully registered!");
                       }}
                       className="p-4 bg-muted/30 border border-border rounded-xl space-y-3"
                     >
                       <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Submit Leave Application</span>
-                      <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <input 
                           type="date" 
                           name="leaveDate" 
                           required 
+                          min={getTomorrow24h().slice(0, 10)}
+                          value={leaveFormDate}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setLeaveFormDate(val);
+                            if (!val) {
+                              setLeaveFormError('');
+                            } else if (isWeekend(val)) {
+                              setLeaveFormError('Leaves cannot be requested on weekends.');
+                            } else if (val < getTomorrow24h().slice(0, 10)) {
+                              setLeaveFormError('Leaves must be requested at least 24 hours in advance.');
+                            } else {
+                              setLeaveFormError('');
+                            }
+                          }}
                           className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold"
                         />
                         <input 
@@ -7284,8 +8871,17 @@ export const UnifiedDashboard: React.FC = () => {
                           className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
                         />
                       </div>
+                      {leaveFormError && (
+                        <div className="p-2.5 bg-rose-500/10 border border-rose-500/20 rounded-lg text-[10px] text-rose-400 font-semibold animate-fadeIn">
+                          ⚠️ {leaveFormError}
+                        </div>
+                      )}
                       <div className="flex justify-end pt-2">
-                        <button type="submit" className="px-6 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md">
+                        <button 
+                          type="submit" 
+                          disabled={!!leaveFormError || !leaveFormDate}
+                          className="px-6 py-2 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-xs rounded-lg transition-all shadow-md"
+                        >
                           + Submit Leave
                         </button>
                       </div>
@@ -7297,51 +8893,159 @@ export const UnifiedDashboard: React.FC = () => {
                     {leaves.length === 0 ? (
                       <p className="text-center text-xs text-foreground/50 py-4">No leave applications registered.</p>
                     ) : (
-                      leaves.map((lv) => (
-                        <div key={lv.id} className="p-3.5 bg-card border border-border rounded-xl flex items-center justify-between">
-                          <div className="space-y-1">
-                            <strong className="block text-sm text-foreground">{lv.name}</strong>
-                            <span className="text-xs text-slate-500 block font-mono">Leave date: {lv.date}</span>
-                            <span className="text-xs text-foreground/75 block">Reason: "{lv.reason}"</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            {lv.status === 'Pending' ? (
-                              isEditor ? (
-                                <>
-                                  <button
-                                    onClick={() => {
-                                      setLeaves(prev => prev.map(l => l.id === lv.id ? { ...l, status: 'Approved' } : l));
-                                    }}
-                                    className="px-2.5 py-1.5 rounded bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs transition-colors shadow"
-                                  >
-                                    Approve
-                                  </button>
-                                  <button
-                                    onClick={() => {
-                                      setLeaves(prev => prev.map(l => l.id === lv.id ? { ...l, status: 'Rejected' } : l));
-                                    }}
-                                    className="px-2.5 py-1.5 rounded bg-red-500 hover:bg-red-650 text-white font-bold text-xs transition-colors shadow"
-                                  >
-                                    Reject
-                                  </button>
-                                </>
-                              ) : (
-                                <span className="px-2.5 py-1 rounded text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                                  Pending Vetting
+                      leaves.map((lv) => {
+                        const isMajor = lv.reason.toLowerCase().includes('medical') || 
+                                        lv.reason.toLowerCase().includes('vacation') || 
+                                        lv.reason.toLowerCase().includes('trip') || 
+                                        lv.reason.toLowerCase().includes('family');
+
+                        return (
+                          <div key={lv.id} className="p-3.5 bg-card border border-border rounded-xl flex items-center justify-between">
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <strong className="block text-sm text-foreground">{lv.name}</strong>
+                                <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${
+                                  isMajor 
+                                    ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' 
+                                    : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+                                }`}>
+                                  {isMajor ? 'Major Leave' : 'Minor Leave'}
                                 </span>
-                              )
-                            ) : (
-                              <span className={`px-2.5 py-1 rounded text-xs font-bold border ${
-                                lv.status === 'Approved'
-                                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                                  : 'bg-red-500/10 text-red-400 border-red-500/20'
-                              }`}>
-                                {lv.status}
-                              </span>
-                            )}
+                              </div>
+                              <span className="text-xs text-slate-500 block font-mono">Leave date: {lv.date}</span>
+                              <span className="text-xs text-foreground/75 block">Reason: "{lv.reason}"</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {lv.status === 'Pending' ? (
+                                isEditor ? (
+                                  simulatedRole === 'vice_principal' ? (
+                                    isMajor ? (
+                                      <>
+                                        <button
+                                          onClick={() => {
+                                            setLeaves(prev => prev.map(l => l.id === lv.id ? { ...l, status: 'Recommended by VP' } : l));
+                                            setPrincipalNotifications(prev => [
+                                              ...prev,
+                                              `Major Action Required: VP recommended and forwarded ${lv.name}'s leave request.`
+                                            ]);
+                                            alert("Recommended and forwarded to Principal for final approval.");
+                                          }}
+                                          className="px-2.5 py-1.5 rounded bg-blue-600 hover:bg-blue-705 text-white font-bold text-[10px] transition-colors shadow cursor-pointer"
+                                        >
+                                          Recommend & Forward
+                                        </button>
+                                        <button
+                                          onClick={() => {
+                                            setLeaves(prev => prev.map(l => l.id === lv.id ? { ...l, status: 'Rejected' } : l));
+                                            setPrincipalNotifications(prev => [
+                                              ...prev,
+                                              `Notification: VP rejected leave request for ${lv.name}.`
+                                            ]);
+                                          }}
+                                          className="px-2.5 py-1.5 rounded bg-red-500 hover:bg-red-650 text-white font-bold text-[10px] transition-colors shadow cursor-pointer"
+                                        >
+                                          Reject
+                                        </button>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <button
+                                          onClick={() => {
+                                            setLeaves(prev => prev.map(l => l.id === lv.id ? { ...l, status: 'Approved' } : l));
+                                            setPrincipalNotifications(prev => [
+                                              ...prev,
+                                              `Notification: VP approved ${lv.name}'s leave request (Minor leave).`
+                                            ]);
+                                            alert("Approved directly by VP.");
+                                          }}
+                                          className="px-2.5 py-1.5 rounded bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-[10px] transition-colors shadow cursor-pointer"
+                                        >
+                                          Approve
+                                        </button>
+                                        <button
+                                          onClick={() => {
+                                            setLeaves(prev => prev.map(l => l.id === lv.id ? { ...l, status: 'Rejected' } : l));
+                                            setPrincipalNotifications(prev => [
+                                              ...prev,
+                                              `Notification: VP rejected leave request for ${lv.name}.`
+                                            ]);
+                                          }}
+                                          className="px-2.5 py-1.5 rounded bg-red-500 hover:bg-red-650 text-white font-bold text-[10px] transition-colors shadow cursor-pointer"
+                                        >
+                                          Reject
+                                        </button>
+                                      </>
+                                    )
+                                  ) : (
+                                    <>
+                                      <button
+                                        onClick={() => {
+                                          setLeaves(prev => prev.map(l => l.id === lv.id ? { ...l, status: 'Approved' } : l));
+                                        }}
+                                        className="px-2.5 py-1.5 rounded bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-[10px] transition-colors shadow cursor-pointer"
+                                      >
+                                        Approve
+                                      </button>
+                                      <button
+                                        onClick={() => {
+                                          setLeaves(prev => prev.map(l => l.id === lv.id ? { ...l, status: 'Rejected' } : l));
+                                        }}
+                                        className="px-2.5 py-1.5 rounded bg-red-500 hover:bg-red-650 text-white font-bold text-[10px] transition-colors shadow cursor-pointer"
+                                      >
+                                        Reject
+                                      </button>
+                                    </>
+                                  )
+                                ) : (
+                                  <span className="px-2.5 py-1 rounded text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                    Pending Vetting
+                                  </span>
+                                )
+                              ) : lv.status === 'Recommended by VP' ? (
+                                isEditor ? (
+                                  simulatedRole === 'admin' ? (
+                                    <>
+                                      <button
+                                        onClick={() => {
+                                          setLeaves(prev => prev.map(l => l.id === lv.id ? { ...l, status: 'Approved' } : l));
+                                          alert("Major leave officially approved by Principal.");
+                                        }}
+                                        className="px-2.5 py-1.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] transition-colors shadow cursor-pointer"
+                                      >
+                                        Principal Approve
+                                      </button>
+                                      <button
+                                        onClick={() => {
+                                          setLeaves(prev => prev.map(l => l.id === lv.id ? { ...l, status: 'Rejected' } : l));
+                                        }}
+                                        className="px-2.5 py-1.5 rounded bg-red-500 hover:bg-red-650 text-white font-bold text-[10px] transition-colors shadow cursor-pointer"
+                                      >
+                                        Principal Reject
+                                      </button>
+                                    </>
+                                  ) : (
+                                    <span className="px-2.5 py-1 rounded text-xs font-bold bg-blue-500/10 text-blue-455 border border-blue-500/20">
+                                      Recommended (Pending Principal)
+                                    </span>
+                                  )
+                                ) : (
+                                  <span className="px-2.5 py-1 rounded text-xs font-bold bg-blue-500/10 text-blue-455 border border-blue-500/20">
+                                    Vetting (Recommended)
+                                  </span>
+                                )
+                              ) : (
+                                <span className={`px-2.5 py-1 rounded text-xs font-bold border ${
+                                  lv.status === 'Approved'
+                                    ? 'bg-emerald-500/10 text-emerald-450 border-emerald-500/20'
+                                    : 'bg-red-500/10 text-red-450 border-red-500/20'
+                                }`}>
+                                  {lv.status}
+                                </span>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      ))
+                        );
+                      })
                     )}
                   </div>
                 </div>
@@ -8316,6 +10020,11 @@ export const UnifiedDashboard: React.FC = () => {
                 </div>
               )}
 
+              {/* Term Dates & Academic Calendar — Full Year Planner */}
+              {(activeFeature === 'Term Dates & Academic Calendar') && (
+                <AcademicCalendar editable={['admin', 'super_admin', 'vice_principal', 'org_owner', 'school_owner', 'hr'].includes(simulatedRole)} />
+              )}
+
               {/* RECEPTION & VISITOR LOGS & APPOINTMENT SCHEDULING */}
               {(activeFeature === 'Visitor Management' || activeFeature === 'Front Desk Operations' || activeFeature === 'Appointment Scheduling' || activeFeature === 'Call Logs') && (
                 <div className="space-y-4">
@@ -8523,50 +10232,123 @@ export const UnifiedDashboard: React.FC = () => {
 
                   {/* Employee Records Sub-view */}
                   {activeFeature === 'Employee Records' && (
-                    <div className="space-y-3">
+                    <div className="space-y-6">
                       {isEditor && (
-                        <form onSubmit={(e) => { e.preventDefault(); alert('Employee record registered!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
-                          <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Register New Employee</span>
-                          <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                            <input type="text" placeholder="Full Name" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
-                            <select defaultValue="" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold outline-none focus:border-primary" required>
-  <option value="" disabled>Designation</option>
-  <option value="Principal">Principal</option>
-  <option value="Vice Principal">Vice Principal</option>
-  <option value="Academic Coordinator">Academic Coordinator</option>
-  <option value="Senior Teacher">Senior Teacher</option>
-  <option value="Junior Teacher">Junior Teacher</option>
-  <option value="Admin Officer">Admin Officer</option>
-  <option value="Accounts Manager">Accounts Manager</option>
-  <option value="IT Administrator">IT Administrator</option>
-  <option value="Librarian">Librarian</option>
-  <option value="Lab Assistant">Lab Assistant</option>
-</select>
-                            <input type="number" placeholder="Salary Base" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
+                        <form onSubmit={(e) => { 
+                          e.preventDefault(); 
+                          const form = e.target as HTMLFormElement;
+                          const name = (form.elements[0] as HTMLInputElement).value;
+                          const role = (form.elements[1] as HTMLSelectElement).value;
+                          const salary = (form.elements[2] as HTMLInputElement).value;
+                          requestSecurityVerification(`Register new employee: ${name}`, () => {
+                            setTeachers(prev => [...prev, {
+                               id: `emp-${Date.now()}`,
+                               name,
+                               role,
+                               salary,
+                               subject: 'Administration',
+                               className: 'N/A',
+                               qualification: 'N/A',
+                               experience: 'N/A',
+                               email: 'N/A',
+                               phone: 'N/A',
+                               photo: null,
+                               doc: null,
+                               status: 'Active'
+                            }]);
+                            form.reset();
+                            alert('Employee record registered successfully!');
+                          });
+                        }} className="p-5 bg-card border border-border rounded-2xl space-y-4 shadow-sm">
+                          <span className="block text-xs font-black text-foreground/80 uppercase tracking-wider">Quick Register New Employee</span>
+                          <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            <input type="text" placeholder="Full Name" className="bg-muted border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold" required />
+                            <select defaultValue="" className="bg-muted border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold outline-none focus:border-primary" required>
+                              <option value="" disabled>Designation</option>
+                              <option value="Principal">Principal</option>
+                              <option value="Vice Principal">Vice Principal</option>
+                              <option value="Academic Coordinator">Academic Coordinator</option>
+                              <option value="Senior Teacher">Senior Teacher</option>
+                              <option value="Junior Teacher">Junior Teacher</option>
+                              <option value="Admin Officer">Admin Officer</option>
+                              <option value="Accounts Manager">Accounts Manager</option>
+                              <option value="IT Administrator">IT Administrator</option>
+                              <option value="Librarian">Librarian</option>
+                              <option value="Lab Assistant">Lab Assistant</option>
+                              <option value="Guard">Guard</option>
+                              <option value="Electrician">Electrician</option>
+                              <option value="Plumber">Plumber</option>
+                              <option value="Gardener">Gardener</option>
+                              <option value="Helpers">Helpers</option>
+                              <option value="Domestic Staff">Domestic Staff</option>
+                            </select>
+                            <input type="number" placeholder="Salary Base (PKR)" className="bg-muted border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold" required />
                           </div>
                           <div className="flex justify-end">
-                            <button type="submit" className="px-4 py-1.5 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all">
+                            <button type="submit" className="px-5 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md">
                               Register Staff
                             </button>
                           </div>
                         </form>
                       )}
 
-                      <div className="space-y-2">
-                        <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Staff Directory</span>
-                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
-                          <thead>
-                            <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
-                              <th className="p-2">Name</th>
-                              <th className="p-2">Designation</th>
-                              <th className="p-2 text-right">Date Joined</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-border text-foreground/85">
-                            <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Raza Ahmed</td><td className="p-2 text-foreground/85">Physics Lecturer</td><td className="p-2 text-right text-slate-500 font-mono">2021-08-15</td></tr>
-                            <tr className="hover:bg-muted/10"><td className="p-2 font-bold">Sarah Khan</td><td className="p-2 text-foreground/85">English Instructor</td><td className="p-2 text-right text-slate-500 font-mono">2023-02-10</td></tr>
-                          </tbody>
-                        </table></div>
+                      <div className="space-y-4">
+                        <span className="block text-xs font-black text-foreground/80 uppercase tracking-wider border-b border-border pb-2">Staff Directory</span>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                          {filteredTeachers.length > 0 ? filteredTeachers.map((teach) => (
+                            <div key={teach.id} className="p-4 bg-card border border-border rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all relative group overflow-hidden">
+                              <div className="absolute top-0 left-0 w-1.5 h-full bg-primary/80"></div>
+                              <div className="flex justify-between items-start mb-3">
+                                <div className="flex items-center gap-3">
+                                  {teach.photo ? (
+                                    <img src={teach.photo} alt={teach.name} className="w-10 h-10 rounded-full object-cover border-2 border-primary/20 shrink-0" />
+                                  ) : (
+                                    <div className="w-10 h-10 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center font-black text-primary text-sm shrink-0">
+                                      {teach.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()}
+                                    </div>
+                                  )}
+                                  <div>
+                                    <strong className="block text-[13px] text-foreground font-black tracking-wide leading-tight">{teach.name}</strong>
+                                    <span className="px-1.5 py-[1px] rounded bg-primary/10 text-primary text-[9px] font-black uppercase tracking-widest inline-block mt-0.5">{teach.role || 'Teacher'}</span>
+                                  </div>
+                                </div>
+                                <span className="text-[9px] bg-emerald-500/10 text-emerald-500 font-bold px-1.5 py-0.5 rounded border border-emerald-500/20">{teach.status || 'Active'}</span>
+                              </div>
+                              
+                              <div className="space-y-1.5 text-[10px] text-foreground/70 mt-3 bg-muted/40 p-3 rounded-xl border border-border/50">
+                                <div className="flex justify-between items-center border-b border-border/50 pb-1.5">
+                                  <span className="font-bold uppercase tracking-wider opacity-60">Department</span>
+                                  <span className="font-bold text-foreground/90">{teach.subject || 'N/A'}</span>
+                                </div>
+                                <div className="flex justify-between items-center border-b border-border/50 pb-1.5">
+                                  <span className="font-bold uppercase tracking-wider opacity-60">Contact</span>
+                                  <span className="font-bold text-foreground/90">{teach.phone || 'N/A'}</span>
+                                </div>
+                                <div className="flex justify-between items-center border-b border-border/50 pb-1.5">
+                                  <span className="font-bold uppercase tracking-wider opacity-60">Qualification</span>
+                                  <span className="font-bold text-foreground/90">{teach.qualification || 'N/A'}</span>
+                                </div>
+                                <div className="flex justify-between items-center pt-1 mt-1">
+                                  <span className="font-black uppercase tracking-wider text-primary">Salary</span>
+                                  <span className="font-black text-primary text-[11px] bg-primary/10 px-2 py-0.5 rounded">PKR {teach.salary ? Number(teach.salary).toLocaleString() : '0'}</span>
+                                </div>
+                              </div>
+                              
+                              <div className="mt-3 flex gap-2">
+                                <button 
+                                  onClick={() => setSelectedDetailedTeacher(teach)}
+                                  className="flex-1 py-1.5 bg-muted hover:bg-border text-foreground font-bold text-[10px] rounded-lg transition-colors border border-border"
+                                >
+                                  View Full Profile
+                                </button>
+                              </div>
+                            </div>
+                          )) : (
+                            <div className="col-span-full p-8 text-center border border-dashed border-border rounded-xl text-xs text-foreground/50">
+                              No staff records found. Add employees to view them here.
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   )}
@@ -8734,7 +10516,19 @@ export const UnifiedDashboard: React.FC = () => {
                       <div className="text-right">
                         <h3 className="text-xs font-black text-muted-foreground uppercase tracking-widest leading-none">STUDENT PROGRESS CARD</h3>
                         <span className="text-sm font-black text-primary dark:text-purple-400 uppercase tracking-widest leading-tight block mt-0.5">& TRANSCRIPT</span>
-                        <span className="text-[9px] text-muted-foreground/80 block mt-1 font-semibold">Date of Issue: 15 June 2026</span>
+                        <div className="flex flex-col items-end gap-1 mt-1">
+                          {isEditor && (
+                            <select 
+                              value={examStatus} 
+                              onChange={(e) => setExamStatus(e.target.value as 'Upcoming' | 'Conducted')}
+                              className="bg-card border border-border text-[9px] font-bold rounded px-1.5 py-0.5 text-muted-foreground outline-none cursor-pointer"
+                            >
+                              <option value="Upcoming">Exam Status: Due / Pending</option>
+                              <option value="Conducted">Exam Status: Conducted</option>
+                            </select>
+                          )}
+                          <span className="text-[9px] text-muted-foreground/80 font-semibold">Date of Issue: 15 June 2026</span>
+                        </div>
                       </div>
                     </div>
 
@@ -8789,7 +10583,9 @@ export const UnifiedDashboard: React.FC = () => {
                           <tr key={idx} className="hover:bg-muted/30">
                             <td className="p-2.5 font-bold text-foreground">{g.subject}</td>
                             <td className="p-2.5 text-center">
-                              {isEditor ? (
+                              {examStatus === 'Upcoming' ? (
+                                <span className="text-muted-foreground/50 font-medium">-</span>
+                              ) : isEditor ? (
                                 <select
                                   value={g.grade}
                                   onChange={(e) => {
@@ -8809,7 +10605,9 @@ export const UnifiedDashboard: React.FC = () => {
                               )}
                             </td>
                             <td className="p-2.5 text-center font-mono">
-                              {isEditor ? (
+                              {examStatus === 'Upcoming' ? (
+                                <span className="text-muted-foreground/50 italic">Pending</span>
+                              ) : isEditor ? (
                                 <div className="flex items-center justify-center gap-1">
                                   <input 
                                     type="number" 
@@ -8841,7 +10639,9 @@ export const UnifiedDashboard: React.FC = () => {
                               )}
                             </td>
                             <td className="p-2.5 text-right">
-                              {isEditor ? (
+                              {examStatus === 'Upcoming' ? (
+                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-muted text-muted-foreground">Due</span>
+                              ) : isEditor ? (
                                 <select
                                   value={g.status}
                                   onChange={(e) => {
@@ -9160,15 +10960,7 @@ export const UnifiedDashboard: React.FC = () => {
                     >
                       📥 Export Timetable (PDF)
                     </button>
-                    {isEditor && (
-                      <button 
-                        type="button"
-                        onClick={() => alert("Redirecting to AI Timetable Optimization engine...")} 
-                        className="px-5 py-2.5 bg-primary hover:bg-primary/95 text-white font-bold text-xs rounded-xl transition-all shadow-sm"
-                      >
-                        ⚡ Optimize Roster (AI)
-                      </button>
-                    )}
+
                   </div>
                 </div>
               )}
@@ -9185,14 +10977,14 @@ export const UnifiedDashboard: React.FC = () => {
                     
                     {/* Dynamic Assignments List */}
                     <div className="space-y-3">
-                      {assignments.filter(a => !(['student', 'parent'].includes(simulatedRole)) || a.publishDate <= '2026-06-08').length === 0 ? (
+                      {assignments.filter(a => !(['student', 'parent'].includes(simulatedRole)) || a.publishDate <= todayStr).length === 0 ? (
                         <p className="text-xs text-foreground/60 text-center py-4">No assignments published yet.</p>
                       ) : (
                         assignments
-                          .filter(a => !(['student', 'parent'].includes(simulatedRole)) || a.publishDate <= '2026-06-08')
+                          .filter(a => !(['student', 'parent'].includes(simulatedRole)) || a.publishDate <= todayStr)
                           .map((ass) => {
                              const isCompleted = completedAssignments.includes(ass.id);
-                             const isDueSoon = ass.dueDate === '2026-06-09' && !isCompleted;
+                             const isDueSoon = ass.dueDate >= todayStr && ass.dueDate <= new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] && !isCompleted;
                              let fileIcon = "📄";
                              if (ass.fileType === 'pdf') fileIcon = "📕";
                              if (ass.fileType === 'word') fileIcon = "📘";
@@ -9461,6 +11253,11 @@ export const UnifiedDashboard: React.FC = () => {
                     onSubmit={(e) => {
                       e.preventDefault();
                       if (!newDisciplineInfraction) return;
+                      
+                      const finalAction = newDisciplineAction === 'Suspension Recommended' 
+                        ? 'Suspension Recommended (Pending Approval)' 
+                        : newDisciplineAction;
+
                       setDisciplines(prev => [
                         ...prev,
                         {
@@ -9468,9 +11265,22 @@ export const UnifiedDashboard: React.FC = () => {
                           name: newDisciplineStudent,
                           date: new Date().toISOString().split('T')[0],
                           infraction: newDisciplineInfraction,
-                          action: newDisciplineAction
+                          action: finalAction
                         }
                       ]);
+
+                      if (newDisciplineAction === 'Suspension Recommended') {
+                        setPrincipalNotifications(prev => [
+                          ...prev,
+                          `Major Action Required: VP recommended suspension for student ${newDisciplineStudent} due to ${newDisciplineInfraction}.`
+                        ]);
+                      } else {
+                        setPrincipalNotifications(prev => [
+                          ...prev,
+                          `Notification: VP logged behavior warning for ${newDisciplineStudent} (${newDisciplineInfraction}).`
+                        ]);
+                      }
+
                       setNewDisciplineInfraction('');
                     }}
                     className="p-4 bg-muted/30 border border-border rounded-xl space-y-3"
@@ -9513,7 +11323,7 @@ export const UnifiedDashboard: React.FC = () => {
                       </select>
                     </div>
                     <div className="flex justify-end pt-2">
-                      <button type="submit" className="px-6 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md">
+                      <button type="submit" className="px-6 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md cursor-pointer">
                         + Add Behavior Report
                       </button>
                     </div>
@@ -9523,12 +11333,51 @@ export const UnifiedDashboard: React.FC = () => {
                   <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
                     <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Conduct Log Entries</span>
                     {disciplines.map((d) => (
-                      <div key={d.id} className="p-3 bg-card border border-border rounded-xl flex items-center justify-between">
-                        <div>
-                          <strong className="block text-sm text-foreground">{d.name}</strong>
-                          <span className="text-xs text-foreground/60">{d.infraction} | Action: {d.action}</span>
+                      <div key={d.id} className="p-3 bg-card border border-border rounded-xl flex items-center justify-between gap-3 hover:border-primary/30 transition-all">
+                        <div className="flex-1">
+                          <strong className="block text-xs text-foreground font-bold">{d.name}</strong>
+                          <span className="text-[10px] text-foreground/60 block">{d.infraction}</span>
+                          <span className={`inline-block mt-1 text-[9px] font-bold px-2 py-0.5 rounded border ${
+                            d.action.includes('Suspension') 
+                              ? 'bg-amber-500/10 text-amber-400 border-amber-500/20 animate-pulse' 
+                              : 'bg-primary/10 text-primary border-primary/20'
+                          }`}>
+                            {d.action}
+                          </span>
                         </div>
-                        <span className="text-[10px] text-slate-500 font-mono">{d.date}</span>
+                        <div className="flex items-center gap-2">
+                          {d.action === "Suspension Recommended (Pending Approval)" && simulatedRole === "admin" && (
+                            <div className="flex gap-1">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setDisciplines((prev: any[]) => prev.map(item => item.id === d.id ? { ...item, action: "Suspended (Approved)" } : item));
+                                  setPrincipalNotifications((prev: string[]) => [
+                                    ...prev,
+                                    `Action: Approved suspension for ${d.name}.`
+                                  ]);
+                                }}
+                                className="px-2 py-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-[9px] rounded transition-colors shadow-sm"
+                              >
+                                Approve
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setDisciplines((prev: any[]) => prev.map(item => item.id === d.id ? { ...item, action: "Warning Issued (Downgraded)" } : item));
+                                  setPrincipalNotifications((prev: string[]) => [
+                                    ...prev,
+                                    `Action: Downgraded suspension proposal for ${d.name} to Warning.`
+                                  ]);
+                                }}
+                                className="px-2 py-1 bg-red-500 hover:bg-red-600 text-white font-bold text-[9px] rounded transition-colors shadow-sm"
+                              >
+                                Downgrade
+                              </button>
+                            </div>
+                          )}
+                          <span className="text-[10px] text-slate-500 font-mono">{d.date}</span>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -9636,9 +11485,10 @@ export const UnifiedDashboard: React.FC = () => {
                         name="deliveryChannel"
                         className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold"
                       >
-                        <option value="App Inbox">App Inbox</option>
-                        <option value="SMS Text Message">SMS Text Message</option>
-                        <option value="Email">Email</option>
+                        <option value="WhatsApp Message">📱 WhatsApp Message</option>
+                        <option value="App Inbox">🔔 App Inbox</option>
+                        <option value="SMS Text Message">💬 SMS Text Message</option>
+                        <option value="Email">📧 Email</option>
                       </select>
                     </div>
                     <textarea 
@@ -11161,8 +13011,21 @@ export const UnifiedDashboard: React.FC = () => {
                         >
                           <option value="admission">Admissions Open 2026-27</option>
                           <option value="sports">Annual Sports Day Announcement</option>
+                          <option value="custom">Custom Prompt (Type Below)</option>
                         </select>
                       </div>
+
+                      {studioCampaignType === 'custom' && (
+                        <div className="space-y-1 animate-fadeIn">
+                          <label className="text-[10px] font-bold text-foreground/75 uppercase tracking-wider">Custom Instructions</label>
+                          <textarea
+                            value={studioPrompt}
+                            onChange={(e) => setStudioPrompt(e.target.value)}
+                            placeholder="e.g. Write a post about our new science lab..."
+                            className="w-full bg-muted border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold min-h-[80px] resize-none"
+                          />
+                        </div>
+                      )}
 
                       <div className="space-y-1">
                         <label className="text-[10px] font-bold text-foreground/75 uppercase tracking-wider">Target Output Language</label>
@@ -11201,32 +13064,35 @@ export const UnifiedDashboard: React.FC = () => {
                         type="button"
                         onClick={async () => {
                           setStudioLoading(true);
-                          // Simulated fetch delay
                           setTimeout(() => {
-                            const captions: Record<string, Record<string, string>> = {
-                              admission: {
-                                Urdu: "داخلے جاری ہیں! تعلیمی سال 2026-27 کے لیے اپنے بچے کا مستقبل محفوظ بنائیں۔",
-                                English: "Admissions Open! Secure your child's future for the academic session 2026-27 today.",
-                                Arabic: "القبول مفتوح الآن! امنح طفلك فرصة الحصول على تعلیم متميز لعام 2026-2027.",
-                                Spanish: "¡Admisiones Abiertas! Asegure el futuro académico de su hijo para la sesión 2026-27.",
-                                French: "Inscriptions ouvertes ! Sécurisez l'avenir de votre enfant pour la session académique 2026-27.",
-                                German: "Anmeldungen geöffnet! Sichern Sie noch heute die Zukunft Ihres Kindes für das Schuljahr 2026-27.",
-                                Turkish: "Kayıtlar Başladı! Çocuğunuzun geleceğini 2026-27 akademik yılı için şimdiden güvenceye alın.",
-                                Chinese: "入学招生中！即刻为您的孩子锁定2026-27学年的璀璨未来。"
-                              },
-                              sports: {
-                                Urdu: "کھیلوں کا سالانہ دن آ رہا ہے! آئیں اور اپنے ننھے چیمپئنز کی حوصلہ افزائی کریں۔",
-                                English: "Annual Sports Day is just around the corner! Let's cheer for our young champions.",
-                                Arabic: "يوم الرياضة السنوي على الأبواب! انضموا إلينا لتشجيع أبطالنا الصغار.",
-                                Spanish: "¡El Día del Deporte se acerca! Venga a animar a nuestros pequeños campeones.",
-                                French: "Journée sportive annuelle approche ! Venez encourager nos jeunes champions.",
-                                German: "Der jährliche Sporttag steht vor der Tür! Feuern Sie unsere kleinen Champions an.",
-                                Turkish: "Yıllık Spor Günü yaklaşıyor! Genç şampiyonlarımızı hep birlikte destekleyelim.",
-                                Chinese: "年度校运会即将来临！让我们共同为年轻的冠军们加油喝彩。"
-                              }
-                            };
-                            const selected = captions[studioCampaignType] || captions.admission;
-                            setStudioGeneratedCaption(selected[studioLanguage] || selected.English);
+                            if (studioCampaignType === 'custom') {
+                              setStudioGeneratedCaption(`[Draft based on prompt: "${studioPrompt}"]\n\nWe are excited to share some great news with our community! Stay tuned for more details.\n\n(Edit this text to refine your post)`);
+                            } else {
+                              const captions: Record<string, Record<string, string>> = {
+                                admission: {
+                                  Urdu: "داخلے جاری ہیں! تعلیمی سال 2026-27 کے لیے اپنے بچے کا مستقبل محفوظ بنائیں۔",
+                                  English: "Admissions Open! Secure your child's future for the academic session 2026-27 today.",
+                                  Arabic: "القبول مفتوح الآن! امنح طفلك فرصة الحصول على تعلیم متميز لعام 2026-2027.",
+                                  Spanish: "¡Admisiones Abiertas! Asegure el futuro académico de su hijo para la sesión 2026-27.",
+                                  French: "Inscriptions ouvertes ! Sécurisez l'avenir de votre enfant pour la session académique 2026-27.",
+                                  German: "Anmeldungen geöffnet! Sichern Sie noch heute die Zukunft Ihres Kindes für das Schuljahr 2026-27.",
+                                  Turkish: "Kayıtlar Başladı! Çocuğunuzun geleceğini 2026-27 akademik yılı için şimdiden güvenceye alın.",
+                                  Chinese: "入学招生中！即刻为您的孩子锁定2026-27学年的璀璨未来。"
+                                },
+                                sports: {
+                                  Urdu: "کھیلوں کا سالانہ دن آ رہا ہے! آئیں اور اپنے ننھے چیمپئنز کی حوصلہ افزائی کریں۔",
+                                  English: "Annual Sports Day is just around the corner! Let's cheer for our young champions.",
+                                  Arabic: "يوم الرياضة السنوي على الأبواب! انضموا إلينا لتشجيع أبطالنا الصغار.",
+                                  Spanish: "¡El Día del Deporte se acerca! Venga a animar a nuestros pequeños campeones.",
+                                  French: "Journée sportive annuelle approche ! Venez encourager nos jeunes champions.",
+                                  German: "Der jährliche Sporttag steht vor der Tür! Feuern Sie unsere kleinen Champions an.",
+                                  Turkish: "Yıllık Spor Günü yaklaşıyor! Genç şampiyonlarımızı hep birlikte destekleyelim.",
+                                  Chinese: "年度校运会即将来临！让我们共同为年轻的冠军们加油喝彩。"
+                                }
+                              };
+                              const selected = captions[studioCampaignType] || captions.admission;
+                              setStudioGeneratedCaption(selected[studioLanguage] || selected.English);
+                            }
                             setStudioGeneratedHashtags(`#AcademicHub #Education #${studioChannel}`);
                             setStudioLoading(false);
                           }, 500);
@@ -11262,21 +13128,117 @@ export const UnifiedDashboard: React.FC = () => {
                           </div>
 
                           {/* Body Caption */}
-                          <p className="text-xs text-slate-300 font-medium leading-relaxed bg-slate-950/40 p-3.5 rounded-xl border border-slate-800/60" dir={['Urdu', 'Arabic'].includes(studioLanguage) ? 'rtl' : 'ltr'}>
-                            {studioGeneratedCaption}
-                          </p>
+                          <textarea
+                            value={studioGeneratedCaption}
+                            onChange={(e) => setStudioGeneratedCaption(e.target.value)}
+                            className="w-full text-xs text-slate-300 font-medium leading-relaxed bg-slate-950/40 p-3.5 rounded-xl border border-slate-800/60 min-h-[120px] focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                            dir={['Urdu', 'Arabic'].includes(studioLanguage) ? 'rtl' : 'ltr'}
+                          />
 
                           <p className="text-[10px] text-primary font-mono">{studioGeneratedHashtags}</p>
 
-                          <div className="flex gap-2.5 pt-2 border-t border-slate-800/80">
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2 border-t border-slate-800/80">
                             <button
                               type="button"
                               onClick={() => {
-                                alert("Simulated PNG image rendering template has been compiled with auto-branding logo. PNG file exported successfully!");
+                                const newNotice = {
+                                  id: `notice-${Date.now()}`,
+                                  title: `AI Post: ${studioCampaignType}`,
+                                  content: `${studioGeneratedCaption}\n\n${studioGeneratedHashtags}`,
+                                  date: new Date().toISOString().split('T')[0],
+                                  department: "Marketing"
+                                };
+                                setNotices((prev: any[]) => [newNotice, ...(prev || [])]);
+                                setStudioSavedPosts(prev => [{ id: `post-${Date.now()}`, text: studioGeneratedCaption, hashtags: studioGeneratedHashtags, type: studioCampaignType, channel: studioChannel, date: new Date().toISOString().split('T')[0] }, ...prev]);
+                                alert("Post saved and published to School Notices portal!");
                               }}
-                              className="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded text-[10px] font-bold transition-all shadow-sm"
+                              className="py-2 bg-primary hover:bg-primary/90 text-white rounded text-[10px] font-bold transition-all shadow-sm"
                             >
-                              📥 Export auto-branded PNG Image
+                              ✅ Publish to Portal
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.origin)}&quote=${encodeURIComponent(studioGeneratedCaption + '\n\n' + studioGeneratedHashtags)}`;
+                                window.open(url, '_blank');
+                              }}
+                              className="py-2 bg-[#1877F2] hover:bg-[#1877F2]/90 text-white rounded text-[10px] font-bold transition-all shadow-sm"
+                            >
+                              🔵 Share on Facebook
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                try {
+                                  const canvas = document.createElement('canvas');
+                                  canvas.width = 1080;
+                                  canvas.height = 1080;
+                                  const ctx = canvas.getContext('2d');
+                                  if (!ctx) throw new Error("Canvas 2D context not supported");
+
+                                  const gradient = ctx.createLinearGradient(0, 0, 1080, 1080);
+                                  gradient.addColorStop(0, '#1e293b');
+                                  gradient.addColorStop(1, '#0f172a');
+                                  ctx.fillStyle = gradient;
+                                  ctx.fillRect(0, 0, 1080, 1080);
+
+                                  ctx.fillStyle = '#6366f1';
+                                  ctx.beginPath();
+                                  ctx.arc(100, 100, 40, 0, Math.PI * 2);
+                                  ctx.fill();
+                                  
+                                  ctx.fillStyle = '#ffffff';
+                                  ctx.font = 'bold 36px sans-serif';
+                                  ctx.fillText(currentSchool?.schoolName || 'Academic Hub School', 160, 110);
+                                  ctx.font = '24px sans-serif';
+                                  ctx.fillStyle = '#94a3b8';
+                                  ctx.fillText('Official Announcement', 160, 145);
+
+                                  ctx.fillStyle = '#f8fafc';
+                                  ctx.font = '38px sans-serif';
+                                  const maxWidth = 880;
+                                  const lineHeight = 55;
+                                  const x = 100;
+                                  let y = 280;
+
+                                  const words = studioGeneratedCaption.replace(/\n/g, ' \n ').split(' ');
+                                  let line = '';
+
+                                  for (let n = 0; n < words.length; n++) {
+                                    if (words[n] === '\n') {
+                                      ctx.fillText(line, x, y);
+                                      line = '';
+                                      y += lineHeight;
+                                      continue;
+                                    }
+                                    const testLine = line + words[n] + ' ';
+                                    const metrics = ctx.measureText(testLine);
+                                    if (metrics.width > maxWidth && n > 0) {
+                                      ctx.fillText(line, x, y);
+                                      line = words[n] + ' ';
+                                      y += lineHeight;
+                                    } else {
+                                      line = testLine;
+                                    }
+                                  }
+                                  ctx.fillText(line, x, y);
+
+                                  y += lineHeight * 2;
+                                  ctx.fillStyle = '#818cf8';
+                                  ctx.font = 'bold 30px monospace';
+                                  ctx.fillText(studioGeneratedHashtags, x, y);
+
+                                  const link = document.createElement('a');
+                                  link.download = `AI_Post_${Date.now()}.png`;
+                                  link.href = canvas.toDataURL('image/png');
+                                  link.click();
+                                } catch (e) {
+                                  alert("Failed to export PNG: " + (e as Error).message);
+                                }
+                              }}
+                              className="py-2 bg-slate-800 hover:bg-slate-700 text-white rounded text-[10px] font-bold transition-all shadow-sm"
+                            >
+                              📥 Export PNG
                             </button>
                             <button
                               type="button"
@@ -11284,7 +13246,7 @@ export const UnifiedDashboard: React.FC = () => {
                                 navigator.clipboard.writeText(`${studioGeneratedCaption}\n\n${studioGeneratedHashtags}`);
                                 alert("Caption text copied to clipboard!");
                               }}
-                              className="px-3.5 py-2 bg-slate-950 hover:bg-slate-900 border border-slate-800 text-slate-300 rounded text-[10px] font-bold transition-all"
+                              className="py-2 bg-slate-950 hover:bg-slate-900 border border-slate-800 text-slate-300 rounded text-[10px] font-bold transition-all"
                             >
                               Copy Text
                             </button>
@@ -11297,6 +13259,45 @@ export const UnifiedDashboard: React.FC = () => {
                       )}
                     </div>
                   </div>
+                  
+                  {/* Saved Posts History */}
+                  {studioSavedPosts.length > 0 && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <span className="block text-xs font-black text-foreground uppercase tracking-wider border-b border-border pb-2">Saved AI Content & History</span>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {studioSavedPosts.map(post => (
+                          <div key={post.id} className="p-4 bg-card border border-border rounded-xl shadow-sm relative space-y-2 group">
+                            <button 
+                              onClick={() => setStudioSavedPosts(prev => prev.filter(p => p.id !== post.id))}
+                              className="absolute top-2 right-2 text-foreground/40 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"
+                              title="Delete Post"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                            <div className="flex gap-2 items-center text-[10px] font-bold text-primary uppercase tracking-widest">
+                              <span>{post.channel}</span>
+                              <span className="w-1 h-1 rounded-full bg-border"></span>
+                              <span className="text-foreground/50">{post.date}</span>
+                            </div>
+                            <p className="text-xs text-foreground/80 line-clamp-3">{post.text}</p>
+                            <div className="pt-2 flex gap-2 border-t border-border mt-2">
+                               <button 
+                                 onClick={() => {
+                                    setStudioGeneratedCaption(post.text);
+                                    setStudioGeneratedHashtags(post.hashtags);
+                                    setStudioChannel(post.channel);
+                                 }}
+                                 className="text-[10px] font-bold text-primary hover:underline"
+                               >
+                                 Load in Editor
+                               </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                 </div>
               )}
 
@@ -11308,19 +13309,31 @@ export const UnifiedDashboard: React.FC = () => {
                     📊 Track inquiries, applications, interviews, and final enrollments to optimize your admission process.
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div className="p-4 bg-card border border-border rounded-xl text-center shadow-sm">
+                    <div 
+                      className="p-4 bg-card border border-border rounded-xl text-center shadow-sm cursor-pointer hover:bg-muted/50 transition-colors"
+                      onClick={() => setActiveFunnelView('Inquiries')}
+                    >
                       <span className="block text-2xl font-black text-primary">145</span>
                       <span className="text-[10px] font-bold uppercase text-foreground/60 tracking-wider">Inquiries</span>
                     </div>
-                    <div className="p-4 bg-card border border-border rounded-xl text-center shadow-sm">
+                    <div 
+                      className="p-4 bg-card border border-border rounded-xl text-center shadow-sm cursor-pointer hover:bg-muted/50 transition-colors"
+                      onClick={() => setActiveFunnelView('Applications')}
+                    >
                       <span className="block text-2xl font-black text-amber-500">89</span>
                       <span className="text-[10px] font-bold uppercase text-foreground/60 tracking-wider">Applications</span>
                     </div>
-                    <div className="p-4 bg-card border border-border rounded-xl text-center shadow-sm">
+                    <div 
+                      className="p-4 bg-card border border-border rounded-xl text-center shadow-sm cursor-pointer hover:bg-muted/50 transition-colors"
+                      onClick={() => setActiveFunnelView('Interviews')}
+                    >
                       <span className="block text-2xl font-black text-blue-500">42</span>
                       <span className="text-[10px] font-bold uppercase text-foreground/60 tracking-wider">Interviews</span>
                     </div>
-                    <div className="p-4 bg-card border border-border rounded-xl text-center shadow-sm">
+                    <div 
+                      className="p-4 bg-card border border-border rounded-xl text-center shadow-sm cursor-pointer hover:bg-muted/50 transition-colors"
+                      onClick={() => setActiveFunnelView('Enrolled')}
+                    >
                       <span className="block text-2xl font-black text-emerald-500">38</span>
                       <span className="text-[10px] font-bold uppercase text-foreground/60 tracking-wider">Enrolled</span>
                     </div>
@@ -11331,6 +13344,33 @@ export const UnifiedDashboard: React.FC = () => {
                     <div className="bg-blue-500 h-3" style={{width: '15%'}}></div>
                     <div className="bg-emerald-500 h-3" style={{width: '20%'}}></div>
                   </div>
+                  
+                  {activeFunnelView && (
+                    <div className="mt-4 p-4 border border-border rounded-xl bg-card animate-fadeIn">
+                      <div className="flex justify-between items-center mb-4">
+                        <h4 className="text-sm font-bold text-foreground">Recent {activeFunnelView}</h4>
+                        <button onClick={() => setActiveFunnelView(null)} className="text-xs text-foreground/50 hover:text-foreground">Close</button>
+                      </div>
+                      <div className="space-y-2">
+                        {[1, 2, 3].map(i => (
+                          <div key={i} className="flex justify-between items-center p-2 hover:bg-muted/30 rounded-lg transition-colors border border-transparent hover:border-border">
+                            <div className="flex flex-col">
+                              <span className="text-xs font-bold text-foreground">Candidate #{Math.floor(Math.random() * 1000) + 1000}</span>
+                              <span className="text-[10px] text-foreground/60">Updated: Today</span>
+                            </div>
+                            <button className="px-3 py-1 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded text-[10px] font-bold transition-colors">
+                              View Details
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                      {activeFunnelView === 'Inquiries' && (
+                        <div className="mt-4 flex justify-end">
+                          <button className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary/90 transition-colors shadow-sm">+ Add Inquiry</button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -11377,10 +13417,52 @@ export const UnifiedDashboard: React.FC = () => {
                     📦 Master ledger for tracking school assets, lab equipment, and stationary stock.
                   </div>
                   <div className="flex justify-end mb-2">
-                     <button className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg shadow hover:bg-primary/90 transition-all flex items-center gap-2">
-                       <Plus size={14} /> Add Asset
+                     <button 
+                       onClick={() => setShowAddInventory(!showAddInventory)}
+                       className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg shadow hover:bg-primary/90 transition-all flex items-center gap-2"
+                     >
+                       <Plus size={14} /> {showAddInventory ? 'Cancel' : 'Add Asset'}
                      </button>
                   </div>
+                  
+                  {showAddInventory && (
+                    <form onSubmit={(e) => {
+                      e.preventDefault();
+                      const form = e.target as any;
+                      setInventoryItems([{
+                        id: Date.now().toString(),
+                        name: form.itemName.value,
+                        category: form.itemCategory.value,
+                        location: form.itemLocation.value,
+                        qty: form.itemQty.value,
+                        value: form.itemValue.value
+                      }, ...inventoryItems]);
+                      setShowAddInventory(false);
+                      form.reset();
+                    }} className="p-4 bg-card border border-border rounded-xl space-y-3 mb-4 animate-fadeIn shadow-sm">
+                      <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Register New Asset</span>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <input name="itemName" required placeholder="Item Name (e.g. Whiteboard)" className="bg-muted/50 border border-border rounded-lg text-xs p-2 text-foreground" />
+                        <select name="itemCategory" className="bg-muted/50 border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
+                          <option value="School Furniture">School Furniture</option>
+                          <option value="Electronics">Electronics</option>
+                          <option value="Play Area Things">Play Area Things</option>
+                          <option value="IT Equipment">IT Equipment</option>
+                          <option value="Lab Supplies">Lab Supplies</option>
+                          <option value="Stationary">Stationary</option>
+                          <option value="Sports Equipment">Sports Equipment</option>
+                          <option value="Other">Other</option>
+                        </select>
+                        <input name="itemLocation" required placeholder="Location (e.g. Room 12)" className="bg-muted/50 border border-border rounded-lg text-xs p-2 text-foreground" />
+                        <input name="itemQty" required placeholder="Qty & Status (e.g. 10 Good)" className="bg-muted/50 border border-border rounded-lg text-xs p-2 text-foreground" />
+                        <input name="itemValue" required placeholder="Estimated Value (e.g. $500)" className="bg-muted/50 border border-border rounded-lg text-xs p-2 text-foreground" />
+                      </div>
+                      <div className="flex justify-end pt-2">
+                        <button type="submit" className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary/90">Save Asset</button>
+                      </div>
+                    </form>
+                  )}
+
                   <div className="border border-border rounded-xl bg-card overflow-hidden">
                     <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs min-w-[600px]">
                       <thead>
@@ -11393,20 +13475,23 @@ export const UnifiedDashboard: React.FC = () => {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border text-foreground/85">
-                        <tr className="hover:bg-muted/10">
-                          <td className="p-3 font-bold text-primary">Dell Optiplex 3020</td>
-                          <td className="p-3">IT Equipment</td>
-                          <td className="p-3">Computer Lab 1</td>
-                          <td className="p-3"><span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 rounded border border-emerald-500/20 font-bold text-[10px]">30 Good</span></td>
-                          <td className="p-3 text-right font-mono text-foreground/60">$6,500</td>
-                        </tr>
-                        <tr className="hover:bg-muted/10">
-                          <td className="p-3 font-bold text-primary">Chemistry Flasks</td>
-                          <td className="p-3">Lab Supplies</td>
-                          <td className="p-3">Science Lab</td>
-                          <td className="p-3"><span className="px-2 py-0.5 bg-amber-500/10 text-amber-500 rounded border border-amber-500/20 font-bold text-[10px]">15 Low Stock</span></td>
-                          <td className="p-3 text-right font-mono text-foreground/60">$150</td>
-                        </tr>
+                        {inventoryItems.map(item => (
+                          <tr key={item.id} className="hover:bg-muted/10 transition-colors">
+                            <td className="p-3 font-bold text-primary">{item.name}</td>
+                            <td className="p-3 font-medium">{item.category}</td>
+                            <td className="p-3 text-foreground/70">{item.location}</td>
+                            <td className="p-3">
+                              <span className={`px-2 py-0.5 rounded border font-bold text-[10px] ${
+                                item.qty.toLowerCase().includes('low') 
+                                  ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' 
+                                  : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+                              }`}>
+                                {item.qty}
+                              </span>
+                            </td>
+                            <td className="p-3 text-right font-mono text-foreground/60">{item.value}</td>
+                          </tr>
+                        ))}
                       </tbody>
                     </table></div>
                   </div>
@@ -11648,6 +13733,116 @@ export const UnifiedDashboard: React.FC = () => {
                       >
                         Save Configurations
                       </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeFeature === 'Academic Setup' && (
+                <div className="space-y-6 animate-fadeIn">
+                  <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                    <strong>Academic Setup Hub:</strong> Manage classes and subjects for your school. Add or remove them as needed to reflect your current curriculum.
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Class Setup */}
+                    <div className="p-4 bg-card/50 border border-border rounded-xl space-y-4">
+                      <h4 className="text-sm font-bold text-foreground">Manage Classes</h4>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={newSetupClass}
+                          onChange={(e) => setNewSetupClass(e.target.value)}
+                          placeholder="e.g. Class 11-A"
+                          className="flex-1 bg-muted/50 border border-border rounded-lg text-xs p-2 text-foreground"
+                        />
+                        <button
+                          onClick={() => {
+                            if (!newSetupClass) return;
+                            if (schoolClasses.includes(newSetupClass)) {
+                              alert('Class already exists!');
+                              return;
+                            }
+                            requestSecurityVerification(`Add new class: ${newSetupClass}`, () => {
+                              setSchoolClasses([...schoolClasses, newSetupClass]);
+                              setNewSetupClass('');
+                            });
+                          }}
+                          className="px-4 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md"
+                        >
+                          Add
+                        </button>
+                      </div>
+                      <div className="space-y-2 mt-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                        {filteredClasses.map(cls => (
+                          <div key={cls} className="flex items-center justify-between p-2.5 bg-muted/30 border border-border/50 rounded-lg group hover:border-primary/30 transition-colors">
+                            <span className="text-xs font-semibold text-foreground/90">{cls}</span>
+                            <button
+                              onClick={() => {
+                                requestSecurityVerification(`Remove class: ${cls}`, () => {
+                                  setSchoolClasses(schoolClasses.filter(c => c !== cls));
+                                });
+                              }}
+                              className="text-[10px] text-red-500 font-bold px-2 py-1 bg-red-500/10 hover:bg-red-500/20 rounded opacity-0 group-hover:opacity-100 transition-all"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        ))}
+                        {schoolClasses.length === 0 && (
+                          <div className="p-3 text-center text-xs text-foreground/50 border border-dashed border-border/50 rounded-lg">No classes configured.</div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Subject Setup */}
+                    <div className="p-4 bg-card/50 border border-border rounded-xl space-y-4">
+                      <h4 className="text-sm font-bold text-foreground">Manage Subjects</h4>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={newSetupSubject}
+                          onChange={(e) => setNewSetupSubject(e.target.value)}
+                          placeholder="e.g. Advanced AI"
+                          className="flex-1 bg-muted/50 border border-border rounded-lg text-xs p-2 text-foreground"
+                        />
+                        <button
+                          onClick={() => {
+                            if (!newSetupSubject) return;
+                            if (schoolSubjects.includes(newSetupSubject)) {
+                              alert('Subject already exists!');
+                              return;
+                            }
+                            requestSecurityVerification(`Add new subject: ${newSetupSubject}`, () => {
+                              setSchoolSubjects([...schoolSubjects, newSetupSubject]);
+                              setNewSetupSubject('');
+                            });
+                          }}
+                          className="px-4 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md"
+                        >
+                          Add
+                        </button>
+                      </div>
+                      <div className="space-y-2 mt-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                        {schoolSubjects.map(sub => (
+                          <div key={sub} className="flex items-center justify-between p-2.5 bg-muted/30 border border-border/50 rounded-lg group hover:border-primary/30 transition-colors">
+                            <span className="text-xs font-semibold text-foreground/90">{sub}</span>
+                            <button
+                              onClick={() => {
+                                requestSecurityVerification(`Remove subject: ${sub}`, () => {
+                                  setSchoolSubjects(schoolSubjects.filter(s => s !== sub));
+                                });
+                              }}
+                              className="text-[10px] text-red-500 font-bold px-2 py-1 bg-red-500/10 hover:bg-red-500/20 rounded opacity-0 group-hover:opacity-100 transition-all"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        ))}
+                        {schoolSubjects.length === 0 && (
+                          <div className="p-3 text-center text-xs text-foreground/50 border border-dashed border-border/50 rounded-lg">No subjects configured.</div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

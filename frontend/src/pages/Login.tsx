@@ -63,6 +63,9 @@ export const Login: React.FC = () => {
 
   // Progressive Wizard Step: 1 = Welcome, 2 = Country, 3 = School, 4 = Preview, 5 = Auth/Sign In
   const [step, setStep] = useState(1);
+  const [showContactModal, setShowContactModal] = useState(false);
+  const [contactSubject, setContactSubject] = useState('');
+  const [contactMessage, setContactMessage] = useState('');
   const [selectedCountry, setSelectedCountry] = useState<SupportedCountry | ''>('');
   const [subdomain, setSubdomain] = useState('');
   const [email, setEmail] = useState('');
@@ -238,8 +241,7 @@ export const Login: React.FC = () => {
       try {
         await signInWithEmailAndPassword(auth, emailLower, password);
       } catch (fbErr: any) {
-        console.warn("Firebase Authentication failed:", fbErr.message);
-        alert(`Firebase Sync Warning: ${fbErr.message}\n\nSince this account is not registered in your Firebase Console, database read/write sync will be disabled.`);
+        console.warn("Firebase Authentication failed, proceeding with local mock data:", fbErr.message);
       }
 
       // Log in session
@@ -733,12 +735,57 @@ export const Login: React.FC = () => {
       </div>
 
       <div className="w-full max-w-md text-center text-foreground/50 text-[11px] font-medium mt-4 space-x-4 z-10">
-        <a href="#help" className="hover:text-foreground/75 transition-colors mx-2">{t.help}</a>
+        <button onClick={() => setShowContactModal(true)} className="hover:text-foreground/75 transition-colors mx-2 font-bold text-primary">Contact Us (Portal)</button>
         <span className="text-border">|</span>
-        <a href="#support" className="hover:text-foreground/75 transition-colors mx-2">{t.support}</a>
+        <a href="#help" className="hover:text-foreground/75 transition-colors mx-2">{t.help}</a>
         <span className="text-border">|</span>
         <span className="mx-2">{t.version}: 3.0.0 (Global Enterprise)</span>
       </div>
+
+      {showContactModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-card w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-border">
+            <div className="p-4 bg-primary/10 border-b border-primary/20 flex justify-between items-center">
+              <h3 className="font-black text-primary uppercase tracking-wider">Portal Contact Request</h3>
+              <button onClick={() => setShowContactModal(false)} className="text-primary hover:text-primary/70">✕</button>
+            </div>
+            <div className="p-6 space-y-4">
+              <p className="text-xs text-foreground/70">Instead of emails, all communication is routed directly into the school's central dashboard.</p>
+              <div>
+                <label className="text-xs font-bold text-foreground/70 mb-1 block">Subject</label>
+                <input 
+                  type="text" 
+                  value={contactSubject}
+                  onChange={e => setContactSubject(e.target.value)}
+                  className="w-full p-2 bg-muted/30 border border-border rounded-lg text-sm" 
+                  placeholder="e.g. Admission Inquiry"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold text-foreground/70 mb-1 block">Message</label>
+                <textarea 
+                  rows={4}
+                  value={contactMessage}
+                  onChange={e => setContactMessage(e.target.value)}
+                  className="w-full p-2 bg-muted/30 border border-border rounded-lg text-sm" 
+                  placeholder="Type your message here..."
+                />
+              </div>
+              <button 
+                onClick={() => {
+                  alert("Message successfully sent to the School Portal!");
+                  setShowContactModal(false);
+                  setContactSubject('');
+                  setContactMessage('');
+                }}
+                className="w-full py-2 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-all shadow-md"
+              >
+                Send to Portal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
