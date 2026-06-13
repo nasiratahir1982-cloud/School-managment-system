@@ -440,6 +440,9 @@ export const UnifiedDashboard: React.FC = () => {
   const [editCertStatus, setEditCertStatus] = useState('');
   const [editCertIssueDate, setEditCertIssueDate] = useState('');
   const [editCertExpiryDate, setEditCertExpiryDate] = useState('');
+  const [editCertFileBase64, setEditCertFileBase64] = useState<string | undefined>(undefined);
+  const [editCertFileName, setEditCertFileName] = useState<string | undefined>(undefined);
+  const [editCertFileType, setEditCertFileType] = useState<string | undefined>(undefined);
 
   const [studentGrades, setStudentGrades] = useState<Record<string, { subject: string; grade: string; marks: number; total: number; status: string }[]>>({
     'Kamran Shah': [
@@ -543,6 +546,9 @@ export const UnifiedDashboard: React.FC = () => {
       status: string;
       issueDate: string;
       expiryDate: string;
+      fileData?: string;
+      fileName?: string;
+      fileType?: string;
     };
   }>>(() => ({
     // 1. Dar-e-Arqam School (PK)
@@ -3482,6 +3488,9 @@ export const UnifiedDashboard: React.FC = () => {
                       setEditCertStatus(foodCert.status);
                       setEditCertIssueDate(foodCert.issueDate);
                       setEditCertExpiryDate(foodCert.expiryDate);
+                      setEditCertFileBase64(foodCert.fileData);
+                      setEditCertFileName(foodCert.fileName);
+                      setEditCertFileType(foodCert.fileType);
                       setIsCertEditMode(false);
                       setIsCertModalOpen(true);
                     }}
@@ -3812,7 +3821,10 @@ export const UnifiedDashboard: React.FC = () => {
                   grade: editCertGrade,
                   status: editCertStatus,
                   issueDate: editCertIssueDate,
-                  expiryDate: editCertExpiryDate
+                  expiryDate: editCertExpiryDate,
+                  fileData: editCertFileBase64,
+                  fileName: editCertFileName,
+                  fileType: editCertFileType
                 });
                 setIsCertEditMode(false);
               }} className="space-y-4 text-xs font-bold text-left">
@@ -3882,6 +3894,32 @@ export const UnifiedDashboard: React.FC = () => {
                     />
                   </div>
                 </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] text-foreground/60 uppercase">Upload Certificate File (PNG, JPEG, PDF)</label>
+                  <input 
+                    type="file" 
+                    accept="image/png, image/jpeg, application/pdf"
+                    onChange={e => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                          setEditCertFileBase64(event.target?.result as string);
+                          setEditCertFileName(file.name);
+                          setEditCertFileType(file.type);
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }} 
+                    className="w-full p-1.5 bg-card border border-border rounded-lg text-foreground text-xs font-semibold"
+                  />
+                  {editCertFileName && (
+                    <div className="text-[9px] text-primary mt-1">
+                      Attached: {editCertFileName}
+                    </div>
+                  )}
+                </div>
                 
                 <div className="flex gap-2 justify-end pt-2">
                   <button 
@@ -3939,6 +3977,34 @@ export const UnifiedDashboard: React.FC = () => {
                       <span>{foodCert.issueDate} to {foodCert.expiryDate}</span>
                     </div>
                   </div>
+
+                  {/* Render File Preview / Download Link if uploaded */}
+                  {foodCert.fileData && (
+                    <div className="w-full pt-3 mt-2 border-t border-border/40 text-left">
+                      <span className="text-[9px] text-foreground/45 uppercase font-bold block mb-1.5">Attached Document / Image:</span>
+                      {foodCert.fileType?.startsWith('image/') ? (
+                        <div className="relative rounded-xl border border-border overflow-hidden max-h-48 flex justify-center bg-muted">
+                          <img 
+                            src={foodCert.fileData} 
+                            alt="Uploaded Certificate" 
+                            className="max-h-48 object-contain"
+                          />
+                        </div>
+                      ) : (
+                        <a 
+                          href={foodCert.fileData} 
+                          download={foodCert.fileName || "food_certificate.pdf"}
+                          className="flex items-center gap-2 p-2 bg-card hover:bg-muted border border-border rounded-lg text-[10px] text-primary font-bold transition-all active:scale-[0.98] w-full"
+                        >
+                          <span className="text-lg">📄</span>
+                          <div className="min-w-0 flex-1">
+                            <div className="truncate text-foreground font-extrabold">{foodCert.fileName || "Download PDF Certificate"}</div>
+                            <span className="text-[8px] text-foreground/45 font-semibold">Click to download certificate file</span>
+                          </div>
+                        </a>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex gap-2 justify-end">
