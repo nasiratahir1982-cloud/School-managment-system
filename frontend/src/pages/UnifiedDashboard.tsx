@@ -11092,8 +11092,17 @@ export const UnifiedDashboard: React.FC = () => {
                       }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3.5">
                         <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Register New Country</span>
                         <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                          <input value={newCountryName} onChange={(e) => setNewCountryName(e.target.value)} type="text" placeholder="Country Name (e.g. Canada)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
-                          <input value={newCountryCode} onChange={(e) => setNewCountryCode(e.target.value)} type="text" placeholder="ISO Code (e.g. CA)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" maxLength={3} required />
+                          <input value={newCountryName} onChange={(e) => {
+                            const val = e.target.value;
+                            setNewCountryName(val);
+                            let autoCode = val.replace(/[^A-Za-z]/g, '').substring(0, 2).toUpperCase();
+                            if (val.toLowerCase().includes('united states')) autoCode = 'US';
+                            if (val.toLowerCase().includes('united kingdom')) autoCode = 'UK';
+                            if (val.toLowerCase().includes('arab emirates')) autoCode = 'AE';
+                            if (val.toLowerCase().includes('saudi arabia')) autoCode = 'SA';
+                            setNewCountryCode(autoCode);
+                          }} type="text" placeholder="Country Name (e.g. Canada)" className="modern-input w-full" required />
+                          <input value={newCountryCode} onChange={(e) => setNewCountryCode(e.target.value.toUpperCase())} type="text" placeholder="ISO Code (e.g. CA)" className="modern-input w-full" maxLength={3} required />
                           <select value={newCountryCurrency} onChange={(e) => setNewCountryCurrency(e.target.value)} className="modern-input">
                             <option value="USD">USD ($)</option>
                             <option value="PKR">PKR (Rs)</option>
