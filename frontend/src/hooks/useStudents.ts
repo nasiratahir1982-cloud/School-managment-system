@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSchoolStore } from '../store/schoolStore';
+import { useAuthStore } from '../store/authStore';
 
 export interface Student {
   student_id: string;
@@ -28,6 +29,7 @@ export const useStudents = () => {
   const queryClient = useQueryClient();
   const currentSchool = useSchoolStore((state) => state.currentSchool);
   const schoolId = currentSchool?.schoolId || '11111111-1111-1111-1111-111111111111';
+  const token = useAuthStore((state) => state.user?.token);
 
   // Query to fetch students ledger
   const studentsQuery = useQuery({
@@ -38,6 +40,7 @@ export const useStudents = () => {
         const response = await fetch('/api/v1/students', {
           headers: {
             'Host': `${subdomain}.academichub.com`,
+            'Authorization': `Bearer ${token}`,
           }
         });
         if (!response.ok) throw new Error('API server unreachable');
@@ -62,6 +65,7 @@ export const useStudents = () => {
           headers: {
             'Content-Type': 'application/json',
             'Host': `${subdomain}.academichub.com`,
+            'Authorization': `Bearer ${token}`,
           },
           body: JSON.stringify({
             name: newStudent.name,

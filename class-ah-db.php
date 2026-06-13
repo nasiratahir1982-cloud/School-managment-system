@@ -83,6 +83,7 @@ class BOA_DB {
         error_log('BOA DB - Creating students table: ' . $table_name);
         $tables[] = "CREATE TABLE $table_name (
             student_id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            user_id BIGINT(20) UNSIGNED DEFAULT NULL,
             student_uid VARCHAR(100) NOT NULL, 
             name VARCHAR(255) NOT NULL,
             email VARCHAR(100) NOT NULL, 
@@ -90,11 +91,15 @@ class BOA_DB {
             course_id BIGINT(20) UNSIGNED NOT NULL, 
             admission_date DATE DEFAULT NULL,
             status VARCHAR(20) NOT NULL DEFAULT 'active', 
+            certificate_url VARCHAR(1000) DEFAULT NULL,
+            certificate_token VARCHAR(64) DEFAULT NULL,
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (student_id), 
             UNIQUE KEY student_uid (student_uid),
             KEY course_id (course_id), 
-            KEY email (email)
+            KEY email (email),
+            KEY user_id (user_id),
+            UNIQUE KEY certificate_token (certificate_token)
         ) $charset_collate;";
         
         // 4. Fees Table

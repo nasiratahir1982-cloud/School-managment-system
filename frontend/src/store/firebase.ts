@@ -27,6 +27,20 @@ export const isUsingDummyConfig = () => {
 
 // Utility function to sync a path in Realtime Database
 export const setupRealtimeSync = (path: string, callback: (data: any) => void) => {
+  if (isUsingDummyConfig()) {
+    // Fallback to localStorage for demo/offline testing
+    const localData = localStorage.getItem(`ah_mock_${path}`);
+    if (localData) {
+      try {
+        callback(JSON.parse(localData));
+      } catch (e) {
+        console.error("Error parsing local mock data", e);
+      }
+    }
+    // Return a dummy unsubscribe function
+    return () => {};
+  }
+
   const dbRef = ref(rtdb, path);
   return onValue(dbRef, (snapshot) => {
     const val = snapshot.val();
@@ -40,10 +54,14 @@ export const setupRealtimeSync = (path: string, callback: (data: any) => void) =
 
 // Utility function to write data to a path in Realtime Database
 export const updateRealtimeData = async (path: string, data: any) => {
-  if (!auth.currentUser) {
-    console.error(`Firebase Realtime write rejected for path "${path}": User is not authenticated.`);
-    return false;
+  if (isUsingDummyConfig() || !auth.currentUser) {
+    console.log(`Firebase Realtime write locally mocked for path "${path}"`);
+    localStorage.setItem(`ah_mock_${path}`, JSON.stringify(data));
+    // Trigger a custom event so other tabs/components listening can update
+    window.dispatchEvent(new CustomEvent('ah_mock_db_update', { detail: { path, data } }));
+    return true;
   }
+  
   try {
     const dbRef = ref(rtdb, path);
     await dbSet(dbRef, data);

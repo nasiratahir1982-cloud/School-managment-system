@@ -149,7 +149,7 @@ const getFeatureDetails = (featureName: string) => {
     case 'Transport GPS Tracking':
       return { desc: 'Track school bus live location and ETA on map.', icon: Map, stats: 'En Route' };
 
-    // Hostel Administrator
+    // Hostel Warden
     case 'Room Allocation':
       return { desc: 'Configure boarding rooms, capacities and wings.', icon: Home, stats: '14 Rooms Active' };
     case 'Bed Allocation':
@@ -159,7 +159,7 @@ const getFeatureDetails = (featureName: string) => {
     case 'Mess Management':
       return { desc: 'Coordinate daily meal menus, stocks and timings.', icon: Activity, stats: 'Breakfast Active' };
     case 'Hostel Reports':
-      return { desc: 'Compile Administrator reports, check-in history & audits.', icon: FileText, stats: 'Weekly Safe' };
+      return { desc: 'Compile Warden reports, check-in history & audits.', icon: FileText, stats: 'Weekly Safe' };
 
     // Transport Manager
     case 'Vehicles':
@@ -304,7 +304,7 @@ const getFeatureDetails = (featureName: string) => {
     case 'Library Books':
       return { desc: 'Manage your library borrows, check due dates and request extensions.', icon: BookOpen, stats: 'Books Issued' };
     case 'Hostel Portal':
-      return { desc: 'Manage hostel room allocation details, meals, and administration.', icon: Home, stats: 'Room Synced' };
+      return { desc: 'Manage hostel room allocation details, meals, and wardens.', icon: Home, stats: 'Room Synced' };
     case 'Transport Roster':
       return { desc: 'View student transport allocations and route lists.', icon: Map, stats: 'Route Roster' };
     case 'Library Books Roster':
@@ -892,9 +892,21 @@ export const UnifiedDashboard: React.FC = () => {
       }
     });
 
+    // Listen to local mocked updates when Firebase is down/unauthenticated
+    const handleMockUpdate = (event: any) => {
+      const { path, data } = event.detail;
+      if (path === 'school_database') {
+        setDatabase(data);
+      } else if (path === 'useful_links') {
+        setUsefulLinks(data);
+      }
+    };
+    window.addEventListener('ah_mock_db_update', handleMockUpdate);
+
     return () => {
       unsubscribeDb();
       unsubscribeLinks();
+      window.removeEventListener('ah_mock_db_update', handleMockUpdate);
     };
   }, []);
   const [activeVideoStreamUrl, setActiveVideoStreamUrl] = useState<string | null>(null);
@@ -2053,12 +2065,12 @@ export const UnifiedDashboard: React.FC = () => {
       case 'hostel':
         return {
           title: 'Hostel & Mess Operations',
-          desc: 'Hostel Management Board. Track occupancy logs, check-in thresholds, and mess kitchen hygiene audits. Fully compliant under local health authority directives.',
+          desc: 'Hostel Wardens Board. Track occupancy logs, check-in thresholds, and mess kitchen hygiene audits. Fully compliant under local health authority directives.',
           diagnostics: [
             { icon: '📜', text: 'Food Auth Cert' },
             { icon: '✓', text: 'Allergy Guide Ok' },
             { icon: '🍱', text: 'Pest Control Pass' },
-            { icon: '✓', text: 'Admin Log Live' },
+            { icon: '✓', text: 'Warden Log Live' },
             { icon: '🚒', text: 'Fire Exit Checked' },
             { icon: '💧', text: 'Water Safety OK' }
           ],
@@ -2155,7 +2167,7 @@ export const UnifiedDashboard: React.FC = () => {
       case 'hostel':
         return {
           title: 'Mess Menus & Safety Guides',
-          subLabel: 'Hostel Admin Manuals:',
+          subLabel: 'Hostel Wardens Manuals:',
           guides: [
             { 
               title: '🍱 Weekly Student Allergy Guide',
@@ -2356,7 +2368,7 @@ export const UnifiedDashboard: React.FC = () => {
     { id: '3', visitor: 'Zainab Fatima', host: 'Accounts Manager', dateTime: 'June 10, 01:00 PM', status: 'Pending' },
     { id: '4', visitor: 'Dr. & Mrs. Tariq', host: 'Principal', dateTime: 'June 10, 02:00 PM', status: 'Confirmed' },
     { id: '5', visitor: 'Sarah Malik', host: 'Class Teacher 10-A', dateTime: 'June 10, 02:45 PM', status: 'Rescheduled' },
-    { id: '6', visitor: 'Muhammad Ali', host: 'Hostel Administrator', dateTime: 'June 10, 03:30 PM', status: 'Confirmed' }
+    { id: '6', visitor: 'Muhammad Ali', host: 'Hostel Warden', dateTime: 'June 10, 03:30 PM', status: 'Confirmed' }
   ]);
 
   // Secure deletion states
@@ -2821,7 +2833,7 @@ export const UnifiedDashboard: React.FC = () => {
                   <option value="hr">HR Department</option>
                   <option value="librarian">Librarian Desk</option>
                   <option value="transport">Transport Manager</option>
-                  <option value="hostel">Hostel Administrator</option>
+                  <option value="hostel">Hotel Warden</option>
                   <option value="super_admin">Super Admin Master Control</option>
                 </select>
               </div>
@@ -4439,21 +4451,47 @@ export const UnifiedDashboard: React.FC = () => {
                           setNewAssignmentFileType('powerpoint');
                         }
 
-                        const reader = new FileReader();
-                        reader.onprogress = (event) => {
-                          if (event.lengthComputable) {
-                            const percent = Math.round((event.loaded / event.total) * 100);
-                            setUploadProgress(percent);
-                          }
-                        };
-                        reader.onload = () => {
-                          setNewAssignmentFileUrl(reader.result as string);
+                        // Actually upload the file to the backend
+                        const formData = new FormData();
+                        formData.append('file', file);
+                        
+                        // Fake progress interval while waiting for fetch
+                        const progressInterval = setInterval(() => {
+                          setUploadProgress(prev => (prev >= 90 ? 90 : prev + 10));
+                        }, 100);
+
+                        fetch('/api/v1/upload', {
+                          method: 'POST',
+                          headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('ah_user_session') ? JSON.parse(localStorage.getItem('ah_user_session') || '{}').token : ''}`
+                          },
+                          body: formData
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                          clearInterval(progressInterval);
                           setUploadProgress(100);
-                          setTimeout(() => {
-                            setIsUploading(false);
-                          }, 300);
-                        };
-                        reader.readAsDataURL(file);
+                          if (data.success) {
+                            setNewAssignmentFileUrl(data.data.url);
+                          } else {
+                            console.error('Upload failed:', data.message);
+                            // Fallback to base64 if server upload fails (e.g., local dev)
+                            const reader = new FileReader();
+                            reader.onload = () => setNewAssignmentFileUrl(reader.result as string);
+                            reader.readAsDataURL(file);
+                          }
+                          setTimeout(() => setIsUploading(false), 300);
+                        })
+                        .catch(err => {
+                          console.error('Upload error:', err);
+                          clearInterval(progressInterval);
+                          setUploadProgress(100);
+                          // Fallback to base64 on error
+                          const reader = new FileReader();
+                          reader.onload = () => setNewAssignmentFileUrl(reader.result as string);
+                          reader.readAsDataURL(file);
+                          setTimeout(() => setIsUploading(false), 300);
+                        });
                       }
                     }}
                   />
@@ -5853,7 +5891,7 @@ export const UnifiedDashboard: React.FC = () => {
                 <div className="space-y-4">
                   {/* Common Hostel Status */}
                   <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed flex items-center justify-between">
-                    <span>🏠 Hostel Administration: <strong className="text-emerald-400 font-mono">Wing A & B</strong> online. Hostel Manager on duty.</span>
+                    <span>🏠 Hostel Administration: <strong className="text-emerald-400 font-mono">Wing A & B</strong> online. Warden on duty.</span>
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
                   </div>
 
@@ -5861,7 +5899,7 @@ export const UnifiedDashboard: React.FC = () => {
                     <div className="space-y-4">
                       {!(studentHostel[activeStudentName]?.allocated) ? (
                         <div className="p-6 bg-card border border-border rounded-2xl space-y-4 text-center">
-                          <div className="w-12 h-12 rounded-full bg-amber-500/10 border-amber-500/20 flex items-center justify-center text-lg mx-auto">
+                          <div className="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-lg mx-auto">
                             🏠
                           </div>
                           <div className="space-y-1">
@@ -5873,7 +5911,7 @@ export const UnifiedDashboard: React.FC = () => {
                           <div className="border-t border-border pt-4 text-xs font-semibold text-foreground/70 space-y-1.5 max-w-sm mx-auto text-left">
                             <div className="flex justify-between"><span>Hostel Room Available:</span><span className="text-foreground">Wing B (Shared Room)</span></div>
                             <div className="flex justify-between"><span>Boarding Fee:</span><span className="text-foreground">{formatCurrency(8500)} / month</span></div>
-                            <div className="flex justify-between"><span>Hostel Manager:</span><span className="text-foreground">Sajid Malik</span></div>
+                            <div className="flex justify-between"><span>Warden:</span><span className="text-foreground">Sajid Malik</span></div>
                           </div>
                           <button
                             onClick={() => {
@@ -5896,8 +5934,8 @@ export const UnifiedDashboard: React.FC = () => {
                             <div className="space-y-1.5 text-xs text-foreground/75">
                               <p>Hostel Wing: <strong className="text-foreground">{studentHostel[activeStudentName].wing}</strong></p>
                               <p>Room Assigned: <strong className="text-foreground">{studentHostel[activeStudentName].room}</strong></p>
-                              <p>Hostel Manager: <strong className="text-foreground">{studentHostel[activeStudentName].warden}</strong></p>
-                              <p>Manager Phone: <strong className="text-foreground">{studentHostel[activeStudentName].phone}</strong></p>
+                              <p>Hostel Warden: <strong className="text-foreground">{studentHostel[activeStudentName].warden}</strong></p>
+                              <p>Warden Phone: <strong className="text-foreground">{studentHostel[activeStudentName].phone}</strong></p>
                               <p>Monthly Hostel Fee: <strong className="text-foreground">{formatCurrency(8500)} / mo</strong></p>
                             </div>
                           </div>
