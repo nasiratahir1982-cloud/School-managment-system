@@ -555,15 +555,15 @@ export const UnifiedDashboard: React.FC = () => {
         { id: '22', name: 'Mahira Khan', roll: '28', className: 'Class 10-A', status: 'Present' }
       ],
       teachers: [
-        { id: '1', name: 'Sarah Khan', role: 'Teacher', subject: 'English', className: 'Class 10-A', status: 'Active' },
-        { id: '2', name: 'Raza Ahmed', role: 'Teacher', subject: 'Physics', className: 'Class 10-B', status: 'Active' },
-        { id: '3', name: 'Hina Malik', role: 'Teacher', subject: 'Mathematics', className: 'Class 9-A', status: 'Active' },
-        { id: '4', name: 'Tariq Mehmood', role: 'Vice Principal', subject: 'Administration', className: 'N/A', status: 'Active' },
-        { id: '5', name: 'Ayesha Bibi', role: 'Coordinator', subject: 'Academics', className: 'N/A', status: 'Active' },
-        { id: '6', name: 'Bashir Ahmed', role: 'Guard', subject: 'Security', className: 'Main Gate', status: 'Active' },
-        { id: '7', name: 'Sajid Ali', role: 'Electrician', subject: 'Maintenance', className: 'Campus', status: 'Active' },
-        { id: '8', name: 'Ghafoor Khan', role: 'Plumber', subject: 'Maintenance', className: 'Campus', status: 'Active' },
-        { id: '9', name: 'Munir', role: 'Gardener', subject: 'Maintenance', className: 'Grounds', status: 'Active' },
+        { id: '1', name: 'Sarah Khan', role: 'Teacher', subject: 'English', className: 'Class 10-A', status: 'Active', salary: '65000', qualification: 'M.Ed', phone: '+92 300 0000000' },
+        { id: '2', name: 'Raza Ahmed', role: 'Teacher', subject: 'Physics', className: 'Class 10-B', status: 'Active', salary: '65000', qualification: 'M.Ed', phone: '+92 300 0000000' },
+        { id: '3', name: 'Hina Malik', role: 'Teacher', subject: 'Mathematics', className: 'Class 9-A', status: 'Active', salary: '65000', qualification: 'M.Ed', phone: '+92 300 0000000' },
+        { id: '4', name: 'Tariq Mehmood', role: 'Vice Principal', subject: 'Administration', className: 'Admin Block', status: 'Active', salary: '120000', qualification: 'PhD', phone: '+92 300 1111111' },
+        { id: '5', name: 'Ayesha Bibi', role: 'Coordinator', subject: 'Academics', className: 'Admin Block', status: 'Active', salary: '85000', qualification: 'MBA', phone: '+92 300 2222222' },
+        { id: '6', name: 'Bashir Ahmed', role: 'Guard', subject: 'Security', className: 'Main Gate', status: 'Active', salary: '35000', qualification: 'Matric', phone: '+92 300 3333333' },
+        { id: '7', name: 'Sajid Ali', role: 'Electrician', subject: 'Maintenance', className: 'Campus', status: 'Active', salary: '40000', qualification: 'Diploma', phone: '+92 300 4444444' },
+        { id: '8', name: 'Ghafoor Khan', role: 'Plumber', subject: 'Maintenance', className: 'Campus', status: 'Active', salary: '38000', qualification: 'Diploma', phone: '+92 300 5555555' },
+        { id: '9', name: 'Munir', role: 'Gardener', subject: 'Maintenance', className: 'Grounds', status: 'Active', salary: '32000', qualification: 'Middle', phone: '+92 300 6666666' },
         { id: '10', name: 'Zubaida', role: 'Domestic Staff', subject: 'Cleaning', className: 'Block A', status: 'Active' },
         { id: '11', name: 'Faizan', role: 'Helper', subject: 'Support', className: 'Admin Block', status: 'Active' }
       ],
@@ -1125,6 +1125,7 @@ export const UnifiedDashboard: React.FC = () => {
   const [enrollmentError, setEnrollmentError] = useState('');
 
   const [newTeacherName, setNewTeacherName] = useState('');
+    const [editingTeacherId, setEditingTeacherId] = useState<string | null>(null);
     const [newTeacherGender, setNewTeacherGender] = useState('Male');
   const [newEmployeeRole, setNewEmployeeRole] = useState('Teacher');
   const [newTeacherSubject, setNewTeacherSubject] = useState(schoolSubjects[0] || '');
@@ -5548,7 +5549,7 @@ export const UnifiedDashboard: React.FC = () => {
                           <div className="space-y-3">
                             <div className="bg-primary/5 rounded border border-primary/10 p-2.5">
                               <span className="block text-[9px] font-bold text-foreground/50 uppercase tracking-wider mb-0.5">Salary</span>
-                              <span className="block text-lg font-black text-foreground">Rs. {teach.salary ? Number(teach.salary).toLocaleString() : 'N/A'}</span>
+                              <span className="block text-lg font-black text-foreground">Rs. {teach.salary ? Number(teach.salary).toLocaleString() : 'Not Set'}</span>
                             </div>
                             
                             <div className="grid grid-cols-2 gap-y-2 gap-x-4 bg-muted/40 p-3 rounded-lg border border-border/50">
@@ -9823,11 +9824,11 @@ export const UnifiedDashboard: React.FC = () => {
                                role,
                                salary,
                                subject: 'Administration',
-                               className: 'N/A',
-                               qualification: 'N/A',
-                               experience: 'N/A',
-                               email: 'N/A',
-                               phone: 'N/A',
+                               className: 'Admin Block',
+                               qualification: 'Bachelors',
+                               experience: '3 Years',
+                               email: 'staff@academichub.com',
+                               phone: '+92 300 1234567',
                                photo: null,
                                doc: null,
                                status: 'Active'
