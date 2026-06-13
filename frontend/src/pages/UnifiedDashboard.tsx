@@ -1103,6 +1103,10 @@ export const UnifiedDashboard: React.FC = () => {
   const [editingOrgId, setEditingOrgId] = useState<string | null>(null);
   const [editOrgForm, setEditOrgForm] = useState<any>({});
   const [editingSchoolId, setEditingSchoolId] = useState<string | null>(null);
+  const [apiKeys, setApiKeys] = useState([{id: '1', appName: 'ZK Teco Biometrics Sync', key: 'sk_live_1234567890abcdefa49b', date: '2026-05-10'}, {id: '2', appName: 'QuickBooks Finance API', key: 'sk_live_0987654321fedcba8f2c', date: '2026-06-01'}]);
+  const [isAddingApiKey, setIsAddingApiKey] = useState(false);
+  const [newApiKeyForm, setNewApiKeyForm] = useState({appName: '', key: ''});
+
   const [editSchoolForm, setEditSchoolForm] = useState<any>({});
 
   const [activeStudentTab, setActiveStudentTab] = useState<'roster' | 'waitlist'>('roster');
