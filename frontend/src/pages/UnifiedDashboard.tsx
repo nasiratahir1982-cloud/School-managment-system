@@ -5458,9 +5458,13 @@ export const UnifiedDashboard: React.FC = () => {
                               <strong className="text-xs text-foreground block">{req.name}</strong>
                               <span className="text-[10px] text-rose-400 font-semibold">{req.type} | {req.days}</span>
                             </div>
-                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <button className="px-2 py-1 bg-emerald-500 hover:bg-emerald-600 text-white text-[9px] font-bold rounded">Approve</button>
-                              <button className="px-2 py-1 bg-rose-500 hover:bg-rose-600 text-white text-[9px] font-bold rounded">Reject</button>
+                            <div className="flex gap-1 transition-opacity">
+                              <button onClick={(e) => {
+                                e.currentTarget.parentElement.innerHTML = '<span class="text-[10px] font-bold text-emerald-500 px-2">Approved</span>';
+                              }} className="px-2 py-1 bg-emerald-500 hover:bg-emerald-600 text-white text-[9px] font-bold rounded cursor-pointer transition-all shadow-sm">Approve</button>
+                              <button onClick={(e) => {
+                                e.currentTarget.parentElement.innerHTML = '<span class="text-[10px] font-bold text-rose-500 px-2">Rejected</span>';
+                              }} className="px-2 py-1 bg-rose-500 hover:bg-rose-600 text-white text-[9px] font-bold rounded cursor-pointer transition-all shadow-sm">Reject</button>
                             </div>
                           </div>
                         ))}
@@ -8332,7 +8336,16 @@ export const UnifiedDashboard: React.FC = () => {
                         <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Log New Visitor Entry</span>
                         <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3">
                           <input type="text" placeholder="Visitor Name" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
-                          <input type="text" placeholder="Purpose of Visit (e.g. Admission Enquiry)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
+                          <select defaultValue="" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold outline-none focus:border-primary" required>
+  <option value="" disabled>Purpose of Visit</option>
+  <option value="Admission Enquiry">Admission Enquiry</option>
+  <option value="Fee Submission">Fee Submission</option>
+  <option value="Parent-Teacher Meeting">Parent-Teacher Meeting</option>
+  <option value="Meeting with Principal">Meeting with Principal</option>
+  <option value="Vendor / Delivery">Vendor / Delivery</option>
+  <option value="Event Guest">Event Guest</option>
+  <option value="Other">Other</option>
+</select>
                         </div>
                         <div className="flex justify-end pt-1">
                           <button type="submit" className="px-6 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md">
@@ -8388,7 +8401,16 @@ export const UnifiedDashboard: React.FC = () => {
                         <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Schedule Meeting Appointment</span>
                         <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                           <input name="visitor" type="text" placeholder="Visitor Name" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
-                          <input name="host" type="text" placeholder="Meeting With (e.g. Principal)" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
+                          <select name="host" defaultValue="" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold outline-none focus:border-primary" required>
+  <option value="" disabled>Meeting With</option>
+  <option value="Principal">Principal</option>
+  <option value="Vice Principal">Vice Principal</option>
+  <option value="Class Teacher">Class Teacher</option>
+  <option value="Accounts / Fee Department">Accounts / Fee Department</option>
+  <option value="Admission Office">Admission Office</option>
+  <option value="IT Support">IT Support</option>
+  <option value="Other">Other</option>
+</select>
                           <input name="dateTime" type="datetime-local" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
                         </div>
                         <div className="flex justify-end pt-1">
@@ -8445,7 +8467,15 @@ export const UnifiedDashboard: React.FC = () => {
                         <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Register Call Registry Log</span>
                         <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                           <input type="text" placeholder="Caller Phone / Name" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
-                          <input type="text" placeholder="Recipient / Dept" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
+                          <select defaultValue="" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold outline-none focus:border-primary" required>
+  <option value="" disabled>Recipient / Dept</option>
+  <option value="General Info Desk">General Info Desk</option>
+  <option value="Admission Office">Admission Office</option>
+  <option value="Accounts / Fee Dept">Accounts / Fee Dept</option>
+  <option value="Principal's Office">Principal's Office</option>
+  <option value="Transport Dept">Transport Dept</option>
+  <option value="IT Support">IT Support</option>
+</select>
                           <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
                             <option>Incoming Call</option>
                             <option>Outgoing Call</option>
@@ -8497,7 +8527,19 @@ export const UnifiedDashboard: React.FC = () => {
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Register New Employee</span>
                           <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                             <input type="text" placeholder="Full Name" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
-                            <input type="text" placeholder="Designation (e.g. Maths Teacher)" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
+                            <select defaultValue="" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold outline-none focus:border-primary" required>
+  <option value="" disabled>Designation</option>
+  <option value="Principal">Principal</option>
+  <option value="Vice Principal">Vice Principal</option>
+  <option value="Academic Coordinator">Academic Coordinator</option>
+  <option value="Senior Teacher">Senior Teacher</option>
+  <option value="Junior Teacher">Junior Teacher</option>
+  <option value="Admin Officer">Admin Officer</option>
+  <option value="Accounts Manager">Accounts Manager</option>
+  <option value="IT Administrator">IT Administrator</option>
+  <option value="Librarian">Librarian</option>
+  <option value="Lab Assistant">Lab Assistant</option>
+</select>
                             <input type="number" placeholder="Salary Base" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
                           </div>
                           <div className="flex justify-end">
@@ -8534,7 +8576,16 @@ export const UnifiedDashboard: React.FC = () => {
                         <form onSubmit={(e) => { e.preventDefault(); alert('Job vacancy opening posted successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Post New Job Vacancy</span>
                           <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-2">
-                            <input type="text" placeholder="Job Title (e.g. Chemistry Lecturer)" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
+                            <select defaultValue="" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold outline-none focus:border-primary" required>
+  <option value="" disabled>Job Title</option>
+  <option value="Class Teacher">Class Teacher</option>
+  <option value="Subject Specialist">Subject Specialist</option>
+  <option value="Physical Training Instructor (PTI)">Physical Training Instructor (PTI)</option>
+  <option value="Librarian">Librarian</option>
+  <option value="Admin Staff">Admin Staff</option>
+  <option value="Accounts Staff">Accounts Staff</option>
+  <option value="Support Staff">Support Staff</option>
+</select>
                             <input type="text" placeholder="Requirements Summary" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
                           </div>
                           <div className="flex justify-end">
@@ -8893,7 +8944,19 @@ export const UnifiedDashboard: React.FC = () => {
                         <select name="student_name" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
                           {students.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
                         </select>
-                        <input name="subject" type="text" placeholder="Subject (e.g. Physics)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
+                        <select name="subject" defaultValue="" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold outline-none focus:border-primary" required>
+  <option value="" disabled>Subject</option>
+  <option value="Mathematics">Mathematics</option>
+  <option value="Physics">Physics</option>
+  <option value="Chemistry">Chemistry</option>
+  <option value="Biology">Biology</option>
+  <option value="Computer Science">Computer Science</option>
+  <option value="English">English</option>
+  <option value="Urdu / Local Language">Urdu / Local Language</option>
+  <option value="History / Geography">History / Geography</option>
+  <option value="Islamic Studies / Ethics">Islamic Studies / Ethics</option>
+  <option value="Physical Education">Physical Education</option>
+</select>
                         <input name="marks" type="number" placeholder="Marks % (e.g. 85)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
                       </div>
                       <div className="flex justify-center gap-2.5 pt-2 pb-1">
@@ -10569,7 +10632,16 @@ export const UnifiedDashboard: React.FC = () => {
                       }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3.5">
                         <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Create Global Broadcast Alert</span>
                         <div className="space-y-3">
-                          <input value={newAnnounceTitle} onChange={(e) => setNewAnnounceTitle(e.target.value)} type="text" placeholder="Notice Headline (e.g. Server Maintenance Window)" className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
+                          <select value={newAnnounceTitle} onChange={(e) => setNewAnnounceTitle(e.target.value)} className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold outline-none focus:border-primary" required>
+  <option value="" disabled>Notice Headline</option>
+  <option value="Server Maintenance Window">Server Maintenance Window</option>
+  <option value="School Holiday Announcement">School Holiday Announcement</option>
+  <option value="Fee Submission Deadline">Fee Submission Deadline</option>
+  <option value="Parent-Teacher Meeting (PTM)">Parent-Teacher Meeting (PTM)</option>
+  <option value="Exam Schedule Published">Exam Schedule Published</option>
+  <option value="Annual Sports Day">Annual Sports Day</option>
+  <option value="Other Announcement">Other Announcement</option>
+</select>
                           <textarea value={newAnnounceContent} onChange={(e) => setNewAnnounceContent(e.target.value)} placeholder="Notice description content details..." className="w-full h-20 bg-card border border-border rounded-lg text-xs p-2.5 text-foreground outline-none" required />
                         </div>
                         <div className="flex justify-center">
@@ -10656,7 +10728,23 @@ export const UnifiedDashboard: React.FC = () => {
                     <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Add New Admission Inquiry</span>
                     <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                       <input type="text" placeholder="Parent Name" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
-                      <input type="text" placeholder="Child Grade (e.g. Grade 8)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
+                      <select defaultValue="" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold outline-none focus:border-primary" required>
+  <option value="" disabled>Child Grade</option>
+  <option value="Pre-School">Pre-School</option>
+  <option value="Kindergarten">Kindergarten</option>
+  <option value="Grade 1">Grade 1</option>
+  <option value="Grade 2">Grade 2</option>
+  <option value="Grade 3">Grade 3</option>
+  <option value="Grade 4">Grade 4</option>
+  <option value="Grade 5">Grade 5</option>
+  <option value="Grade 6">Grade 6</option>
+  <option value="Grade 7">Grade 7</option>
+  <option value="Grade 8">Grade 8</option>
+  <option value="Grade 9">Grade 9</option>
+  <option value="Grade 10">Grade 10</option>
+  <option value="Grade 11">Grade 11</option>
+  <option value="Grade 12">Grade 12</option>
+</select>
                       <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
                         <option>Status: New Lead</option>
                         <option>Status: Test Scheduled</option>
@@ -10705,7 +10793,17 @@ export const UnifiedDashboard: React.FC = () => {
                     <form onSubmit={(e) => { e.preventDefault(); alert('Expense payout logged!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                       <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Add School Expense</span>
                       <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                        <input type="text" placeholder="Expense Category (e.g. Electricity, Water)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
+                        <select defaultValue="" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold outline-none focus:border-primary" required>
+  <option value="" disabled>Expense Category</option>
+  <option value="Electricity Bill">Electricity Bill</option>
+  <option value="Water Bill">Water Bill</option>
+  <option value="Internet / Phone">Internet / Phone</option>
+  <option value="Stationery">Stationery</option>
+  <option value="Maintenance / Repairs">Maintenance / Repairs</option>
+  <option value="Event Expenses">Event Expenses</option>
+  <option value="Transport / Fuel">Transport / Fuel</option>
+  <option value="Other">Other</option>
+</select>
                         <input type="number" placeholder="Expenditure Amount" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
                         <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
                           <option>Cash</option>
@@ -10755,7 +10853,17 @@ export const UnifiedDashboard: React.FC = () => {
                       <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Add New Staff</span>
                       <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         <input type="text" placeholder="Staff Name" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
-                        <input type="text" placeholder="Role (e.g. Teacher)" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
+                        <select defaultValue="" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold outline-none focus:border-primary" required>
+  <option value="" disabled>Role</option>
+  <option value="Teacher">Teacher</option>
+  <option value="Admin">Admin</option>
+  <option value="Accountant">Accountant</option>
+  <option value="Principal">Principal</option>
+  <option value="IT Support">IT Support</option>
+  <option value="Librarian">Librarian</option>
+  <option value="Support Staff">Support Staff</option>
+  <option value="Other">Other</option>
+</select>
                         <input type="number" placeholder="Monthly Salary" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
                       </div>
                       <div className="flex justify-end pt-2">
