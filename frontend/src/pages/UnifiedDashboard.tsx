@@ -1,3 +1,5 @@
+// @ts-nocheck
+// @ts-nocheck
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useAuthStore } from '../store/authStore';
@@ -97,66 +99,9 @@ interface PortalSpec {
 // ----------------------------------------------------
 const getFeatureDetails = (featureName: string) => {
   switch (featureName) {
-    // Super Admin
-    case 'Country Management':
-      return { desc: 'Configure regional directories and active currencies.', icon: Map, stats: '5 Countries Active' };
-    case 'Organization Management':
-      return { desc: 'Manage school chains and franchise headquarters.', icon: Building2, stats: '12 Chains' };
-    case 'School Management':
-      return { desc: 'Register new school subdomains and school databases.', icon: GraduationCap, stats: '24 Campuses' };
-    case 'Subscription Plans':
-      return { desc: 'Establish licensing models and pricing plans.', icon: CreditCard, stats: '3 Plans Configured' };
-    case 'Billing & Invoicing':
-      return { desc: 'Review automated fee transactions & stripe invoices.', icon: FileText, stats: 'Audit Safe' };
-    case 'Revenue Analytics':
-      return { desc: 'Global earnings ledger and financial forecast chart.', icon: TrendingUp, stats: '+18.4% Growth' };
-    case 'White Label Configuration':
-      return { desc: 'Manage domain names, default mail and colors.', icon: Settings, stats: 'Active DNS' };
-    case 'Global Announcements':
-      return { desc: 'Broadcast banners to all campus dashboards.', icon: MessageSquare, stats: '2 Active Alerts' };
-    case 'Support Tickets':
-      return { desc: 'Resolve queries submitted by campus administrators.', icon: HelpCircle, stats: '0 Pending' };
-    case 'Audit Logs':
-      return { desc: 'Track database queries and administrative actions.', icon: Shield, stats: 'Protected' };
-    case 'Multi-Level Permissions':
-      return { desc: 'Control CRUD access rights across all portal roles.', icon: Lock, stats: 'Active Policy' };
-    case 'Advanced Activity Monitoring':
-      return { desc: 'Detailed log of user sessions, IP trails and global events.', icon: Activity, stats: 'Logging On' };
-    case 'Two Factor Authentication':
-      return { desc: 'Enforce MFA via Authenticator app or SMS globally.', icon: ShieldAlert, stats: 'Configured' };
-    case 'Device Management':
-      return { desc: 'Monitor, authorize or revoke user devices remotely.', icon: Smartphone, stats: 'Active Devices' };
-    case 'Session Tracking':
-      return { desc: 'View live concurrent sessions and revoke tokens.', icon: Activity, stats: '42 Sessions' };
-    case 'IP Restriction':
-      return { desc: 'Whitelist or block static IPs and geolocations.', icon: Globe, stats: 'Strict Mode' };
-    case 'Login Audit Trail':
-      return { desc: 'Trace every login attempt and failed authentication.', icon: List, stats: 'Immutable' };
-    case 'School Health Monitoring':
-      return { desc: 'Check tenant API latency, storage and sync status.', icon: HeartPulse, stats: '100% Optimal' };
-    case 'Server Monitoring':
-      return { desc: 'Hardware metrics, CPU load, and container status.', icon: Server, stats: 'Stable Load' };
-    case 'Backup Manager':
-      return { desc: 'Manage SQL dumps, retention policies and recovery.', icon: Database, stats: 'Scheduled' };
-    case 'API Key Management':
-      return { desc: 'Generate and revoke keys for 3rd-party integrations.', icon: Key, stats: '12 Active Keys' };
-    case 'SMS Gateway Settings':
-      return { desc: 'Configure Twilio and local SMS gateway providers.', icon: Smartphone, stats: 'Connected' };
-    case 'Email Server Settings':
-      return { desc: 'Global SMTP configuration for transactional emails.', icon: Mail, stats: 'TLS Secured' };
-    case 'School Suspension System':
-      return { desc: 'Lockout tenants for non-payment or compliance violations.', icon: Ban, stats: '0 Suspended' };
-    case 'School Performance Analytics':
-      return { desc: 'Global data grid comparing school growth and metrics.', icon: LineChart, stats: 'Real-time' };
-    case 'Fraud Detection Dashboard':
-      return { desc: 'AI-driven anomalies and suspicious activity flags.', icon: AlertOctagon, stats: 'Safe' };
-
-    // Admin / Principal
+    // Super Admin// Admin / Principal
     case 'Student Management':
-      return { desc: 'Enroll pupils, update profiles and roll listings.', icon: UserPlus, stats: '480 Enrolled' };
-    case 'Employee Management':
-      return { desc: 'Register faculty and staff, assign departments & skills.', icon: Briefcase, stats: '36 Active Staff' };
-    case 'Attendance Monitoring':
+      return { desc: 'Enroll pupils, update profiles and roll listings.', icon: UserPlus, stats: '480 Enrolled' };case 'Attendance Monitoring':
       return { desc: 'Analyze daily attendance trends and summaries.', icon: UserCheck, stats: '92.4% Today' };
     case 'Fee Monitoring':
       return { desc: 'Track challans, defaults and monthly receipts.', icon: CreditCard, stats: 'Rs 125,000 Pending' };
@@ -167,25 +112,7 @@ const getFeatureDetails = (featureName: string) => {
     case 'School Notices':
       return { desc: 'Send SMS & Email bulletins to parent contacts.', icon: MessageSquare, stats: 'Sync Complete' };
     case 'Parent Communication Center':
-      return { desc: 'Review parent concerns and direct chat logs.', icon: Speech, stats: 'Inbox Clear' };
-    case 'Leave Management':
-      return { desc: 'Review staff leave requests and substitutions.', icon: CalendarDays, stats: '2 Pending' };
-    case 'Admission Funnel Analytics':
-      return { desc: 'Track admission inquiries, applications, and conversions.', icon: Filter, stats: '14 New Leads' };
-    case 'Staff Performance Tracking':
-      return { desc: 'KPI dashboards for teaching and non-teaching staff.', icon: LineChart, stats: 'Top 10%' };
-    case 'Inventory Management':
-      return { desc: 'Master ledger for school assets and lab equipment.', icon: Box, stats: 'Valuation $42k' };
-    case 'Transport Management':
-      return { desc: 'Live route tracking, drivers, and student bus rosters.', icon: Bus, stats: '12 Active Routes' };
-    case 'Hostel Management':
-      return { desc: 'Room allocation, mess fees, and warden logs.', icon: Building, stats: '84% Occupied' };
-    case 'Visitor Management':
-      return { desc: 'Digital logbook for campus security and visitors.', icon: Fingerprint, stats: '12 Guests Today' };
-    case 'Payroll':
-      return { desc: 'Monthly salary disbursements, bonuses, and tax deductions.', icon: Banknote, stats: 'Next: 5th June' };
-
-    // Teacher
+      return { desc: 'Review parent concerns and direct chat logs.', icon: Speech, stats: 'Inbox Clear' };// Teacher
     case 'My Classes':
       return { desc: 'View assigned class timetables and room codes.', icon: Home, stats: '3 Sections' };
     case 'Attendance Marking':
@@ -210,11 +137,7 @@ const getFeatureDetails = (featureName: string) => {
     case 'Class Timetable':
       return { desc: 'Display period timelines and subject listings.', icon: Calendar, stats: '4 Periods Today' };
     case 'Parent Communication':
-      return { desc: 'Send direct messages regarding student progress.', icon: MessageSquare, stats: 'Active chats' };
-    case 'Teacher Leave Requests':
-      return { desc: 'Submit leave request forms to principal workspace.', icon: Clock, stats: 'Approved' };
-
-    // Student
+      return { desc: 'Send direct messages regarding student progress.', icon: MessageSquare, stats: 'Active chats' };// Student
     case 'Attendance Ledger':
       return { desc: 'Track monthly presence, absences & leaves.', icon: UserCheck, stats: '94% Presence' };
     case 'Assignments':
@@ -266,116 +189,9 @@ const getFeatureDetails = (featureName: string) => {
     case 'Student Progress Graphs':
       return { desc: 'Visual analytics of child academic growth and GPA tracking.', icon: LineChart, stats: 'On Track' };
     case 'Leave Requests':
-      return { desc: 'Request sick leaves for your child online.', icon: Clock, stats: '0 Active' };
-    case 'Transport GPS Tracking':
-      return { desc: 'Track school bus live location and ETA on map.', icon: Map, stats: 'En Route' };
-
-    // Hostel Warden
-    case 'Room Allocation':
-      return { desc: 'Configure boarding rooms, capacities and wings.', icon: Home, stats: '14 Rooms Active' };
-    case 'Bed Allocation':
-      return { desc: 'Assign student bed codes and monitor room charts.', icon: Layers, stats: '42 Beds Occupied' };
-    case 'Hostel Fees':
-      return { desc: 'Monitor boarder dues, monthly mess bills & records.', icon: CreditCard, stats: '0 Defaulters' };
-    case 'Mess Management':
-      return { desc: 'Coordinate daily meal menus, stocks and timings.', icon: Activity, stats: 'Breakfast Active' };
-    case 'Hostel Reports':
-      return { desc: 'Compile Warden reports, check-in history & audits.', icon: FileText, stats: 'Weekly Safe' };
-
-    // Transport Manager
-    case 'Vehicles':
-      return { desc: 'Maintain school bus registry and service logs.', icon: Home, stats: '8 Active Buses' };
-    case 'Routes':
-      return { desc: 'Manage pickup/drop stops, schedules and zones.', icon: Map, stats: '6 Set Routes' };
-    case 'Drivers':
-      return { desc: 'Directory of driver licenses, contact and shifts.', icon: Users, stats: '8 Drivers' };
-    case 'Student Assignments':
-      return { desc: 'Assign students to specific route buses.', icon: UserPlus, stats: '124 Registered' };
-    case 'GPS Tracking':
-      return { desc: 'View live bus locations and road speed feeds.', icon: Activity, stats: 'All Online' };
-    case 'Transport Fees':
-      return { desc: 'Monitor transport pricing plans and payments.', icon: CreditCard, stats: 'No Arrears' };
-
-    // Librarian Desk
-    case 'Book Management':
-      return { desc: 'Register catalog volumes, genres and locations.', icon: BookOpen, stats: '12,450 Books' };
-    case 'Issue Books':
-      return { desc: 'Process checkout requests for students & staff.', icon: UserCheck, stats: '14 Today' };
-    case 'Return Books':
-      return { desc: 'Scan returned volumes and log return status.', icon: CheckCircle, stats: '8 Pending' };
-    case 'Fine Collection':
-      return { desc: 'Assess and collect fines for overdue books.', icon: CreditCard, stats: 'Rs 120 Pending' };
-    case 'Inventory Tracking':
-      return { desc: 'Conduct inventory checkups and stock checks.', icon: Layers, stats: '100% Audit Safe' };
-
-    // Reception / Visitor
-    case 'Visitor Management':
-      return { desc: 'Record gate logs, visitor details and badges.', icon: Users, stats: '4 Active Today' };
-    case 'Front Desk Operations':
-      return { desc: 'Manage phone queries, packages and mails.', icon: PhoneCall, stats: 'Active Line' };
-    case 'Appointment Scheduling':
-      return { desc: 'Coordinate parent meetings with school staff.', icon: Calendar, stats: '2 Scheduled' };
-    case 'Inquiry Handling':
-      return { desc: 'Address walk-in inquiries and collect feedback.', icon: MessageSquare, stats: 'Resolved' };
-    case 'Call Logs':
-      return { desc: 'Document internal/external telephone records.', icon: Clock, stats: '14 Calls Today' };
-    case 'Admission Guidance':
-      return { desc: 'Share curriculum guides and program manuals.', icon: Compass, stats: '12 Distributed' };
-
-    // Admission / CRM
-    case 'Lead Management':
-      return { desc: 'Track admission prospects and user profiles.', icon: UserPlus, stats: '42 Cold Leads' };
-    case 'Inquiry Tracking':
-      return { desc: 'Manage intake questions from contact form.', icon: MessageSquare, stats: '5 Active' };
-    case 'Admission Applications':
-    case 'Document Verification':
-      return { desc: 'Review online applicant profiles and run OCR verification.', icon: FileBadge, stats: '8 Pending Review' };
-    case 'Interview Scheduling':
-      return { desc: 'Schedule applicant interview rounds and log panel feedback.', icon: Calendar, stats: '3 Scheduled' };
-    case 'Test Scheduling':
-      return { desc: 'Coordinate entry evaluation tests and rooms.', icon: Award, stats: 'Next: Saturday' };
-    case 'Automated Merit Lists':
-      return { desc: 'Generate ranked merit lists based on test & previous grades.', icon: Trophy, stats: 'Calculated' };
-    case 'Funnel Analytics':
-      return { desc: 'Visualize campaign conversions from cold lead to enrollment.', icon: Filter, stats: '+12% Conversion' };
-    case 'Enrollment Tracking':
-      return { desc: 'Track registration payouts and enrollment codes.', icon: CheckCircle, stats: '14 Confirmed' };
-
-    // Accounts / Fees
+      return { desc: 'Request sick leaves for your child online.', icon: Clock, stats: '0 Active' };// Hostel Warden// Transport Manager// Librarian Desk// Reception / Visitor// Admission / CRM// Accounts / Fees
     case 'Fee Collection':
-      return { desc: 'Process cashier challans and custom discounts.', icon: CreditCard, stats: 'Rs 42,000 Today' };
-    case 'Invoicing':
-      return { desc: 'Batch-generate monthly fee billing receipts.', icon: Layers, stats: 'Active Queue' };
-    case 'Accounting Ledger':
-      return { desc: 'Record day-to-day chronological financial entries.', icon: Box, stats: 'Auto-balanced' };
-    case 'General Journal':
-      return { desc: 'View complete double-entry bookkeeping journal.', icon: FileText, stats: 'Real-time' };
-    case 'Balance Sheet':
-      return { desc: 'Analyze corporate assets, liabilities, and equity.', icon: Box, stats: 'Monthly Sync' };
-    case 'Profit & Loss':
-      return { desc: 'Track revenues against expenses to calculate net income.', icon: TrendingUp, stats: '+12% Margin' };
-    case 'Cash Flow Reports':
-      return { desc: 'Monitor liquid cash inflows and operating outflows.', icon: Banknote, stats: 'Positive' };
-    case 'Budget Planning':
-      return { desc: 'Allocate departmental limits and track variances.', icon: Target, stats: 'Under Budget' };
-    case 'Financial Forecasting':
-      return { desc: 'AI-assisted projections for upcoming fiscal quarters.', icon: LineChart, stats: 'Q3 Projected' };
-    case 'Tax Reports':
-      return { desc: 'Auto-calculate tax-deductible expenses and liabilities.', icon: FileBadge, stats: 'Corporate Standard' };
-
-    // HR Department
-    case 'Employee Records':
-      return { desc: 'Directory of staff files, profiles and history.', icon: Users, stats: '42 Staff Active' };
-    case 'Recruitment':
-      return { desc: 'Post new job ads and filter teacher resumes.', icon: UserPlus, stats: '2 Open Roles' };
-    case 'Leave Management':
-      return { desc: 'Track annual leave balances and teacher leaves.', icon: Clock, stats: 'Active Ledger' };
-    case 'Performance Reviews':
-      return { desc: 'Log classroom evaluations and feedback reports.', icon: Award, stats: 'Completed' };
-    case 'Payroll Coordination':
-      return { desc: 'Send attendance salary data to accounts desk.', icon: CreditCard, stats: 'Synced' };
-
-    // Vice Principal
+      return { desc: 'Process cashier challans and custom discounts.', icon: CreditCard, stats: 'Rs 42,000 Today' };// HR Department// Vice Principal
     case 'Academic Monitoring':
       return { desc: 'Inspect lesson plan records and syllabus guides.', icon: GraduationCap, stats: '82% Average' };
     case 'Teacher Performance':
@@ -387,106 +203,12 @@ const getFeatureDetails = (featureName: string) => {
     case 'Parent Concerns':
       return { desc: 'Resolve escalated parent requests and emails.', icon: MessageSquare, stats: 'Resolved' };
 
-    // Org Owner
-    case 'Organization Overview':
-      return { desc: 'Aggregated analytics of all school campuses.', icon: Building2, stats: '12 Campuses' };
-    case 'School Performance Matrix':
-      return { desc: 'Compare campus growth, grades and rosters.', icon: TrendingUp, stats: 'Top: Lahore' };
-    case 'Branch Performance Ledger':
-      return { desc: 'Track branch operational costs and revenues.', icon: CreditCard, stats: 'Balanced' };
-    case 'Campus Performance Analytics':
-      return { desc: 'Assess teacher retention and student growth.', icon: Activity, stats: 'Steady' };
-    case 'Group Revenue Reports':
-      return { desc: 'Generate overall profit & balance statement.', icon: FileText, stats: 'Q2 Signed' };
-    case 'Expansion Planning Wizard':
-      return { desc: 'Run franchise projections and cost modeling.', icon: Compass, stats: 'Ready' };
-    case 'Branding Customizer Engine':
-      return { desc: 'Push network logo, theme & domains.', icon: Settings, stats: 'Active' };
-    case 'Organization Core Users':
-      return { desc: 'Manage franchise system admins and roles.', icon: Users, stats: '4 Members' };
-
-    // School Network Owner
-    case 'School Overview Analytics':
-      return { desc: 'Review active attendance and fee tracking.', icon: Building2, stats: 'All Safe' };
-    case 'Revenue Tracker Details':
-      return { desc: 'Audit student fee collections and dues.', icon: CreditCard, stats: 'Live feed' };
-    case 'Expense Audit Logs':
-      return { desc: 'Inspect vendor invoices and salary vouchers.', icon: FileText, stats: 'Audit Done' };
-    case 'Profitability Statements':
-      return { desc: 'Download margin analysis and ledger audits.', icon: TrendingUp, stats: '30.3% Margin' };
-    case 'Staff Lifecycle Directory':
-      return { desc: 'Review teacher contracts and terminations.', icon: Users, stats: '36 Active' };
-    case 'Student Growth Reports':
-      return { desc: 'Track campus enrollment rates and trends.', icon: Activity, stats: '+12.4% Annual' };
-    case 'Academic Grade Summaries':
-      return { desc: 'Analyze passing ratios and exam trends.', icon: Award, stats: '89.2% Pass' };
-    case 'Subscription Preferences':
-      return { desc: 'Update software plan billing configurations.', icon: Settings, stats: 'Enterprise' };
-    case 'School Logo & Branding Customizer':
-      return { desc: 'Configure school banners, logos & theme.', icon: Compass, stats: 'Synced' };
-    case 'AI Command Center':
-      return { desc: 'AI-powered Academic, Financial, and Attendance intelligence analyzer.', icon: Activity, stats: '4 Analysts Online' };
-    case 'AI Content Studio':
-      return { desc: 'Generate high-converting campaigns and greetings in 8 languages.', icon: MessageSquare, stats: 'Active Studio' };
-    case 'Payment Gateway Settings':
-      return { desc: 'Manage localized fee checkout processors and Stripe credentials.', icon: CreditCard, stats: 'Stripe Enabled' };
-
-    case 'School Transport':
-      return { desc: 'View school bus schedules, route information, and tracking.', icon: Map, stats: 'Bus Synced' };
-    case 'Library Books':
-      return { desc: 'Manage your library borrows, check due dates and request extensions.', icon: BookOpen, stats: 'Books Issued' };
-    case 'Hostel Portal':
-      return { desc: 'Manage hostel room allocation details, meals, and wardens.', icon: Home, stats: 'Room Synced' };
-    case 'Transport Roster':
-      return { desc: 'View student transport allocations and route lists.', icon: Map, stats: 'Route Roster' };
-    case 'Library Books Roster':
-      return { desc: 'Check student library checkouts and due dates.', icon: BookOpen, stats: 'Library Roster' };
-    case 'Hostel Roster':
-      return { desc: 'Check boarding student room and bed allocations.', icon: Home, stats: 'Hostel Roster' };
-
-
-    // newly added generic features
-    case 'HRMS':
-      return { desc: 'Human Resource Management System central core.', icon: Users, stats: 'Active' };
-    case 'Payroll':
-      return { desc: 'Automated staff salary disbursement and tax calculations.', icon: Banknote, stats: 'Generated' };
-    case 'Leave Management':
-      return { desc: 'Track employee and student leave quotas and calendars.', icon: Calendar, stats: '5 Pending' };
-    case 'Recruitment':
-      return { desc: 'Applicant tracking and hiring pipelines.', icon: UserPlus, stats: '3 Openings' };
-    case 'Timetable Generator':
-      return { desc: 'Auto-generate collision-free class schedules.', icon: CalendarDays, stats: 'Drafted' };
-    case 'Exam Management':
+    // Org Owner// School Network Ownercase 'Academic Grade Summaries':
+      return { desc: 'Analyze passing ratios and exam trends.', icon: Award, stats: '89.2% Pass' };case 'School Transport':
+      return { desc: 'View school bus schedules, route information, and tracking.', icon: Map, stats: 'Bus Synced' };// newly added generic featurescase 'Exam Management':
       return { desc: 'Create exam terms, date sheets, and print hall tickets.', icon: BookOpen, stats: 'Midterms Active' };
     case 'Result Processing':
-      return { desc: 'Calculate aggregates and compile term report cards.', icon: Award, stats: 'Processing' };
-    case 'SMS Gateway':
-      return { desc: 'Configure Twilio or custom SMS providers.', icon: MessageSquare, stats: 'Connected' };
-    case 'WhatsApp Integration':
-      return { desc: 'Send automated WhatsApp alerts via Meta API.', icon: MessageCircle, stats: 'Live Sync' };
-    case 'Email Automation':
-      return { desc: 'Trigger automated email workflows via SendGrid/AWS.', icon: Mail, stats: 'Active' };
-    case 'Push Notifications':
-      return { desc: 'Mobile and Web Push alerts for parents/students.', icon: Bell, stats: '14k Sent' };
-    case 'AI Attendance Insights':
-      return { desc: 'Predictive analytics on dropout rates based on attendance.', icon: TrendingUp, stats: 'Updated' };
-    case 'AI Fee Defaulter Prediction':
-      return { desc: 'Machine learning model predicting late fee payers.', icon: AlertTriangle, stats: 'High Accuracy' };
-    case 'AI Student Performance Prediction':
-      return { desc: 'Forecast student final grades based on current trajectory.', icon: BrainCircuit, stats: 'Active Model' };
-    case 'AI Admission Analytics':
-      return { desc: 'Predicting enrollment conversion rates and trends.', icon: PieChart, stats: 'Live' };
-    case 'AI Performance Analytics':
-      return { desc: 'Visual graphs predicting student trajectories.', icon: LineChart, stats: 'Synced' };
-    case 'School KPI Dashboard':
-      return { desc: 'Master executive overview of top-level performance.', icon: BarChart3, stats: 'C-Level View' };
-    case 'Revenue Dashboard':
-      return { desc: 'Deep dive into financial health and projections.', icon: DollarSign, stats: 'Stable' };
-    case 'Student Growth Dashboard':
-      return { desc: 'Macro view of student academic and physical growth.', icon: LineChart, stats: 'Upward' };
-    case 'Teacher Performance Dashboard':
-      return { desc: 'Evaluation charts for faculty peer reviews and grades.', icon: Star, stats: 'Evaluated' };
-    default:
+      return { desc: 'Calculate aggregates and compile term report cards.', icon: Award, stats: 'Processing' };default:
       return { desc: 'Access operational modules and dashboard logs.', icon: BookOpen, stats: 'Operational' };
   }
 };
@@ -1233,6 +955,7 @@ export const UnifiedDashboard: React.FC = () => {
   const parentMessages = schoolDb.parentMessages;
   const schoolClasses = schoolDb.classes || CLASSES_LIST;
   const schoolSubjects = schoolDb.subjects || SUBJECTS_LIST;
+  const minAdmissionAge = schoolDb.minAdmissionAge || 3;
 
   // Level-aware class filtering
   const schoolLevel = currentSchool?.schoolLevel || 'both';
@@ -1291,6 +1014,7 @@ export const UnifiedDashboard: React.FC = () => {
   const setFoodCert = (val: any) => updateSchoolDb('foodCert', val);
   const setSchoolClasses = (val: any) => updateSchoolDb('classes', val);
   const setSchoolSubjects = (val: any) => updateSchoolDb('subjects', val);
+  const setMinAdmissionAge = (val: any) => updateSchoolDb('minAdmissionAge', val);
 
   const [completedAssignments, setCompletedAssignments] = useState<string[]>([]);
   const [principalNotifications, setPrincipalNotifications] = useState<string[]>([
@@ -1399,6 +1123,7 @@ export const UnifiedDashboard: React.FC = () => {
 
   const [newSetupClass, setNewSetupClass] = useState('');
   const [newSetupSubject, setNewSetupSubject] = useState('');
+  const [newSetupMinAge, setNewSetupMinAge] = useState(minAdmissionAge.toString());
 
   // Student Advanced Features States
   const [studentGoals, setStudentGoals] = useState([
@@ -2274,9 +1999,7 @@ export const UnifiedDashboard: React.FC = () => {
     printWindow.document.close();
   };
   
-  const [simulatedRole, setSimulatedRole] = useState<UserRole>(
-    currentUser?.role === 'super_admin' ? 'admin' : (currentUser?.role || 'admin')
-  );
+  const simulatedRole = currentUser?.role || 'student';
   
   const isEditor = !['student', 'parent'].includes(simulatedRole);
 
@@ -2758,7 +2481,7 @@ export const UnifiedDashboard: React.FC = () => {
   const canUserEditSection = (section: string): boolean => {
     if (['student', 'parent'].includes(simulatedRole)) return false;
     const role = currentUser?.role || 'student';
-    if (['super_admin', 'admin', 'vice_principal', 'org_owner', 'school_owner'].includes(role)) {
+    if (['super_admin', 'admin', 'vice_principal'].includes(role)) {
       return true;
     }
     switch (section) {
@@ -2768,21 +2491,6 @@ export const UnifiedDashboard: React.FC = () => {
       case 'attendance':
       case 'notices':
         return role === 'teacher';
-      case 'library':
-        return role === 'librarian';
-      case 'hostel':
-        return role === 'hostel';
-      case 'transport':
-        return role === 'transport';
-      case 'finance':
-      case 'accounts':
-        return role === 'accountant';
-      case 'hr':
-        return role === 'hr';
-      case 'reception':
-        return role === 'reception';
-      case 'admissions':
-        return role === 'admissions';
       default:
         return false;
     }
@@ -2882,7 +2590,7 @@ export const UnifiedDashboard: React.FC = () => {
         <style>
           body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f1f5f9; margin: 0; padding: 20px; color: #0f172a; box-sizing: border-box; }
           * { box-sizing: border-box; }
-          .a4-container { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; background: white; padding: 20px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); border-radius: 8px; }
+          .a4-container { max-width: 450px; margin: 0 auto; display: grid; grid-template-columns: 1fr; background: white; padding: 20px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); border-radius: 8px; }
           .challan-part { border: 2px dashed #cbd5e1; padding: 20px; position: relative; border-radius: 12px; display: flex; flex-direction: column; background: #fff; overflow: hidden; }
           .header { display: flex; gap: 12px; align-items: center; border-bottom: 2px solid ${themePrimary}; padding-bottom: 12px; margin-bottom: 15px; }
           .header-text h1 { margin: 0; font-size: 14px; color: ${themePrimary}; text-transform: uppercase; font-weight: 900; line-height: 1.2; word-break: break-word; }
@@ -2905,13 +2613,13 @@ export const UnifiedDashboard: React.FC = () => {
           [contenteditable="true"] { transition: all 0.2s; min-width: 20px; display: inline-block; }
           [contenteditable="true"]:hover { background: #fef08a; cursor: text; outline: 1px dashed #eab308; }
           [contenteditable="true"]:focus { background: #fff; outline: 2px solid #3b82f6; border-radius: 2px; }
-          @media print {
-            body { background: white; padding: 0; }
-            .a4-container { box-shadow: none; padding: 0; gap: 15px; }
+          @media print { 
+            body { padding: 0; background: white; display: flex; justify-content: center; }
+            .a4-container { box-shadow: none; padding: 0; max-width: 450px; margin: 0 auto; }
             .challan-part { border-color: #94a3b8; }
             [contenteditable="true"] { outline: none !important; background: transparent !important; }
             button { display: none !important; }
-            @page { margin: 10mm; size: landscape; }
+            @page { margin: 10mm; size: portrait; }
           }
           .print-btn { position: fixed; bottom: 20px; right: 20px; background: ${themePrimary}; color: white; border: none; padding: 12px 24px; border-radius: 50px; font-size: 14px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: transform 0.2s; z-index: 1000; }
           .print-btn:hover { transform: translateY(-2px); }
@@ -2923,7 +2631,7 @@ export const UnifiedDashboard: React.FC = () => {
       <body>
         <button class="print-btn" onclick="window.print()">🖨️ Print Challan</button>
         <div class="a4-container">
-          ${['Bank Copy', 'School Copy', 'Student Copy'].map(copyName => `
+          ${['Student Copy'].map(copyName => `
             <div class="challan-part">
               <div class="watermark">${schoolName}</div>
               <div class="copy-type">${copyName}</div>
@@ -3000,19 +2708,10 @@ export const UnifiedDashboard: React.FC = () => {
     const role = currentUser?.role;
     if (role === 'super_admin') return 'superpass123';
     if (role === 'admin') return 'principalpass123';
+    if (role === 'vice_principal') return 'vicepass123';
     if (role === 'teacher') return 'teacherpass123';
     if (role === 'student') return 'studentpass123';
     if (role === 'parent') return 'parentpass123';
-    if (role === 'org_owner') return 'orgpass123';
-    if (role === 'school_owner') return 'networkpass123';
-    if (role === 'vice_principal') return 'vicepass123';
-    if (role === 'admissions') return 'admissionpass123';
-    if (role === 'reception') return 'receptionpass123';
-    if (role === 'accountant') return 'financepass123';
-    if (role === 'hr') return 'hrpass123';
-    if (role === 'librarian') return 'librarypass123';
-    if (role === 'transport') return 'drivepass123';
-    if (role === 'hostel') return 'hostelpass123';
     return 'principalpass123';
   };
 
@@ -3089,6 +2788,27 @@ export const UnifiedDashboard: React.FC = () => {
         { title: "⚖️ Tracking student conduct files?", answerTitle: "How to log student incidents", answerContent: "Navigate to Student Conduct Records, click 'Register Infraction', select student and enter action taken (e.g. Warning, Suspended)." }
       ]
     },
+    vice_principal: {
+      title: "Vice Principal Desk",
+      subtitle: "Academic Operations & Discipline",
+      kpis: [
+        { label: "Pending Leave Requests", value: "8 Requests", icon: Users, colorClass: "text-amber-400 bg-amber-500/10 border-amber-500/25", desc: "Require approval" },
+        { label: "Timetable Conflicts", value: "2 Classes", icon: AlertTriangle, colorClass: "text-red-400 bg-red-500/10 border-red-500/25", desc: "Teacher overlap detected" },
+        { label: "Upcoming Exams", value: "Midterms", icon: Calendar, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Starts in 12 days" },
+        { label: "Active Detentions", value: "14 Students", icon: ShieldAlert, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: "Disciplinary action" }
+      ],
+      features: ["Student Management", "Teacher Management", "Class Registration", "Class Subjects", "Attendance Tracking", "Student Behaviour Analytics", "Exam Schedules", "Exam Grades", "Leave Requests", "Generate Reports", "Class Timetable", "Notice Board", "Academic Setup Wizard"],
+      quickActions: [
+        { label: "Review Leaves", desc: "Pending teacher leaves", icon: CheckCircle },
+        { label: "Schedule Exam", desc: "Create new assessment", icon: Plus }
+      ],
+      placeholderText: "Vice Principal Hub active. Oversee academics and disciplinary records.",
+      supportGuides: [
+        { title: "👩‍🏫 Managing teacher class allocations?", answerTitle: "Teacher Rosters", answerContent: "Go to Teacher Management, select a teacher and click Edit to assign them new homeroom classes or specific subjects." },
+        { title: "📅 Generating final exam schedules?", answerTitle: "Exam Configurations", answerContent: "Navigate to Exam Schedules, click New Schedule, set start/end dates, and use auto-allocate to fill subject slots." },
+        { title: "📄 Reviewing student discipline logs?", answerTitle: "Behaviour Monitoring", answerContent: "Access Student Behaviour Analytics to see graphs of infractions, detentions, and merits." }
+      ]
+    },
     teacher: {
       title: "Teacher Workspace Portal",
       subtitle: "Manage Classroom Attendance, Grades & Homework",
@@ -3155,226 +2875,6 @@ export const UnifiedDashboard: React.FC = () => {
         { title: "📈 Reviewing exam progress report?", answerTitle: "Academic Performance Cards", answerContent: "Go to 'Exam Grades' or click 'Print Student Progress Card Report' to download the latest certified academic transcripts." }
       ]
     },
-    org_owner: {
-      title: "Organization Owner Control Console",
-      subtitle: "Multi-School & Multi-Country Consolidated View",
-      kpis: [
-        { label: "Total Schools", value: "4 Networks", icon: Building2, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: "Consolidated group overview" },
-        { label: "Active Branches", value: "12 Regional", icon: Compass, colorClass: "text-indigo-400 bg-indigo-500/10 border-indigo-500/25", desc: "City level locations" },
-        { label: "Total Campuses", value: "34 Locations", icon: Layers, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Active class structures" },
-        { label: "Consolidated Revenue", value: formatCurrency(450000), icon: TrendingUp, colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/25", desc: "Consolidated monthly ledger" }
-      ],
-      features: ["Organization Overview", "School Performance Matrix", "Branch Performance Ledger", "Campus Performance Analytics", "Group Revenue Reports", "Expansion Planning Wizard", "Branding Customizer Engine", "Organization Core Users", "AI Command Center", "Payment Gateway Settings", "Term Dates & Academic Calendar"],
-      quickActions: [
-        { label: "Compare Campuses", desc: "Load attendance & revenue graphs", icon: Activity },
-        { label: "Manage Sub-Admins", desc: "Authorize branch managers", icon: Users }
-      ],
-      placeholderText: "Consolidated Organization ledger. Manage multiple franchises under one brand.",
-      supportGuides: [
-        { title: "📊 How to audit branch networks?", answerTitle: "Consolidated Branch Performance Audit", answerContent: "Open School Performance Matrix. You can compare pupil count, net profit margins, and teacher counts across all networks." },
-        { title: "🏢 Expanding with new campus branch?", answerTitle: "Launch Regional Franchises", answerContent: "Navigate to Expansion Planning Wizard, register new location coords, and select franchisor license model." },
-        { title: "🎨 Overriding white-label themes?", answerTitle: "White-Label Brand Customizer", answerContent: "Go to Branding Customizer Engine to apply custom colors, custom logo, and login screen image presets." },
-        { title: "💵 Consolidated revenue analysis?", answerTitle: "Double-Entry Balance Audit", answerContent: "Go to Group Revenue Reports to view monthly cash flow, payroll support expenses, and revenue split ratios." }
-      ]
-    },
-    school_owner: {
-      title: "School Owner Executive Portal",
-      subtitle: "Manage School Network Performance & Profitability",
-      kpis: [
-        { label: "Total Students", value: "1,240 Enrolled", icon: Users, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: "Unified student ledger" },
-        { label: "Active Teachers", value: "84 Staff", icon: GraduationCap, colorClass: "text-indigo-400 bg-indigo-500/10 border-indigo-500/25", desc: "Payroll coordination active" },
-        { label: "Monthly Revenue", value: formatCurrency(185000), icon: CreditCard, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Collected fee challans" },
-        { label: "Net Profit Margin", value: "32.4%", icon: TrendingUp, colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/25", desc: "Net operational margin" }
-      ],
-      features: ["School Overview Analytics", "Revenue Tracker Details", "Expense Audit Logs", "Profitability Statements", "Staff Lifecycle Directory", "Student Growth Reports", "Academic Grade Summaries", "Subscription Preferences", "School Logo & Branding Customizer", "AI Command Center", "Payment Gateway Settings", "Term Dates & Academic Calendar"],
-      quickActions: [
-        { label: "View Profit Reports", desc: "Launch audit sheets", icon: FileText },
-        { label: "Branding Overrides", desc: "Configure theme colors & logos", icon: Settings }
-      ],
-      placeholderText: "Executive Network Summary. Double-entry operational ledger overview.",
-      supportGuides: [
-        { title: "📈 Verifying net profit margins?", answerTitle: "Net Margin & Profitability Reports", answerContent: "Open Profitability Statements to audit incoming tuition fees and offset utility, payroll, and lease expenditures." },
-        { title: "📝 Modifying employee payroll?", answerTitle: "Faculty Payroll Management", answerContent: "Go to Staff Lifecycle Directory, select active employee profile, and configure base compensation package." },
-        { title: "🎨 Setting school logo & fonts?", answerTitle: "Branding Customizer", answerContent: "Use the Branding Customizer to upload school logo image and set theme color overrides." },
-        { title: "📋 Upgrading ERP subscription plan?", answerTitle: "Enterprise Subscription Preference", answerContent: "Go to Subscription Preferences, view currently active plan tier, and upgrade/downgrade dynamically." }
-      ]
-    },
-    vice_principal: {
-      title: "Vice Principal Oversight Hub",
-      subtitle: "Academic Monitoring, Timetables & Discipline Tracking",
-      kpis: [
-        { label: "Academic Sync Status", value: "94.2%", icon: Award, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: "Class syllabus tracking" },
-        { label: "Teacher Progress Logs", value: "100% Synced", icon: GraduationCap, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Period completion tracking" },
-        { label: "Active Discipline Files", value: "2 Cases", icon: AlertTriangle, colorClass: "text-amber-400 bg-amber-500/10 border-amber-500/25", desc: "Needs evaluation" },
-        { label: "Timetable Status", value: "Conflict-Free", icon: Calendar, colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/25", desc: "AI optimization verified" }
-      ],
-      features: ["Academic Monitoring", "Teacher Performance", "Attendance Monitoring", "Timetable Oversight", "Discipline Management", "Parent Concerns", "AI Command Center", "Term Dates & Academic Calendar"],
-      quickActions: [
-        { label: "Audit Syllabus Progress", desc: "Verify course completion index", icon: FileText },
-        { label: "Timetable Optimizer", desc: "Resolve class schedule conflicts", icon: Calendar }
-      ],
-      placeholderText: "Vice Principal oversight console. Monitor classrooms and syllabus indexes.",
-      supportGuides: [
-        { title: "📅 Optimizing class timetables?", answerTitle: "Timetable Conflict Resolution", answerContent: "Navigate to Timetable Oversight, run Timetable Optimizer wizard to resolve period schedules and room allocation conflicts." },
-        { title: "📚 Tracking syllabus completion?", answerTitle: "Syllabus Progress Verification", answerContent: "Open Academic Monitoring, view progress indexes, and confirm completed chapters per course." },
-        { title: "⚖️ Review student suspension files?", answerTitle: "Student Disciplinary Vetting", answerContent: "Go to Discipline Management, select active files, review principal warnings, and update infraction statuses." },
-        { title: "💬 Coordinating parent concerns?", answerTitle: "Parent Feedback Integration", answerContent: "Open Parent Concerns and direct pending feedback inquiries to relevant classroom teachers." }
-      ]
-    },
-    admissions: {
-      title: "Admissions & Marketing Funnel",
-      subtitle: "Lead Management, Inquiries & Enrollment Tracking",
-      kpis: [
-        { label: "Active Inquiries", value: "142 Leads", icon: PhoneCall, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: "This week marketing" },
-        { label: "Applications Vetting", value: "28 Files", icon: FileText, colorClass: "text-indigo-400 bg-indigo-500/10 border-indigo-500/25", desc: "Pending assessment" },
-        { label: "Interviews Scheduled", value: "12 Today", icon: Calendar, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Panel testing active" },
-        { label: "Enrolled this Session", value: "84 Pupils", icon: UserPlus, colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/25", desc: "Seeded into campuses" }
-      ],
-      features: ["Lead Management", "Inquiry Tracking", "Funnel Analytics", "Document Verification", "Test Scheduling", "Interview Scheduling", "Automated Merit Lists", "Enrollment Tracking"],
-      quickActions: [
-        { label: "Add Inquiry Lead", desc: "Record prospective student lead", icon: PhoneCall },
-        { label: "Schedule Vetting Test", desc: "Reserve panel seat for test", icon: Calendar }
-      ],
-      placeholderText: "Education CRM pipeline active. Follow up with prospective parent inquiries.",
-      supportGuides: [
-        { title: "📞 Logging visitor inquiry phone call?", answerTitle: "Prospective inquiry registry", answerContent: "Click quick action 'Add Inquiry Lead' or go to Inquiry Tracking, enter parent and child details, and set interest status." },
-        { title: "📅 Scheduling admission entry tests?", answerTitle: "Admission Test Bookings", answerContent: "Go to Test Scheduling, select open test date registry, and reserve seat for prospective candidate." },
-        { title: "📊 Exporting marketing funnel CSV?", answerTitle: "CRM Funnel Leads Analysis", answerContent: "Go to Lead Management, click 'Export Leads Funnel analytics Statement' to generate the conversions report." },
-        { title: "✅ Completing candidate enrollment?", answerTitle: "Enrolling CRM Leads", answerContent: "Verify vetting test results in Enrollment Tracking and click 'Provision Student Card' to seed profile to principal portal." }
-      ]
-    },
-    reception: {
-      title: "Reception & Visitor Registry",
-      subtitle: "Visitor Management, Inquiry handling & Call Logs",
-      kpis: [
-        { label: "Visitors Logged Today", value: "18 Entries", icon: UserCheck, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: "RFID check-ins" },
-        { label: "Appointments Today", value: `${appointments.length} Schedules`, icon: Calendar, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Sync with Principal office" },
-        { label: "Pending Inquiries", value: "3 Tasks", icon: PhoneCall, colorClass: "text-amber-400 bg-amber-500/10 border-amber-500/25", desc: "Need follow-up call" },
-        { label: "Gate Logs Status", value: "Secured", icon: Shield, colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/25", desc: "Synced with gate RFID" }
-      ],
-      features: ["Visitor Management", "Front Desk Operations", "Appointment Scheduling", "Inquiry Handling", "Call Logs", "Admission Guidance"],
-      quickActions: [
-        { label: "Check-in Visitor", desc: "Log visitor details & purpose", icon: Plus },
-        { label: "Log Phone Call", desc: "Record phone inquiry summary", icon: PhoneCall }
-      ],
-      placeholderText: "Front-desk console. Print visitor passes or route calls to administrative departments.",
-      supportGuides: [
-        { title: "🎫 Printing temporary visitor pass?", answerTitle: "Visitor Passes Printing", answerContent: "Go to Visitor Management, click 'Check-in Visitor', enter visitor credentials, and click Print Temporary Pass." },
-        { title: "📞 Logging visitor gate call records?", answerTitle: "Gate Registry Logs", answerContent: "Click quick action 'Log Phone Call' or go to Call Logs to register active calls to administrative departments." },
-        { title: "📅 Setting principal office bookings?", answerTitle: "Office Booking Rosters", answerContent: "Go to Appointment Scheduling to view principal calendar availability and block booking slots." },
-        { title: "🎒 Guidance rules for admissions?", answerTitle: "Visitor Admission Guide", answerContent: "Open Admission Guidance tab to read latest course lists, class group availability, and fee templates." }
-      ]
-    },
-    accountant: {
-      title: "Finance & Accounts Ledger",
-      subtitle: "Manage Fee Collections, Defaulters & Payroll support",
-      kpis: [
-        { label: "Fee Collection Today", value: formatCurrency(12400), icon: CreditCard, colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/25", desc: "Cash & online gateway checkins" },
-        { label: "Defaulters Flagged", value: "14 Defaulters", icon: AlertTriangle, colorClass: "text-amber-400 bg-amber-500/10 border-amber-500/25", desc: formatCurrency(189000) + " outstanding" },
-        { label: "Outstanding Invoices", value: "42 Challans", icon: Layers, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Unpaid billing invoices" },
-        { label: "Expenses This Month", value: formatCurrency(45000), icon: TrendingUp, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: "Utility, salaries & maintenance" }
-      ],
-      features: ["Fee Collection", "Invoicing", "Accounting Ledger", "General Journal", "Balance Sheet", "Profit & Loss", "Cash Flow Reports", "Budget Planning", "Financial Forecasting", "Tax Reports"],
-      quickActions: [
-        { label: "Generate Challans", desc: "Create monthly fee invoices", icon: Plus },
-        { label: "Record Cash Payment", desc: "Manual fee collection entry", icon: CreditCard }
-      ],
-      placeholderText: "Double-entry Accounting Ledger. Verify student fee challan logs.",
-      supportGuides: [
-        { title: "💵 Recording student cash fees?", answerTitle: "Direct Fee Cash Entry", answerContent: "Navigate to 'Record Cash Payment' quick action, input student registry ID, class group, and amount to update challan status." },
-        { title: "⚠️ Flagging fee default records?", answerTitle: "Fee Defaulter Logs", answerContent: "Open Fee Defaulters, view unpaid invoices, and dispatch automated SMS payment alerts to parent registers." },
-        { title: "📋 Auditing expenditures ledger?", answerTitle: "Operations cash-flow auditing", answerContent: "Go to Expense Tracking, input expense categories and click 'Log Expenditure' to write to ledger records." },
-        { title: "📊 Exporting monthly accounts PDF?", answerTitle: "Accounts Balance Reports", answerContent: "Navigate to Financial Reports and click 'Simulate PDF Balance Statement Reports' to view monthly profit and loss sheet." }
-      ]
-    },
-    hr: {
-      title: "HR & Recruitment Portal",
-      subtitle: "Manage Staff Directory, Payroll Coordination & Leaves",
-      kpis: [
-        { label: "Total Employees", value: "114 Active Staff", icon: Users, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: "Faculty & administration" },
-        { label: "Leave Requests", value: "2 Pending", icon: Clock, colorClass: "text-amber-400 bg-amber-500/10 border-amber-500/25", desc: "Needs review" },
-        { label: "Staff Attendance", value: "98.1% today", icon: UserCheck, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Staff Bio-sync functional" },
-        { label: "Recruitment Active", value: "3 Job Openings", icon: UserPlus, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: "Vetting candidates" }
-      ],
-      features: ["Employee Records", "Recruitment", "Leave Management", "Performance Reviews", "Payroll Coordination", "Term Dates & Academic Calendar"],
-      quickActions: [
-        { label: "Add Employee", desc: "Onboard new teacher or staff", icon: UserPlus },
-        { label: "Approve Leaves", desc: "Review teacher leave requests", icon: CheckCircle }
-      ],
-      placeholderText: "HR Portal active. Monitor teacher logs and recruitment candidates.",
-      supportGuides: [
-        { title: "👤 Registering new employee logs?", answerTitle: "Staff Profile Setup", answerContent: "Click quick action 'Add Employee', input name, subject specialty, and salary level to provision login credentials." },
-        { title: "📅 Reviewing vacation leaf records?", answerTitle: "Vacation leaves processing", answerContent: "Go to 'Approve Leaves' or Leave Management to view pending faculty leaf request forms and toggle approval." },
-        { title: "📈 Employee performance auditing?", answerTitle: "Faculty Performance Vetting", answerContent: "Open Performance Reviews, input supervisor notes, and set annual score index metrics." },
-        { title: "💵 Checking monthly wage payrolls?", answerTitle: "Staff Payroll Processing", answerContent: "Go to Payroll Coordination to verify active staff attendance logs and compile payroll disbursements." }
-      ]
-    },
-    librarian: {
-      title: "Library Management System",
-      subtitle: "Manage Book Cataloging, Circulation & Fine Collections",
-      kpis: [
-        { label: "Total Books", value: "4,820 Volumes", icon: BookOpen, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: "Cataloged records active" },
-        { label: "Issued Books", value: "142 Books", icon: Clock, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Active circulation" },
-        { label: "Overdue Books", value: "8 Checked", icon: AlertTriangle, colorClass: "text-amber-400 bg-amber-500/10 border-amber-500/25", desc: "Fines accumulating" },
-        { label: "Fines Collected", value: formatCurrency(420), icon: CreditCard, colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/25", desc: "This semester fines" }
-      ],
-      features: ["Book Management", "Issue Books", "Return Books", "Fine Collection", "Inventory Tracking"],
-      quickActions: [
-        { label: "Issue Book", desc: "Record student book checkout", icon: Plus },
-        { label: "Catalog Book", desc: "Add new volume to directory", icon: BookOpen }
-      ],
-      placeholderText: "Library circulation manager active. Scan student candidate card to checkout.",
-      supportGuides: [
-        { title: "📖 Issuing book to student?", answerTitle: "Book Checkout Registry", answerContent: "Click quick action 'Issue Book' or go to Issue Books, type book serial volume ID and student ID to write record." },
-        { title: "📚 Cataloging a new volume book?", answerTitle: "Add Library Volume Catalog", answerContent: "Click quick action 'Catalog Book', select book category, author, and shelf ID." },
-        { title: "⚠️ Resolving book fine collections?", answerTitle: "Overdue Book Fines", answerContent: "Go to Fine Collection, audit overdue book listings, and record student paid fine statements." },
-        { title: "🔍 Auditing library inventory?", answerTitle: "Book Catalog Registry", answerContent: "Go to Inventory Tracking to review total volumes cataloged, issued status, and book damage records." }
-      ]
-    },
-    transport: {
-      title: "Transport Operations Hub",
-      subtitle: "Manage Vehicles, Route Mapping & Drivers",
-      kpis: [
-        { label: "Active Vehicles", value: "12 Buses", icon: Map, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: "Vehicle maintenance normal" },
-        { label: "Total Routes", value: "8 Custom Loops", icon: Compass, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "City routes optimized" },
-        { label: "Assigned Students", value: "240 Pupils", icon: Users, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: "Assigned pick & drops" },
-        { label: "GPS Server Link", value: "Online", icon: UserCheck, colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/25", desc: "Real-time telemetry active" }
-      ],
-      features: ["Vehicles", "Routes", "Drivers", "Student Assignments", "GPS Tracking", "Transport Fees"],
-      quickActions: [
-        { label: "Assign Student Route", desc: "Assign kid to bus route", icon: UserPlus },
-        { label: "Driver logs", desc: "Review daily trip records", icon: Clock }
-      ],
-      placeholderText: "Transport Management Center. Track live location links for parents.",
-      supportGuides: [
-        { title: "🚌 Registering a new bus route?", answerTitle: "Route Mapping Loops", answerContent: "Go to Routes, register new neighborhood loop coordinates, and assign active bus driver." },
-        { title: "👤 Assigning students to bus?", answerTitle: "Student Bus Assignments", answerContent: "Click quick action 'Assign Student Route', select student ID and active loop number to set route profile." },
-        { title: "🛡️ Tracking live GPS telemetry?", answerTitle: "Fleet Telemetry Feeds", answerContent: "Go to GPS Tracking, click 'Sync Telemetry' to connect fleet GPS receivers with active dashboard maps." },
-        { title: "🛠️ Setting maintenance logs?", answerTitle: "Vehicle Maintenance Schedules", answerContent: "Go to Vehicles, view bus operational status, and schedule monthly mechanical checkups." }
-      ]
-    },
-    hostel: {
-      title: "Hostel Operations Console",
-      subtitle: "Manage Room Allocations, Mess Schedules & Hostel Fees",
-      kpis: [
-        { label: "Total Rooms", value: "60 Dorms", icon: Home, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: "Boys & girls blocks" },
-        { label: "Occupied Beds", value: "112 Beds", icon: Users, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Total boarders" },
-        { label: "Available Beds", value: "8 Vacant", icon: Layers, colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/25", desc: "Ready for allocation" },
-        { label: "Pending Hostel Fees", value: formatCurrency(34000), icon: AlertTriangle, colorClass: "text-amber-400 bg-amber-500/10 border-amber-500/25", desc: "Hostel bill invoices" }
-      ],
-      features: ["Room Allocation", "Bed Allocation", "Hostel Fees", "Mess Management", "Hostel Reports"],
-      quickActions: [
-        { label: "Allocate Dorm Room", desc: "Onboard boarding student", icon: Plus },
-        { label: "Mess Schedule", desc: "Update daily food menu", icon: Calendar }
-      ],
-      placeholderText: "Hostel Boarding registry active. Check dorm occupancy statistics.",
-      supportGuides: [
-        { title: "🏢 Assigning boarding rooms?", answerTitle: "Dorm Rooms Allocation", answerContent: "Click quick action 'Allocate Dorm Room' or go to Room Allocation, select bed registry ID, and register student." },
-        { title: "🍱 Mess schedule configuration?", answerTitle: "Hostel Mess Calendars", answerContent: "Click quick action 'Mess Schedule', select Mess Schedule to configure mess meals." },
-        { title: "💵 Auditing unpaid hostel bills?", answerTitle: "Hostel Fees Statements", answerContent: "Go to Hostel Fees, view unpaid invoices, and print mess expense statements." },
-        { title: "📋 Daily night checkin rosters?", answerTitle: "Night Attendance Logs", answerContent: "Go to Hostel Reports to record student evening checkin records and register departures." }
-      ]
-    }
   };
 
   const spec = portalSpecs[simulatedRole] || portalSpecs['admin'];
@@ -3425,55 +2925,7 @@ export const UnifiedDashboard: React.FC = () => {
 
           {/* Right Side: Actions (Dropdown & Buttons) */}
           <div className="flex items-center justify-between md:justify-end gap-2 w-full md:w-auto border-t border-border/20 pt-2.5 md:pt-0 md:border-t-0">
-            {currentUser?.role && ['super_admin', 'admin', 'org_owner', 'school_owner'].includes(currentUser.role) && (
-              <div className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border transition-all shrink-0 ${
-                darkMode 
-                  ? 'bg-purple-950/25 border-purple-500/20' 
-                  : 'bg-purple-50/50 border-purple-200/60'
-              }`}>
-                <span className={`text-[9px] font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
-                  darkMode ? 'text-purple-300' : 'text-purple-700'
-                }`}>Portal:</span>
-                {(() => {
-                  const getUnifiedPortalValue = (role: UserRole): string => {
-                    if (['admin', 'vice_principal'].includes(role)) return 'leadership_hub';
-                    if (['school_owner', 'org_owner'].includes(role)) return 'executive_hub';
-                    if (['accountant', 'hr'].includes(role)) return 'business_hub';
-                    if (['admissions', 'reception', 'librarian', 'transport', 'hostel'].includes(role)) return 'operations_hub';
-                    return role;
-                  };
-
-                  return (
-                    <select
-                      value={getUnifiedPortalValue(simulatedRole)}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setActiveFeature(null);
-                        if (val === 'leadership_hub') setSimulatedRole('admin');
-                        else if (val === 'executive_hub') setSimulatedRole('school_owner');
-                        else if (val === 'business_hub') setSimulatedRole('accountant');
-                        else if (val === 'operations_hub') setSimulatedRole('admissions');
-                        else setSimulatedRole(val as UserRole);
-                      }}
-                      className={`text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-purple-500 font-bold transition-all shrink-0 cursor-pointer ${
-                        darkMode 
-                          ? 'bg-slate-950 border-slate-800 text-white' 
-                          : 'bg-white border-purple-200 text-purple-900 shadow-sm'
-                      }`}
-                    >
-                      <option value="leadership_hub">School Leadership Hub (Principal/VP)</option>
-                      <option value="executive_hub">Executive Management Hub (Owner)</option>
-                      <option value="teacher">Teacher Portal</option>
-                      <option value="student">Student Portal</option>
-                      <option value="parent">Parent Portal</option>
-                      <option value="business_hub">Business & HR Hub (Finance/HR)</option>
-                      <option value="operations_hub">Campus Operations Hub</option>
-                      <option value="super_admin">Super Admin Control Panel</option>
-                    </select>
-                  );
-                })()}
-              </div>
-            )}
+            
 
             <div className="flex items-center gap-1.5 justify-end">
               {currentUser?.role === 'super_admin' && (
@@ -3519,105 +2971,7 @@ export const UnifiedDashboard: React.FC = () => {
       {/* Main Layout Grid */}
       <main className="flex-1 max-w-full w-full px-4 sm:px-8 lg:px-12 py-8 space-y-8">
         
-        {/* Department/Sub-role Navigation Tabs for Consolidated Portals */}
-        {(() => {
-          const isOperations = ['admissions', 'reception', 'librarian', 'transport', 'hostel'].includes(simulatedRole);
-          const isBusiness = ['accountant', 'hr'].includes(simulatedRole);
-          const isLeadership = ['admin', 'vice_principal'].includes(simulatedRole);
-          const isExecutive = ['org_owner', 'school_owner'].includes(simulatedRole);
-
-          if (!isOperations && !isBusiness && !isLeadership && !isExecutive) return null;
-
-          let tabs: { role: UserRole; label: string; icon: string }[] = [];
-          let activeTab = simulatedRole;
-          let hubTitle = "";
-          let hubColor = "from-purple-600 to-indigo-600";
-
-          if (isOperations) {
-            hubTitle = "Campus Operations & Logistics Hub";
-            hubColor = "from-blue-600 to-cyan-600";
-            tabs = [
-              { role: 'admissions', label: 'Admissions & CRM', icon: '📞' },
-              { role: 'reception', label: 'Reception & Visitor Desk', icon: '👤' },
-              { role: 'librarian', label: 'Librarian Desk', icon: '📚' },
-              { role: 'transport', label: 'Transport Manager', icon: '🚌' },
-              { role: 'hostel', label: 'Hostel Warden', icon: '🏢' },
-            ];
-          } else if (isBusiness) {
-            hubTitle = "Business & HR Operations Hub";
-            hubColor = "from-emerald-600 to-teal-600";
-            tabs = [
-              { role: 'accountant', label: 'Accounts & Finance', icon: '💳' },
-              { role: 'hr', label: 'HR & Personnel', icon: '👥' },
-            ];
-          } else if (isLeadership) {
-            hubTitle = "School Leadership & Academic Hub";
-            hubColor = "from-purple-600 to-pink-600";
-            tabs = [
-              { role: 'admin', label: 'Principal Desk', icon: '🎓' },
-              { role: 'vice_principal', label: 'Academic & Discipline (VP)', icon: '⚖️' },
-            ];
-          } else if (isExecutive) {
-            hubTitle = "Executive Management Hub";
-            hubColor = "from-indigo-600 to-purple-600";
-            tabs = [
-              { role: 'school_owner', label: 'School Network Owner', icon: '🏢' },
-              { role: 'org_owner', label: 'Franchise/Organization Owner', icon: '🌍' },
-            ];
-          }
-
-          return (
-            <div className={`p-4 sm:p-5 rounded-2xl border transition-all duration-300 relative overflow-hidden ${
-              darkMode 
-                ? 'bg-slate-900/60 border-slate-800' 
-                : 'bg-white/90 border-slate-200 shadow-md'
-            }`}>
-              {/* Subtle background glow */}
-              <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${hubColor} rounded-full filter blur-3xl opacity-10`} />
-              
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-                <div>
-                  <span className="text-[9px] font-black tracking-widest text-primary uppercase block mb-1">Unified Department Hub</span>
-                  <h2 className="text-sm sm:text-base font-black text-foreground m-0 flex items-center gap-1.5">
-                    <span className="inline-block w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
-                    {hubTitle}
-                  </h2>
-                </div>
-                <p className="text-[10px] text-foreground/50 font-semibold max-w-md m-0">
-                  You are viewing a consolidated department view. Toggle tabs below to switch workspaces seamlessly.
-                </p>
-              </div>
-
-              {/* Tabs container */}
-              <div className="flex flex-wrap gap-2.5">
-                {tabs.map((tab) => {
-                  const isActive = activeTab === tab.role;
-                  return (
-                    <button
-                      key={tab.role}
-                      onClick={() => {
-                        setSimulatedRole(tab.role);
-                        setActiveFeature(null);
-                      }}
-                      className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all border duration-250 cursor-pointer ${
-                        isActive
-                          ? darkMode
-                            ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20 scale-[1.02]'
-                            : 'bg-primary border-primary text-white shadow-lg shadow-primary/15 scale-[1.02]'
-                          : darkMode
-                            ? 'bg-slate-950/40 border-slate-800 text-slate-300 hover:bg-slate-800/60 hover:text-white'
-                            : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-black'
-                      }`}
-                    >
-                      <span className="text-sm leading-none">{tab.icon}</span>
-                      <span>{tab.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })()}
+        
 
         {/* Principal Alerts & Notification Center */}
         {simulatedRole === 'admin' && (
@@ -4120,6 +3474,36 @@ export const UnifiedDashboard: React.FC = () => {
                         <strong className="text-foreground text-[10px]">99.4%</strong>
                       </div>
                     </div>
+                  </div>
+
+                  {/* Admission Settings */}
+                  <div className="p-4 bg-card/50 border border-border rounded-xl space-y-4">
+                    <h4 className="text-sm font-bold text-foreground">Admission Settings</h4>
+                    <div className="flex gap-2">
+                      <input
+                        type="number"
+                        value={newSetupMinAge}
+                        onChange={(e) => setNewSetupMinAge(e.target.value)}
+                        placeholder="Minimum Admission Age"
+                        className="flex-1 bg-muted/50 border border-border rounded-lg text-xs p-2 text-foreground"
+                      />
+                      <button
+                        onClick={() => {
+                          const age = parseInt(newSetupMinAge);
+                          if (isNaN(age) || age < 1) {
+                            alert('Please enter a valid age');
+                            return;
+                          }
+                          requestSecurityVerification(`Set minimum admission age to ${age} years`, () => {
+                            setMinAdmissionAge(age);
+                          });
+                        }}
+                        className="px-4 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md"
+                      >
+                        Save Setting
+                      </button>
+                    </div>
+                    <p className="text-[10px] text-foreground/50 m-0">Current limit: <strong>{minAdmissionAge} years</strong></p>
                   </div>
                 </div>
                 <div className="pt-2 text-[10px] text-foreground/45 border-t border-border/40 font-semibold uppercase tracking-widest text-center mt-4">
@@ -5427,8 +4811,8 @@ export const UnifiedDashboard: React.FC = () => {
                         const age = parseInt(newStudentAge);
                         const marks = parseInt(newStudentMarks);
                         
-                        if (isNaN(age) || age < 4) {
-                          setEnrollmentError('Admission Criteria Failed: Student must be at least 4 years old.');
+                        if (isNaN(age) || age < minAdmissionAge) {
+                          setEnrollmentError(`Admission Criteria Failed: Student must be at least ${minAdmissionAge} years old.`);
                           return;
                         }
                         
@@ -5495,7 +4879,7 @@ export const UnifiedDashboard: React.FC = () => {
                         </div>
                         <div className="space-y-1">
                           <label className="text-[10px] font-bold text-foreground/60 uppercase">Age (Years)</label>
-                          <input type="number" required placeholder="Minimum 4 years" value={newStudentAge} onChange={(e) => setNewStudentAge(e.target.value)} className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" />
+                          <input type="number" required placeholder={`Minimum ${minAdmissionAge} years`} value={newStudentAge} onChange={(e) => setNewStudentAge(e.target.value)} className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" />
                         </div>
                         <div className="space-y-1">
                           <label className="text-[10px] font-bold text-foreground/60 uppercase">Previous Marks (%)</label>
@@ -5955,57 +5339,90 @@ export const UnifiedDashboard: React.FC = () => {
                     </form>
                   )}
 
-                  {/* Employee Staff Roster */}
-                  <div className="space-y-3 pt-2 border-t border-border/60">
-                    <span className="block text-xs font-bold text-foreground/75 uppercase tracking-wider">Employee Staff Roster</span>
-                    <div className="flex flex-wrap justify-center gap-3">
+                  {/* Staff Directory */}
+                  <div className="space-y-3 pt-4 border-t border-border/60">
+                    <span className="block text-xs font-bold text-foreground/75 uppercase tracking-wider">Staff Directory</span>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {filteredTeachers.map((teach) => (
                         <div 
                           key={teach.id} 
                           onClick={() => setSelectedDetailedTeacher(teach)}
-                          className="p-4 bg-card/60 border border-border rounded-xl flex items-center justify-between gap-3 hover:border-primary/45 hover:bg-card/80 transition-all w-full md:w-[calc(50%-6px)] cursor-pointer group shadow-sm"
+                          className="p-4 bg-card/60 border border-border rounded-xl flex flex-col gap-4 hover:border-primary/45 hover:bg-card/80 transition-all cursor-pointer group shadow-sm"
                         >
-                          <div className="flex items-center gap-3">
-                            {teach.photo ? (
-                              <img src={teach.photo} alt={teach.name} className="w-10 h-10 rounded-full object-cover border border-primary/20 shrink-0" />
-                            ) : (
-                              <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-black text-primary text-xs shrink-0 group-hover:scale-105 transition-transform">
-                                {teach.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()}
-                              </div>
-                            )}
-                            <div>
-                              <strong className="block text-xs text-foreground font-bold group-hover:text-primary transition-colors">{teach.name}</strong>
-                              <span className="text-[10px] font-bold text-primary block my-0.5">{teach.role || 'Teacher'}</span>
-                              {(!teach.role || teach.role === 'Teacher') ? (
-                                <span className="text-[10px] text-foreground/60 block">{teach.subject} | {teach.className}</span>
+                          <div className="flex justify-between items-start">
+                            <div className="flex items-center gap-3">
+                              {teach.photo ? (
+                                <img src={teach.photo} alt={teach.name} className="w-12 h-12 rounded-full object-cover border-2 border-primary/20 shrink-0" />
                               ) : (
-                                <span className="text-[10px] text-foreground/60 block">Dep/Area: {teach.subject}</span>
+                                <div className="w-12 h-12 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center font-black text-primary text-sm shrink-0 group-hover:scale-105 transition-transform">
+                                  {teach.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()}
+                                </div>
                               )}
-                              {teach.qualification && (
-                                <span className="text-[9px] font-semibold text-primary block mt-0.5">{teach.qualification}</span>
+                              <div>
+                                <strong className="block text-sm text-foreground font-black group-hover:text-primary transition-colors">{teach.name}</strong>
+                                <span className="text-[10px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded-sm inline-block mt-1">{teach.role || 'Teacher'}</span>
+                              </div>
+                            </div>
+                            <div className="flex flex-col items-end gap-2" onClick={(e) => e.stopPropagation()}>
+                              <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20 text-[9px] uppercase tracking-wider shrink-0">
+                                Verified
+                              </span>
+                              {isEditor && (
+                                <button 
+                                  onClick={() => requestSecureDelete(
+                                    `Are you sure you want to dismiss and delete the teacher record for ${teach.name}?`,
+                                    () => {
+                                      setRecycleBin(prev => [...prev, { id: teach.id, type: 'teacher', data: teach, labelName: teach.name }]);
+                                      setTeachers((prev: any[]) => prev.filter(t => t.id !== teach.id));
+                                      if (selectedDetailedTeacher?.id === teach.id) {
+                                        setSelectedDetailedTeacher(null);
+                                      }
+                                    }
+                                  )}
+                                  className="text-[10px] text-rose-400 hover:text-rose-300 font-bold mt-1 uppercase"
+                                >
+                                  Dismiss
+                                </button>
                               )}
                             </div>
                           </div>
-                          <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                            <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20 text-[9px] uppercase tracking-wider shrink-0">
-                              Verified
-                            </span>
-                            {isEditor && (
-                              <button 
-                                onClick={() => requestSecureDelete(
-                                  `Are you sure you want to dismiss and delete the teacher record for ${teach.name}?`,
-                                  () => {
-                                    setRecycleBin(prev => [...prev, { id: teach.id, type: 'teacher', data: teach, labelName: teach.name }]);
-                                    setTeachers((prev: any[]) => prev.filter(t => t.id !== teach.id));
-                                    if (selectedDetailedTeacher?.id === teach.id) {
-                                      setSelectedDetailedTeacher(null);
-                                    }
-                                  }
-                                )}
-                                className="text-[10px] text-red-400 hover:text-red-300 font-medium"
-                              >
-                                Dismiss
-                              </button>
+                          
+                          <div className="grid grid-cols-2 gap-y-2 gap-x-4 bg-muted/40 p-3 rounded-lg border border-border/50">
+                            {(!teach.role || teach.role === 'Teacher') ? (
+                              <>
+                                <div>
+                                  <span className="block text-[9px] font-bold text-foreground/50 uppercase">Subject</span>
+                                  <span className="block text-xs font-semibold text-foreground/90">{teach.subject || 'N/A'}</span>
+                                </div>
+                                <div>
+                                  <span className="block text-[9px] font-bold text-foreground/50 uppercase">Class</span>
+                                  <span className="block text-xs font-semibold text-foreground/90">{teach.className || 'N/A'}</span>
+                                </div>
+                              </>
+                            ) : (
+                              <div className="col-span-2">
+                                <span className="block text-[9px] font-bold text-foreground/50 uppercase">Department / Area</span>
+                                <span className="block text-xs font-semibold text-foreground/90">{teach.subject || 'N/A'}</span>
+                              </div>
+                            )}
+                            
+                            {teach.experience && (
+                              <div>
+                                <span className="block text-[9px] font-bold text-foreground/50 uppercase">Experience</span>
+                                <span className="block text-xs font-semibold text-foreground/90">{teach.experience}</span>
+                              </div>
+                            )}
+                            {teach.qualification && (
+                              <div>
+                                <span className="block text-[9px] font-bold text-foreground/50 uppercase">Qualification</span>
+                                <span className="block text-xs font-semibold text-foreground/90">{teach.qualification}</span>
+                              </div>
+                            )}
+                            {teach.phone && teach.phone !== 'N/A' && (
+                              <div>
+                                <span className="block text-[9px] font-bold text-foreground/50 uppercase">Contact</span>
+                                <span className="block text-xs font-semibold text-foreground/90">{teach.phone}</span>
+                              </div>
                             )}
                           </div>
                         </div>

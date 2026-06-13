@@ -168,46 +168,10 @@ export const Login: React.FC = () => {
         detectedRole = 'parent';
         displayName = 'Parent Account';
         expectedPassword = 'parentpass123';
-      } else if (emailLower.includes('org')) {
-        detectedRole = 'org_owner';
-        displayName = 'Organization Owner';
-        expectedPassword = 'orgpass123';
-      } else if (emailLower.includes('owner')) {
-        detectedRole = 'school_owner';
-        displayName = 'School Network Owner';
-        expectedPassword = 'networkpass123';
       } else if (emailLower.includes('vice')) {
         detectedRole = 'vice_principal';
         displayName = 'Vice Principal';
         expectedPassword = 'vicepass123';
-      } else if (emailLower.includes('admission')) {
-        detectedRole = 'admissions';
-        displayName = 'Admissions Director';
-        expectedPassword = 'admissionpass123';
-      } else if (emailLower.includes('reception')) {
-        detectedRole = 'reception';
-        displayName = 'Front Desk Executive';
-        expectedPassword = 'receptionpass123';
-      } else if (emailLower.includes('accountant') || emailLower.includes('finance')) {
-        detectedRole = 'accountant';
-        displayName = 'Chief Accountant';
-        expectedPassword = 'financepass123';
-      } else if (emailLower.includes('hr')) {
-        detectedRole = 'hr';
-        displayName = 'HR Manager';
-        expectedPassword = 'hrpass123';
-      } else if (emailLower.includes('librarian')) {
-        detectedRole = 'librarian';
-        displayName = 'Librarian';
-        expectedPassword = 'librarypass123';
-      } else if (emailLower.includes('transport')) {
-        detectedRole = 'transport';
-        displayName = 'Transport Manager';
-        expectedPassword = 'drivepass123';
-      } else if (emailLower.includes('hostel')) {
-        detectedRole = 'hostel';
-        displayName = 'Hostel Warden';
-        expectedPassword = 'hostelpass123';
       } else if (emailLower.includes('principal') || emailLower.includes('admin')) {
         detectedRole = 'admin';
         displayName = 'Principal Officer';

@@ -6,16 +6,7 @@ export type UserRole =
   | 'teacher' 
   | 'student' 
   | 'parent'
-  | 'org_owner'
-  | 'school_owner'
-  | 'vice_principal'
-  | 'admissions'
-  | 'reception'
-  | 'accountant'
-  | 'hr'
-  | 'librarian'
-  | 'transport'
-  | 'hostel';
+  | 'vice_principal';
 
 export interface UserSession {
   userId: string;
