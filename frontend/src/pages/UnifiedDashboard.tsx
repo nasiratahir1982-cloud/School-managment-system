@@ -2899,11 +2899,11 @@ export const UnifiedDashboard: React.FC = () => {
       title: "Academic Hub Master Control",
       subtitle: "Global School Administration Center",
       kpis: [
-        { label: "Total Countries", value: "6 Active", icon: GlobeIcon, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: "PK, UK, AE, SA, US, CA" },
-        { label: "Organizations", value: "14 Groups", icon: Building2, colorClass: "text-indigo-400 bg-indigo-500/10 border-indigo-500/25", desc: "School groups overview" },
-        { label: "Total Schools", value: "184 Schools", icon: Layers, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Secure data channels active" },
-        { label: "Active Revenue", value: "$48,920/mo", icon: TrendingUp, colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/25", desc: "Monthly collection records" }
-      ],
+        { label: "Total Countries", value: `${countries.filter(c => c.status === 'Active').length} Active`, icon: GlobeIcon, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: countries.filter(c => c.status === 'Active').map(c => c.code).join(', ') || "None" },
+          { label: "Organizations", value: `${organizations.filter(o => o.status === 'Active').length} Groups`, icon: Building2, colorClass: "text-indigo-400 bg-indigo-500/10 border-indigo-500/25", desc: "School groups overview" },
+          { label: "Total Schools", value: `${schoolsList.filter(s => s.status !== 'Suspended' && s.status !== 'Inactive').length} Schools`, icon: Layers, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Secure data channels active" },
+          { label: "Active Revenue", value: "$48,920/mo", icon: TrendingUp, colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/25", desc: "Monthly collection records" }
+        ],
       features: ["Country Management", "Organization Management", "School Management", "Subscription Plans", "Billing & Invoicing", "Revenue Analytics", "White Label Configuration", "Global Announcements", "Support Tickets", "Audit Logs", "Multi-Level Permissions", "Advanced Activity Monitoring", "School Health Monitoring", "Server Monitoring", "Backup Manager", "API Key Management", "SMS Gateway Settings", "Email Server Settings", "School Suspension System", "School Performance Analytics", "Fraud Detection Dashboard", "Two Factor Authentication", "Device Management", "Session Tracking", "IP Restriction", "Login Audit Trail", "SMS Gateway", "WhatsApp Integration", "Email Automation", "Push Notifications", "AI Attendance Insights", "AI Fee Defaulter Prediction", "AI Student Performance Prediction", "AI Admission Analytics", "School KPI Dashboard", "Revenue Dashboard", "Student Growth Dashboard", "Teacher Performance Dashboard", "AI Command Center", "AI Content Studio", "Payment Gateway Settings", "Term Dates & Academic Calendar"],
       quickActions: [
         { label: "Add New School", desc: "Create school profile", icon: Plus },
