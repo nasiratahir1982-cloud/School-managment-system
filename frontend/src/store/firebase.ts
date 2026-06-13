@@ -3,7 +3,19 @@ import { getDatabase, ref, onValue, set as dbSet } from 'firebase/database';
 import { getAuth } from 'firebase/auth';
 
 // Firebase configuration using environment variables or standard placeholders
-const firebaseConfig = {
+// Load custom config from localStorage if it exists
+let customConfig = null;
+try {
+  const savedConfig = localStorage.getItem('ah_custom_firebase_config');
+  if (savedConfig) {
+    customConfig = JSON.parse(savedConfig);
+  }
+} catch (e) {
+  console.error("Failed to parse custom Firebase config from localStorage", e);
+}
+
+// Fallback to environment variables or hardcoded default
+const firebaseConfig = customConfig || {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyB5jhrEr8C6rp9YC5vmqJk1DL7XDcoYAus",
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "school-management-system-cac21.firebaseapp.com",
   databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL || "https://school-management-system-cac21-default-rtdb.firebaseio.com",
