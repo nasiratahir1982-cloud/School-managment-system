@@ -5347,7 +5347,7 @@ export const UnifiedDashboard: React.FC = () => {
 
                       <div className="border-t border-border/50 pt-3">
                         <span className="block text-[10px] font-black text-foreground/50 uppercase tracking-wider mb-3">Required Documents (PDF/Images)</span>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex flex-wrap justify-center gap-4">
                           <div className="bg-muted/20 border border-dashed border-border rounded-lg p-3 flex flex-col justify-center gap-2 hover:bg-muted/30 transition-colors cursor-pointer">
                             <label className="text-xs font-bold text-foreground/80 flex items-center gap-1 cursor-pointer"><FileText className="w-3 h-3 text-primary" /> Birth Certificate / B-Form <span className="text-rose-500">*</span></label>
                             <input name="birthCert" type="file" accept="image/*,.pdf" className="text-[10px] file:mr-3 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer text-foreground/60 w-full" />
@@ -5791,12 +5791,12 @@ export const UnifiedDashboard: React.FC = () => {
                   {/* Staff Directory */}
                   <div className="space-y-3 pt-4 border-t border-border/60">
                     <span className="block text-xs font-bold text-foreground/75 uppercase tracking-wider">Staff Directory</span>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex flex-wrap justify-center gap-4">
                       {filteredTeachers.map((teach) => (
                         <div 
                           key={teach.id} 
                           onClick={() => setSelectedDetailedTeacher(teach)}
-                          className="p-4 bg-card/60 border border-border rounded-xl flex flex-col gap-4 hover:border-primary/45 hover:bg-card/80 transition-all cursor-pointer group shadow-sm"
+                          className="p-4 bg-card/60 border border-border rounded-xl flex flex-col gap-4 hover:border-primary/45 hover:bg-card/80 transition-all cursor-pointer group shadow-sm w-full md:w-[calc(50%-8px)] lg:w-[calc(33.33%-11px)] max-w-sm"
                         >
                           <div className="flex flex-col items-center text-center justify-center relative gap-3 w-full">
                             <div className="flex flex-col items-center justify-center gap-3 w-full">
@@ -6199,7 +6199,7 @@ export const UnifiedDashboard: React.FC = () => {
                     🌟 Log individual student remarks regarding behavior, participation, and academic improvement.
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-wrap justify-center gap-4">
                     <div className="p-5 bg-card border border-border rounded-xl space-y-4">
                       <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Add Remark</span>
                       <select className="w-full bg-muted/30 border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold">
@@ -6912,7 +6912,7 @@ export const UnifiedDashboard: React.FC = () => {
               {/* COMMUNICATION & AI MODULES */}
               {(activeFeature === 'SMS Gateway' || activeFeature === 'WhatsApp Integration') && (
                 <div className="space-y-4 animate-fadeIn">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-wrap justify-center gap-4">
                     <div className="p-5 bg-card border border-border rounded-xl space-y-4 relative overflow-hidden">
                       <div className="absolute top-0 right-0 p-3 opacity-20"><MessageSquare className="w-16 h-16" /></div>
                       <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider relative z-10">SMS Gateway Config</span>
@@ -6967,7 +6967,7 @@ export const UnifiedDashboard: React.FC = () => {
 
               {(activeFeature === 'AI Attendance Insights' || activeFeature === 'AI Fee Defaulter Prediction') && (
                 <div className="space-y-4 animate-fadeIn">
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <div className="flex flex-wrap justify-center gap-4">
                      {/* Attendance Prediction */}
                      <div className="p-5 bg-card border border-border rounded-xl space-y-4 flex flex-col justify-between">
                        <div>
@@ -7197,7 +7197,7 @@ export const UnifiedDashboard: React.FC = () => {
 
               {(activeFeature === 'Grade Book' || activeFeature === 'Student Remarks') && (
                 <div className="space-y-4 animate-fadeIn">
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <div className="flex flex-wrap justify-center gap-4">
                      {/* Grade Book */}
                      <div className="p-5 bg-card border border-border rounded-xl space-y-4">
                         <strong className="text-xs font-bold text-foreground uppercase tracking-wider block">Subject Grade Book</strong>
@@ -7278,7 +7278,7 @@ export const UnifiedDashboard: React.FC = () => {
                   </div>
 
                   {activeFeature === 'School KPI Dashboard' && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex flex-wrap justify-center gap-4">
                       <div className="p-5 bg-card border border-border rounded-xl space-y-4">
                         <strong className="text-xs font-bold text-foreground uppercase tracking-wider block">Enrollment Targets</strong>
                         <div className="h-32 flex items-end gap-2">
@@ -7648,7 +7648,7 @@ export const UnifiedDashboard: React.FC = () => {
                     🪪 Run simulated OCR (Optical Character Recognition) to verify uploaded candidate documents (Birth Certificates, Transcripts).
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-wrap justify-center gap-4">
                     <div className="p-5 bg-card border border-border rounded-xl space-y-4">
                       <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Candidate Pending Files</span>
                       <div className="space-y-3 w-full">
@@ -8234,7 +8234,7 @@ export const UnifiedDashboard: React.FC = () => {
                     </select>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-wrap justify-center gap-4">
                     {/* Overall Growth Chart */}
                     <div className="p-5 bg-card border border-border rounded-xl flex flex-col justify-between h-64">
                       <div className="flex justify-between items-start mb-4">
@@ -8422,7 +8422,7 @@ export const UnifiedDashboard: React.FC = () => {
                     📈 Analyze your GPA progression across semesters and subject-wise performance benchmarks.
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-wrap justify-center gap-4">
                     {/* GPA Chart Mock */}
                     <div className="p-5 bg-card border border-border rounded-xl flex flex-col justify-between">
                       <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider mb-4">Semester GPA Trend</span>
@@ -12077,7 +12077,7 @@ export const UnifiedDashboard: React.FC = () => {
                       <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
                         🏥 Multi-Tenant Health Dashboard. Live metrics for API latency and sync status across all connected school branches.
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="flex flex-wrap justify-center gap-4">
                         {[
                           { name: 'Allied School Campus A', latency: '24ms', load: '14%', status: 'Optimal' },
                           { name: 'Beaconhouse UK Branch', latency: '112ms', load: '65%', status: 'Warning' },
@@ -12196,7 +12196,7 @@ export const UnifiedDashboard: React.FC = () => {
                       </div>
                       <form onSubmit={handleSaveFirebaseConfig} className="bg-card/50 border border-border p-4 rounded-xl space-y-4">
                         <h4 className="text-sm font-bold text-foreground">Custom Firebase Configuration</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex flex-wrap justify-center gap-4">
                           <div>
                             <label className="block text-[10px] font-bold text-foreground/70 uppercase mb-1">API Key</label>
                             <input type="text" required value={firebaseApiKey} onChange={(e) => setFirebaseApiKey(e.target.value)} className="w-full bg-muted border border-border rounded-lg text-xs p-2.5" placeholder="AIzaSy..." />
@@ -12282,7 +12282,7 @@ export const UnifiedDashboard: React.FC = () => {
                         📱 Configure Global SMS Gateway providers (Twilio, Clickatell, Local PK Gateways).
                       </div>
                       <div className="p-5 bg-card border border-border rounded-xl space-y-4 shadow-sm max-w-2xl">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex flex-wrap justify-center gap-4">
                           <div className="space-y-1">
                             <label className="text-[11px] font-bold text-foreground/70 uppercase">Active Gateway</label>
                             <select className="bg-muted/30 border border-border rounded-lg text-xs p-2.5 w-full text-foreground cursor-pointer">
@@ -12315,7 +12315,7 @@ export const UnifiedDashboard: React.FC = () => {
                         📧 Global SMTP configuration for transactional emails (Invoices, Notifications, Alerts).
                       </div>
                       <div className="p-5 bg-card border border-border rounded-xl space-y-4 shadow-sm max-w-2xl">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex flex-wrap justify-center gap-4">
                           <div className="space-y-1">
                             <label className="text-[11px] font-bold text-foreground/70 uppercase">SMTP Host</label>
                             <input type="text" defaultValue="smtp.sendgrid.net" className="bg-muted/30 border border-border rounded-lg text-xs p-2.5 w-full text-foreground" />
@@ -12350,7 +12350,7 @@ export const UnifiedDashboard: React.FC = () => {
                       <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-500/90 font-bold leading-relaxed flex items-center gap-2">
                         <Ban size={16} /> Extreme Security Protocol. Suspending a school will instantly block all logins and API access for that tenant.
                       </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex flex-wrap justify-center gap-4">
                           {schoolsList.map((school) => {
                             const isSuspended = school.status === 'Suspended' || school.status === 'Inactive';
                             return (
@@ -13546,7 +13546,7 @@ export const UnifiedDashboard: React.FC = () => {
                   <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
                     🚌 Live tracking of school buses, driver assignments, and student route rosters.
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-wrap justify-center gap-4">
                     {[
                       { route: 'Route A - Downtown', bus: 'LEA-4050', driver: 'Asif Mehmood', students: 42, status: 'In Transit' },
                       { route: 'Route B - Suburbs', bus: 'LEA-8811', driver: 'Tariq Jameel', students: 38, status: 'Completed' }

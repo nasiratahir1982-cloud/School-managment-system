@@ -789,7 +789,7 @@ export const SuperAdminDashboard: React.FC = () => {
                 <label className="block text-sm font-bold text-foreground flex items-center gap-1.5">
                   <Building2 className="w-4 h-4 text-purple-400" /> School Details
                 </label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-wrap justify-center gap-4">
                   <div>
                     <label className="block text-xs text-slate-450 mb-1.5 font-semibold">School Name</label>
                     <input
@@ -847,7 +847,7 @@ export const SuperAdminDashboard: React.FC = () => {
                 <label className="block text-sm font-bold text-foreground flex items-center gap-1.5">
                   <Layers className="w-4 h-4 text-purple-400" /> Structure Configuration
                 </label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-wrap justify-center gap-4">
                   <div>
                     <label className="block text-xs text-slate-450 mb-1.5 font-semibold">Branch Name</label>
                     <input
