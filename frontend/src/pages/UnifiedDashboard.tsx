@@ -5405,9 +5405,9 @@ export const UnifiedDashboard: React.FC = () => {
                               <div className="text-[10px] text-foreground/60 font-semibold">{stud.className} | Roll: {stud.roll}</div>
                             </div>
                             <div className="w-full space-y-1 mt-1 border-t border-border/30 pt-2 text-left px-1">
-                               <div className="text-[9px] text-slate-400 flex justify-between items-center"><span className="uppercase tracking-wider">Hostel</span> <span className="font-semibold text-foreground/80 truncate max-w-[60px]" title={stud.hostelStatus || 'Day Scholar'}>{stud.hostelStatus || 'Day Scholar'}</span></div>
-                               <div className="text-[9px] text-slate-400 flex justify-between items-center"><span className="uppercase tracking-wider">Transport</span> <span className="font-semibold text-foreground/80 truncate max-w-[60px]" title={stud.bookedTransport || 'None'}>{stud.bookedTransport || 'None'}</span></div>
-                               <div className="text-[9px] text-slate-400 flex justify-between items-center"><span className="uppercase tracking-wider">Books</span> <span className="font-semibold text-foreground/80">{stud.borrowedBooks?.length > 0 ? stud.borrowedBooks.length : '0'}</span></div>
+                               <div className="text-[9px] text-slate-400 flex flex-col items-center justify-center text-center gap-0.5"><span className="uppercase tracking-wider">Hostel</span> <span className="font-semibold text-foreground/80 truncate max-w-[60px]" title={stud.hostelStatus || 'Day Scholar'}>{stud.hostelStatus || 'Day Scholar'}</span></div>
+                               <div className="text-[9px] text-slate-400 flex flex-col items-center justify-center text-center gap-0.5"><span className="uppercase tracking-wider">Transport</span> <span className="font-semibold text-foreground/80 truncate max-w-[60px]" title={stud.bookedTransport || 'None'}>{stud.bookedTransport || 'None'}</span></div>
+                               <div className="text-[9px] text-slate-400 flex flex-col items-center justify-center text-center gap-0.5"><span className="uppercase tracking-wider">Books</span> <span className="font-semibold text-foreground/80">{stud.borrowedBooks?.length > 0 ? stud.borrowedBooks.length : '0'}</span></div>
                             </div>
                             {isEditor && (
                               <button 
@@ -5798,8 +5798,8 @@ export const UnifiedDashboard: React.FC = () => {
                           onClick={() => setSelectedDetailedTeacher(teach)}
                           className="p-4 bg-card/60 border border-border rounded-xl flex flex-col gap-4 hover:border-primary/45 hover:bg-card/80 transition-all cursor-pointer group shadow-sm"
                         >
-                          <div className="flex justify-between items-start">
-                            <div className="flex items-center gap-3">
+                          <div className="flex flex-col items-center text-center justify-center relative gap-3 w-full">
+                            <div className="flex flex-col items-center justify-center gap-3 w-full">
                               {teach.photo ? (
                                 <img src={teach.photo} alt={teach.name} className="w-12 h-12 rounded-full object-cover border-2 border-primary/20 shrink-0" />
                               ) : (
@@ -5816,7 +5816,7 @@ export const UnifiedDashboard: React.FC = () => {
                                 <span className="text-[10px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded-sm inline-block mt-1">{teach.role || 'Teacher'}</span>
                               </div>
                             </div>
-                            <div className="flex flex-col items-end gap-2" onClick={(e) => e.stopPropagation()}>
+                            <div className="flex items-center justify-center gap-2 mt-2 w-full" onClick={(e) => e.stopPropagation()}>
                               <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20 text-[9px] uppercase tracking-wider shrink-0">
                                 Verified
                               </span>
@@ -5841,12 +5841,12 @@ export const UnifiedDashboard: React.FC = () => {
                           </div>
                           
                           <div className="space-y-3">
-                            <div className="bg-primary/5 rounded border border-primary/10 p-2.5">
+                            <div className="bg-primary/5 rounded border border-primary/10 p-2.5 text-center flex flex-col items-center justify-center">
                               <span className="block text-[9px] font-bold text-foreground/50 uppercase tracking-wider mb-0.5">Salary</span>
                               <span className="block text-lg font-black text-foreground">Rs. {teach.salary && teach.salary !== 'N/A' ? Number(teach.salary).toLocaleString() : 'Not Provided'}</span>
                             </div>
                             
-                            <div className="grid grid-cols-2 gap-y-2 gap-x-4 bg-muted/40 p-3 rounded-lg border border-border/50">
+                            <div className="grid grid-cols-1 gap-y-3 bg-muted/40 p-3 rounded-lg border border-border/50 text-center place-items-center">
                               {(!teach.role || teach.role === 'Teacher') ? (
                                 <div className="col-span-2">
                                   <span className="block text-[9px] font-bold text-foreground/50 uppercase">Subject & Class</span>
