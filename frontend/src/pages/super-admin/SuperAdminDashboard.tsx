@@ -371,7 +371,7 @@ export const SuperAdminDashboard: React.FC = () => {
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
           
           {/* Active Tenant List Column */}
-          <div className="lg:col-span-2 flex flex-col">
+          <div className="lg:col-span-1 w-full flex flex-col">
             <div className="glass-card rounded-xl overflow-hidden border border-border h-full flex flex-col justify-between">
               <table className="w-full text-left border-collapse">
                 <thead>
@@ -911,7 +911,7 @@ export const SuperAdminDashboard: React.FC = () => {
                 <label className="block text-sm font-bold text-foreground flex items-center gap-1.5">
                   <User className="w-4 h-4 text-purple-400" /> Admin Account details
                 </label>
-                <div className="space-y-3">
+                <div className="space-y-3 w-full">
                   <div>
                     <label className="block text-xs text-slate-450 mb-1.5 font-semibold">Admin Full Name</label>
                     <input
@@ -1072,7 +1072,7 @@ export const SuperAdminDashboard: React.FC = () => {
             {/* Modal Body */}
             <div className="modal-body space-y-4 text-sm">
               {activeDetailModal === 'schools' && (
-                <div className="space-y-3">
+                <div className="space-y-3 w-full">
                   <div className="p-3 bg-background rounded-lg border border-slate-850 space-y-2 text-xs">
                     <div className="flex justify-between text-muted-foreground">
                       <span>Total Registered Institutes</span>
@@ -1156,7 +1156,7 @@ export const SuperAdminDashboard: React.FC = () => {
               )}
 
               {activeDetailModal === 'database' && (
-                <div className="space-y-3">
+                <div className="space-y-3 w-full">
                   <div className="p-3 bg-background rounded-lg border border-slate-850 space-y-2 text-xs">
                     <div className="flex justify-between text-muted-foreground">
                       <span>Total Database Size</span>
@@ -1197,7 +1197,7 @@ export const SuperAdminDashboard: React.FC = () => {
               )}
 
               {activeDetailModal === 'queues' && (
-                <div className="space-y-3">
+                <div className="space-y-3 w-full">
                   <div className="p-3 bg-background rounded-lg border border-slate-850 space-y-2 text-xs">
                     <div className="flex justify-between text-muted-foreground">
                       <span>Message Engine</span>
@@ -1280,7 +1280,7 @@ export const SuperAdminDashboard: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-3">
+                  <div className="space-y-3 w-full">
                     <span className="text-xs font-bold text-muted-foreground block uppercase tracking-wider font-semibold">Server Component Performance (Click to Optimize):</span>
                     
                     <div className="space-y-2.5">
