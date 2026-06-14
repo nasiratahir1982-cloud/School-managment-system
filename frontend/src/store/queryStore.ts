@@ -82,7 +82,7 @@ export const useQueryStore = create<QueryState>((set, get) => ({
       const currentQueries = get().queries;
       const updatedQueries = currentQueries.map(q => {
         if (q.id === id) {
-          return { ...q, status: 'resolved', reply: replyMessage };
+          return { ...q, status: 'resolved' as 'resolved', reply: replyMessage };
         }
         return q;
       });

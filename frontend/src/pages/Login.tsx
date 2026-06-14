@@ -68,6 +68,7 @@ export const Login: React.FC = () => {
   const [showContactModal, setShowContactModal] = useState(false);
   const [contactSubject, setContactSubject] = useState('');
   const [contactMessage, setContactMessage] = useState('');
+  const [contactTarget, setContactTarget] = useState('superadmin');
   const [selectedCountry, setSelectedCountry] = useState<SupportedCountry | ''>('');
   const [activeCountries, setActiveCountries] = useState<string[] | null>(null);
 
@@ -738,6 +739,21 @@ export const Login: React.FC = () => {
                   ? "Instead of emails, all communication is routed directly into the school's central dashboard."
                   : "Send your system-wide inquiries directly to the Super Admin."}
               </p>
+              {!currentSchool && (
+                <div className="mb-1">
+                  <label className="text-xs font-bold text-foreground/70 mb-1 block">Route Query To:</label>
+                  <select 
+                    value={contactTarget}
+                    onChange={e => setContactTarget(e.target.value)}
+                    className="w-full p-2 bg-muted/30 border border-border rounded-lg text-sm font-semibold"
+                  >
+                    <option value="superadmin">System Support (Super Admin)</option>
+                    {schoolsList.map(school => (
+                      <option key={school.domain} value={school.domain}>{school.schoolName} ({school.city})</option>
+                    ))}
+                  </select>
+                </div>
+              )}
               <div>
                 <label className="text-xs font-bold text-foreground/70 mb-1 block">Subject</label>
                 <input 
@@ -762,7 +778,7 @@ export const Login: React.FC = () => {
                 onClick={async () => {
                   if (!contactSubject || !contactMessage) return alert("Please fill in subject and message");
                   
-                  const target = currentSchool ? currentSchool.domain : 'superadmin';
+                  const target = currentSchool ? currentSchool.domain : contactTarget;
                   const success = await sendQuery({
                     target,
                     subject: contactSubject,

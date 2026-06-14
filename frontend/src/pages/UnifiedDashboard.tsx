@@ -5537,13 +5537,13 @@ export const UnifiedDashboard: React.FC = () => {
                               name: newTeacherName, 
                               role: newEmployeeRole,
                               gender: newTeacherGender,
-                              subject: newTeacherSubject || 'N/A',
+                              subject: newTeacherSubject || '-',
                               className: newEmployeeRole === 'Teacher' ? newTeacherClass : 'N/A', 
-                              qualification: newTeacherQualification || 'N/A',
-                              salary: newTeacherSalary || 'N/A',
+                              qualification: newTeacherQualification || '-',
+                              salary: newTeacherSalary || '-',
                               experience: newTeacherExperience,
-                              email: newTeacherEmail || 'N/A',
-                              phone: newTeacherPhone || 'N/A',
+                              email: newTeacherEmail || '-',
+                              phone: newTeacherPhone || '-',
                               photo: newTeacherPhoto,
                               doc: newTeacherDoc,
                               status: 'Active' 
@@ -5635,24 +5635,94 @@ export const UnifiedDashboard: React.FC = () => {
 
                         <div className="flex flex-col gap-1">
                           <label className="text-[10px] text-foreground/70 font-semibold">Academic Qualification</label>
-                          <input 
-                            type="text" 
-                            placeholder="e.g. M.Phil Physics, B.Ed"
-                            value={newTeacherQualification}
-                            onChange={(e) => setNewTeacherQualification(e.target.value)}
+                          <select 
                             className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
-                          />
+                            value={
+                              ['B.Ed', 'M.Ed', 'B.Sc', 'M.Sc', 'M.Phil', 'Ph.D'].includes(newTeacherQualification) 
+                                ? newTeacherQualification 
+                                : (newTeacherQualification ? 'Other' : '')
+                            }
+                            onChange={e => {
+                              if (e.target.value === 'Other') {
+                                setNewTeacherQualification(' ');
+                              } else {
+                                setNewTeacherQualification(e.target.value);
+                              }
+                            }}
+                          >
+                            <option value="" disabled>Select</option>
+                            <option value="B.Ed">B.Ed</option>
+                            <option value="M.Ed">M.Ed</option>
+                            <option value="B.Sc">B.Sc</option>
+                            <option value="M.Sc">M.Sc</option>
+                            <option value="M.Phil">M.Phil</option>
+                            <option value="Ph.D">Ph.D</option>
+                            <option value="Other">Other (Manual)</option>
+                          </select>
+                          {(!['B.Ed', 'M.Ed', 'B.Sc', 'M.Sc', 'M.Phil', 'Ph.D', ''].includes(newTeacherQualification)) && (
+                            <input 
+                              type="text" 
+                              placeholder="Type manually"
+                              value={newTeacherQualification === ' ' ? '' : newTeacherQualification}
+                              onChange={(e) => setNewTeacherQualification(e.target.value)}
+                              className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground mt-1"
+                              autoFocus
+                            />
+                          )}
                         </div>
 
                         <div className="flex flex-col gap-1">
                           <label className="text-[10px] text-foreground/70 font-semibold">Decided Salary (Monthly)</label>
-                          <input 
-                            type="text" 
-                            placeholder="e.g. 45,000"
-                            value={newTeacherSalary}
-                            onChange={(e) => setNewTeacherSalary(e.target.value)}
+                          <select 
                             className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
-                          />
+                            value={
+                              ['30000', '40000', '50000', '80000', '100000', '2000', '3000', '4000', '5000'].includes(newTeacherSalary) 
+                                ? newTeacherSalary 
+                                : (newTeacherSalary ? 'Other' : '')
+                            }
+                            onChange={e => {
+                              if (e.target.value === 'Other') {
+                                setNewTeacherSalary(' ');
+                              } else {
+                                setNewTeacherSalary(e.target.value);
+                              }
+                            }}
+                          >
+                            <option value="" disabled>Select</option>
+                            {currentSchool?.country === 'PK' || currentSchool?.country === 'SA' || currentSchool?.country === 'AE' ? (
+                              <>
+                                <option value="30000">30,000</option>
+                                <option value="40000">40,000</option>
+                                <option value="50000">50,000</option>
+                                <option value="80000">80,000</option>
+                                <option value="100000">100,000</option>
+                              </>
+                            ) : (
+                              <>
+                                <option value="2000">2,000</option>
+                                <option value="3000">3,000</option>
+                                <option value="4000">4,000</option>
+                                <option value="5000">5,000</option>
+                                <option value="8000">8,000</option>
+                              </>
+                            )}
+                            <option value="Other">Other (Manual)</option>
+                          </select>
+                          {(!['30000', '40000', '50000', '80000', '100000', '2000', '3000', '4000', '5000', ''].includes(newTeacherSalary)) && (
+                            <input 
+                              type="text" 
+                              placeholder="Type amount"
+                              value={newTeacherSalary === ' ' ? '' : newTeacherSalary}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                if (/^[\d]*$/.test(val)) {
+                                  setNewTeacherSalary(val);
+                                }
+                              }}
+                              className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground mt-1"
+                              autoFocus
+                            />
+                          )}
                         </div>
 
                         <div className="flex flex-col gap-1">
@@ -5686,8 +5756,17 @@ export const UnifiedDashboard: React.FC = () => {
                           <input 
                             type="text" 
                             placeholder="e.g. +92 300 1234567"
-                            value={newTeacherPhone}
-                            onChange={(e) => setNewTeacherPhone(e.target.value)}
+                            value={
+                              newTeacherPhone === '' 
+                                ? (COUNTRY_CONFIGS[currentSchool?.country || 'PK']?.phonePrefix || '+92') + ' '
+                                : newTeacherPhone
+                            }
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              if (/^[\d\s+]*$/.test(val)) {
+                                setNewTeacherPhone(val);
+                              }
+                            }}
                             className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
                           />
                         </div>
@@ -5843,25 +5922,25 @@ export const UnifiedDashboard: React.FC = () => {
                           <div className="space-y-3 w-full">
                             <div className="bg-primary/5 rounded border border-primary/10 p-2.5 text-center flex flex-col items-center justify-center">
                               <span className="block text-[9px] font-bold text-foreground/50 uppercase tracking-wider mb-0.5">Salary</span>
-                              <span className="block text-lg font-black text-foreground">Rs. {teach.salary && teach.salary !== 'N/A' ? Number(teach.salary).toLocaleString() : 'Not Provided'}</span>
+                              <span className="block text-lg font-black text-foreground">Rs. {teach.salary && teach.salary !== 'N/A' ? Number(teach.salary).toLocaleString() : '-'}</span>
                             </div>
                             
                             <div className="grid grid-cols-1 gap-y-3 bg-muted/40 p-3 rounded-lg border border-border/50 text-center place-items-center">
                               {(!teach.role || teach.role === 'Teacher') ? (
                                 <div className="col-span-1 w-full">
                                   <span className="block text-[9px] font-bold text-foreground/50 uppercase">Subject & Class</span>
-                                  <span className="block text-xs font-semibold text-foreground/90">{teach.subject || 'N/A'} ({teach.className || 'N/A'})</span>
+                                  <span className="block text-xs font-semibold text-foreground/90">{teach.subject || '-'} ({teach.className || '-'})</span>
                                 </div>
                               ) : (
                                 <div className="col-span-1 w-full">
                                   <span className="block text-[9px] font-bold text-foreground/50 uppercase">Department / Area</span>
-                                  <span className="block text-xs font-semibold text-foreground/90">{teach.subject || 'N/A'}</span>
+                                  <span className="block text-xs font-semibold text-foreground/90">{teach.subject || '-'}</span>
                                 </div>
                               )}
                               
                               <div className="col-span-1 w-full">
                                 <span className="block text-[9px] font-bold text-foreground/50 uppercase">Qualification</span>
-                                <span className="block text-xs font-semibold text-foreground/90">{teach.qualification || 'N/A'} {teach.experience ? `• ${teach.experience}` : ''}</span>
+                                <span className="block text-xs font-semibold text-foreground/90">{teach.qualification || '-'} {teach.experience ? `• ${teach.experience}` : ''}</span>
                               </div>
                               
                               {(teach.phone && teach.phone !== 'N/A') && (
@@ -5942,55 +6021,209 @@ export const UnifiedDashboard: React.FC = () => {
                         {/* Modal Content */}
                         <div className="space-y-4 overflow-y-auto pr-1 flex-1">
                           <div className="flex items-center gap-4 p-3 bg-muted/20 border border-border/60 rounded-xl">
-                            {selectedDetailedTeacher.photo ? (
-                              <img src={selectedDetailedTeacher.photo} alt={selectedDetailedTeacher.name} className="w-16 h-16 rounded-full object-cover border-2 border-primary/30" />
-                            ) : (
-                              <div className="w-16 h-16 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center font-black text-primary text-xl">
-                                {selectedDetailedTeacher.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()}
+                            <label className="relative cursor-pointer group shrink-0">
+                              <input 
+                                type="file" 
+                                accept="image/*" 
+                                className="hidden" 
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    const reader = new FileReader();
+                                    reader.onloadend = () => {
+                                      setSelectedDetailedTeacher({...selectedDetailedTeacher, photo: reader.result as string});
+                                    };
+                                    reader.readAsDataURL(file);
+                                  }
+                                }} 
+                              />
+                              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-primary/30 group-hover:border-primary transition-colors relative">
+                                {selectedDetailedTeacher.photo ? (
+                                  <img src={selectedDetailedTeacher.photo} alt={selectedDetailedTeacher.name} className="w-full h-full object-cover" />
+                                ) : (
+                                  <div className="w-full h-full bg-primary/10 flex items-center justify-center font-black text-primary text-xl">
+                                    {selectedDetailedTeacher.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()}
+                                  </div>
+                                )}
                               </div>
-                            )}
-                            <div>
-                              <h4 className="text-sm font-bold text-foreground">{selectedDetailedTeacher.name}</h4>
-                              <p className="text-xs text-foreground/60">{selectedDetailedTeacher.subject} Teacher</p>
+                              <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <span className="text-[10px] text-white font-bold">Upload</span>
+                              </div>
+                            </label>
+                            <div className="flex-1">
+                              <input 
+                                className="text-sm font-bold text-foreground bg-transparent border-b border-transparent hover:border-border focus:border-primary focus:outline-none w-full mb-1"
+                                value={selectedDetailedTeacher.name}
+                                onChange={e => setSelectedDetailedTeacher({...selectedDetailedTeacher, name: e.target.value})}
+                                placeholder="Teacher Name"
+                              />
+                              <div className="flex items-center">
+                                <input 
+                                  className="text-xs text-foreground/60 bg-transparent border-b border-transparent hover:border-border focus:border-primary focus:outline-none w-auto"
+                                  value={selectedDetailedTeacher.subject}
+                                  onChange={e => setSelectedDetailedTeacher({...selectedDetailedTeacher, subject: e.target.value})}
+                                  placeholder="Subject"
+                                />
+                                <span className="text-xs text-foreground/60 ml-1">Teacher</span>
+                              </div>
                               <span className="inline-block mt-1 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-[9px] font-bold">
-                                Assigned to {selectedDetailedTeacher.className}
+                                Assigned to <input 
+                                  className="bg-transparent border-b border-transparent hover:border-primary/50 focus:border-primary focus:outline-none w-12 text-center"
+                                  value={selectedDetailedTeacher.className}
+                                  onChange={e => setSelectedDetailedTeacher({...selectedDetailedTeacher, className: e.target.value})}
+                                  placeholder="Class"
+                                />
                               </span>
                             </div>
                           </div>
 
                           <div className="grid grid-cols-2 gap-3.5">
                             <div className="p-3 bg-card border border-border rounded-xl">
-                              <span className="block text-[9px] uppercase font-bold text-foreground/60">Qualification</span>
-                              <strong className="text-xs text-foreground block mt-0.5">{selectedDetailedTeacher.qualification || 'N/A'}</strong>
+                              <span className="block text-[9px] uppercase font-bold text-foreground/60 mb-1">Qualification</span>
+                              <div className="flex flex-col gap-1">
+                                <select 
+                                  className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground"
+                                  value={
+                                    ['B.Ed', 'M.Ed', 'B.Sc', 'M.Sc', 'M.Phil', 'Ph.D'].includes(selectedDetailedTeacher.qualification) 
+                                      ? selectedDetailedTeacher.qualification 
+                                      : (selectedDetailedTeacher.qualification ? 'Other' : '')
+                                  }
+                                  onChange={e => {
+                                    if (e.target.value === 'Other') {
+                                      setSelectedDetailedTeacher({...selectedDetailedTeacher, qualification: ' '});
+                                    } else {
+                                      setSelectedDetailedTeacher({...selectedDetailedTeacher, qualification: e.target.value});
+                                    }
+                                  }}
+                                >
+                                  <option value="" disabled>Select</option>
+                                  <option value="B.Ed">B.Ed</option>
+                                  <option value="M.Ed">M.Ed</option>
+                                  <option value="B.Sc">B.Sc</option>
+                                  <option value="M.Sc">M.Sc</option>
+                                  <option value="M.Phil">M.Phil</option>
+                                  <option value="Ph.D">Ph.D</option>
+                                  <option value="Other">Other (Manual)</option>
+                                </select>
+                                {(!['B.Ed', 'M.Ed', 'B.Sc', 'M.Sc', 'M.Phil', 'Ph.D', ''].includes(selectedDetailedTeacher.qualification) && selectedDetailedTeacher.qualification !== 'N/A') && (
+                                  <input 
+                                    className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground" 
+                                    value={selectedDetailedTeacher.qualification === ' ' ? '' : selectedDetailedTeacher.qualification}
+                                    onChange={e => setSelectedDetailedTeacher({...selectedDetailedTeacher, qualification: e.target.value})}
+                                    placeholder="Type manually"
+                                    autoFocus
+                                  />
+                                )}
+                              </div>
                             </div>
                             <div className="p-3 bg-card border border-border rounded-xl">
-                              <span className="block text-[9px] uppercase font-bold text-foreground/60">Decided Salary</span>
-                              <strong className="text-xs text-emerald-400 block mt-0.5 font-bold">
-                                {selectedDetailedTeacher.salary && selectedDetailedTeacher.salary !== 'N/A' ? `Rs. ${Number(selectedDetailedTeacher.salary).toLocaleString()}` : 'Contact Admin'}
-                              </strong>
+                              <span className="block text-[9px] uppercase font-bold text-foreground/60 mb-1">Decided Salary</span>
+                              <div className="flex flex-col gap-1">
+                                <select 
+                                  className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground"
+                                  value={
+                                    ['30000', '40000', '50000', '80000', '100000', '2000', '3000', '4000', '5000'].includes(selectedDetailedTeacher.salary) 
+                                      ? selectedDetailedTeacher.salary 
+                                      : (selectedDetailedTeacher.salary ? 'Other' : '')
+                                  }
+                                  onChange={e => {
+                                    if (e.target.value === 'Other') {
+                                      setSelectedDetailedTeacher({...selectedDetailedTeacher, salary: ' '});
+                                    } else {
+                                      setSelectedDetailedTeacher({...selectedDetailedTeacher, salary: e.target.value});
+                                    }
+                                  }}
+                                >
+                                  <option value="" disabled>Select</option>
+                                  {currentSchool?.country === 'PK' || currentSchool?.country === 'SA' || currentSchool?.country === 'AE' ? (
+                                    <>
+                                      <option value="30000">30,000</option>
+                                      <option value="40000">40,000</option>
+                                      <option value="50000">50,000</option>
+                                      <option value="80000">80,000</option>
+                                      <option value="100000">100,000</option>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <option value="2000">2,000</option>
+                                      <option value="3000">3,000</option>
+                                      <option value="4000">4,000</option>
+                                      <option value="5000">5,000</option>
+                                      <option value="8000">8,000</option>
+                                    </>
+                                  )}
+                                  <option value="Other">Other (Manual)</option>
+                                </select>
+                                {(!['30000', '40000', '50000', '80000', '100000', '2000', '3000', '4000', '5000', ''].includes(selectedDetailedTeacher.salary) && selectedDetailedTeacher.salary !== 'N/A') && (
+                                  <input 
+                                    type="number"
+                                    className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground" 
+                                    value={selectedDetailedTeacher.salary === ' ' ? '' : selectedDetailedTeacher.salary}
+                                    onChange={e => setSelectedDetailedTeacher({...selectedDetailedTeacher, salary: e.target.value})}
+                                    placeholder="Type amount"
+                                    autoFocus
+                                  />
+                                )}
+                              </div>
                             </div>
                             <div className="p-3 bg-card border border-border rounded-xl">
-                              <span className="block text-[9px] uppercase font-bold text-foreground/60">Experience</span>
-                              <strong className="text-xs text-foreground block mt-0.5">{selectedDetailedTeacher.experience || 'Fresh'}</strong>
+                              <span className="block text-[9px] uppercase font-bold text-foreground/60 mb-1">Experience</span>
+                              <input 
+                                className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground" 
+                                value={selectedDetailedTeacher.experience === 'N/A' ? '' : (selectedDetailedTeacher.experience || '')}
+                                onChange={e => setSelectedDetailedTeacher({...selectedDetailedTeacher, experience: e.target.value})}
+                                placeholder="e.g. 5 Years"
+                              />
                             </div>
                             <div className="p-3 bg-card border border-border rounded-xl">
-                              <span className="block text-[9px] uppercase font-bold text-foreground/60">Contract Status</span>
-                              <strong className="text-xs text-emerald-400 block mt-0.5 font-bold">{selectedDetailedTeacher.status || 'Active'}</strong>
+                              <span className="block text-[9px] uppercase font-bold text-foreground/60 mb-1">Contract Status</span>
+                              <input 
+                                className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground" 
+                                value={selectedDetailedTeacher.status === 'N/A' ? '' : (selectedDetailedTeacher.status || '')}
+                                onChange={e => setSelectedDetailedTeacher({...selectedDetailedTeacher, status: e.target.value})}
+                                placeholder="e.g. Active"
+                              />
                             </div>
                           </div>
 
                           <div className="space-y-2 p-3 bg-card border border-border rounded-xl">
                             <span className="block text-[9px] uppercase font-bold text-foreground/60">Contact Details</span>
-                            <div className="text-xs space-y-1 text-foreground/80 font-medium">
-                              <div className="flex justify-between">
+                            <div className="text-xs space-y-2 text-foreground/80 font-medium mt-2">
+                              <div className="flex flex-col gap-1">
                                 <span>Email:</span>
-                                <span className="text-primary hover:underline cursor-pointer">{selectedDetailedTeacher.email || 'N/A'}</span>
+                                <input 
+                                  className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground" 
+                                  value={selectedDetailedTeacher.email === 'N/A' ? '' : (selectedDetailedTeacher.email || '')}
+                                  onChange={e => setSelectedDetailedTeacher({...selectedDetailedTeacher, email: e.target.value})}
+                                  placeholder="e.g. email@school.com"
+                                />
                               </div>
-                              <div className="flex justify-between">
+                              <div className="flex flex-col gap-1">
                                 <span>Phone:</span>
-                                <span>{selectedDetailedTeacher.phone || 'N/A'}</span>
+                                <input 
+                                  className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground" 
+                                  value={
+                                    selectedDetailedTeacher.phone === 'N/A' || !selectedDetailedTeacher.phone 
+                                      ? (COUNTRY_CONFIGS[currentSchool?.country || 'PK']?.phonePrefix || '+92') + ' '
+                                      : selectedDetailedTeacher.phone
+                                  }
+                                  onChange={e => setSelectedDetailedTeacher({...selectedDetailedTeacher, phone: e.target.value})}
+                                  placeholder="e.g. +92 300 1234567"
+                                />
                               </div>
                             </div>
+                          </div>
+
+                          <div className="pt-2">
+                            <button 
+                              onClick={() => {
+                                setTeachers((prev: any[]) => prev.map(t => t.id === selectedDetailedTeacher.id ? selectedDetailedTeacher : t));
+                                setSelectedDetailedTeacher(null);
+                              }}
+                              className="w-full py-2.5 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl transition-all shadow-md text-xs uppercase tracking-wider"
+                            >
+                              Save Changes
+                            </button>
                           </div>
 
                           {/* Attached Certificate / Application Preview */}
@@ -10189,19 +10422,19 @@ export const UnifiedDashboard: React.FC = () => {
                               <div className="space-y-1.5 text-[10px] text-foreground/70 mt-3 bg-muted/40 p-3 rounded-xl border border-border/50">
                                 <div className="flex justify-between items-center border-b border-border/50 pb-1.5">
                                   <span className="font-bold uppercase tracking-wider opacity-60">Department</span>
-                                  <span className="font-bold text-foreground/90">{teach.subject || 'N/A'}</span>
+                                  <span className="font-bold text-foreground/90">{teach.subject || '-'}</span>
                                 </div>
                                 <div className="flex justify-between items-center border-b border-border/50 pb-1.5">
                                   <span className="font-bold uppercase tracking-wider opacity-60">Contact</span>
-                                  <span className="font-bold text-foreground/90">{teach.phone || 'N/A'}</span>
+                                  <span className="font-bold text-foreground/90">{teach.phone || '-'}</span>
                                 </div>
                                 <div className="flex justify-between items-center border-b border-border/50 pb-1.5">
                                   <span className="font-bold uppercase tracking-wider opacity-60">Qualification</span>
-                                  <span className="font-bold text-foreground/90">{teach.qualification || 'N/A'}</span>
+                                  <span className="font-bold text-foreground/90">{teach.qualification || '-'}</span>
                                 </div>
                                 <div className="flex justify-between items-center pt-1 mt-1">
                                   <span className="font-black uppercase tracking-wider text-primary">Salary</span>
-                                  <span className="font-black text-primary text-[11px] bg-primary/10 px-2 py-0.5 rounded">PKR {teach.salary && teach.salary !== 'N/A' ? Number(teach.salary).toLocaleString() : 'See Admin'}</span>
+                                  <span className="font-black text-primary text-[11px] bg-primary/10 px-2 py-0.5 rounded">PKR {teach.salary && teach.salary !== 'N/A' ? Number(teach.salary).toLocaleString() : '-'}</span>
                                 </div>
                               </div>
                               
@@ -13783,7 +14016,7 @@ export const UnifiedDashboard: React.FC = () => {
                                 <td className="p-3 font-bold text-primary">{v.name}</td>
                                 <td className="p-3">{v.purpose}</td>
                                 <td className="p-3 text-foreground/70">{v.meetingWith}</td>
-                                <td className="p-3 font-mono text-[10px] text-foreground/60">{v.entryTime} → {v.exitTime || 'N/A'}</td>
+                                <td className="p-3 font-mono text-[10px] text-foreground/60">{v.entryTime} → {v.exitTime || '-'}</td>
                                 <td className="p-3 text-right">
                                   <button onClick={() => { if(window.confirm('Delete this record?')) setVisitors((prev: any[]) => prev.filter((x: any) => x.id !== v.id)); }} className="px-2 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-[10px] font-bold rounded border border-rose-500/20 transition-colors">Delete</button>
                                 </td>
