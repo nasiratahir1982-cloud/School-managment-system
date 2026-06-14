@@ -7,6 +7,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useSchoolStore, COUNTRY_CONFIGS } from '../store/schoolStore';
 import type { SupportedCountry } from '../store/schoolStore';
 import { useThemeStore } from '../store/themeStore';
+import { useQueryStore } from '../store/queryStore';
 import { 
   GraduationCap, 
   Mail, 
@@ -60,6 +61,7 @@ export const Login: React.FC = () => {
   const schoolsList = useSchoolStore((state) => state.schools);
   const resolveSchool = useSchoolStore((state) => state.resolveSchool);
   const currentSchool = useSchoolStore((state) => state.currentSchool);
+  const sendQuery = useQueryStore((state) => state.sendQuery);
 
   // Progressive Wizard Step: 1 = Welcome, 2 = Country, 3 = School, 4 = Preview, 5 = Auth/Sign In
   const [step, setStep] = useState(1);
@@ -712,7 +714,9 @@ export const Login: React.FC = () => {
       </div>
 
       <div className="w-full max-w-md text-center text-foreground/50 text-[11px] font-medium mt-4 space-x-4 z-10">
-        <button onClick={() => setShowContactModal(true)} className="hover:text-foreground/75 transition-colors mx-2 font-bold text-primary">Contact Us (Portal)</button>
+        <button onClick={() => setShowContactModal(true)} className="hover:text-foreground/75 transition-colors mx-2 font-bold text-primary">
+          {currentSchool ? `Contact ${currentSchool.schoolName}` : 'Contact Support (Super Admin)'}
+        </button>
         <span className="text-border">|</span>
         <a href="#help" className="hover:text-foreground/75 transition-colors mx-2">{t.help}</a>
         <span className="text-border">|</span>
@@ -723,11 +727,17 @@ export const Login: React.FC = () => {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-card w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-border">
             <div className="p-4 bg-primary/10 border-b border-primary/20 flex justify-between items-center">
-              <h3 className="font-black text-primary uppercase tracking-wider">Portal Contact Request</h3>
+              <h3 className="font-black text-primary uppercase tracking-wider">
+                {currentSchool ? 'School Portal Contact' : 'Super Admin Contact'}
+              </h3>
               <button onClick={() => setShowContactModal(false)} className="text-primary hover:text-primary/70">✕</button>
             </div>
             <div className="p-6 space-y-4">
-              <p className="text-xs text-foreground/70">Instead of emails, all communication is routed directly into the school's central dashboard.</p>
+              <p className="text-xs text-foreground/70">
+                {currentSchool 
+                  ? "Instead of emails, all communication is routed directly into the school's central dashboard."
+                  : "Send your system-wide inquiries directly to the Super Admin."}
+              </p>
               <div>
                 <label className="text-xs font-bold text-foreground/70 mb-1 block">Subject</label>
                 <input 
@@ -749,15 +759,28 @@ export const Login: React.FC = () => {
                 />
               </div>
               <button 
-                onClick={() => {
-                  alert("Message successfully sent to the School Portal!");
-                  setShowContactModal(false);
-                  setContactSubject('');
-                  setContactMessage('');
+                onClick={async () => {
+                  if (!contactSubject || !contactMessage) return alert("Please fill in subject and message");
+                  
+                  const target = currentSchool ? currentSchool.domain : 'superadmin';
+                  const success = await sendQuery({
+                    target,
+                    subject: contactSubject,
+                    message: contactMessage
+                  });
+
+                  if (success) {
+                    alert(`Message successfully sent to the ${currentSchool ? 'School Portal' : 'Super Admin'}!`);
+                    setShowContactModal(false);
+                    setContactSubject('');
+                    setContactMessage('');
+                  } else {
+                    alert("Failed to send message. Please try again.");
+                  }
                 }}
                 className="w-full py-2 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-all shadow-md"
               >
-                Send to Portal
+                Send Message
               </button>
             </div>
           </div>

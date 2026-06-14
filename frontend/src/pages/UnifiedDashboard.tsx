@@ -9,6 +9,7 @@ import type { UserRole } from '../store/authStore';
 import { useSchoolStore, COUNTRY_CONFIGS } from '../store/schoolStore';
 import { useNavigate } from 'react-router-dom';
 import { setupRealtimeSync, updateRealtimeData } from '../store/firebase';
+import { useQueryStore } from '../store/queryStore';
 import { 
   Building2, 
   Layers, 
@@ -113,6 +114,8 @@ const getFeatureDetails = (featureName: string) => {
       return { desc: 'Log behavioral incidents, warnings and rewards.', icon: Shield, stats: 'Conflict-Free' };
     case 'School Notices':
       return { desc: 'Send SMS & Email bulletins to parent contacts.', icon: MessageSquare, stats: 'Sync Complete' };
+    case 'Portal Queries':
+      return { desc: 'Review and resolve contact queries routed to this portal.', icon: MessageSquare, stats: 'Active Logs' };
     case 'Parent Communication Center':
       return { desc: 'Review parent concerns and direct chat logs.', icon: Speech, stats: 'Inbox Clear' };// Teacher
     case 'My Classes':
@@ -1318,6 +1321,10 @@ export const UnifiedDashboard: React.FC = () => {
   const setMinAdmissionAge = (val: any) => updateSchoolDb('minAdmissionAge', val);
   const setInventory = (val: any) => updateSchoolDb('inventory', val);
   const setVisitors = (val: any) => updateSchoolDb('visitors', val);
+
+  const { portal_queries, replyToQuery } = useQueryStore();
+  const [activeQueryId, setActiveQueryId] = useState<string | null>(null);
+  const [replyMessage, setReplyMessage] = useState('');
 
   const [completedAssignments, setCompletedAssignments] = useState<string[]>([]);
 
@@ -3216,7 +3223,7 @@ export const UnifiedDashboard: React.FC = () => {
         { label: "Collected Today", value: formatCurrency(8400), icon: CreditCard, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Real-time payment logs" },
         { label: "Outstanding Fees", value: formatCurrency(125000), icon: AlertTriangle, colorClass: "text-amber-400 bg-amber-500/10 border-amber-500/25", desc: "5 unpaid students" }
       ],
-      features: ["Student Management", "Employee Management", "Academic Setup", "Attendance Monitoring", "Fee Monitoring", "Academic Oversight", "Student Conduct Records", "School Notices", "Parent Communication Center", "Leave Management", "Admission Funnel Analytics", "Staff Performance Tracking", "Inventory Management", "Transport Management", "Hostel Management", "Visitor Management", "Payroll", "Two Factor Authentication", "Device Management", "Session Tracking", "IP Restriction", "Login Audit Trail", "Timetable Generator", "Exam Management", "Result Processing", "SMS Gateway", "WhatsApp Integration", "Email Automation", "Push Notifications", "School KPI Dashboard", "Revenue Dashboard", "Student Growth Dashboard", "Teacher Performance Dashboard", "AI Command Center", "AI Content Studio", "Payment Gateway Settings"],
+      features: ["Student Management", "Employee Management", "Academic Setup", "Attendance Monitoring", "Fee Monitoring", "Academic Oversight", "Student Conduct Records", "School Notices", "Portal Queries", "Parent Communication Center", "Leave Management", "Admission Funnel Analytics", "Staff Performance Tracking", "Inventory Management", "Transport Management", "Hostel Management", "Visitor Management", "Payroll", "Two Factor Authentication", "Device Management", "Session Tracking", "IP Restriction", "Login Audit Trail", "Timetable Generator", "Exam Management", "Result Processing", "SMS Gateway", "WhatsApp Integration", "Email Automation", "Push Notifications", "School KPI Dashboard", "Revenue Dashboard", "Student Growth Dashboard", "Teacher Performance Dashboard", "AI Command Center", "AI Content Studio", "Payment Gateway Settings"],
       quickActions: [
         { label: "Enroll Student", desc: "Record new admission registry", icon: UserPlus },
         { label: "Publish Notice", desc: "Send SMS/Email notification", icon: MessageSquare }
@@ -11455,6 +11462,68 @@ export const UnifiedDashboard: React.FC = () => {
                   </div>
                 </div>
               )}
+
+              {/* Portal Queries */}
+              {activeFeature === 'Portal Queries' && (
+                <div className="space-y-4 animate-fadeIn">
+                  <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
+                    📬 Support queries received from the portal login page specifically for your domain.
+                  </div>
+                  <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                    {Object.values(portal_queries).filter(q => q.target === currentSchool?.subdomain).length === 0 ? (
+                      <div className="text-center py-8 text-foreground/60 text-sm bg-card border border-border rounded-xl">No portal queries found for your domain.</div>
+                    ) : (
+                      Object.values(portal_queries).filter(q => q.target === currentSchool?.subdomain).sort((a: any, b: any) => b.createdAt - a.createdAt).map((q: any) => (
+                        <div key={q.id} className="p-4 bg-card border border-border rounded-xl space-y-3">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h4 className="font-bold text-foreground">{q.subject}</h4>
+                              <span className="text-[10px] text-foreground/60">{new Date(q.createdAt).toLocaleString()}</span>
+                            </div>
+                            <span className={`text-[10px] px-2 py-1 rounded-full font-bold uppercase ${q.status === 'open' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'}`}>
+                              {q.status}
+                            </span>
+                          </div>
+                          <p className="text-sm text-foreground/80 bg-muted/30 p-3 rounded-lg">{q.message}</p>
+                          
+                          {q.status === 'open' ? (
+                            <div className="space-y-2 pt-2 border-t border-border">
+                              <textarea 
+                                value={activeQueryId === q.id ? replyMessage : ''}
+                                onChange={e => {
+                                  setActiveQueryId(q.id);
+                                  setReplyMessage(e.target.value);
+                                }}
+                                placeholder="Type your reply to resolve this query..."
+                                className="w-full p-2 bg-background border border-border rounded-lg text-sm modern-input"
+                                rows={2}
+                              />
+                              <button 
+                                onClick={async () => {
+                                  if (!replyMessage) return;
+                                  await replyToQuery(q.id, replyMessage);
+                                  setReplyMessage('');
+                                  setActiveQueryId(null);
+                                  alert('Query marked as resolved and replied!');
+                                }}
+                                className="px-4 py-1.5 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all"
+                              >
+                                Send Reply & Resolve
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="space-y-2 pt-2 border-t border-border">
+                              <span className="text-xs font-bold text-emerald-500 block">Resolved with Reply:</span>
+                              <p className="text-sm text-foreground/80 bg-muted/30 p-3 rounded-lg border border-emerald-500/20">{q.reply}</p>
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* SaaS Admin, Organization & Brand Settings */}
               {['Country Management', 'Organization Management', 'School Management', 'Subscription Plans', 'Revenue Analytics', 'White Label Configuration', 'Support Tickets', 'Audit Logs', 'Multi-Level Permissions', 'Advanced Activity Monitoring', 'School Health Monitoring', 'Server Monitoring', 'Backup Manager', 'Firebase Database Settings', 'API Key Management', 'SMS Gateway Settings', 'Email Server Settings', 'School Suspension System', 'School Performance Analytics', 'Fraud Detection Dashboard', 'Global Announcements'].includes(activeFeature || '') && (
                 <div className="space-y-6">

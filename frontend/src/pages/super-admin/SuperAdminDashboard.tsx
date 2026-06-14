@@ -26,6 +26,7 @@ import {
   Moon
 } from 'lucide-react';
 import { useThemeStore } from '../../store/themeStore';
+import { useQueryStore } from '../../store/queryStore';
 
 export const SuperAdminDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -33,6 +34,18 @@ export const SuperAdminDashboard: React.FC = () => {
   const loginUser = useAuthStore((state) => state.login);
   const currentUser = useAuthStore((state) => state.user);
   const { darkMode, toggleTheme } = useThemeStore();
+  
+  const { queries, initialize, replyToQuery } = useQueryStore();
+  const [showQueriesModal, setShowQueriesModal] = useState(false);
+  const [activeQueryId, setActiveQueryId] = useState<string | null>(null);
+  const [replyMessage, setReplyMessage] = useState('');
+
+  React.useEffect(() => {
+    initialize();
+  }, [initialize]);
+
+  const superAdminQueries = queries.filter(q => q.target === 'superadmin');
+  const openQueriesCount = superAdminQueries.filter(q => q.status === 'open').length;
   
   const schoolsList = useSchoolStore((state) => state.schools);
   const addSchoolToStore = useSchoolStore((state) => state.addSchool);
@@ -439,6 +452,25 @@ export const SuperAdminDashboard: React.FC = () => {
                       <div>
                         <span className="block font-bold text-background dark:text-foreground">Run DB Backup</span>
                         <span className="text-[10px] text-muted-foreground">Instant SQL snapshot</span>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
+                  </button>
+
+                  <button
+                    onClick={() => setShowQueriesModal(true)}
+                    className="w-full flex items-center justify-between p-3 bg-card/60 hover:bg-card border border-border hover:border-purple-500/50 rounded-xl text-left text-xs font-semibold text-foreground transition-all active:scale-[0.98]"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="relative">
+                        <span>💬</span>
+                        {openQueriesCount > 0 && (
+                          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full">{openQueriesCount}</span>
+                        )}
+                      </div>
+                      <div>
+                        <span className="block font-bold text-background dark:text-foreground">Support Queries</span>
+                        <span className="text-[10px] text-muted-foreground">View system-wide messages</span>
                       </div>
                     </div>
                     <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
@@ -1320,6 +1352,70 @@ export const SuperAdminDashboard: React.FC = () => {
               )}
             </div>{/* End modal-body */}
 
+          </div>
+        </div>
+      )}
+
+      {/* QUERIES MODAL */}
+      {showQueriesModal && (
+        <div className="modal-overlay z-50">
+          <div className="modal-container modal-lg glass-card glow-purple p-6 space-y-6">
+            <div className="flex justify-between items-center border-b border-border pb-4">
+              <h3 className="text-xl font-bold text-foreground">Super Admin Support Queries</h3>
+              <button onClick={() => setShowQueriesModal(false)} className="text-muted-foreground hover:text-foreground text-xl">✕</button>
+            </div>
+            
+            <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+              {superAdminQueries.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground text-sm">No support queries found.</div>
+              ) : (
+                superAdminQueries.map(q => (
+                  <div key={q.id} className="p-4 bg-card border border-border rounded-xl space-y-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="font-bold text-foreground">{q.subject}</h4>
+                        <span className="text-[10px] text-muted-foreground">{new Date(q.createdAt).toLocaleString()}</span>
+                      </div>
+                      <span className={`text-[10px] px-2 py-1 rounded-full font-bold uppercase ${q.status === 'open' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'}`}>
+                        {q.status}
+                      </span>
+                    </div>
+                    <p className="text-sm text-foreground/80 bg-muted/30 p-3 rounded-lg">{q.message}</p>
+                    
+                    {q.status === 'open' ? (
+                      <div className="space-y-2 pt-2 border-t border-border">
+                        <textarea 
+                          value={activeQueryId === q.id ? replyMessage : ''}
+                          onChange={e => {
+                            setActiveQueryId(q.id);
+                            setReplyMessage(e.target.value);
+                          }}
+                          placeholder="Type your reply to resolve this query..."
+                          className="w-full p-2 bg-background border border-border rounded-lg text-sm"
+                          rows={2}
+                        />
+                        <button 
+                          onClick={async () => {
+                            if (!replyMessage) return;
+                            await replyToQuery(q.id, replyMessage);
+                            setActiveQueryId(null);
+                            setReplyMessage('');
+                          }}
+                          className="bg-purple-600 text-white px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-purple-500"
+                        >
+                          Send Reply & Resolve
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="bg-purple-500/10 border border-purple-500/20 p-3 rounded-lg mt-2">
+                        <span className="text-[10px] font-bold text-purple-400 uppercase tracking-wider block mb-1">Super Admin Reply:</span>
+                        <p className="text-sm text-foreground/90">{q.reply}</p>
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </div>
       )}
