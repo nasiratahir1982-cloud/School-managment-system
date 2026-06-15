@@ -19,6 +19,7 @@ interface QueryState {
   initialize: () => void;
   sendQuery: (query: Omit<PortalQuery, 'id' | 'createdAt' | 'status'>) => Promise<boolean>;
   replyToQuery: (id: string, replyMessage: string) => Promise<boolean>;
+  deleteQuery: (id: string) => Promise<boolean>;
 }
 
 export const useQueryStore = create<QueryState>((set, get) => ({
@@ -145,6 +146,23 @@ export const useQueryStore = create<QueryState>((set, get) => ({
       return true;
     } catch (e) {
       console.error("Failed to reply to query:", e);
+      return false;
+    }
+  },
+  deleteQuery: async (id) => {
+    try {
+      const currentQueries = get().queries;
+      const updatedQueries = currentQueries.filter(q => q.id !== id);
+      
+      const queriesMap = updatedQueries.reduce((acc, q) => {
+        acc[q.id] = q;
+        return acc;
+      }, {} as Record<string, PortalQuery>);
+      
+      await updateRealtimeData('portal_queries', queriesMap);
+      return true;
+    } catch (e) {
+      console.error("Failed to delete query:", e);
       return false;
     }
   }

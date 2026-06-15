@@ -101,11 +101,11 @@ interface PortalSpec {
 // ----------------------------------------------------
 // PORTAL FEATURE NAVIGATION DETAILS MAPPING
 // ----------------------------------------------------
-const getFeatureDetails = (featureName: string) => {
+const getFeatureDetails = (featureName: string, studentCount?: number) => {
   switch (featureName) {
     // Super Admin// Admin / Principal
     case 'Student Management':
-      return { desc: 'Enroll pupils, update profiles and roll listings.', icon: UserPlus, stats: '480 Enrolled' };case 'Attendance Monitoring':
+      return { desc: 'Enroll pupils, update profiles and roll listings.', icon: UserPlus, stats: `${studentCount || 0} Enrolled` };case 'Attendance Monitoring':
       return { desc: 'Analyze daily attendance trends and summaries.', icon: UserCheck, stats: '92.4% Today' };
     case 'Fee Monitoring':
       return { desc: 'Track challans, defaults and monthly receipts.', icon: CreditCard, stats: 'Rs 125,000 Pending' };
@@ -628,2046 +628,66 @@ export const UnifiedDashboard: React.FC = () => {
     const freshData = {
     // 1. Dar-e-Arqam School (PK)
     '11111111-1111-1111-1111-111111111111': {
-      students: [
-        {
-                "id": "s1-1",
-                "name": "Asad Siddiqui",
-                "roll": "237",
-                "className": "Class 10-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route A",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 3379861",
-                "email": "students1_0@example.com"
-        },
-        {
-                "id": "s1-2",
-                "name": "Arif Ghani",
-                "roll": "386",
-                "className": "Class 10-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6174069",
-                "email": "students1_1@example.com"
-        },
-        {
-                "id": "s1-3",
-                "name": "Mehwish Khan",
-                "roll": "428",
-                "className": "Class 10-A",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 4093249",
-                "email": "students1_2@example.com"
-        },
-        {
-                "id": "s1-4",
-                "name": "Nida Raza",
-                "roll": "738",
-                "className": "Class 10-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 5385123",
-                "email": "students1_3@example.com"
-        },
-        {
-                "id": "s1-5",
-                "name": "Hassan Ali",
-                "roll": "962",
-                "className": "Class 10-A",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 5994570",
-                "email": "students1_4@example.com"
-        },
-        {
-                "id": "s1-6",
-                "name": "Nawaz Noor",
-                "roll": "265",
-                "className": "Class 10-A",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 9459686",
-                "email": "students1_5@example.com"
-        },
-        {
-                "id": "s1-7",
-                "name": "Sara Sultan",
-                "roll": "792",
-                "className": "Class 10-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route A",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 7081785",
-                "email": "students1_6@example.com"
-        },
-        {
-                "id": "s1-8",
-                "name": "Fawad Tariq",
-                "roll": "820",
-                "className": "Class 10-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route A",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 3698753",
-                "email": "students1_7@example.com"
-        },
-        {
-                "id": "s1-9",
-                "name": "Hafsa Malik",
-                "roll": "213",
-                "className": "Class 10-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 2630662",
-                "email": "students1_8@example.com"
-        },
-        {
-                "id": "s1-10",
-                "name": "Farhan Hussain",
-                "roll": "969",
-                "className": "Class 10-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route A",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 2580578",
-                "email": "students1_9@example.com"
-        },
-        {
-                "id": "s1-11",
-                "name": "Sana Sultan",
-                "roll": "134",
-                "className": "Class 10-B",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "Route B",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6588876",
-                "email": "students1_10@example.com"
-        },
-        {
-                "id": "s1-12",
-                "name": "Zara Ghani",
-                "roll": "210",
-                "className": "Class 10-B",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 3361102",
-                "email": "students1_11@example.com"
-        },
-        {
-                "id": "s1-13",
-                "name": "Ahmed Sultan",
-                "roll": "293",
-                "className": "Class 10-B",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6756479",
-                "email": "students1_12@example.com"
-        },
-        {
-                "id": "s1-14",
-                "name": "Salman Zafar",
-                "roll": "143",
-                "className": "Class 10-B",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "Route B",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 3934849",
-                "email": "students1_13@example.com"
-        },
-        {
-                "id": "s1-15",
-                "name": "Nida Sultan",
-                "roll": "124",
-                "className": "Class 10-B",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "Route B",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 1279774",
-                "email": "students1_14@example.com"
-        },
-        {
-                "id": "s1-16",
-                "name": "Ayesha Malik",
-                "roll": "687",
-                "className": "Class 10-B",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 9515174",
-                "email": "students1_15@example.com"
-        },
-        {
-                "id": "s1-17",
-                "name": "Nadia Nawaz",
-                "roll": "863",
-                "className": "Class 10-B",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route B",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 9304873",
-                "email": "students1_16@example.com"
-        },
-        {
-                "id": "s1-18",
-                "name": "Zahid Shah",
-                "roll": "803",
-                "className": "Class 10-B",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 9557406",
-                "email": "students1_17@example.com"
-        },
-        {
-                "id": "s1-19",
-                "name": "Qasim Siddiqui",
-                "roll": "780",
-                "className": "Class 10-B",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6570721",
-                "email": "students1_18@example.com"
-        },
-        {
-                "id": "s1-20",
-                "name": "Omar Shah",
-                "roll": "482",
-                "className": "Class 10-B",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 2516371",
-                "email": "students1_19@example.com"
-        },
-        {
-                "id": "s1-21",
-                "name": "Ali Ahmed",
-                "roll": "405",
-                "className": "Class 2",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 4866433",
-                "email": "students1_20@example.com"
-        },
-        {
-                "id": "s1-22",
-                "name": "Farhan Raza",
-                "roll": "163",
-                "className": "Class 9-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 5353416",
-                "email": "students1_21@example.com"
-        },
-        {
-                "id": "s1-23",
-                "name": "Bilal Raza",
-                "roll": "992",
-                "className": "Class 10-A",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6461980",
-                "email": "students1_22@example.com"
-        },
-        {
-                "id": "s1-24",
-                "name": "Rabia Noor",
-                "roll": "143",
-                "className": "Class 7-B",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6486457",
-                "email": "students1_23@example.com"
-        },
-        {
-                "id": "s1-25",
-                "name": "Salman Farooq",
-                "roll": "759",
-                "className": "Class 6-B",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 5517670",
-                "email": "students1_24@example.com"
-        },
-        {
-                "id": "s1-26",
-                "name": "Bilal Tariq",
-                "roll": "716",
-                "className": "Class 10-B",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 5375238",
-                "email": "students1_25@example.com"
-        },
-        {
-                "id": "s1-27",
-                "name": "Ayesha Shah",
-                "roll": "979",
-                "className": "Class 10-B",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6988006",
-                "email": "students1_26@example.com"
-        },
-        {
-                "id": "s1-28",
-                "name": "Zafar Zafar",
-                "roll": "914",
-                "className": "Class 10-A",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 4836337",
-                "email": "students1_27@example.com"
-        },
-        {
-                "id": "s1-29",
-                "name": "Waseem Shah",
-                "roll": "662",
-                "className": "Class 2",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 8076945",
-                "email": "students1_28@example.com"
-        },
-        {
-                "id": "s1-30",
-                "name": "Nida Raza",
-                "roll": "407",
-                "className": "Class 8-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 9323315",
-                "email": "students1_29@example.com"
-        },
-        {
-                "id": "s1-31",
-                "name": "Jameel Shah",
-                "roll": "895",
-                "className": "Class 9-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6375227",
-                "email": "students1_30@example.com"
-        },
-        {
-                "id": "s1-32",
-                "name": "Maryam Shah",
-                "roll": "684",
-                "className": "Class 1",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6202248",
-                "email": "students1_31@example.com"
-        },
-        {
-                "id": "s1-33",
-                "name": "Iqra Raza",
-                "roll": "523",
-                "className": "Class 1",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 4577964",
-                "email": "students1_32@example.com"
-        },
-        {
-                "id": "s1-34",
-                "name": "Rabia Tariq",
-                "roll": "353",
-                "className": "Class 1",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 8367678",
-                "email": "students1_33@example.com"
-        },
-        {
-                "id": "s1-35",
-                "name": "Nadia Mirza",
-                "roll": "427",
-                "className": "Class 7-A",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 3538170",
-                "email": "students1_34@example.com"
-        },
-        {
-                "id": "s1-36",
-                "name": "Sadia Zafar",
-                "roll": "557",
-                "className": "Class 10-A",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 3180250",
-                "email": "students1_35@example.com"
-        },
-        {
-                "id": "s1-37",
-                "name": "Iqra Ghani",
-                "roll": "318",
-                "className": "Class 6-A",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6723633",
-                "email": "students1_36@example.com"
-        },
-        {
-                "id": "s1-38",
-                "name": "Hamza Nawaz",
-                "roll": "604",
-                "className": "Class 7-A",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 3349720",
-                "email": "students1_37@example.com"
-        },
-        {
-                "id": "s1-39",
-                "name": "Ali Ahmed",
-                "roll": "408",
-                "className": "Class 6-B",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6012565",
-                "email": "students1_38@example.com"
-        },
-        {
-                "id": "s1-40",
-                "name": "Tariq Tariq",
-                "roll": "301",
-                "className": "Class 7-A",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 1626682",
-                "email": "students1_39@example.com"
-        },
-        {
-                "id": "s1-41",
-                "name": "Maryam Tariq",
-                "roll": "699",
-                "className": "Class 7-B",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 3872756",
-                "email": "students1_40@example.com"
-        },
-        {
-                "id": "s1-42",
-                "name": "Kamran Malik",
-                "roll": "494",
-                "className": "Class 1",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 7800848",
-                "email": "students1_41@example.com"
-        },
-        {
-                "id": "s1-43",
-                "name": "Sana Farooq",
-                "roll": "371",
-                "className": "Class 10-B",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 5595037",
-                "email": "students1_42@example.com"
-        },
-        {
-                "id": "s1-44",
-                "name": "Sobia Khan",
-                "roll": "437",
-                "className": "Class 1",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 9070305",
-                "email": "students1_43@example.com"
-        },
-        {
-                "id": "s1-45",
-                "name": "Ahmed Farooq",
-                "roll": "571",
-                "className": "Class 4",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 2740595",
-                "email": "students1_44@example.com"
-        },
-        {
-                "id": "s1-46",
-                "name": "Saad Sultan",
-                "roll": "287",
-                "className": "Class 10-B",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 7413218",
-                "email": "students1_45@example.com"
-        },
-        {
-                "id": "s1-47",
-                "name": "Maha Farooq",
-                "roll": "484",
-                "className": "Class 10-A",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 7993313",
-                "email": "students1_46@example.com"
-        },
-        {
-                "id": "s1-48",
-                "name": "Saad Noor",
-                "roll": "706",
-                "className": "Class 7-A",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 9444683",
-                "email": "students1_47@example.com"
-        },
-        {
-                "id": "s1-49",
-                "name": "Hafsa Nawaz",
-                "roll": "847",
-                "className": "Class 9-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 5806041",
-                "email": "students1_48@example.com"
-        },
-        {
-                "id": "s1-50",
-                "name": "Qasim Ahmed",
-                "roll": "215",
-                "className": "Class 3",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6039778",
-                "email": "students1_49@example.com"
-        },
-        {
-                "id": "s1-51",
-                "name": "Waseem Sultan",
-                "roll": "909",
-                "className": "Class 6-B",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 5202808",
-                "email": "students1_50@example.com"
-        },
-        {
-                "id": "s1-52",
-                "name": "Faiza Hussain",
-                "roll": "490",
-                "className": "Class 8-A",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 5334781",
-                "email": "students1_51@example.com"
-        },
-        {
-                "id": "s1-53",
-                "name": "Faiza Farooq",
-                "roll": "663",
-                "className": "Class 8-B",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 7270653",
-                "email": "students1_52@example.com"
-        },
-        {
-                "id": "s1-54",
-                "name": "Amna Ahmed",
-                "roll": "941",
-                "className": "Class 8-B",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 4103972",
-                "email": "students1_53@example.com"
-        },
-        {
-                "id": "s1-55",
-                "name": "Yasin Ghani",
-                "roll": "124",
-                "className": "Class 10-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 9625435",
-                "email": "students1_54@example.com"
-        },
-        {
-                "id": "s1-56",
-                "name": "Qasim Raza",
-                "roll": "181",
-                "className": "Class 10-B",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 3727473",
-                "email": "students1_55@example.com"
-        },
-        {
-                "id": "s1-57",
-                "name": "Sobia Farooq",
-                "roll": "364",
-                "className": "Class 10-A",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 7995377",
-                "email": "students1_56@example.com"
-        },
-        {
-                "id": "s1-58",
-                "name": "Zubaida Sultan",
-                "roll": "432",
-                "className": "Class 6-B",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 4567595",
-                "email": "students1_57@example.com"
-        },
-        {
-                "id": "s1-59",
-                "name": "Sonia Noor",
-                "roll": "244",
-                "className": "Class 3",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 5397681",
-                "email": "students1_58@example.com"
-        },
-        {
-                "id": "s1-60",
-                "name": "Sadia Sultan",
-                "roll": "318",
-                "className": "Class 1",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 4453770",
-                "email": "students1_59@example.com"
-        },
-        {
-                "id": "s1-61",
-                "name": "Farhan Malik",
-                "roll": "836",
-                "className": "Class 7-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 3396887",
-                "email": "students1_60@example.com"
-        },
-        {
-                "id": "s1-62",
-                "name": "Khadija Nawaz",
-                "roll": "174",
-                "className": "Class 7-B",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 2642338",
-                "email": "students1_61@example.com"
-        },
-        {
-                "id": "s1-63",
-                "name": "Ahmed Farooq",
-                "roll": "775",
-                "className": "Class 4",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 4203286",
-                "email": "students1_62@example.com"
-        },
-        {
-                "id": "s1-64",
-                "name": "Hamza Zafar",
-                "roll": "541",
-                "className": "Class 4",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 9861867",
-                "email": "students1_63@example.com"
-        },
-        {
-                "id": "s1-65",
-                "name": "Usman Ahmed",
-                "roll": "302",
-                "className": "Class 8-A",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 1834861",
-                "email": "students1_64@example.com"
-        },
-        {
-                "id": "s1-66",
-                "name": "Fawad Sultan",
-                "roll": "484",
-                "className": "Class 5",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 9775075",
-                "email": "students1_65@example.com"
-        },
-        {
-                "id": "s1-67",
-                "name": "Imran Hussain",
-                "roll": "724",
-                "className": "Class 1",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 5913104",
-                "email": "students1_66@example.com"
-        },
-        {
-                "id": "s1-68",
-                "name": "Zubaida Khan",
-                "roll": "221",
-                "className": "Class 6-A",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 4899870",
-                "email": "students1_67@example.com"
-        },
-        {
-                "id": "s1-69",
-                "name": "Bilal Ahmed",
-                "roll": "645",
-                "className": "Class 8-A",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6669567",
-                "email": "students1_68@example.com"
-        },
-        {
-                "id": "s1-70",
-                "name": "Mahnoor Farooq",
-                "roll": "620",
-                "className": "Class 7-B",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 2969691",
-                "email": "students1_69@example.com"
-        },
-        {
-                "id": "s1-71",
-                "name": "Kamran Ahmed",
-                "roll": "900",
-                "className": "Class 6-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 3030469",
-                "email": "students1_70@example.com"
-        },
-        {
-                "id": "s1-72",
-                "name": "Sobia Hussain",
-                "roll": "892",
-                "className": "Class 10-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 1935185",
-                "email": "students1_71@example.com"
-        },
-        {
-                "id": "s1-73",
-                "name": "Waseem Siddiqui",
-                "roll": "607",
-                "className": "Class 7-A",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 3817917",
-                "email": "students1_72@example.com"
-        },
-        {
-                "id": "s1-74",
-                "name": "Mehwish Mirza",
-                "roll": "632",
-                "className": "Class 2",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 4420685",
-                "email": "students1_73@example.com"
-        },
-        {
-                "id": "s1-75",
-                "name": "Kamran Nawaz",
-                "roll": "792",
-                "className": "Class 7-A",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 4410726",
-                "email": "students1_74@example.com"
-        },
-        {
-                "id": "s1-76",
-                "name": "Sara Zafar",
-                "roll": "102",
-                "className": "Class 7-B",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 7482488",
-                "email": "students1_75@example.com"
-        },
-        {
-                "id": "s1-77",
-                "name": "Waseem Ahmed",
-                "roll": "385",
-                "className": "Class 1",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 4656189",
-                "email": "students1_76@example.com"
-        },
-        {
-                "id": "s1-78",
-                "name": "Raza Sultan",
-                "roll": "373",
-                "className": "Class 1",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 3367031",
-                "email": "students1_77@example.com"
-        },
-        {
-                "id": "s1-79",
-                "name": "Usman Ghani",
-                "roll": "735",
-                "className": "Class 3",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6567744",
-                "email": "students1_78@example.com"
-        },
-        {
-                "id": "s1-80",
-                "name": "Ali Ghani",
-                "roll": "772",
-                "className": "Class 7-B",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 7898275",
-                "email": "students1_79@example.com"
-        }
-],
-
-      admissionFunnel: {
-        inquiries: [
-          { id: 'inq-1', name: 'Ali Hamza', phone: '+92 300 1111111', email: 'ali@example.com', className: 'Class 1', date: new Date().toISOString().split('T')[0], notes: 'Interested in sports', status: 'Pending' },
-          { id: 'inq-2', name: 'Sara Khan', phone: '+92 300 2222222', email: 'sara@example.com', className: 'Class 5', date: new Date().toISOString().split('T')[0], notes: 'Needs transport', status: 'Pending' }
-        ],
-        applications: [
-          { id: 'app-1', name: 'Zainab Ahmed', phone: '+92 300 3333333', email: 'zainab@example.com', className: 'Class 3', date: new Date().toISOString().split('T')[0], fatherName: 'Ahmed Raza', documents: 'Pending', status: 'Under Review' },
-          { id: 'app-2', name: 'Omer Farooq', phone: '+92 300 4444444', email: 'omer@example.com', className: 'Class 6', date: new Date().toISOString().split('T')[0], fatherName: 'Farooq', documents: 'Submitted', status: 'Under Review' }
-        ],
-        interviews: [
-          { id: 'int-1', name: 'Hassan Ali', phone: '+92 300 5555555', email: 'hassan@example.com', className: 'Class 2', date: new Date().toISOString().split('T')[0], interviewer: 'Principal', score: '85', remarks: 'Good communication', status: 'Scheduled' }
-        ],
-        enrolled: [
-          { id: 'enr-1', name: 'Fatima Bilal', phone: '+92 300 6666666', email: 'fatima@example.com', className: 'Class 4', date: new Date().toISOString().split('T')[0], rollNumber: '25', admissionDate: new Date().toISOString().split('T')[0], status: 'Admitted' }
-        ]
-      },
-      teachers: [
-        { id: '1', name: 'Sarah Khan', role: 'Principal', subject: 'Administration', className: 'Admin Block', status: 'Active', salary: '150000', qualification: 'PhD Education', experience: '18 Years', phone: '+92 300 1010101', email: 'sarah.khan@academichub.edu', gender: 'Female' },
-        { id: '2', name: 'Tariq Mehmood', role: 'Vice Principal', subject: 'Administration', className: 'Admin Block', status: 'Active', salary: '120000', qualification: 'PhD', experience: '14 Years', phone: '+92 300 1040404', email: 'tariq.m@academichub.edu', gender: 'Male' },
-        { id: '3', name: 'Raza Ahmed', role: 'Teacher', subject: 'Physics', className: 'Class 10-A', status: 'Active', salary: '75000', qualification: 'M.Sc. Physics', experience: '9 Years', phone: '+92 300 1020202', email: 'raza.ahmed@academichub.edu', gender: 'Male' },
-        { id: '4', name: 'Hina Malik', role: 'Teacher', subject: 'Mathematics', className: 'Class 10-A', status: 'Active', salary: '70000', qualification: 'M.Sc. Mathematics', experience: '7 Years', phone: '+92 300 1030303', email: 'hina.malik@academichub.edu', gender: 'Female' },
-        { id: '5', name: 'Nadia Hussain', role: 'Teacher', subject: 'English Literature', className: 'Class 10-A', status: 'Active', salary: '68000', qualification: 'M.A. English', experience: '6 Years', phone: '+92 300 1060606', email: 'nadia.h@academichub.edu', gender: 'Female' },
-        { id: '6', name: 'Omer Shahid', role: 'Teacher', subject: 'Biology', className: 'Class 8-A', status: 'Active', salary: '65000', qualification: 'M.Sc. Biology', experience: '5 Years', phone: '+92 300 1070707', email: 'omer.s@academichub.edu', gender: 'Male' },
-        { id: '7', name: 'Imran Qureshi', role: 'Teacher', subject: 'Chemistry', className: 'Class 10-A', status: 'Active', salary: '67000', qualification: 'M.Sc. Chemistry', experience: '6 Years', phone: '+92 300 1111222', email: 'imran.q@academichub.edu', gender: 'Male' },
-        { id: '8', name: 'Sadia Hussain', role: 'Teacher', subject: 'Urdu', className: 'Class 8-C', status: 'Active', salary: '58000', qualification: 'M.A. Urdu', experience: '5 Years', phone: '+92 300 1222333', email: 'sadia.h@academichub.edu', gender: 'Female' },
-        { id: '9', name: 'Khalid Waseem', role: 'Teacher', subject: 'Islamiyat', className: 'Class 7-A', status: 'Active', salary: '55000', qualification: 'M.A. Islamic Studies', experience: '4 Years', phone: '+92 300 1333444', email: 'khalid.w@academichub.edu', gender: 'Male' },
-        { id: '10', name: 'Ayesha Bibi', role: 'Academic Coordinator', subject: 'Academics', className: 'Admin Block', status: 'Active', salary: '85000', qualification: 'MBA', experience: '10 Years', phone: '+92 300 1050505', email: 'ayesha.b@academichub.edu', gender: 'Female' },
-        { id: '11', name: 'Zara Ansar', role: 'Substitute Teacher', subject: 'English / Urdu', className: 'Cover Classes', status: 'Active', salary: '42000', qualification: 'B.A. English', experience: '2 Years', phone: '+92 300 1444555', email: 'zara.a@academichub.edu', gender: 'Female' },
-        { id: '12', name: 'Fawad Malik', role: 'Substitute Teacher', subject: 'Mathematics / Science', className: 'Cover Classes', status: 'Active', salary: '40000', qualification: 'B.Sc. Mathematics', experience: '1 Year', phone: '+92 300 1555666', email: 'fawad.m@academichub.edu', gender: 'Male' },
-        { id: '13', name: 'Abrar Hussain', role: 'Lab Assistant', subject: 'Science Lab', className: 'Science Lab', status: 'Active', salary: '35000', qualification: 'B.Sc. Chemistry', experience: '3 Years', phone: '+92 300 1666777', email: 'lab@academichub.edu', gender: 'Male' },
-        { id: '14', name: 'Bashir Ahmed', role: 'Guard', subject: 'Security', className: 'Main Gate', status: 'Active', salary: '35000', qualification: 'Matric', experience: '8 Years', phone: '+92 300 1080808', email: 'security@academichub.edu', gender: 'Male' },
-        { id: '15', name: 'Zubaida Parveen', role: 'Domestic Staff', subject: 'Cleaning', className: 'Block A', status: 'Active', salary: '28000', qualification: 'Middle', experience: '4 Years', phone: '+92 300 1001001', email: 'staff@academichub.edu', gender: 'Female' }
+            students: [
+        { id: '1', name: 'Ahmad Khan', roll: '101', className: 'Class 10-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '2', name: 'Hamza Khan', roll: '102', className: 'Class 10-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '3', name: 'Saad Ali', roll: '103', className: 'Class 10-A', status: 'Late', borrowedBooks: [], bookedTransport: 'School Bus 1', hostelStatus: 'Day Scholar' },
+        { id: '4', name: 'Ayesha Qureshi', roll: '104', className: 'Class 10-A', status: 'Absent', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '5', name: 'Khadija Ali', roll: '105', className: 'Class 10-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '6', name: 'Bilal Khan', roll: '106', className: 'Class 10-A', status: 'Present', borrowedBooks: [], bookedTransport: 'School Bus 1', hostelStatus: 'Dorm A' },
+        { id: '7', name: 'Fatima Khan', roll: '107', className: 'Class 10-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '8', name: 'Hassan Khan', roll: '108', className: 'Class 10-B', status: 'Present', borrowedBooks: ["Science Grade 10"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '9', name: 'Ayesha Raza', roll: '109', className: 'Class 10-B', status: 'Present', borrowedBooks: ["Science Grade 10"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '10', name: 'Fatima Hussain', roll: '110', className: 'Class 10-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '11', name: 'Bilal Khan', roll: '111', className: 'Class 10-B', status: 'Late', borrowedBooks: ["History"], bookedTransport: 'Route B', hostelStatus: 'Room 101' },
+        { id: '12', name: 'Khadija Ali', roll: '112', className: 'Class 10-B', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '13', name: 'Zainab Raza', roll: '113', className: 'Class 10-B', status: 'Present', borrowedBooks: ["Science Grade 10"], bookedTransport: 'School Bus 1', hostelStatus: 'Day Scholar' },
+        { id: '14', name: 'Hassan Malik', roll: '114', className: 'Class 9-A', status: 'Present', borrowedBooks: [], bookedTransport: 'School Bus 1', hostelStatus: 'Day Scholar' },
+        { id: '15', name: 'Zainab Khan', roll: '115', className: 'Class 9-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '16', name: 'Usman Khan', roll: '116', className: 'Class 9-A', status: 'Present', borrowedBooks: [], bookedTransport: 'School Bus 1', hostelStatus: 'Day Scholar' },
+        { id: '17', name: 'Ali Hussain', roll: '117', className: 'Class 9-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '18', name: 'Hamza Khan', roll: '118', className: 'Class 9-A', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'School Bus 1', hostelStatus: 'Day Scholar' },
+        { id: '19', name: 'Hassan Tariq', roll: '119', className: 'Class 9-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '20', name: 'Sana Sheikh', roll: '120', className: 'Class 9-A', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '21', name: 'Ali Ali', roll: '121', className: 'Class 9-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '22', name: 'Mariam Hussain', roll: '122', className: 'Class 9-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Dorm A' },
+        { id: '23', name: 'Zainab Sheikh', roll: '123', className: 'Class 9-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '24', name: 'Mariam Malik', roll: '124', className: 'Class 9-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '25', name: 'Sana Ali', roll: '125', className: 'Class 9-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '26', name: 'Zainab Sheikh', roll: '126', className: 'Class 9-B', status: 'Present', borrowedBooks: ["Science Grade 9"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '27', name: 'Zainab Raza', roll: '127', className: 'Class 9-B', status: 'Late', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '28', name: 'Bilal Qureshi', roll: '128', className: 'Class 9-B', status: 'Late', borrowedBooks: ["Science Grade 9"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '29', name: 'Sana Khan', roll: '129', className: 'Class 8-A', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '30', name: 'Muhammad Sheikh', roll: '130', className: 'Class 8-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '31', name: 'Omar Ali', roll: '131', className: 'Class 8-A', status: 'Present', borrowedBooks: ["Science Grade 8"], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '32', name: 'Saad Qureshi', roll: '132', className: 'Class 8-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '33', name: 'Zainab Malik', roll: '133', className: 'Class 8-A', status: 'Present', borrowedBooks: ["Science Grade 8"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '34', name: 'Saad Hussain', roll: '134', className: 'Class 8-A', status: 'Present', borrowedBooks: ["Science Grade 8"], bookedTransport: 'School Bus 1', hostelStatus: 'Day Scholar' },
+        { id: '35', name: 'Fatima Qureshi', roll: '135', className: 'Class 8-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '36', name: 'Hassan Tariq', roll: '136', className: 'Class 8-B', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '37', name: 'Ahmad Khan', roll: '137', className: 'Class 8-B', status: 'Absent', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '38', name: 'Bilal Sheikh', roll: '138', className: 'Class 8-B', status: 'Present', borrowedBooks: ["Science Grade 8"], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '39', name: 'Sana Khan', roll: '139', className: 'Class 8-B', status: 'Late', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '40', name: 'Khadija Ahmed', roll: '140', className: 'Class 8-B', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '41', name: 'Usman Ali', roll: '141', className: 'Class 8-B', status: 'Absent', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Room 205' },
+        { id: '42', name: 'Saad Tariq', roll: '142', className: 'Class 8-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Room 101' },
+        { id: '43', name: 'Sana Tariq', roll: '143', className: 'Class 8-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '44', name: 'Fatima Khan', roll: '144', className: 'Class 8-B', status: 'Present', borrowedBooks: [], bookedTransport: 'School Bus 1', hostelStatus: 'Day Scholar' },
+        { id: '45', name: 'Hamza Hussain', roll: '145', className: 'Class 7-A', status: 'Present', borrowedBooks: ["Science Grade 7"], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '46', name: 'Ali Tariq', roll: '146', className: 'Class 7-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '47', name: 'Sana Malik', roll: '147', className: 'Class 7-A', status: 'Present', borrowedBooks: [], bookedTransport: 'School Bus 1', hostelStatus: 'Day Scholar' },
+        { id: '48', name: 'Hamza Syed', roll: '148', className: 'Class 7-A', status: 'Absent', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '49', name: 'Zainab Tariq', roll: '149', className: 'Class 7-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '50', name: 'Fatima Malik', roll: '150', className: 'Class 7-A', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'School Bus 1', hostelStatus: 'Dorm A' },
+        { id: '51', name: 'Bilal Raza', roll: '151', className: 'Class 7-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '52', name: 'Omar Khan', roll: '152', className: 'Class 7-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '53', name: 'Fatima Sheikh', roll: '153', className: 'Class 7-B', status: 'Present', borrowedBooks: [], bookedTransport: 'School Bus 1', hostelStatus: 'Day Scholar' },
+        { id: '54', name: 'Hassan Ali', roll: '154', className: 'Class 7-B', status: 'Present', borrowedBooks: [], bookedTransport: 'School Bus 1', hostelStatus: 'Day Scholar' },
+        { id: '55', name: 'Saad Khan', roll: '155', className: 'Class 7-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '56', name: 'Mariam Khan', roll: '156', className: 'Class 7-B', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '57', name: 'Mariam Ahmed', roll: '157', className: 'Class 7-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '58', name: 'Ayesha Hussain', roll: '158', className: 'Class 7-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' }
       ],
-      notices: [
-        { id: '1', date: '2026-06-08', title: 'Summer Vacation Announcement', content: 'School will remain closed from June 15 to August 15 for summer holidays.' },
-        { id: '2', date: '2026-06-05', title: 'Midterm Exam Schedule Uploaded', content: 'Exam starts on June 25. Please download date-sheets from portals.' }
-      ],
-      leaves: [
-        { id: '1', name: 'Sarah Khan', date: '2026-06-10', reason: 'Medical Checkup', status: 'Pending' },
-        { id: '2', name: 'Raza Ahmed', date: '2026-06-14', reason: 'Family Event', status: 'Pending' }
-      ],
-      invoices: [
-        { id: 'INV-001', student: 'Kamran Shah', amount: 8500, status: 'Unpaid' },
-        { id: 'INV-002', student: 'Ayesha Siddiqui', amount: 8500, status: 'Paid' },
-        { id: 'INV-003', student: 'Zainab Ali', amount: 7200, status: 'Unpaid' },
-        { id: 'INV-004', student: 'Bilal Ahmed', amount: 8500, status: 'Paid' },
-        { id: 'INV-005', student: 'Fatima Noor', amount: 6500, status: 'Unpaid' },
-        { id: 'INV-006', student: 'Saad Tariq', amount: 7200, status: 'Paid' },
-        { id: 'INV-007', student: 'Hassan Raza', amount: 6000, status: 'Paid' },
-        { id: 'INV-008', student: 'Mariam Khan', amount: 8500, status: 'Unpaid' },
-        { id: 'INV-009', student: 'Usman Ghani', amount: 6500, status: 'Paid' },
-        { id: 'INV-010', student: 'Hira Malik', amount: 7200, status: 'Paid' },
-        { id: 'INV-011', student: 'Ali Zafar', amount: 6000, status: 'Unpaid' },
-        { id: 'INV-012', student: 'Sana Javed', amount: 8500, status: 'Paid' },
-        { id: 'INV-013', student: 'Omar Farooq', amount: 6500, status: 'Unpaid' },
-        { id: 'INV-014', student: 'Amina Baig', amount: 7200, status: 'Paid' }
-      ],
-      assignments: [
-        { 
-          id: '1', 
-          title: 'Chapter 2: Electrostatics Homework', 
-          subject: 'Physics', 
-          publishDate: '2026-06-05', 
-          dueDate: '2026-06-09', 
-          fileName: 'physics_assignment_2.pdf', 
-          fileType: 'pdf', 
-          status: 'Published', 
-          fileUrl: 'data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvUmVzb3VyY2VzIDw8IC9Gb250IDw8IC9GMSA8PCAvVHlwZSAvRm9udCAvU3VidHlwZSAvVHlwZTEgL0Jhc2VGb250IC9IZWx2ZXRpY2EgPj4gPj4gPj4gL0NvbnRlbnRzIDQgMCBSID4+CmVuZG9iago0IDAgb2JqCjw8IC9MZW5ndGggNjAgPj4Kc3RyZWFtCkJUCi9GMSAxNCBUZgo1MCA3NTAgVGQKKEFjYWRlbWljIEh1YiAtIERlbW8gUGFzdCBQYXBlciBhbmQgSG9tZXdvcmsgQXNzaWdubWVudCkgVGoKRVQKZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgNQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTE1IDAwMDAwIG4gCjAwMDAwMDAyMjQgMDAwMDAgbiAKdHJhaWxlcgo8PCAvU2l6ZSA1IC9Sb290IDEgMCBSID4+CnN0YXJ0eHJlZgozMzMKJSVFT0Y='
-        },
-        { 
-          id: '2', 
-          title: 'Midterm Shakespeare Critical Essay', 
-          subject: 'English', 
-          publishDate: '2026-06-07', 
-          dueDate: '2026-06-16', 
-          fileName: 'hamlet_rubric_outline.docx', 
-          fileType: 'word', 
-          status: 'Published', 
-          fileUrl: 'data:application/msword;base64,e1xydGYxXGFuc2kgRGVtbyBIb21ld29yayBEb2N1bWVudCBpbiBNUyBXb3JkIGZvcm1hdC59' 
-        }
-      ],
-      disciplines: [
-        { id: '1', name: 'Zainab Ali', date: '2026-06-08', infraction: 'Classroom Disruption', action: 'Warning Issued' },
-        { id: '2', name: 'Kamran Shah', date: '2026-06-02', infraction: 'Late Arrival', action: 'Parent Notified' }
-      ],
-      parentMessages: [
-        { id: '1', parent: 'M. Shah (Kamran\'s Father)', date: '2026-06-08', subject: 'Query about summer camp', message: 'Will school transport be available during the summer classes?' }
-      ],
-      inventory: [
-        { id: 'inv-1', name: 'Dell Optiplex Desktops', category: 'IT Equipment', location: 'Computer Lab 1', qty: '32 Good', value: 'Rs. 3,200,000' },
-        { id: 'inv-2', name: 'Interactive Smart Boards', category: 'Electronics', location: 'Lecture Hall A & B', qty: '4 Good', value: 'Rs. 480,000' },
-        { id: 'inv-3', name: 'Student Wooden Desks', category: 'School Furniture', location: 'All Classrooms', qty: '350 Good', value: 'Rs. 1,750,000' },
-        { id: 'inv-4', name: 'Chemistry Beakers & Flasks', category: 'Lab Supplies', location: 'Science Lab 1', qty: '60 Low Stock', value: 'Rs. 45,000' },
-        { id: 'inv-5', name: 'Physics Lab Kits', category: 'Lab Supplies', location: 'Science Lab 2', qty: '20 Good', value: 'Rs. 80,000' },
-        { id: 'inv-6', name: 'Teacher Whiteboard Markers', category: 'Stationary', location: 'Admin Storeroom', qty: '200 pcs Good', value: 'Rs. 6,000' },
-        { id: 'inv-7', name: 'Football & Volleyball Set', category: 'Sports Equipment', location: 'Sports Room', qty: '15 Good', value: 'Rs. 45,000' },
-        { id: 'inv-8', name: 'Swing Sets & Slides', category: 'Play Area Things', location: 'Junior Playground', qty: '1 Set Good', value: 'Rs. 95,000' },
-        { id: 'inv-9', name: 'CCTV Security Cameras', category: 'Electronics', location: 'Campus-Wide', qty: '24 Good', value: 'Rs. 240,000' },
-        { id: 'inv-10', name: 'Library Book Collection', category: 'Other', location: 'Main Library', qty: '3,500 Books Good', value: 'Rs. 700,000' },
-        { id: 'inv-11', name: 'Projectors', category: 'Electronics', location: 'Class 10-A, 10-B, 9-A', qty: '6 Good', value: 'Rs. 180,000' },
-        { id: 'inv-12', name: 'Fire Extinguishers', category: 'Other', location: 'All Floors', qty: '18 Good', value: 'Rs. 54,000' },
-        { id: 'inv-13', name: 'Printer (HP LaserJet)', category: 'IT Equipment', location: 'Admin Office', qty: '3 Good', value: 'Rs. 90,000' },
-        { id: 'inv-14', name: 'Water Cooler / Dispenser', category: 'Other', location: 'Corridor Block A & B', qty: '8 Good', value: 'Rs. 64,000' },
-        { id: 'inv-15', name: 'Exam Answer Sheet Reams', category: 'Stationary', location: 'Admin Storeroom', qty: '500 reams Low Stock', value: 'Rs. 75,000' }
-      ],
-      visitors: [
-        { id: 'v-1', name: 'Saad Malik', cnic: '35202-1234567-1', phone: '+92 300 1234567', purpose: 'Admission Enquiry', meetingWith: 'Principal', entryTime: '09:15 AM', exitTime: '10:30 AM', status: 'Checked Out', date: '2026-06-13' },
-        { id: 'v-2', name: 'Mrs. Fatima Naqvi', cnic: '35202-9876543-2', phone: '+92 311 9876543', purpose: 'Parent-Teacher Meeting', meetingWith: 'Class Teacher', entryTime: '11:45 AM', exitTime: '', status: 'Checked In', date: '2026-06-13' },
-        { id: 'v-3', name: 'Arif Hussain', cnic: '35202-5555555-3', phone: '+92 321 5555555', purpose: 'Fee Submission', meetingWith: 'Accounts Office', entryTime: '02:00 PM', exitTime: '02:20 PM', status: 'Checked Out', date: '2026-06-12' },
-        { id: 'v-4', name: 'Sobia Tariq', cnic: '35202-7777777-4', phone: '+92 333 7777777', purpose: 'Document Collection', meetingWith: 'Admin Office', entryTime: '10:00 AM', exitTime: '10:15 AM', status: 'Checked Out', date: '2026-06-12' }
-      ]
-    },
-    // 2. Beaconhouse Campus Lahore (PK)
-    '22222222-2222-2222-2222-222222222222': {
-      students: [
-        {
-                "id": "s2-1",
-                "name": "Hassan Noor",
-                "roll": "453",
-                "className": "Class 10-A",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route A",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 3437962",
-                "email": "students2_0@example.com"
-        },
-        {
-                "id": "s2-2",
-                "name": "Shoaib Noor",
-                "roll": "897",
-                "className": "Class 10-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route A",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 2262701",
-                "email": "students2_1@example.com"
-        },
-        {
-                "id": "s2-3",
-                "name": "Sara Noor",
-                "roll": "347",
-                "className": "Class 10-A",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6053315",
-                "email": "students2_2@example.com"
-        },
-        {
-                "id": "s2-4",
-                "name": "Sadia Malik",
-                "roll": "806",
-                "className": "Class 10-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route A",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 4301596",
-                "email": "students2_3@example.com"
-        },
-        {
-                "id": "s2-5",
-                "name": "Zafar Khan",
-                "roll": "987",
-                "className": "Class 10-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6500170",
-                "email": "students2_4@example.com"
-        },
-        {
-                "id": "s2-6",
-                "name": "Hamza Khan",
-                "roll": "590",
-                "className": "Class 10-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route A",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 8429965",
-                "email": "students2_5@example.com"
-        },
-        {
-                "id": "s2-7",
-                "name": "Kiran Ahmed",
-                "roll": "339",
-                "className": "Class 10-A",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 4221036",
-                "email": "students2_6@example.com"
-        },
-        {
-                "id": "s2-8",
-                "name": "Tariq Ghani",
-                "roll": "211",
-                "className": "Class 10-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route A",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 9810655",
-                "email": "students2_7@example.com"
-        },
-        {
-                "id": "s2-9",
-                "name": "Iqra Ali",
-                "roll": "962",
-                "className": "Class 10-A",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route A",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 3955727",
-                "email": "students2_8@example.com"
-        },
-        {
-                "id": "s2-10",
-                "name": "Shoaib Sultan",
-                "roll": "616",
-                "className": "Class 10-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6183410",
-                "email": "students2_9@example.com"
-        },
-        {
-                "id": "s2-11",
-                "name": "Omar Farooq",
-                "roll": "989",
-                "className": "Class 10-B",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6044864",
-                "email": "students2_10@example.com"
-        },
-        {
-                "id": "s2-12",
-                "name": "Hamza Ahmed",
-                "roll": "662",
-                "className": "Class 10-B",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route B",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 1884130",
-                "email": "students2_11@example.com"
-        },
-        {
-                "id": "s2-13",
-                "name": "Yasin Zafar",
-                "roll": "400",
-                "className": "Class 10-B",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 2194082",
-                "email": "students2_12@example.com"
-        },
-        {
-                "id": "s2-14",
-                "name": "Zubaida Ghani",
-                "roll": "907",
-                "className": "Class 10-B",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 7827813",
-                "email": "students2_13@example.com"
-        },
-        {
-                "id": "s2-15",
-                "name": "Hamza Tariq",
-                "roll": "735",
-                "className": "Class 10-B",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6505747",
-                "email": "students2_14@example.com"
-        },
-        {
-                "id": "s2-16",
-                "name": "Jameel Zafar",
-                "roll": "467",
-                "className": "Class 10-B",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 9063062",
-                "email": "students2_15@example.com"
-        },
-        {
-                "id": "s2-17",
-                "name": "Ayesha Ahmed",
-                "roll": "660",
-                "className": "Class 10-B",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 1717305",
-                "email": "students2_16@example.com"
-        },
-        {
-                "id": "s2-18",
-                "name": "Zafar Farooq",
-                "roll": "417",
-                "className": "Class 10-B",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 4866951",
-                "email": "students2_17@example.com"
-        },
-        {
-                "id": "s2-19",
-                "name": "Maryam Ali",
-                "roll": "148",
-                "className": "Class 10-B",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 5229382",
-                "email": "students2_18@example.com"
-        },
-        {
-                "id": "s2-20",
-                "name": "Ahmed Nawaz",
-                "roll": "276",
-                "className": "Class 10-B",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route B",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 5416212",
-                "email": "students2_19@example.com"
-        },
-        {
-                "id": "s2-21",
-                "name": "Sobia Sultan",
-                "roll": "883",
-                "className": "Class 4",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 3337342",
-                "email": "students2_20@example.com"
-        },
-        {
-                "id": "s2-22",
-                "name": "Zubaida Ghani",
-                "roll": "992",
-                "className": "Class 10-B",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 7405373",
-                "email": "students2_21@example.com"
-        },
-        {
-                "id": "s2-23",
-                "name": "Sonia Zafar",
-                "roll": "263",
-                "className": "Class 1",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 1876624",
-                "email": "students2_22@example.com"
-        },
-        {
-                "id": "s2-24",
-                "name": "Salman Ahmed",
-                "roll": "964",
-                "className": "Class 9-B",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 9969496",
-                "email": "students2_23@example.com"
-        },
-        {
-                "id": "s2-25",
-                "name": "Zara Siddiqui",
-                "roll": "212",
-                "className": "Class 5",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 9670640",
-                "email": "students2_24@example.com"
-        },
-        {
-                "id": "s2-26",
-                "name": "Amna Zafar",
-                "roll": "215",
-                "className": "Class 6-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 5452344",
-                "email": "students2_25@example.com"
-        },
-        {
-                "id": "s2-27",
-                "name": "Hamza Siddiqui",
-                "roll": "998",
-                "className": "Class 9-B",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 5161563",
-                "email": "students2_26@example.com"
-        },
-        {
-                "id": "s2-28",
-                "name": "Bisma Sultan",
-                "roll": "355",
-                "className": "Class 2",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 4012956",
-                "email": "students2_27@example.com"
-        },
-        {
-                "id": "s2-29",
-                "name": "Ali Ahmed",
-                "roll": "628",
-                "className": "Class 6-A",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 8573678",
-                "email": "students2_28@example.com"
-        },
-        {
-                "id": "s2-30",
-                "name": "Omar Malik",
-                "roll": "881",
-                "className": "Class 5",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 1557890",
-                "email": "students2_29@example.com"
-        },
-        {
-                "id": "s2-31",
-                "name": "Mehwish Ghani",
-                "roll": "649",
-                "className": "Class 9-B",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 8086549",
-                "email": "students2_30@example.com"
-        },
-        {
-                "id": "s2-32",
-                "name": "Yasin Raza",
-                "roll": "883",
-                "className": "Class 8-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 8809005",
-                "email": "students2_31@example.com"
-        },
-        {
-                "id": "s2-33",
-                "name": "Kiran Hussain",
-                "roll": "913",
-                "className": "Class 10-B",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 7947779",
-                "email": "students2_32@example.com"
-        },
-        {
-                "id": "s2-34",
-                "name": "Hassan Zafar",
-                "roll": "799",
-                "className": "Class 8-B",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 7087970",
-                "email": "students2_33@example.com"
-        },
-        {
-                "id": "s2-35",
-                "name": "Sana Ahmed",
-                "roll": "296",
-                "className": "Class 9-B",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 2447691",
-                "email": "students2_34@example.com"
-        },
-        {
-                "id": "s2-36",
-                "name": "Zubaida Hussain",
-                "roll": "868",
-                "className": "Class 6-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 9224366",
-                "email": "students2_35@example.com"
-        },
-        {
-                "id": "s2-37",
-                "name": "Nadia Mirza",
-                "roll": "128",
-                "className": "Class 6-B",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 9408478",
-                "email": "students2_36@example.com"
-        },
-        {
-                "id": "s2-38",
-                "name": "Sobia Khan",
-                "roll": "335",
-                "className": "Class 7-B",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 9567627",
-                "email": "students2_37@example.com"
-        },
-        {
-                "id": "s2-39",
-                "name": "Hassan Ali",
-                "roll": "395",
-                "className": "Class 8-A",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 8184300",
-                "email": "students2_38@example.com"
-        },
-        {
-                "id": "s2-40",
-                "name": "Kamran Tariq",
-                "roll": "231",
-                "className": "Class 9-B",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 7397742",
-                "email": "students2_39@example.com"
-        },
-        {
-                "id": "s2-41",
-                "name": "Zara Farooq",
-                "roll": "168",
-                "className": "Class 5",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6371752",
-                "email": "students2_40@example.com"
-        },
-        {
-                "id": "s2-42",
-                "name": "Salman Mirza",
-                "roll": "851",
-                "className": "Class 10-B",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 4753014",
-                "email": "students2_41@example.com"
-        },
-        {
-                "id": "s2-43",
-                "name": "Mehwish Ali",
-                "roll": "919",
-                "className": "Class 6-B",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 9831686",
-                "email": "students2_42@example.com"
-        },
-        {
-                "id": "s2-44",
-                "name": "Zahid Ahmed",
-                "roll": "416",
-                "className": "Class 8-A",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 9275359",
-                "email": "students2_43@example.com"
-        },
-        {
-                "id": "s2-45",
-                "name": "Ayesha Farooq",
-                "roll": "559",
-                "className": "Class 3",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 7889388",
-                "email": "students2_44@example.com"
-        },
-        {
-                "id": "s2-46",
-                "name": "Sara Nawaz",
-                "roll": "640",
-                "className": "Class 3",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 1634158",
-                "email": "students2_45@example.com"
-        },
-        {
-                "id": "s2-47",
-                "name": "Kamran Siddiqui",
-                "roll": "212",
-                "className": "Class 3",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6049032",
-                "email": "students2_46@example.com"
-        },
-        {
-                "id": "s2-48",
-                "name": "Raza Ahmed",
-                "roll": "850",
-                "className": "Class 2",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 3249561",
-                "email": "students2_47@example.com"
-        },
-        {
-                "id": "s2-49",
-                "name": "Sobia Siddiqui",
-                "roll": "727",
-                "className": "Class 9-A",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 7863344",
-                "email": "students2_48@example.com"
-        },
-        {
-                "id": "s2-50",
-                "name": "Hafsa Tariq",
-                "roll": "800",
-                "className": "Class 7-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 9223260",
-                "email": "students2_49@example.com"
-        },
-        {
-                "id": "s2-51",
-                "name": "Rabia Malik",
-                "roll": "367",
-                "className": "Class 7-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 2419496",
-                "email": "students2_50@example.com"
-        },
-        {
-                "id": "s2-52",
-                "name": "Zara Farooq",
-                "roll": "728",
-                "className": "Class 8-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 5676802",
-                "email": "students2_51@example.com"
-        },
-        {
-                "id": "s2-53",
-                "name": "Raza Malik",
-                "roll": "668",
-                "className": "Class 4",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 7648494",
-                "email": "students2_52@example.com"
-        },
-        {
-                "id": "s2-54",
-                "name": "Nida Nawaz",
-                "roll": "901",
-                "className": "Class 1",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6979954",
-                "email": "students2_53@example.com"
-        },
-        {
-                "id": "s2-55",
-                "name": "Zubaida Nawaz",
-                "roll": "793",
-                "className": "Class 7-B",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 5761366",
-                "email": "students2_54@example.com"
-        },
-        {
-                "id": "s2-56",
-                "name": "Waseem Zafar",
-                "roll": "979",
-                "className": "Class 10-A",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 5172980",
-                "email": "students2_55@example.com"
-        },
-        {
-                "id": "s2-57",
-                "name": "Hassan Hussain",
-                "roll": "312",
-                "className": "Class 5",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 1319811",
-                "email": "students2_56@example.com"
-        },
-        {
-                "id": "s2-58",
-                "name": "Waseem Tariq",
-                "roll": "541",
-                "className": "Class 8-A",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 4298710",
-                "email": "students2_57@example.com"
-        },
-        {
-                "id": "s2-59",
-                "name": "Zahid Ali",
-                "roll": "372",
-                "className": "Class 8-B",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 7877991",
-                "email": "students2_58@example.com"
-        },
-        {
-                "id": "s2-60",
-                "name": "Saad Ghani",
-                "roll": "886",
-                "className": "Class 3",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 3023251",
-                "email": "students2_59@example.com"
-        },
-        {
-                "id": "s2-61",
-                "name": "Zainab Ahmed",
-                "roll": "962",
-                "className": "Class 3",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 5731977",
-                "email": "students2_60@example.com"
-        },
-        {
-                "id": "s2-62",
-                "name": "Zainab Siddiqui",
-                "roll": "706",
-                "className": "Class 6-B",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 5725241",
-                "email": "students2_61@example.com"
-        },
-        {
-                "id": "s2-63",
-                "name": "Omar Tariq",
-                "roll": "248",
-                "className": "Class 5",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 4785008",
-                "email": "students2_62@example.com"
-        },
-        {
-                "id": "s2-64",
-                "name": "Waseem Nawaz",
-                "roll": "107",
-                "className": "Class 7-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 5426691",
-                "email": "students2_63@example.com"
-        },
-        {
-                "id": "s2-65",
-                "name": "Kamran Ali",
-                "roll": "703",
-                "className": "Class 10-A",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6996837",
-                "email": "students2_64@example.com"
-        },
-        {
-                "id": "s2-66",
-                "name": "Yasin Malik",
-                "roll": "433",
-                "className": "Class 3",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 1342005",
-                "email": "students2_65@example.com"
-        },
-        {
-                "id": "s2-67",
-                "name": "Sana Nawaz",
-                "roll": "389",
-                "className": "Class 7-B",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 1432017",
-                "email": "students2_66@example.com"
-        },
-        {
-                "id": "s2-68",
-                "name": "Fatima Ahmed",
-                "roll": "237",
-                "className": "Class 9-B",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 5534823",
-                "email": "students2_67@example.com"
-        },
-        {
-                "id": "s2-69",
-                "name": "Saad Hussain",
-                "roll": "743",
-                "className": "Class 10-B",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6335521",
-                "email": "students2_68@example.com"
-        },
-        {
-                "id": "s2-70",
-                "name": "Kiran Khan",
-                "roll": "169",
-                "className": "Class 10-A",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 2960896",
-                "email": "students2_69@example.com"
-        },
-        {
-                "id": "s2-71",
-                "name": "Saad Shah",
-                "roll": "473",
-                "className": "Class 2",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 2247589",
-                "email": "students2_70@example.com"
-        },
-        {
-                "id": "s2-72",
-                "name": "Imran Zafar",
-                "roll": "705",
-                "className": "Class 6-B",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 2631405",
-                "email": "students2_71@example.com"
-        },
-        {
-                "id": "s2-73",
-                "name": "Waseem Farooq",
-                "roll": "130",
-                "className": "Class 8-A",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 7811437",
-                "email": "students2_72@example.com"
-        },
-        {
-                "id": "s2-74",
-                "name": "Nawaz Noor",
-                "roll": "343",
-                "className": "Class 7-B",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 9613734",
-                "email": "students2_73@example.com"
-        },
-        {
-                "id": "s2-75",
-                "name": "Sobia Nawaz",
-                "roll": "310",
-                "className": "Class 6-B",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 4354715",
-                "email": "students2_74@example.com"
-        },
-        {
-                "id": "s2-76",
-                "name": "Nida Hussain",
-                "roll": "524",
-                "className": "Class 7-B",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 6832884",
-                "email": "students2_75@example.com"
-        },
-        {
-                "id": "s2-77",
-                "name": "Mahnoor Sultan",
-                "roll": "581",
-                "className": "Class 3",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 4056849",
-                "email": "students2_76@example.com"
-        },
-        {
-                "id": "s2-78",
-                "name": "Khadija Farooq",
-                "roll": "431",
-                "className": "Class 1",
-                "status": "Late",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 3747532",
-                "email": "students2_77@example.com"
-        },
-        {
-                "id": "s2-79",
-                "name": "Nadia Shah",
-                "roll": "207",
-                "className": "Class 3",
-                "status": "Absent",
-                "borrowedBooks": [],
-                "bookedTransport": "None",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 9278169",
-                "email": "students2_78@example.com"
-        },
-        {
-                "id": "s2-80",
-                "name": "Fawad Siddiqui",
-                "roll": "588",
-                "className": "Class 8-A",
-                "status": "Present",
-                "borrowedBooks": [],
-                "bookedTransport": "Route C",
-                "hostelStatus": "Day Scholar",
-                "contact": "+92 300 4710229",
-                "email": "students2_79@example.com"
-        }
-],
-
       teachers: [
         { id: '1', name: 'Dr. Arshad Raza', role: 'Principal', subject: 'Administration', className: 'Admin Block', status: 'Active', salary: '180000', qualification: 'PhD Mathematics', experience: '20 Years', phone: '+92 300 2010101', email: 'principal@beaconhouse-lhr.edu', gender: 'Male' },
         { id: '2', name: 'Sohail Mirza', role: 'Vice Principal', subject: 'Administration', className: 'Admin Block', status: 'Active', salary: '130000', qualification: 'M.Ed.', experience: '11 Years', phone: '+92 300 2666666', email: 'coordinator@beaconhouse-lhr.edu', gender: 'Male' },
@@ -2727,17 +747,74 @@ export const UnifiedDashboard: React.FC = () => {
     },
     // 3. The Educators (PK)
     '33333333-3333-3333-3333-333333333333': {
-      students: [
-        { id: '1', name: 'Hamza Sohail', roll: '55', className: 'Class 10-A', status: 'Present', borrowedBooks: ['English Grammar'], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
-        { id: '2', name: 'Sana Javed', roll: '21', className: 'Class 10-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
-        { id: '3', name: 'Faisal Nawaz', roll: '33', className: 'Class 9-A', status: 'Absent', borrowedBooks: ['Urdu Adab'], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
-        { id: '4', name: 'Rabia Tariq', roll: '12', className: 'Class 9-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Room 201' },
-        { id: '5', name: 'Adeel Maqsood', roll: '07', className: 'Class 8-A', status: 'Present', borrowedBooks: ['Science Workbook'], bookedTransport: 'Route C', hostelStatus: 'Day Scholar' },
-        { id: '6', name: 'Mahnoor Riaz', roll: '44', className: 'Class 10-A', status: 'Late', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
-        { id: '7', name: 'Shahzaib Khan', roll: '08', className: 'Class 7-A', status: 'Present', borrowedBooks: ['Math Book 7'], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
-        { id: '8', name: 'Gulnaz Fatima', roll: '29', className: 'Class 8-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Room 305' },
-        { id: '9', name: 'Asif Raza', roll: '16', className: 'Class 9-A', status: 'Present', borrowedBooks: ['Chemistry 9'], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
-        { id: '10', name: 'Hina Zulfiqar', roll: '38', className: 'Class 10-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route C', hostelStatus: 'Day Scholar' }
+            students: [
+        { id: '1', name: 'Hussein Al-Khalifa', roll: '301', className: 'Class 10-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '2', name: 'Mohammed Al-Maktoum', roll: '302', className: 'Class 10-A', status: 'Late', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '3', name: 'Zainab Al-Maktoum', roll: '303', className: 'Class 10-A', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '4', name: 'Mohammed Al-Khalifa', roll: '304', className: 'Class 10-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Room 205' },
+        { id: '5', name: 'Ali Al-Nahyan', roll: '305', className: 'Class 10-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '6', name: 'Aisha Al-Maktoum', roll: '306', className: 'Class 10-A', status: 'Present', borrowedBooks: ["Science Grade 10"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '7', name: 'Mohammed Al-Thani', roll: '307', className: 'Class 10-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Dorm A' },
+        { id: '8', name: 'Mahmoud Al-Otaibi', roll: '308', className: 'Class 10-B', status: 'Absent', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '9', name: 'Ahmed Al-Hashimi', roll: '309', className: 'Class 10-B', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '10', name: 'Mariam Al-Fayed', roll: '310', className: 'Class 10-B', status: 'Absent', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '11', name: 'Khadija Al-Thani', roll: '311', className: 'Class 10-B', status: 'Present', borrowedBooks: ["Science Grade 10"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '12', name: 'Ali Al-Sabah', roll: '312', className: 'Class 10-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '13', name: 'Youssef Al-Otaibi', roll: '313', className: 'Class 10-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '14', name: 'Ali Al-Rashid', roll: '314', className: 'Class 10-B', status: 'Absent', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '15', name: 'Zainab Al-Hashimi', roll: '315', className: 'Class 10-B', status: 'Absent', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '16', name: 'Hussein Al-Hashimi', roll: '316', className: 'Class 9-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '17', name: 'Mohammed Al-Khalifa', roll: '317', className: 'Class 9-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '18', name: 'Zainab Al-Maktoum', roll: '318', className: 'Class 9-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '19', name: 'Ibrahim Al-Maktoum', roll: '319', className: 'Class 9-A', status: 'Present', borrowedBooks: ["Science Grade 9"], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '20', name: 'Ibrahim Al-Rashid', roll: '320', className: 'Class 9-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '21', name: 'Aisha Al-Otaibi', roll: '321', className: 'Class 9-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '22', name: 'Mariam Al-Sabah', roll: '322', className: 'Class 9-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '23', name: 'Mariam Al-Sabah', roll: '323', className: 'Class 9-A', status: 'Present', borrowedBooks: ["Science Grade 9"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '24', name: 'Youssef Al-Nahyan', roll: '324', className: 'Class 9-B', status: 'Absent', borrowedBooks: ["History"], bookedTransport: 'School Bus 1', hostelStatus: 'Day Scholar' },
+        { id: '25', name: 'Mariam Al-Otaibi', roll: '325', className: 'Class 9-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '26', name: 'Mohammed Al-Fayed', roll: '326', className: 'Class 9-B', status: 'Present', borrowedBooks: ["Science Grade 9"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '27', name: 'Ismail Al-Maktoum', roll: '327', className: 'Class 9-B', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '28', name: 'Youssef Al-Nahyan', roll: '328', className: 'Class 9-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '29', name: 'Zainab Al-Thani', roll: '329', className: 'Class 9-B', status: 'Present', borrowedBooks: ["Science Grade 9"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '30', name: 'Mahmoud Al-Hashimi', roll: '330', className: 'Class 9-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '31', name: 'Mohammed Al-Nahyan', roll: '331', className: 'Class 9-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '32', name: 'Ibrahim Al-Fayed', roll: '332', className: 'Class 9-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '33', name: 'Ali Al-Sabah', roll: '333', className: 'Class 8-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '34', name: 'Fatima Al-Nahyan', roll: '334', className: 'Class 8-A', status: 'Present', borrowedBooks: ["Science Grade 8"], bookedTransport: 'Route B', hostelStatus: 'Dorm A' },
+        { id: '35', name: 'Youssef Al-Saud', roll: '335', className: 'Class 8-A', status: 'Absent', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '36', name: 'Mariam Al-Khalifa', roll: '336', className: 'Class 8-A', status: 'Present', borrowedBooks: ["Science Grade 8"], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '37', name: 'Youssef Al-Fayed', roll: '337', className: 'Class 8-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '38', name: 'Ali Al-Otaibi', roll: '338', className: 'Class 8-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '39', name: 'Mahmoud Al-Rashid', roll: '339', className: 'Class 8-A', status: 'Present', borrowedBooks: ["Science Grade 8"], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '40', name: 'Aisha Al-Khalifa', roll: '340', className: 'Class 8-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '41', name: 'Mahmoud Al-Nahyan', roll: '341', className: 'Class 8-B', status: 'Absent', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Room 101' },
+        { id: '42', name: 'Youssef Al-Maktoum', roll: '342', className: 'Class 8-B', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'School Bus 1', hostelStatus: 'Dorm A' },
+        { id: '43', name: 'Ibrahim Al-Nahyan', roll: '343', className: 'Class 8-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '44', name: 'Hassan Al-Fayed', roll: '344', className: 'Class 8-B', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '45', name: 'Ahmed Al-Fayed', roll: '345', className: 'Class 8-B', status: 'Absent', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Room 101' },
+        { id: '46', name: 'Ali Al-Maktoum', roll: '346', className: 'Class 8-B', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '47', name: 'Aisha Al-Hashimi', roll: '347', className: 'Class 8-B', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '48', name: 'Mariam Al-Hashimi', roll: '348', className: 'Class 8-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Dorm A' },
+        { id: '49', name: 'Aisha Al-Rashid', roll: '349', className: 'Class 8-B', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '50', name: 'Aisha Al-Sabah', roll: '350', className: 'Class 7-A', status: 'Present', borrowedBooks: ["Science Grade 7"], bookedTransport: 'School Bus 1', hostelStatus: 'Room 101' },
+        { id: '51', name: 'Fatima Al-Maktoum', roll: '351', className: 'Class 7-A', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '52', name: 'Ahmed Al-Sabah', roll: '352', className: 'Class 7-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '53', name: 'Mohammed Al-Fayed', roll: '353', className: 'Class 7-A', status: 'Present', borrowedBooks: ["Science Grade 7"], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '54', name: 'Mustafa Al-Khalifa', roll: '354', className: 'Class 7-A', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '55', name: 'Zainab Al-Rashid', roll: '355', className: 'Class 7-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '56', name: 'Ibrahim Al-Sabah', roll: '356', className: 'Class 7-A', status: 'Late', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '57', name: 'Ahmed Al-Sabah', roll: '357', className: 'Class 7-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '58', name: 'Zainab Al-Fayed', roll: '358', className: 'Class 7-A', status: 'Absent', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '59', name: 'Ibrahim Al-Khalifa', roll: '359', className: 'Class 7-B', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'Route B', hostelStatus: 'Dorm A' },
+        { id: '60', name: 'Youssef Al-Nahyan', roll: '360', className: 'Class 7-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '61', name: 'Khadija Al-Nahyan', roll: '361', className: 'Class 7-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '62', name: 'Ahmed Al-Otaibi', roll: '362', className: 'Class 7-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '63', name: 'Ali Al-Otaibi', roll: '363', className: 'Class 7-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '64', name: 'Ahmed Al-Fayed', roll: '364', className: 'Class 7-B', status: 'Present', borrowedBooks: ["Science Grade 7"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '65', name: 'Zainab Al-Sabah', roll: '365', className: 'Class 7-B', status: 'Absent', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '66', name: 'Ibrahim Al-Thani', roll: '366', className: 'Class 7-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '67', name: 'Hussein Al-Khalifa', roll: '367', className: 'Class 7-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' }
       ],
       teachers: [
         { id: '1', name: 'Mrs. Samina Afridi', role: 'Principal', subject: 'Administration', className: 'Admin Block', status: 'Active', salary: '140000', qualification: 'M.Ed.', experience: '16 Years', phone: '+92 300 3010101', email: 'principal@educators.edu.pk', gender: 'Female' },
@@ -2799,17 +876,66 @@ export const UnifiedDashboard: React.FC = () => {
     },
     // 4. Beaconhouse London (UK)
     '44444444-4444-4444-4444-444444444444': {
-      students: [
-        { id: '1', name: 'George Harrison', roll: '201', className: 'Class 10-A', status: 'Present', borrowedBooks: ['GCSE Chemistry Guide'], bookedTransport: 'Bus Route 4', hostelStatus: 'Day Scholar' },
-        { id: '2', name: 'Oliver Smith', roll: '202', className: 'Class 10-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
-        { id: '3', name: 'Amelia Johnson', roll: '203', className: 'Class 9-A', status: 'Absent', borrowedBooks: ['History of Britain'], bookedTransport: 'Bus Route 2', hostelStatus: 'Day Scholar' },
-        { id: '4', name: 'Noah Williams', roll: '204', className: 'Class 10-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Boarding Room 11' },
-        { id: '5', name: 'Sophia Brown', roll: '205', className: 'Class 8-A', status: 'Present', borrowedBooks: ['English Literature Key Texts'], bookedTransport: 'Bus Route 1', hostelStatus: 'Day Scholar' },
-        { id: '6', name: 'Liam Davis', roll: '206', className: 'Class 10-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Bus Route 4', hostelStatus: 'Day Scholar' },
-        { id: '7', name: 'Emma Wilson', roll: '207', className: 'Class 9-B', status: 'Late', borrowedBooks: ['Physics Revision'], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
-        { id: '8', name: 'James Taylor', roll: '208', className: 'Class 7-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Bus Route 3', hostelStatus: 'Day Scholar' },
-        { id: '9', name: 'Charlotte Anderson', roll: '209', className: 'Class 8-B', status: 'Present', borrowedBooks: ['Maths GCSE Practice'], bookedTransport: 'Bus Route 2', hostelStatus: 'Day Scholar' },
-        { id: '10', name: 'Ethan Thomas', roll: '210', className: 'Class 9-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' }
+            students: [
+        { id: '1', name: 'Youssef Al-Sabah', roll: '401', className: 'Class 10-A', status: 'Present', borrowedBooks: ["Science Grade 10"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '2', name: 'Ahmed Al-Rashid', roll: '402', className: 'Class 10-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '3', name: 'Zainab Al-Nahyan', roll: '403', className: 'Class 10-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '4', name: 'Ahmed Al-Sabah', roll: '404', className: 'Class 10-A', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '5', name: 'Mustafa Al-Saud', roll: '405', className: 'Class 10-A', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '6', name: 'Hassan Al-Rashid', roll: '406', className: 'Class 10-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Dorm A' },
+        { id: '7', name: 'Ali Al-Fayed', roll: '407', className: 'Class 10-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '8', name: 'Mohammed Al-Hashimi', roll: '408', className: 'Class 10-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '9', name: 'Mustafa Al-Nahyan', roll: '409', className: 'Class 10-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '10', name: 'Fatima Al-Rashid', roll: '410', className: 'Class 10-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '11', name: 'Zainab Al-Sabah', roll: '411', className: 'Class 10-B', status: 'Present', borrowedBooks: [], bookedTransport: 'School Bus 1', hostelStatus: 'Day Scholar' },
+        { id: '12', name: 'Zainab Al-Nahyan', roll: '412', className: 'Class 10-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '13', name: 'Ismail Al-Sabah', roll: '413', className: 'Class 10-B', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '14', name: 'Ismail Al-Fayed', roll: '414', className: 'Class 10-B', status: 'Present', borrowedBooks: [], bookedTransport: 'School Bus 1', hostelStatus: 'Day Scholar' },
+        { id: '15', name: 'Fatima Al-Sabah', roll: '415', className: 'Class 10-B', status: 'Present', borrowedBooks: [], bookedTransport: 'School Bus 1', hostelStatus: 'Day Scholar' },
+        { id: '16', name: 'Youssef Al-Hashimi', roll: '416', className: 'Class 9-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '17', name: 'Ali Al-Nahyan', roll: '417', className: 'Class 9-A', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '18', name: 'Ahmed Al-Hashimi', roll: '418', className: 'Class 9-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '19', name: 'Ali Al-Hashimi', roll: '419', className: 'Class 9-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Dorm A' },
+        { id: '20', name: 'Mariam Al-Maktoum', roll: '420', className: 'Class 9-A', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'None', hostelStatus: 'Dorm A' },
+        { id: '21', name: 'Ibrahim Al-Sabah', roll: '421', className: 'Class 9-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '22', name: 'Youssef Al-Fayed', roll: '422', className: 'Class 9-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Room 205' },
+        { id: '23', name: 'Ali Al-Sabah', roll: '423', className: 'Class 9-A', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '24', name: 'Zainab Al-Hashimi', roll: '424', className: 'Class 9-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '25', name: 'Ibrahim Al-Saud', roll: '425', className: 'Class 9-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '26', name: 'Mariam Al-Saud', roll: '426', className: 'Class 9-B', status: 'Absent', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '27', name: 'Mariam Al-Saud', roll: '427', className: 'Class 9-B', status: 'Present', borrowedBooks: ["Science Grade 9"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '28', name: 'Mustafa Al-Thani', roll: '428', className: 'Class 9-B', status: 'Present', borrowedBooks: ["Science Grade 9"], bookedTransport: 'School Bus 1', hostelStatus: 'Dorm A' },
+        { id: '29', name: 'Zainab Al-Khalifa', roll: '429', className: 'Class 9-B', status: 'Absent', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '30', name: 'Mustafa Al-Fayed', roll: '430', className: 'Class 9-B', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'School Bus 1', hostelStatus: 'Room 205' },
+        { id: '31', name: 'Ahmed Al-Khalifa', roll: '431', className: 'Class 9-B', status: 'Late', borrowedBooks: ["Science Grade 9"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '32', name: 'Mustafa Al-Otaibi', roll: '432', className: 'Class 8-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '33', name: 'Khadija Al-Maktoum', roll: '433', className: 'Class 8-A', status: 'Present', borrowedBooks: ["Science Grade 8"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '34', name: 'Zainab Al-Otaibi', roll: '434', className: 'Class 8-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '35', name: 'Ahmed Al-Thani', roll: '435', className: 'Class 8-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '36', name: 'Mustafa Al-Sabah', roll: '436', className: 'Class 8-A', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'None', hostelStatus: 'Dorm A' },
+        { id: '37', name: 'Ibrahim Al-Khalifa', roll: '437', className: 'Class 8-A', status: 'Late', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Room 205' },
+        { id: '38', name: 'Zainab Al-Hashimi', roll: '438', className: 'Class 8-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '39', name: 'Mariam Al-Sabah', roll: '439', className: 'Class 8-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '40', name: 'Mariam Al-Khalifa', roll: '440', className: 'Class 8-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '41', name: 'Ali Al-Maktoum', roll: '441', className: 'Class 8-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Dorm A' },
+        { id: '42', name: 'Zainab Al-Sabah', roll: '442', className: 'Class 8-B', status: 'Present', borrowedBooks: [], bookedTransport: 'School Bus 1', hostelStatus: 'Day Scholar' },
+        { id: '43', name: 'Ibrahim Al-Rashid', roll: '443', className: 'Class 8-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '44', name: 'Zainab Al-Maktoum', roll: '444', className: 'Class 8-B', status: 'Late', borrowedBooks: [], bookedTransport: 'School Bus 1', hostelStatus: 'Dorm A' },
+        { id: '45', name: 'Hassan Al-Sabah', roll: '445', className: 'Class 8-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '46', name: 'Hussein Al-Khalifa', roll: '446', className: 'Class 8-B', status: 'Present', borrowedBooks: ["Science Grade 8"], bookedTransport: 'School Bus 1', hostelStatus: 'Day Scholar' },
+        { id: '47', name: 'Ibrahim Al-Sabah', roll: '447', className: 'Class 7-A', status: 'Present', borrowedBooks: [], bookedTransport: 'School Bus 1', hostelStatus: 'Day Scholar' },
+        { id: '48', name: 'Mariam Al-Nahyan', roll: '448', className: 'Class 7-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '49', name: 'Mohammed Al-Sabah', roll: '449', className: 'Class 7-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Dorm A' },
+        { id: '50', name: 'Hassan Al-Sabah', roll: '450', className: 'Class 7-A', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '51', name: 'Hussein Al-Hashimi', roll: '451', className: 'Class 7-A', status: 'Present', borrowedBooks: ["Science Grade 7"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '52', name: 'Youssef Al-Saud', roll: '452', className: 'Class 7-A', status: 'Present', borrowedBooks: ["Science Grade 7"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '53', name: 'Aisha Al-Fayed', roll: '453', className: 'Class 7-B', status: 'Present', borrowedBooks: ["Science Grade 7"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '54', name: 'Mohammed Al-Otaibi', roll: '454', className: 'Class 7-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '55', name: 'Hussein Al-Rashid', roll: '455', className: 'Class 7-B', status: 'Absent', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '56', name: 'Fatima Al-Rashid', roll: '456', className: 'Class 7-B', status: 'Absent', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Dorm A' },
+        { id: '57', name: 'Zainab Al-Maktoum', roll: '457', className: 'Class 7-B', status: 'Absent', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Room 101' },
+        { id: '58', name: 'Ibrahim Al-Thani', roll: '458', className: 'Class 7-B', status: 'Absent', borrowedBooks: ["History"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '59', name: 'Mariam Al-Rashid', roll: '459', className: 'Class 7-B', status: 'Present', borrowedBooks: ["Science Grade 7"], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' }
       ],
       teachers: [
         { id: '1', name: 'Mrs. Patricia Hawkins', role: 'Principal', subject: 'Administration', className: 'Admin Block', status: 'Active', salary: '320000', qualification: 'Ph.D. Education Management', experience: '22 Years', phone: '+44 7700 100001', email: 'principal@beaconhouse.co.uk', gender: 'Female' },
@@ -2868,17 +994,69 @@ export const UnifiedDashboard: React.FC = () => {
     },
     // 5. Beaconhouse Dubai (AE)
     '55555555-5555-5555-5555-555555555555': {
-      students: [
-        { id: '1', name: 'Omar Al-Mansoori', roll: '301', className: 'Class 10-A', status: 'Present', borrowedBooks: ['Arabic Advanced Reader'], bookedTransport: 'Bus Route 1', hostelStatus: 'Day Scholar' },
-        { id: '2', name: 'Yasmin Qureshi', roll: '302', className: 'Class 10-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
-        { id: '3', name: 'Khalid Al-Rashid', roll: '303', className: 'Class 9-A', status: 'Absent', borrowedBooks: ['Islamic Studies Grade 9'], bookedTransport: 'Bus Route 3', hostelStatus: 'Day Scholar' },
-        { id: '4', name: 'Noor Bint Hassan', roll: '304', className: 'Class 10-A', status: 'Present', borrowedBooks: ['English for Gulf Students'], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
-        { id: '5', name: 'Tariq Al-Amin', roll: '305', className: 'Class 8-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Bus Route 2', hostelStatus: 'Day Scholar' },
-        { id: '6', name: 'Amira Siddiqui', roll: '306', className: 'Class 10-B', status: 'Present', borrowedBooks: ['Maths CBSE G10'], bookedTransport: 'Bus Route 1', hostelStatus: 'Day Scholar' },
-        { id: '7', name: 'Yousef Ibrahim', roll: '307', className: 'Class 9-B', status: 'Late', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
-        { id: '8', name: 'Laila Zaheer', roll: '308', className: 'Class 7-A', status: 'Present', borrowedBooks: ['Science Grade 7'], bookedTransport: 'Bus Route 2', hostelStatus: 'Day Scholar' },
-        { id: '9', name: 'Saif Al-Kuwari', roll: '309', className: 'Class 8-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Bus Route 3', hostelStatus: 'Day Scholar' },
-        { id: '10', name: 'Mariam Chaudhry', roll: '310', className: 'Class 9-A', status: 'Present', borrowedBooks: ['History of Arabia'], bookedTransport: 'None', hostelStatus: 'Day Scholar' }
+            students: [
+        { id: '1', name: 'Noah Johnson', roll: '501', className: 'Class 10-A', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'None', hostelStatus: 'Dorm A' },
+        { id: '2', name: 'Oliver Rodriguez', roll: '502', className: 'Class 10-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Room 101' },
+        { id: '3', name: 'Ava Miller', roll: '503', className: 'Class 10-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '4', name: 'Liam Smith', roll: '504', className: 'Class 10-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '5', name: 'William Davis', roll: '505', className: 'Class 10-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '6', name: 'Charlotte Johnson', roll: '506', className: 'Class 10-A', status: 'Present', borrowedBooks: [], bookedTransport: 'School Bus 1', hostelStatus: 'Day Scholar' },
+        { id: '7', name: 'William Smith', roll: '507', className: 'Class 10-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '8', name: 'Sophia Williams', roll: '508', className: 'Class 10-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Dorm A' },
+        { id: '9', name: 'Lucas Miller', roll: '509', className: 'Class 10-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '10', name: 'Emma Davis', roll: '510', className: 'Class 10-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '11', name: 'Ava Williams', roll: '511', className: 'Class 10-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '12', name: 'William Davis', roll: '512', className: 'Class 10-B', status: 'Present', borrowedBooks: [], bookedTransport: 'School Bus 1', hostelStatus: 'Day Scholar' },
+        { id: '13', name: 'Liam Davis', roll: '513', className: 'Class 10-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '14', name: 'William Smith', roll: '514', className: 'Class 10-B', status: 'Absent', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '15', name: 'Charlotte Johnson', roll: '515', className: 'Class 9-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '16', name: 'Ava Williams', roll: '516', className: 'Class 9-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '17', name: 'Sophia Johnson', roll: '517', className: 'Class 9-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '18', name: 'Ava Johnson', roll: '518', className: 'Class 9-A', status: 'Present', borrowedBooks: ["Science Grade 9"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '19', name: 'Charlotte Williams', roll: '519', className: 'Class 9-A', status: 'Absent', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '20', name: 'Oliver Miller', roll: '520', className: 'Class 9-A', status: 'Absent', borrowedBooks: ["Science Grade 9"], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '21', name: 'Sophia Brown', roll: '521', className: 'Class 9-A', status: 'Late', borrowedBooks: ["History"], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '22', name: 'Oliver Johnson', roll: '522', className: 'Class 9-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Room 101' },
+        { id: '23', name: 'Mia Williams', roll: '523', className: 'Class 9-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '24', name: 'William Jones', roll: '524', className: 'Class 9-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '25', name: 'Mia Davis', roll: '525', className: 'Class 9-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '26', name: 'William Johnson', roll: '526', className: 'Class 9-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Dorm A' },
+        { id: '27', name: 'Ava Brown', roll: '527', className: 'Class 9-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '28', name: 'Ava Smith', roll: '528', className: 'Class 9-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '29', name: 'Oliver Smith', roll: '529', className: 'Class 9-B', status: 'Present', borrowedBooks: ["Science Grade 9"], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '30', name: 'Olivia Jones', roll: '530', className: 'Class 8-A', status: 'Present', borrowedBooks: ["Science Grade 8"], bookedTransport: 'None', hostelStatus: 'Dorm A' },
+        { id: '31', name: 'Emma Jones', roll: '531', className: 'Class 8-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '32', name: 'Emma Rodriguez', roll: '532', className: 'Class 8-A', status: 'Present', borrowedBooks: [], bookedTransport: 'School Bus 1', hostelStatus: 'Day Scholar' },
+        { id: '33', name: 'Olivia Brown', roll: '533', className: 'Class 8-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '34', name: 'Mia Brown', roll: '534', className: 'Class 8-A', status: 'Absent', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '35', name: 'Noah Smith', roll: '535', className: 'Class 8-A', status: 'Present', borrowedBooks: ["Science Grade 8"], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '36', name: 'Isabella Jones', roll: '536', className: 'Class 8-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '37', name: 'Oliver Davis', roll: '537', className: 'Class 8-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '38', name: 'Sophia Martinez', roll: '538', className: 'Class 8-B', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'None', hostelStatus: 'Room 101' },
+        { id: '39', name: 'Charlotte Johnson', roll: '539', className: 'Class 8-B', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Dorm A' },
+        { id: '40', name: 'Noah Johnson', roll: '540', className: 'Class 8-B', status: 'Present', borrowedBooks: [], bookedTransport: 'School Bus 1', hostelStatus: 'Dorm A' },
+        { id: '41', name: 'Elijah Williams', roll: '541', className: 'Class 8-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '42', name: 'Isabella Williams', roll: '542', className: 'Class 8-B', status: 'Absent', borrowedBooks: ["History"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '43', name: 'Ava Smith', roll: '543', className: 'Class 8-B', status: 'Present', borrowedBooks: ["Science Grade 8"], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '44', name: 'Liam Brown', roll: '544', className: 'Class 8-B', status: 'Present', borrowedBooks: ["Science Grade 8"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '45', name: 'Mia Rodriguez', roll: '545', className: 'Class 8-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Room 205' },
+        { id: '46', name: 'Sophia Williams', roll: '546', className: 'Class 7-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '47', name: 'James Davis', roll: '547', className: 'Class 7-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Day Scholar' },
+        { id: '48', name: 'Isabella Smith', roll: '548', className: 'Class 7-A', status: 'Present', borrowedBooks: ["Science Grade 7"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '49', name: 'Liam Garcia', roll: '549', className: 'Class 7-A', status: 'Absent', borrowedBooks: [], bookedTransport: 'Route A', hostelStatus: 'Room 205' },
+        { id: '50', name: 'Ava Williams', roll: '550', className: 'Class 7-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '51', name: 'William Williams', roll: '551', className: 'Class 7-A', status: 'Late', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Room 101' },
+        { id: '52', name: 'Lucas Rodriguez', roll: '552', className: 'Class 7-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '53', name: 'Isabella Rodriguez', roll: '553', className: 'Class 7-A', status: 'Present', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Dorm A' },
+        { id: '54', name: 'Oliver Smith', roll: '554', className: 'Class 7-A', status: 'Absent', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '55', name: 'Isabella Miller', roll: '555', className: 'Class 7-B', status: 'Absent', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '56', name: 'Olivia Brown', roll: '556', className: 'Class 7-B', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '57', name: 'Elijah Brown', roll: '557', className: 'Class 7-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '58', name: 'Charlotte Miller', roll: '558', className: 'Class 7-B', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '59', name: 'Noah Miller', roll: '559', className: 'Class 7-B', status: 'Absent', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
+        { id: '60', name: 'Benjamin Brown', roll: '560', className: 'Class 7-B', status: 'Present', borrowedBooks: [], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '61', name: 'Mia Garcia', roll: '561', className: 'Class 7-B', status: 'Late', borrowedBooks: ["Science Grade 7"], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
+        { id: '62', name: 'Elijah Williams', roll: '562', className: 'Class 7-B', status: 'Present', borrowedBooks: ["History"], bookedTransport: 'None', hostelStatus: 'Day Scholar' }
       ],
       teachers: [
         { id: '1', name: 'Mr. Faisal Al-Tamimi', role: 'Principal', subject: 'Administration', className: 'Admin Block', status: 'Active', salary: '450000', qualification: 'Ph.D. International Education', experience: '20 Years', phone: '+971 50 100 1001', email: 'principal@beaconhouse-dxb.edu.ae', gender: 'Male' },
@@ -3423,7 +1601,7 @@ export const UnifiedDashboard: React.FC = () => {
   const setVisitors = (val: any) => updateSchoolDb('visitors', val);
   const setAdmissionFunnel = (val: any) => updateSchoolDb('admissionFunnel', val);
 
-  const { queries: portal_queries, initialize: initQueries, replyToQuery } = useQueryStore();
+  const { queries: portal_queries, initialize: initQueries, replyToQuery, deleteQuery } = useQueryStore();
   const [activeQueryId, setActiveQueryId] = useState<string | null>(null);
   const [replyMessage, setReplyMessage] = useState('');
 
@@ -5875,7 +4053,7 @@ export const UnifiedDashboard: React.FC = () => {
           <div className="p-6">
             <div className="flex flex-wrap justify-center gap-4">
               {filteredFeatures.map((feature, i) => {
-                const details = getFeatureDetails(feature);
+                const details = getFeatureDetails(feature, database[currentSchool?.schoolId || '']?.students?.length || 0);
                 const FeatureIcon = details.icon;
                 return (
                   <div 
@@ -8708,7 +6886,22 @@ export const UnifiedDashboard: React.FC = () => {
                       <div className="flex justify-between items-center pt-2">
                         <button className="text-xs text-primary font-bold hover:underline">+ Add Another Question</button>
                         <button 
-                          onClick={() => alert("Quiz Generated! A notification has been sent to the class.")}
+                          onClick={() => {
+              alert("Quiz Generated! A notification has been sent to the class.");
+              if (currentSchool?.schoolId) {
+                  setDatabase(prev => {
+                      const db = prev[currentSchool.schoolId];
+                      if (!db) return prev;
+                      return {
+                          ...prev,
+                          [currentSchool.schoolId]: {
+                              ...db,
+                              assignments: [...(db.assignments || []), { id: `quiz-${Date.now()}`, title: 'New Auto-Generated Quiz', class: 'Various', subject: 'Generated', deadline: new Date().toISOString().split('T')[0], active: true }]
+                          }
+                      };
+                  });
+              }
+            }}
                           className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-lg transition-all shadow-md"
                         >
                           Generate & Publish Quiz
@@ -8758,7 +6951,22 @@ export const UnifiedDashboard: React.FC = () => {
                       </select>
                       <textarea rows={4} className="w-full bg-muted/30 border border-border rounded-lg text-xs p-2.5 text-foreground" placeholder="Write detailed remark here..."></textarea>
                       <button 
-                        onClick={() => alert("Remark logged! It is now visible on the Parent's Dashboard.")}
+                        onClick={() => {
+              alert("Remark logged! It is now visible on the Parent's Dashboard.");
+              if (currentSchool?.schoolId) {
+                  setDatabase(prev => {
+                      const db = prev[currentSchool.schoolId];
+                      if (!db) return prev;
+                      return {
+                          ...prev,
+                          [currentSchool.schoolId]: {
+                              ...db,
+                              disciplines: [...(db.disciplines || []), { id: `disc-${Date.now()}`, name: 'Selected Student', date: new Date().toISOString().split('T')[0], infraction: 'General Remark', action: 'Notified Parent' }]
+                          }
+                      };
+                  });
+              }
+            }}
                         className="w-full py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md"
                       >
                         Submit Remark
@@ -9121,10 +7329,36 @@ export const UnifiedDashboard: React.FC = () => {
                             <div className="flex gap-1 transition-opacity">
                               <button onClick={(e) => {
                                 alert(`Leave Request for ${req.name} Approved successfully.`);
+            if (currentSchool?.schoolId) {
+                setDatabase(prev => {
+                    const db = prev[currentSchool.schoolId];
+                    if (!db) return prev;
+                    return {
+                        ...prev,
+                        [currentSchool.schoolId]: {
+                            ...db,
+                            leaves: (db.leaves || []).map(l => l.id === req.id ? {...l, status: 'Approved'} : l)
+                        }
+                    };
+                });
+            }
                                 e.currentTarget.parentElement.innerHTML = '<span class="text-[10px] font-bold text-emerald-500 px-2">Approved</span>';
                               }} className="px-2 py-1 bg-emerald-500 hover:bg-emerald-600 text-white text-[9px] font-bold rounded cursor-pointer transition-all shadow-sm">Approve</button>
                               <button onClick={(e) => {
                                 alert(`Leave Request for ${req.name} Rejected.`);
+            if (currentSchool?.schoolId) {
+                setDatabase(prev => {
+                    const db = prev[currentSchool.schoolId];
+                    if (!db) return prev;
+                    return {
+                        ...prev,
+                        [currentSchool.schoolId]: {
+                            ...db,
+                            leaves: (db.leaves || []).map(l => l.id === req.id ? {...l, status: 'Rejected'} : l)
+                        }
+                    };
+                });
+            }
                                 e.currentTarget.parentElement.innerHTML = '<span class="text-[10px] font-bold text-rose-500 px-2">Rejected</span>';
                               }} className="px-2 py-1 bg-rose-500 hover:bg-rose-600 text-white text-[9px] font-bold rounded cursor-pointer transition-all shadow-sm">Reject</button>
                             </div>
@@ -9609,6 +7843,20 @@ export const UnifiedDashboard: React.FC = () => {
                                 btn.innerHTML = '✅ Assignment Published';
                                 setTimeout(() => {
                                     alert('Assignment Published Successfully!');
+            if (currentSchool?.schoolId) {
+                setDatabase(prev => {
+                    const db = prev[currentSchool.schoolId];
+                    if (!db) return prev;
+                    return {
+                        ...prev,
+                        [currentSchool.schoolId]: {
+                            ...db,
+                            assignments: [...(db.assignments || []), { id: `asn-${Date.now()}`, title: newAssignmentTitle, class: newAssignmentClass, subject: newAssignmentSubject, deadline: newAssignmentDate, active: true }]
+                        }
+                    };
+                });
+                setNewAssignmentTitle('');
+            }
                                     setActiveFeature(null);
                                 }, 800);
                              }, 1500);
@@ -9640,6 +7888,19 @@ export const UnifiedDashboard: React.FC = () => {
                                   btn.innerHTML = '✅ Quiz Launched & Published';
                                   setTimeout(() => {
                                       alert('Live Quiz has been successfully launched. Students will be notified instantly.');
+            if (currentSchool?.schoolId) {
+                setDatabase(prev => {
+                    const db = prev[currentSchool.schoolId];
+                    if (!db) return prev;
+                    return {
+                        ...prev,
+                        [currentSchool.schoolId]: {
+                            ...db,
+                            notices: [...(db.notices || []), { id: `ntc-${Date.now()}`, date: new Date().toISOString().split('T')[0], title: 'Live Quiz Active', content: 'A live quiz has been started by your teacher. Please join immediately.' }]
+                        }
+                    };
+                });
+            }
                                       setActiveFeature(null);
                                   }, 800);
                                }, 1500);
@@ -9694,6 +7955,20 @@ export const UnifiedDashboard: React.FC = () => {
                                   btn.innerHTML = '✅ Published to Portal';
                                   setTimeout(() => {
                                       alert('Class diary has been updated. Parents will be notified.');
+            if (currentSchool?.schoolId) {
+                setDatabase(prev => {
+                    const db = prev[currentSchool.schoolId];
+                    if (!db) return prev;
+                    return {
+                        ...prev,
+                        [currentSchool.schoolId]: {
+                            ...db,
+                            notices: [...(db.notices || []), { id: `ntc-${Date.now()}`, date: new Date().toISOString().split('T')[0], title: 'Class Diary Updated', content: diaryEntry }]
+                        }
+                    };
+                });
+                setDiaryEntry('');
+            }
                                       setActiveFeature(null);
                                   }, 800);
                                }, 1500);
@@ -9793,6 +8068,10 @@ export const UnifiedDashboard: React.FC = () => {
                                   btn.innerHTML = '✅ Marks Saved Successfully';
                                   setTimeout(() => {
                                       alert('Grades have been saved to the report card.');
+            setStudentGrades(prev => ({
+                ...prev,
+                [selectedReportStudent]: prev[selectedReportStudent] ? prev[selectedReportStudent].map(g => ({...g, grade: 'Updated'})) : []
+            }));
                                       setActiveFeature(null);
                                   }, 800);
                                }, 1500);
@@ -9823,6 +8102,19 @@ export const UnifiedDashboard: React.FC = () => {
                                     btn.innerHTML = '✅ Remark Issued';
                                     setTimeout(() => {
                                         alert('Student remark has been logged and sent to parents.');
+            if (currentSchool?.schoolId) {
+                setDatabase(prev => {
+                    const db = prev[currentSchool.schoolId];
+                    if (!db) return prev;
+                    return {
+                        ...prev,
+                        [currentSchool.schoolId]: {
+                            ...db,
+                            disciplines: [...(db.disciplines || []), { id: `rmk-${Date.now()}`, name: selectedReportStudent || 'General', date: new Date().toISOString().split('T')[0], infraction: 'Teacher Remark', action: 'Sent to Parent Portal' }]
+                        }
+                    };
+                });
+            }
                                         setActiveFeature(null);
                                     }, 800);
                                  }, 1000);
@@ -10918,8 +9210,25 @@ export const UnifiedDashboard: React.FC = () => {
                             className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
                             value={newNoticeTitle}
                             onChange={e => {
-                              if (e.target.value === 'CUSTOM_MANUAL') setNewNoticeTitle('CUSTOM_MANUAL');
-                              else setNewNoticeTitle(e.target.value);
+                              const val = e.target.value;
+                              if (val === 'CUSTOM_MANUAL') {
+                                setNewNoticeTitle('CUSTOM_MANUAL');
+                                setNewNoticeContent('');
+                              } else {
+                                setNewNoticeTitle(val);
+                                const templates: Record<string, string> = {
+                                  'General Announcement': 'Dear Students and Parents, \n\nPlease be informed that [Detail].\n\nRegards,\nAdministration',
+                                  'Fee Submission Reminder': 'Dear Parents, \n\nThis is a gentle reminder that the deadline for fee submission for the upcoming term is approaching. Please ensure all dues are cleared by [Date].\n\nRegards,\nAccounts Department',
+                                  'Upcoming Exams': 'Dear Students, \n\nThe mid-term examinations will commence from [Date]. The detailed date sheet has been published on your portal. Please ensure you prepare well.\n\nBest of Luck,\nExamination Department',
+                                  'Result Declaration': 'Dear Parents, \n\nThe final results for the academic session have been compiled. The result cards are now available on the parent portal.\n\nRegards,\nAdministration',
+                                  'Parent-Teacher Meeting': 'Dear Parents, \n\nA Parent-Teacher Meeting (PTM) has been scheduled for [Date] from [Time]. We highly encourage you to attend and discuss your child\'s progress.\n\nRegards,\nAdministration',
+                                  'Holidays / Vacations': 'Dear Students and Parents, \n\nThe school will remain closed from [Start Date] to [End Date] on account of [Reason/Vacation]. Classes will resume on [Resume Date].\n\nRegards,\nAdministration',
+                                  'Event / Activity Notification': 'Dear Students, \n\nWe are excited to announce an upcoming [Event Name] on [Date]. All interested students are requested to register their names with their respective class teachers by [Deadline Date].\n\nRegards,\nEvent Coordinator'
+                                };
+                                if (templates[val]) {
+                                  setNewNoticeContent(templates[val]);
+                                }
+                              }
                             }}
                             required
                           >
@@ -10946,10 +9255,13 @@ export const UnifiedDashboard: React.FC = () => {
                   )}                  <div className="space-y-2.5 max-h-52 overflow-y-auto pr-1">
                     <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Active Broadcasts</span>
                     {notices.map((not) => (
-                      <div key={not.id} className="p-3 bg-card border border-border rounded-xl space-y-1">
+                      <div key={not.id} className="p-3 bg-card border border-border rounded-xl space-y-1 relative group">
                         <div className="flex justify-between items-start">
                           <strong className="text-sm text-foreground block font-bold">{not.title}</strong>
-                          <span className="text-[10px] text-slate-500 font-mono">{not.date}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] text-slate-500 font-mono">{not.date}</span>
+                            <button onClick={() => setNotices(prev => prev.filter(n => n.id !== not.id))} className="text-[10px] text-red-500 hover:bg-red-500/10 px-1.5 py-0.5 rounded font-bold transition-colors opacity-0 group-hover:opacity-100">Del</button>
+                          </div>
                         </div>
                         <p className="text-xs text-foreground/70 leading-relaxed font-medium">{not.content}</p>
                       </div>
@@ -11637,6 +9949,18 @@ export const UnifiedDashboard: React.FC = () => {
                           onSubmit={(e) => {
                             e.preventDefault();
                             alert('Book issued successfully to selected student!');
+            const f = document.getElementById('issueBookForm') as HTMLFormElement;
+            if (f) {
+                const bTitle = (f.elements.namedItem('bookTitle') as HTMLInputElement)?.value;
+                const stu = (f.elements.namedItem('studentName') as HTMLSelectElement)?.value;
+                if (bTitle && stu) {
+                    setStudentLibrary(prev => ({
+                        ...prev,
+                        [stu]: [...(prev[stu] || []), { id: `lib-${Date.now()}`, title: bTitle, issueDate: new Date().toISOString().split('T')[0], dueDate: '2026-06-30', status: 'Active' }]
+                    }));
+                    f.reset();
+                }
+            }
                           }}
                           className="p-4 bg-muted/30 border border-border rounded-xl space-y-3"
                         >
@@ -11937,7 +10261,11 @@ export const UnifiedDashboard: React.FC = () => {
                       </div>
 
                       {isEditor && (
-                        <form onSubmit={(e) => { e.preventDefault(); alert('New vehicle added to fleet!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+                        <form onSubmit={(e) => { 
+              e.preventDefault(); 
+              alert('New vehicle added to fleet!'); 
+              (e.target as HTMLFormElement).reset(); 
+            }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Register New Fleet Vehicle</span>
                           <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                             <input type="text" placeholder="Vehicle Reg No (e.g. BUS-09)" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
@@ -11977,7 +10305,11 @@ export const UnifiedDashboard: React.FC = () => {
                   {activeFeature === 'Routes' && (
                     <div className="space-y-3 w-full">
                       {isEditor && (
-                        <form onSubmit={(e) => { e.preventDefault(); alert('New route saved!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+                        <form onSubmit={(e) => { 
+              e.preventDefault(); 
+              alert('New route saved!'); 
+              (e.target as HTMLFormElement).reset(); 
+            }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Create New Bus Route</span>
                           <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-2">
                             <input type="text" placeholder="Route Title (e.g. Route Gamma)" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
@@ -12014,7 +10346,11 @@ export const UnifiedDashboard: React.FC = () => {
                   {activeFeature === 'Drivers' && (
                     <div className="space-y-3 w-full">
                       {isEditor && (
-                        <form onSubmit={(e) => { e.preventDefault(); alert('Driver registered successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+                        <form onSubmit={(e) => { 
+              e.preventDefault(); 
+              alert('Driver registered successfully!'); 
+              (e.target as HTMLFormElement).reset(); 
+            }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Add Bus Driver</span>
                           <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                             <input type="text" placeholder="Driver Name (e.g. Aslam Khan)" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
@@ -12054,7 +10390,20 @@ export const UnifiedDashboard: React.FC = () => {
                   {activeFeature === 'Student Assignments' && (
                     <div className="space-y-3 w-full">
                       {isEditor && (
-                        <form onSubmit={(e) => { e.preventDefault(); alert('Student transport route assigned!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+                        <form onSubmit={(e) => { 
+              e.preventDefault(); 
+              const f = e.target as HTMLFormElement;
+              const stu = (f.elements.namedItem('stu_name') as HTMLSelectElement)?.value;
+              const route = (f.elements.namedItem('route') as HTMLSelectElement)?.value;
+              if (stu && route) {
+                  setStudentTransport(prev => ({
+                      ...prev,
+                      [stu]: { active: true, route, vehicle: 'Assigned', driver: 'Pending', fee: 2500 }
+                  }));
+              }
+              alert('Student transport route assigned!'); 
+              f.reset(); 
+            }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Assign Student to Route</span>
                           <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                             <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
@@ -12109,7 +10458,27 @@ export const UnifiedDashboard: React.FC = () => {
                       </div>
 
                       {isEditor && (
-                        <form onSubmit={(e) => { e.preventDefault(); alert('Fee payment recorded!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+                        <form onSubmit={(e) => { 
+              e.preventDefault(); 
+              const f = e.target as HTMLFormElement;
+              const stu = (f.elements.namedItem('stu_name') as HTMLSelectElement)?.value;
+              const amount = (f.elements.namedItem('amount') as HTMLInputElement)?.value;
+              if (stu && amount && currentSchool?.schoolId) {
+                  setDatabase(prev => {
+                      const db = prev[currentSchool.schoolId];
+                      if (!db) return prev;
+                      return {
+                          ...prev,
+                          [currentSchool.schoolId]: {
+                              ...db,
+                              invoices: [...(db.invoices || []), { id: `inv-${Date.now()}`, student: stu, amount: parseInt(amount), status: 'Paid' }]
+                          }
+                      };
+                  });
+              }
+              alert('Fee payment recorded!'); 
+              f.reset(); 
+            }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Record Transport Fee Payment</span>
                           <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                             <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
@@ -12264,7 +10633,11 @@ export const UnifiedDashboard: React.FC = () => {
                       </div>
 
                       {isEditor && (
-                        <form onSubmit={(e) => { e.preventDefault(); alert('Mess menu updated successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+                        <form onSubmit={(e) => { 
+              e.preventDefault(); 
+              alert('Mess menu updated successfully!'); 
+              (e.target as HTMLFormElement).reset(); 
+            }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Update Today's Mess Menu</span>
                           <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                             <input type="text" placeholder="Breakfast Menu" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" required />
@@ -12285,7 +10658,11 @@ export const UnifiedDashboard: React.FC = () => {
                   {activeFeature === 'Room Allocation' && (
                     <div className="space-y-3 w-full">
                       {isEditor && (
-                        <form onSubmit={(e) => { e.preventDefault(); alert('Dorm room assigned successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+                        <form onSubmit={(e) => { 
+              e.preventDefault(); 
+              alert('Dorm room assigned successfully!'); 
+              (e.target as HTMLFormElement).reset(); 
+            }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Assign Dorm Room</span>
                           <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3">
                             <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
@@ -12328,7 +10705,20 @@ export const UnifiedDashboard: React.FC = () => {
                   {activeFeature === 'Bed Allocation' && (
                     <div className="space-y-3 w-full">
                       {isEditor && (
-                        <form onSubmit={(e) => { e.preventDefault(); alert('Hostel Bed allocation logged successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+                        <form onSubmit={(e) => { 
+              e.preventDefault(); 
+              const f = e.target as HTMLFormElement;
+              const stu = (f.elements.namedItem('stu_name') as HTMLSelectElement)?.value;
+              const wing = (f.elements.namedItem('wing') as HTMLSelectElement)?.value;
+              if (stu && wing) {
+                  setStudentHostel(prev => ({
+                      ...prev,
+                      [stu]: { allocated: true, wing, room: 'Pending', warden: 'Assigned', feeStatus: 'Unpaid' }
+                  }));
+              }
+              alert('Hostel Bed allocation logged successfully!'); 
+              f.reset(); 
+            }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Allocate Bed</span>
                           <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                             <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
@@ -12391,9 +10781,10 @@ export const UnifiedDashboard: React.FC = () => {
                       <div className="p-4 bg-muted/30 border border-border rounded-xl space-y-2 text-xs">
                         <span className="block font-bold text-foreground/85 uppercase">Maintenance Logs & Reports</span>
                         {maintenanceLogs.map((log) => (
-                          <div key={log.id} className="p-2 bg-card border border-border rounded-lg flex justify-between items-center gap-2">
+                          <div key={log.id} className={`p-2 border rounded-lg flex justify-between items-center gap-2 ${log.status === 'Resolved' ? 'bg-emerald-500/5 border-emerald-500/30' : 'bg-card border-border'}`}>
                             <span>{log.title}</span>
                             {isEditor ? (
+                              <div className="flex items-center gap-1">
                               <select
                                 value={log.status}
                                 onChange={(e) => {
@@ -12412,6 +10803,8 @@ export const UnifiedDashboard: React.FC = () => {
                                 <option className="text-blue-400 font-bold bg-card" value="In Progress">In Progress</option>
                                 <option className="text-emerald-400 font-bold bg-card" value="Resolved">Resolved</option>
                               </select>
+                              <button onClick={() => setMaintenanceLogs(prev => prev.filter(item => item.id !== log.id))} className="text-[10px] text-red-500 hover:bg-red-500/10 px-1.5 py-1 rounded font-bold transition-colors ml-1" title="Delete Log">Del</button>
+                              </div>
                             ) : (
                               <span className={`font-bold ${
                                 log.status === 'Resolved' ? 'text-emerald-400' :
@@ -12467,6 +10860,19 @@ export const UnifiedDashboard: React.FC = () => {
                                         requestSecurityVerification(`Collect outstanding hostel fees of ${formatCurrency(inv.amount)} from student "${inv.name}"`, () => {
                                           setHostelInvoices(prev => prev.map(item => item.id === inv.id ? { ...item, status: 'Paid' } : item));
                                           alert(`Fee collection of ${formatCurrency(inv.amount)} for ${inv.name} logged successfully!`);
+            if (currentSchool?.schoolId) {
+                setDatabase(prev => {
+                    const db = prev[currentSchool.schoolId];
+                    if (!db) return prev;
+                    return {
+                        ...prev,
+                        [currentSchool.schoolId]: {
+                            ...db,
+                            invoices: (db.invoices || []).map(i => i.id === inv.id ? {...i, status: 'Paid'} : i)
+                        }
+                    };
+                });
+            }
                                         });
                                       }}
                                       className="px-2.5 py-1 bg-emerald-500 hover:bg-emerald-600 text-white rounded text-[10px] font-bold shadow-sm transition-all"
@@ -12831,7 +11237,11 @@ export const UnifiedDashboard: React.FC = () => {
                   {activeFeature === 'Recruitment' && (
                     <div className="space-y-3 w-full">
                       {isEditor && (
-                        <form onSubmit={(e) => { e.preventDefault(); alert('Job vacancy opening posted successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+                        <form onSubmit={(e) => { 
+              e.preventDefault(); 
+              alert('Job vacancy opening posted successfully!'); 
+              (e.target as HTMLFormElement).reset(); 
+            }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Post New Job Vacancy</span>
                           <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-2">
                             <select defaultValue="" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold outline-none focus:border-primary" required>
@@ -12871,7 +11281,11 @@ export const UnifiedDashboard: React.FC = () => {
                   {activeFeature === 'Performance Reviews' && (
                     <div className="space-y-3 w-full">
                       {isEditor && (
-                        <form onSubmit={(e) => { e.preventDefault(); alert('Performance score logged!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+                        <form onSubmit={(e) => { 
+              e.preventDefault(); 
+              alert('Performance score logged!'); 
+              (e.target as HTMLFormElement).reset(); 
+            }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Log Teacher Performance Score</span>
                           <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                             <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
@@ -12916,7 +11330,11 @@ export const UnifiedDashboard: React.FC = () => {
                   {activeFeature === 'Payroll Coordination' && (
                     <div className="space-y-3 w-full">
                       {isEditor && (
-                        <form onSubmit={(e) => { e.preventDefault(); alert('Monthly payroll disbursement initiated!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+                        <form onSubmit={(e) => { 
+              e.preventDefault(); 
+              alert('Monthly payroll disbursement initiated!'); 
+              (e.target as HTMLFormElement).reset(); 
+            }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Disburse Monthly Pay Slip</span>
                           <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                             <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
@@ -15093,6 +13511,8 @@ export const UnifiedDashboard: React.FC = () => {
                         e.preventDefault();
                         setWhiteLabelConfig(prev => ({ ...prev, customDomain: dnsInput }));
                         alert('Custom DNS target configurations saved! DNS is currently propagation-testing.');
+            const dnsInput = document.getElementById('customDnsInput') as HTMLInputElement;
+            if (dnsInput) dnsInput.value = '';
                       }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-4">
                         <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">White-Label DNS Pointer & Theme settings</span>
                         
@@ -15195,7 +13615,7 @@ export const UnifiedDashboard: React.FC = () => {
                           </thead>
                           <tbody className="divide-y divide-border text-foreground/85">
                             {supportTickets.map(ticket => (
-                              <tr key={ticket.id} className="hover:bg-muted/10">
+                              <tr key={ticket.id} className={`hover:bg-muted/10 transition-colors ${ticket.status === 'Resolved' ? 'bg-emerald-500/5' : ''}`}>
                                 <td className="p-3 font-mono font-bold text-primary">{ticket.id}</td>
                                 <td className="p-3">{ticket.sender}</td>
                                 <td className="p-3 font-semibold">{ticket.subject}</td>
@@ -15291,7 +13711,9 @@ export const UnifiedDashboard: React.FC = () => {
                           </tbody>
                         </table></div>
                       </div>
-                      <button onClick={() => alert('Multi-Level Permissions updated successfully!')} className="w-full sm:w-auto px-4 py-2.5 bg-primary text-white text-xs font-bold rounded-lg shadow hover:bg-primary/90 transition-all flex items-center justify-center gap-2">Save Matrix Configuration</button>
+                      <button onClick={() => (() => {
+                alert('Multi-Level Permissions updated successfully!');
+            })()} className="w-full sm:w-auto px-4 py-2.5 bg-primary text-white text-xs font-bold rounded-lg shadow hover:bg-primary/90 transition-all flex items-center justify-center gap-2">Save Matrix Configuration</button>
                     </div>
                   )}
 
@@ -15561,7 +13983,11 @@ export const UnifiedDashboard: React.FC = () => {
                         </div>
                         <div className="flex gap-3 justify-end pt-2">
                           <button onClick={() => alert('Test SMS sent successfully!')} className="px-4 py-2 bg-muted text-foreground border border-border text-xs font-bold rounded-lg shadow-sm hover:bg-muted/80 transition-all">Send Test SMS</button>
-                          <button onClick={() => alert('SMS Settings saved!')} className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg shadow hover:bg-primary/90 transition-all">Save Settings</button>
+                          <button onClick={() => (() => {
+                alert('SMS Settings saved!');
+                const smsForm = document.getElementById('smsForm') as HTMLFormElement;
+                if (smsForm) smsForm.reset();
+            })()} className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg shadow hover:bg-primary/90 transition-all">Save Settings</button>
                         </div>
                       </div>
                     </div>
@@ -15597,7 +14023,11 @@ export const UnifiedDashboard: React.FC = () => {
                           </div>
                         </div>
                         <div className="flex gap-3 justify-end pt-2 border-t border-border/50 mt-4">
-                          <button onClick={() => alert('Email Server Configuration saved!')} className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg shadow hover:bg-primary/90 transition-all mt-4">Save Configuration</button>
+                          <button onClick={() => (() => {
+                alert('Email Server Configuration saved!');
+                const smtpForm = document.getElementById('smtpForm') as HTMLFormElement;
+                if (smtpForm) smtpForm.reset();
+            })()} className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg shadow hover:bg-primary/90 transition-all mt-4">Save Configuration</button>
                         </div>
                       </div>
                     </div>
@@ -15744,6 +14174,19 @@ export const UnifiedDashboard: React.FC = () => {
                         setNewAnnounceTitle('');
                         setNewAnnounceContent('');
                         alert('Global notice announcement broadcasted successfully!');
+            if (currentSchool?.schoolId) {
+                setDatabase(prev => {
+                    const db = prev[currentSchool.schoolId];
+                    if (!db) return prev;
+                    return {
+                        ...prev,
+                        [currentSchool.schoolId]: {
+                            ...db,
+                            notices: [{ id: `ntc-g-${Date.now()}`, date: new Date().toISOString().split('T')[0], title: 'GLOBAL ANNOUNCEMENT', content: 'Broadcasted to all users: Please check school communication channels.' }, ...(db.notices || [])]
+                        }
+                    };
+                });
+            }
                       }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3.5">
                         <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Create Global Broadcast Alert</span>
                         <div className="space-y-3 w-full">
@@ -15839,7 +14282,31 @@ export const UnifiedDashboard: React.FC = () => {
                     </div>
                   </div>
 
-                  <form onSubmit={(e) => { e.preventDefault(); alert('Prospective lead added successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+                  <form onSubmit={(e) => { 
+              e.preventDefault(); 
+              const f = e.target as HTMLFormElement;
+              const name = (f.elements.namedItem('lName') as HTMLInputElement)?.value;
+              const phone = (f.elements.namedItem('lPhone') as HTMLInputElement)?.value;
+              if (name && currentSchool?.schoolId) {
+                  setDatabase(prev => {
+                      const db = prev[currentSchool.schoolId];
+                      if (!db) return prev;
+                      const funnel = db.admissionFunnel || { inquiries: [], applications: [], interviews: [], enrolled: [] };
+                      return {
+                          ...prev,
+                          [currentSchool.schoolId]: {
+                              ...db,
+                              admissionFunnel: {
+                                  ...funnel,
+                                  inquiries: [...funnel.inquiries, { id: `inq-${Date.now()}`, name, phone: phone || '', email: '', className: 'Unspecified', date: new Date().toISOString().split('T')[0], notes: 'Added manually via dashboard', status: 'New' }]
+                              }
+                          }
+                      };
+                  });
+              }
+              alert('Prospective lead added successfully!'); 
+              f.reset(); 
+            }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                     <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Add New Admission Inquiry</span>
                     <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                       <input type="text" placeholder="Parent Name" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
@@ -15905,7 +14372,11 @@ export const UnifiedDashboard: React.FC = () => {
                   </div>
 
                   {isEditor && (
-                    <form onSubmit={(e) => { e.preventDefault(); alert('Expense payout logged!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+                    <form onSubmit={(e) => { 
+              e.preventDefault(); 
+              alert('Expense payout logged!'); 
+              (e.target as HTMLFormElement).reset(); 
+            }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                       <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Add School Expense</span>
                       <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         <select defaultValue="" className="modern-input" required>
@@ -15964,7 +14435,26 @@ export const UnifiedDashboard: React.FC = () => {
                   <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
                     👤 HR Staff Lifecycle directory and payroll coordinator.
                   </div>                  {isEditor && (
-                    <form onSubmit={(e) => { e.preventDefault(); alert('Staff profile created successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+                    <form onSubmit={(e) => { 
+              e.preventDefault(); 
+              const f = e.target as HTMLFormElement;
+              const name = (f.elements.namedItem('sName') as HTMLInputElement)?.value;
+              const role = (f.elements.namedItem('sRole') as HTMLSelectElement)?.value;
+              if (name && role && currentSchool?.schoolId) {
+                  setDatabase(prev => {
+                      const db = prev[currentSchool.schoolId] || { teachers: [] };
+                      return {
+                          ...prev,
+                          [currentSchool.schoolId]: {
+                              ...db,
+                              teachers: [...(db.teachers || []), { id: `stf-${Date.now()}`, name, subject: 'General', className: 'N/A', status: 'Active', role }]
+                          }
+                      };
+                  });
+              }
+              alert('Staff profile created successfully!'); 
+              f.reset(); 
+            }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
                       <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Add New Staff</span>
                       <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         <input type="text" placeholder="Staff Name" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />

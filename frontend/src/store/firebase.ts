@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, onValue, set as dbSet } from 'firebase/database';
-import { getAuth, signInAnonymously } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
 
 // Firebase configuration using environment variables or standard placeholders
 // Load custom config from localStorage if it exists
@@ -31,11 +31,6 @@ export const rtdb = getDatabase(app);
 
 // Initialize Firebase Auth
 export const auth = getAuth(app);
-
-// Authenticate anonymously so we can read/write to the database safely
-signInAnonymously(auth).catch(error => {
-  console.warn("Firebase Anonymous Auth failed. Some DB operations might fail if rules require auth.", error);
-});
 
 // Check if using dummy placeholder config
 export const isUsingDummyConfig = () => {
@@ -71,7 +66,7 @@ export const setupRealtimeSync = (path: string, callback: (data: any) => void) =
 
 // Utility function to write data to a path in Realtime Database
 export const updateRealtimeData = async (path: string, data: any) => {
-  if (isUsingDummyConfig()) {
+  if (isUsingDummyConfig() || !auth.currentUser) {
     console.log(`Firebase Realtime write locally mocked for path "${path}"`);
     localStorage.setItem(`ah_mock_${path}`, JSON.stringify(data));
     // Trigger a custom event so other tabs/components listening can update
