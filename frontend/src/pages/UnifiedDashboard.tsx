@@ -15638,14 +15638,15 @@ export const UnifiedDashboard: React.FC = () => {
                     <form onSubmit={(e) => {
                       e.preventDefault();
                       const form = e.target as any;
-                      setInventory((prev: any[]) => [{
+                      const currentInventory = schoolDb.inventory || [];
+                      setInventory([{
                         id: Date.now().toString(),
                         name: form.itemName.value,
                         category: form.itemCategory.value,
                         location: form.itemLocation.value,
                         qty: form.itemQty.value,
                         value: form.itemValue.value
-                      }, ...prev]);
+                      }, ...currentInventory]);
                       setShowAddInventory(false);
                       form.reset();
                     }} className="p-4 bg-card border border-border rounded-xl space-y-3 mb-4 animate-fadeIn shadow-sm">
@@ -15695,7 +15696,8 @@ export const UnifiedDashboard: React.FC = () => {
                       <div className="flex gap-2 justify-end pt-1">
                         <button onClick={() => { setEditingInventoryId(null); setEditInventoryForm(null); }} className="px-4 py-1.5 bg-muted hover:bg-border text-foreground text-xs font-bold rounded-lg">Cancel</button>
                         <button onClick={() => {
-                          setInventory((prev: any[]) => prev.map(i => i.id === editingInventoryId ? { ...i, ...editInventoryForm } : i));
+                          const currentInventory = schoolDb.inventory || [];
+                          setInventory(currentInventory.map((i: any) => i.id === editingInventoryId ? { ...i, ...editInventoryForm } : i));
                           setEditingInventoryId(null); setEditInventoryForm(null);
                         }} className="px-4 py-1.5 bg-primary hover:bg-primary/90 text-white text-xs font-bold rounded-lg">Save Changes</button>
                       </div>
@@ -15732,7 +15734,10 @@ export const UnifiedDashboard: React.FC = () => {
                             <td className="p-3 text-right">
                               <div className="flex gap-1.5 justify-end">
                                 <button onClick={() => { setEditingInventoryId(item.id); setEditInventoryForm({name: item.name, category: item.category, location: item.location, qty: item.qty, value: item.value}); }} className="px-2.5 py-1 bg-primary/10 hover:bg-primary/20 text-primary text-[10px] font-bold rounded-lg border border-primary/20 transition-colors">Edit</button>
-                                <button onClick={() => { if(window.confirm('Delete this asset?')) setInventory((prev: any[]) => prev.filter(i => i.id !== item.id)); }} className="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-[10px] font-bold rounded-lg border border-rose-500/20 transition-colors">Delete</button>
+                                <button onClick={() => { if(window.confirm('Delete this asset?')) {
+                                    const currentInventory = schoolDb.inventory || [];
+                                    setInventory(currentInventory.filter((i: any) => i.id !== item.id));
+                                  } }} className="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-[10px] font-bold rounded-lg border border-rose-500/20 transition-colors">Delete</button>
                               </div>
                             </td>
                           </tr>
