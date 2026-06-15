@@ -386,6 +386,51 @@ const SALARIES_BY_COUNTRY: Record<string, string[]> = {
   DEFAULT: ['3000', '4000', '5000', '6000']
 };
 
+const generatePTMSchedule = (studentName: string, className: string, allStudents: any[], allTeachers: any[]) => {
+  const classStudents = allStudents.filter(s => s.className === className).sort((a,b) => a.name.localeCompare(b.name));
+  const classTeachers = allTeachers.filter(t => t.className === className).sort((a,b) => a.name.localeCompare(b.name));
+  
+  if (classTeachers.length === 0) return '\n\n*(No teachers assigned to this class yet)*';
+  
+  const studentIndex = classStudents.findIndex(s => s.name === studentName);
+  if (studentIndex === -1) return '';
+  
+  const N = Math.max(classStudents.length, classTeachers.length);
+  
+  let scheduleText = '\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  scheduleText += '         OFFICIAL PTM SCHEDULE       \n';
+  scheduleText += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  
+  const meetings = classTeachers.map((t, teacherIndex) => {
+    const slotIndex = (studentIndex + teacherIndex) % N;
+    // Base time: 09:00 AM
+    const totalMinutes = slotIndex * 15;
+    const hours = 9 + Math.floor(totalMinutes / 60);
+    const mins = totalMinutes % 60;
+    
+    const endTotalMinutes = totalMinutes + 10;
+    const endHours = 9 + Math.floor(endTotalMinutes / 60);
+    const endMins = endTotalMinutes % 60;
+    
+    const formatTime = (h: number, m: number) => {
+      const isPm = h >= 12;
+      const displayH = h > 12 ? h - 12 : h;
+      const ampm = isPm ? 'PM' : 'AM';
+      return `${displayH.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')} ${ampm}`;
+    };
+    
+    return {
+      slotIndex,
+      text: `⏰ [${formatTime(hours, mins)} - ${formatTime(endHours, endMins)}]  |  ${t.subject}\n   👨‍🏫 Teacher: ${t.name}\n--------------------------------------------`
+    };
+  });
+  
+  meetings.sort((a, b) => a.slotIndex - b.slotIndex);
+  
+  scheduleText += meetings.map(m => m.text).join('\n');
+  scheduleText += '\n📌 Please ensure punctuality for each slot.';
+  return scheduleText;
+};
 export const UnifiedDashboard: React.FC = () => {
   const navigate = useNavigate();
   const currentUser = useAuthStore((state) => state.user);
@@ -417,6 +462,8 @@ export const UnifiedDashboard: React.FC = () => {
   const [editFunnelForm, setEditFunnelForm] = useState<any | null>(null);
   const [activeSection, setActiveSection] = useState<'primary' | 'secondary'>('primary');
   const [selectedReportStudent, setSelectedReportStudent] = useState('');
+  const [selectedReportClassGroup, setSelectedReportClassGroup] = useState<string>('');
+  const [selectedParentMsgClassGroup, setSelectedParentMsgClassGroup] = useState<string>('');
   const [activeExamView, setActiveExamView] = useState<string | null>(null);
   const [showSubstituteForm, setShowSubstituteForm] = useState(false);
   const [substitutes, setSubstitutes] = useState<{ id: string; date: string; absentTeacher: string; substituteTeacher: string; period: string }[]>([
@@ -1563,11 +1610,11 @@ export const UnifiedDashboard: React.FC = () => {
       teachers: [
         { id: '1', name: 'Sarah Khan', role: 'Principal', subject: 'Administration', className: 'Admin Block', status: 'Active', salary: '150000', qualification: 'PhD Education', experience: '18 Years', phone: '+92 300 1010101', email: 'sarah.khan@academichub.edu', gender: 'Female' },
         { id: '2', name: 'Tariq Mehmood', role: 'Vice Principal', subject: 'Administration', className: 'Admin Block', status: 'Active', salary: '120000', qualification: 'PhD', experience: '14 Years', phone: '+92 300 1040404', email: 'tariq.m@academichub.edu', gender: 'Male' },
-        { id: '3', name: 'Raza Ahmed', role: 'Teacher', subject: 'Physics', className: 'Class 10-B', status: 'Active', salary: '75000', qualification: 'M.Sc. Physics', experience: '9 Years', phone: '+92 300 1020202', email: 'raza.ahmed@academichub.edu', gender: 'Male' },
-        { id: '4', name: 'Hina Malik', role: 'Teacher', subject: 'Mathematics', className: 'Class 9-A', status: 'Active', salary: '70000', qualification: 'M.Sc. Mathematics', experience: '7 Years', phone: '+92 300 1030303', email: 'hina.malik@academichub.edu', gender: 'Female' },
+        { id: '3', name: 'Raza Ahmed', role: 'Teacher', subject: 'Physics', className: 'Class 10-A', status: 'Active', salary: '75000', qualification: 'M.Sc. Physics', experience: '9 Years', phone: '+92 300 1020202', email: 'raza.ahmed@academichub.edu', gender: 'Male' },
+        { id: '4', name: 'Hina Malik', role: 'Teacher', subject: 'Mathematics', className: 'Class 10-A', status: 'Active', salary: '70000', qualification: 'M.Sc. Mathematics', experience: '7 Years', phone: '+92 300 1030303', email: 'hina.malik@academichub.edu', gender: 'Female' },
         { id: '5', name: 'Nadia Hussain', role: 'Teacher', subject: 'English Literature', className: 'Class 10-A', status: 'Active', salary: '68000', qualification: 'M.A. English', experience: '6 Years', phone: '+92 300 1060606', email: 'nadia.h@academichub.edu', gender: 'Female' },
         { id: '6', name: 'Omer Shahid', role: 'Teacher', subject: 'Biology', className: 'Class 8-A', status: 'Active', salary: '65000', qualification: 'M.Sc. Biology', experience: '5 Years', phone: '+92 300 1070707', email: 'omer.s@academichub.edu', gender: 'Male' },
-        { id: '7', name: 'Imran Qureshi', role: 'Teacher', subject: 'Chemistry', className: 'Class 9-B', status: 'Active', salary: '67000', qualification: 'M.Sc. Chemistry', experience: '6 Years', phone: '+92 300 1111222', email: 'imran.q@academichub.edu', gender: 'Male' },
+        { id: '7', name: 'Imran Qureshi', role: 'Teacher', subject: 'Chemistry', className: 'Class 10-A', status: 'Active', salary: '67000', qualification: 'M.Sc. Chemistry', experience: '6 Years', phone: '+92 300 1111222', email: 'imran.q@academichub.edu', gender: 'Male' },
         { id: '8', name: 'Sadia Hussain', role: 'Teacher', subject: 'Urdu', className: 'Class 8-C', status: 'Active', salary: '58000', qualification: 'M.A. Urdu', experience: '5 Years', phone: '+92 300 1222333', email: 'sadia.h@academichub.edu', gender: 'Female' },
         { id: '9', name: 'Khalid Waseem', role: 'Teacher', subject: 'Islamiyat', className: 'Class 7-A', status: 'Active', salary: '55000', qualification: 'M.A. Islamic Studies', experience: '4 Years', phone: '+92 300 1333444', email: 'khalid.w@academichub.edu', gender: 'Male' },
         { id: '10', name: 'Ayesha Bibi', role: 'Academic Coordinator', subject: 'Academics', className: 'Admin Block', status: 'Active', salary: '85000', qualification: 'MBA', experience: '10 Years', phone: '+92 300 1050505', email: 'ayesha.b@academichub.edu', gender: 'Female' },
@@ -2625,12 +2672,12 @@ export const UnifiedDashboard: React.FC = () => {
         { id: '1', name: 'Dr. Arshad Raza', role: 'Principal', subject: 'Administration', className: 'Admin Block', status: 'Active', salary: '180000', qualification: 'PhD Mathematics', experience: '20 Years', phone: '+92 300 2010101', email: 'principal@beaconhouse-lhr.edu', gender: 'Male' },
         { id: '2', name: 'Sohail Mirza', role: 'Vice Principal', subject: 'Administration', className: 'Admin Block', status: 'Active', salary: '130000', qualification: 'M.Ed.', experience: '11 Years', phone: '+92 300 2666666', email: 'coordinator@beaconhouse-lhr.edu', gender: 'Male' },
         { id: '3', name: 'Usman Ghani', role: 'Teacher', subject: 'English', className: 'Class 10-A', status: 'Active', salary: '65000', experience: '4 Years', qualification: 'M.A. English', phone: '+92 300 2111111', email: 'usman.g@beaconhouse-lhr.edu', gender: 'Male' },
-        { id: '4', name: 'Ayesha Khan', role: 'Teacher', subject: 'Mathematics', className: 'Class 10-B', status: 'Active', salary: '70000', experience: '5 Years', qualification: 'M.Sc. Mathematics', phone: '+92 300 2222221', email: 'ayesha@beaconhouse-lhr.edu', gender: 'Female' },
+        { id: '4', name: 'Ayesha Khan', role: 'Teacher', subject: 'Mathematics', className: 'Class 10-A', status: 'Active', salary: '70000', experience: '5 Years', qualification: 'M.Sc. Mathematics', phone: '+92 300 2222221', email: 'ayesha@beaconhouse-lhr.edu', gender: 'Female' },
         { id: '5', name: 'Fatima Noor', role: 'Teacher', subject: 'General Science', className: 'Class 9-A', status: 'Active', salary: '55000', experience: '2 Years', qualification: 'B.Sc. General Science', phone: '+92 300 2333333', email: 'fatima@beaconhouse-lhr.edu', gender: 'Female' },
         { id: '6', name: 'Tariq Jameel', role: 'Teacher', subject: 'Islamic Studies', className: 'Class 9-B', status: 'Active', salary: '58000', experience: '8 Years', qualification: 'M.A. Islamic Studies', phone: '+92 300 2444444', email: 'tariq.j@beaconhouse-lhr.edu', gender: 'Male' },
-        { id: '7', name: 'Nida Yasir', role: 'Teacher', subject: 'Physics', className: 'Class 10-B', status: 'Active', salary: '62000', experience: '3 Years', qualification: 'M.Sc. Physics', phone: '+92 300 2555555', email: 'nida@beaconhouse-lhr.edu', gender: 'Female' },
+        { id: '7', name: 'Nida Yasir', role: 'Teacher', subject: 'Physics', className: 'Class 10-A', status: 'Active', salary: '62000', experience: '3 Years', qualification: 'M.Sc. Physics', phone: '+92 300 2555555', email: 'nida@beaconhouse-lhr.edu', gender: 'Female' },
         { id: '8', name: 'Arif Nawaz', role: 'Teacher', subject: 'Chemistry', className: 'Class 10-A', status: 'Active', salary: '64000', experience: '5 Years', qualification: 'M.Sc. Chemistry', phone: '+92 300 2123456', email: 'arif.n@beaconhouse-lhr.edu', gender: 'Male' },
-        { id: '9', name: 'Saba Saleem', role: 'Teacher', subject: 'Biology', className: 'Class 8-A', status: 'Active', salary: '60000', experience: '4 Years', qualification: 'M.Sc. Biology', phone: '+92 300 2234567', email: 'saba.s@beaconhouse-lhr.edu', gender: 'Female' },
+        { id: '9', name: 'Saba Saleem', role: 'Teacher', subject: 'Biology', className: 'Class 10-A', status: 'Active', salary: '60000', experience: '4 Years', qualification: 'M.Sc. Biology', phone: '+92 300 2234567', email: 'saba.s@beaconhouse-lhr.edu', gender: 'Female' },
         { id: '10', name: 'Rukhsana Bibi', role: 'Librarian', subject: 'Library', className: 'Library Block', status: 'Active', salary: '45000', qualification: 'B.A. Library Science', experience: '7 Years', phone: '+92 300 2777777', email: 'library@beaconhouse-lhr.edu', gender: 'Female' },
         { id: '11', name: 'Kamran Mirza', role: 'Accountant', subject: 'Finance', className: 'Admin Office', status: 'Active', salary: '72000', qualification: 'B.Com, ACCA Pursuing', experience: '6 Years', phone: '+92 300 2345678', email: 'accounts@beaconhouse-lhr.edu', gender: 'Male' },
         { id: '12', name: 'Huma Baig', role: 'Substitute Teacher', subject: 'English / Urdu', className: 'Cover Classes', status: 'Active', salary: '45000', qualification: 'M.A. English', experience: '2 Years', phone: '+92 300 2456789', email: 'huma.b@beaconhouse-lhr.edu', gender: 'Female' },
@@ -3200,6 +3247,53 @@ export const UnifiedDashboard: React.FC = () => {
     }
   }, [activeSchoolId, currentSchool]);
 
+  // Global Migration: Inject standard subjects for Class 10-A to ensure Employee Directory and PTMs look robust globally
+  useEffect(() => {
+    if (!activeSchoolId) return;
+    setDatabase((prev: any) => {
+      if (!prev[activeSchoolId]) return prev;
+      const allTeachers = prev[activeSchoolId].teachers || [];
+      const class10ATeachers = allTeachers.filter((t: any) => t.className === 'Class 10-A');
+      const standardSubjects = ['English', 'Mathematics', 'Physics', 'Chemistry', 'Biology', 'Computer Science', 'Islamic Studies'];
+      const teacherNames = ['Usman Ghani', 'Ayesha Khan', 'Nida Yasir', 'Arif Nawaz', 'Saba Saleem', 'Zahra Ahmed', 'Tariq Jameel'];
+      
+      let needsUpdate = false;
+      const existingSubjects = new Set(class10ATeachers.map((t: any) => t.subject));
+      const newTeachers = [...allTeachers];
+      
+      for (let i = 0; i < standardSubjects.length; i++) {
+        if (!existingSubjects.has(standardSubjects[i])) {
+           newTeachers.push({
+              id: `migrated_t_${i}_${Date.now()}`,
+              name: teacherNames[i],
+              role: 'Teacher',
+              subject: standardSubjects[i],
+              className: 'Class 10-A',
+              status: 'Active',
+              salary: '65000',
+              qualification: 'M.Sc. ' + standardSubjects[i],
+              experience: '5 Years',
+              phone: '+92 300 ' + Math.floor(1000000 + Math.random() * 9000000),
+              email: teacherNames[i].toLowerCase().replace(' ', '.') + '@school.edu',
+              gender: i % 2 === 0 ? 'Male' : 'Female'
+           });
+           needsUpdate = true;
+        }
+      }
+      
+      if (needsUpdate) {
+        return {
+          ...prev,
+          [activeSchoolId]: {
+             ...prev[activeSchoolId],
+             teachers: newTeachers
+          }
+        };
+      }
+      return prev;
+    });
+  }, [activeSchoolId]);
+
   const schoolDb = database[activeSchoolId] || {
     students: [] as any[],
     waitingList: [] as any[],
@@ -3293,7 +3387,7 @@ export const UnifiedDashboard: React.FC = () => {
   const activeStudentName = currentUser?.role === 'student' || currentUser?.role === 'parent'
     ? (currentUser?.name || students[0]?.name || 'Student')
     : (selectedReportStudent || currentUser?.name || students[0]?.name || 'Student');
-  const activeStudent = students.find(s => s.name === activeStudentName) || students[0] || { id: '1', name: currentUser?.name || 'Student', roll: '12', className: 'Class 10-A', status: 'Present' };
+  const activeStudent = students.find(s => s.name === activeStudentName && (!selectedReportClassGroup || s.className === selectedReportClassGroup)) || students.find(s => s.name === activeStudentName) || students[0] || { id: '1', name: currentUser?.name || 'Student', roll: '12', className: 'Class 10-A', status: 'Present' };
 
   // Sync state updaters to target the selected tenant database partition
   const updateSchoolDb = (key: string, updater: any) => {
@@ -12915,6 +13009,26 @@ export const UnifiedDashboard: React.FC = () => {
                     {/* Student Metadata Box */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-3 bg-muted border border-border rounded-xl text-[10px] font-medium">
                       <div>
+                        <span className="text-[9px] text-muted-foreground block uppercase font-bold tracking-wider mb-0.5">Class Group</span>
+                        {isEditor ? (
+                          <select 
+                            value={selectedReportClassGroup || students[0]?.className || 'Class 10-A'}
+                            onChange={(e) => {
+                              setSelectedReportClassGroup(e.target.value);
+                              const firstStudent = students.find(s => s.className === e.target.value);
+                              if (firstStudent) setSelectedReportStudent(firstStudent.name);
+                            }}
+                            className="bg-card border border-border rounded text-foreground font-black text-xs px-1 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary w-full"
+                          >
+                            {Array.from(new Set(students.map(s => s.className))).map(c => <option key={c} value={c}>{c}</option>)}
+                          </select>
+                        ) : (
+                          <span className="text-foreground font-bold text-xs">
+                            {activeStudent?.className || 'Grade 10 Science'}
+                          </span>
+                        )}
+                      </div>
+                      <div>
                         <span className="text-[9px] text-muted-foreground block uppercase font-bold tracking-wider mb-0.5">Student Name</span>
                         {isEditor ? (
                           <select 
@@ -12922,7 +13036,7 @@ export const UnifiedDashboard: React.FC = () => {
                             onChange={(e) => setSelectedReportStudent(e.target.value)}
                             className="bg-card border border-border rounded text-foreground font-black text-xs px-1 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary w-full"
                           >
-                            {students.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
+                            {students.filter(s => !selectedReportClassGroup || s.className === selectedReportClassGroup).map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
                           </select>
                         ) : (
                           <span className="text-foreground font-black text-xs">{activeStudentName}</span>
@@ -12932,12 +13046,6 @@ export const UnifiedDashboard: React.FC = () => {
                         <span className="text-[9px] text-muted-foreground block uppercase font-bold tracking-wider mb-0.5">Admission ID</span>
                         <span className="text-foreground font-mono text-xs">
                           {`ADM-2026-${(activeStudent?.id || '1').padStart(3, '0')}`}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-[9px] text-muted-foreground block uppercase font-bold tracking-wider mb-0.5">Class Group</span>
-                        <span className="text-foreground font-bold text-xs">
-                          {activeStudent?.className || 'Grade 10 Science'}
                         </span>
                       </div>
                       <div>
@@ -14172,6 +14280,22 @@ export const UnifiedDashboard: React.FC = () => {
                       {simulatedRole === 'parent' ? 'Send message to Tutors / School' : 'Send message to parents'}
                     </span>
                     <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {simulatedRole !== 'parent' && (
+                        <select
+                          value={selectedParentMsgClassGroup}
+                          onChange={(e) => {
+                            setSelectedParentMsgClassGroup(e.target.value);
+                            const firstStudentInClass = students.find(s => !e.target.value || s.className === e.target.value);
+                            if (firstStudentInClass) {
+                              setNewParentMessageStudent(firstStudentInClass.name);
+                            }
+                          }}
+                          className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold"
+                        >
+                          <option value="">All Classes</option>
+                          {Array.from(new Set(students.map(s => s.className))).map(c => <option key={c} value={c}>{c}</option>)}
+                        </select>
+                      )}
                       <select 
                         value={newParentMessageStudent || (students[0]?.name || '')}
                         onChange={(e) => {
@@ -14186,7 +14310,7 @@ export const UnifiedDashboard: React.FC = () => {
                               'Academic Performance / Grades': `Dear Parent/Guardian,\n\nWe would like to inform you about the recent academic performance and grades of your child ${selectedStudent} (${sc}).\n\nPlease review the attached report and feel free to contact the school for any queries regarding your child's progress.`,
                               'Student Attendance / Absence': `Dear Parent/Guardian,\n\nThis is to inform you regarding the attendance record of your child ${selectedStudent} (${sc}).\n\nRegular attendance is essential for academic success. Please ensure your child maintains consistent attendance. Contact us if there are any concerns.`,
                               'Behavior / Conduct Issue': `Dear Parent/Guardian,\n\nWe wish to bring to your attention a matter related to the behavior/conduct of your child ${selectedStudent} (${sc}).\n\nWe believe in working together with parents to ensure the best environment for all students. We request a meeting to discuss this matter further.`,
-                              'Parent-Teacher Meeting (PTM)': `Dear Parent/Guardian,\n\nYou are cordially invited to attend the Parent-Teacher Meeting (PTM) for your child ${selectedStudent} (${sc}).\n\nYour presence is highly valued as it helps us work together for the betterment of your child's education. Please confirm your attendance.`,
+                              'Parent-Teacher Meeting (PTM)': `Dear Parent/Guardian,\n\nYou are cordially invited to attend the Parent-Teacher Meeting (PTM) for your child ${selectedStudent} (${sc}).\n\nYour presence is highly valued as it helps us work together for the betterment of your child's education. Please confirm your attendance.${generatePTMSchedule(selectedStudent, sc, students, schoolDb.teachers || [])}`,
                               'School Event / Activity': `Dear Parent/Guardian,\n\nWe are pleased to inform you about an upcoming school event/activity in which your child ${selectedStudent} (${sc}) is invited to participate.\n\nPlease see the attached details and ensure your child is prepared. We look forward to your support!`,
                               'Health / Medical Update': `Dear Parent/Guardian,\n\nThis is to inform you about a health/medical update regarding your child ${selectedStudent} (${sc}).\n\nPlease review the details and take any necessary action. Do not hesitate to contact the school nurse or administration for further information.`,
                               'General Announcement': `Dear Parent/Guardian,\n\nWe would like to share an important announcement with you regarding ${selectedStudent} (${sc}).\n\nPlease read the details carefully and contact the school office if you have any questions.`,
@@ -14205,7 +14329,7 @@ export const UnifiedDashboard: React.FC = () => {
                             <option value="School Administration">School Administration Desk</option>
                           </>
                         ) : (
-                          students.map(s => <option key={s.id} value={s.name}>Parent of {s.name}</option>)
+                          students.filter(s => !selectedParentMsgClassGroup || s.className === selectedParentMsgClassGroup).map(s => <option key={s.id} value={s.name}>Parent of {s.name}</option>)
                         )}
                       </select>
                       {(() => {
@@ -14256,7 +14380,7 @@ export const UnifiedDashboard: React.FC = () => {
                                 'Academic Performance / Grades': `Dear Parent/Guardian,\n\nWe would like to inform you about the recent academic performance and grades of your child ${sn} (${sc}).\n\nPlease review the attached report and feel free to contact the school for any queries regarding your child's progress.`,
                                 'Student Attendance / Absence': `Dear Parent/Guardian,\n\nThis is to inform you regarding the attendance record of your child ${sn} (${sc}).\n\nRegular attendance is essential for academic success. Please ensure your child maintains consistent attendance. Contact us if there are any concerns.`,
                                 'Behavior / Conduct Issue': `Dear Parent/Guardian,\n\nWe wish to bring to your attention a matter related to the behavior/conduct of your child ${sn} (${sc}).\n\nWe believe in working together with parents to ensure the best environment for all students. We request a meeting to discuss this matter further.`,
-                                'Parent-Teacher Meeting (PTM)': `Dear Parent/Guardian,\n\nYou are cordially invited to attend the Parent-Teacher Meeting (PTM) for your child ${sn} (${sc}).\n\nYour presence is highly valued as it helps us work together for the betterment of your child's education. Please confirm your attendance.`,
+                                'Parent-Teacher Meeting (PTM)': `Dear Parent/Guardian,\n\nYou are cordially invited to attend the Parent-Teacher Meeting (PTM) for your child ${sn} (${sc}).\n\nYour presence is highly valued as it helps us work together for the betterment of your child's education. Please confirm your attendance.${generatePTMSchedule(sn, sc, students, schoolDb.teachers || [])}`,
                                 'School Event / Activity': `Dear Parent/Guardian,\n\nWe are pleased to inform you about an upcoming school event/activity in which your child ${sn} (${sc}) is invited to participate.\n\nPlease see the attached details and ensure your child is prepared. We look forward to your support!`,
                                 'Health / Medical Update': `Dear Parent/Guardian,\n\nThis is to inform you about a health/medical update regarding your child ${sn} (${sc}).\n\nPlease review the details and take any necessary action. Do not hesitate to contact the school nurse or administration for further information.`,
                                 'General Announcement': `Dear Parent/Guardian,\n\nWe would like to share an important announcement with you regarding ${sn} (${sc}).\n\nPlease read the details carefully and contact the school office if you have any questions.`,
