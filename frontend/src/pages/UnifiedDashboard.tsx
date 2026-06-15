@@ -1604,6 +1604,7 @@ export const UnifiedDashboard: React.FC = () => {
   const { queries: portal_queries, initialize: initQueries, replyToQuery, deleteQuery } = useQueryStore();
   const [activeQueryId, setActiveQueryId] = useState<string | null>(null);
   const [replyMessage, setReplyMessage] = useState('');
+  const [replyMessages, setReplyMessages] = useState<Record<string, string>>({});
 
   const [whatsappApiUrl, setWhatsappApiUrl] = useState('https://api.whatsapp.com/v1/');
   const [whatsappToken, setWhatsappToken] = useState('');
