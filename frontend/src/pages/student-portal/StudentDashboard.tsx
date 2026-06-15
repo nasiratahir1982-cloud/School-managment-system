@@ -17,6 +17,7 @@ import {
 import { useThemeStore } from '../../store/themeStore';
 import { setupRealtimeSync } from '../../store/firebase';
 import { useQueryStore } from '../../store/queryStore';
+import AcademicCalendar from '../AcademicCalendar';
 
 interface FeeChallan {
   invoice_id: string;
@@ -258,6 +259,11 @@ export const StudentDashboard: React.FC = () => {
                   </tbody>
                 </table>
               </div>
+            </div>
+
+            {/* Academic Calendar */}
+            <div className="glass-card p-6 rounded-xl border border-slate-800">
+              <AcademicCalendar editable={false} compact={true} />
             </div>
           </div>
 
