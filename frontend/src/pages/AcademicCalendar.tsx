@@ -500,9 +500,9 @@ export const AcademicCalendar: React.FC<AcademicCalendarProps> = ({
           </button>
         )}
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+      <div className="flex flex-wrap justify-center gap-2">
         {academicEvents.map(ev => (
-          <div key={ev.id} className="p-3 bg-muted/15 border border-border rounded-lg flex items-center gap-3 group hover:border-primary/20 transition-all">
+          <div key={ev.id} className="w-full sm:w-[calc(50%-0.25rem)] lg:w-[calc(33.333%-0.35rem)] p-3 bg-muted/15 border border-border rounded-lg flex items-center gap-3 group hover:border-primary/20 transition-all">
             <div className="w-2 h-8 rounded-full flex-shrink-0" style={{ backgroundColor: EVENT_DOT_COLORS[ev.color] || '#6366f1' }} />
             <div className="flex-1 min-w-0">
               <strong className="text-[11px] text-foreground block truncate">{ev.title}</strong>
