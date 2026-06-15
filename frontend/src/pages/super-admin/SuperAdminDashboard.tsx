@@ -368,10 +368,10 @@ export const SuperAdminDashboard: React.FC = () => {
         </div>
 
         {/* Dashboard Grid */}
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
           
           {/* Active Tenant List Column */}
-          <div className="lg:col-span-1 w-full flex flex-col">
+          <div className="w-full flex flex-col">
             <div className="glass-card rounded-xl overflow-hidden border border-border h-full flex flex-col justify-between">
               <table className="w-full text-left border-collapse">
                 <thead>

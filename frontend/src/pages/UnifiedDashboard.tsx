@@ -81,7 +81,8 @@ import {
   BarChart3,
   DollarSign,
   Star,
-  MapPin
+  MapPin,
+  X
 } from 'lucide-react';
 import { useThemeStore } from '../store/themeStore';
 import { AcademicCalendar } from './AcademicCalendar';
@@ -355,6 +356,36 @@ export const SUBJECTS_LIST = [
   'Physical Education'
 ];
 
+const QUALIFICATIONS_BY_COUNTRY: Record<string, string[]> = {
+  PK: ['Matric', 'F.Sc', 'B.Sc', 'M.Sc', 'M.Phil', 'Ph.D', 'B.Ed', 'M.Ed'],
+  UK: ['GCSE', 'A-Levels', 'BA', 'BSc', 'MA', 'MSc', 'PGCE', 'PhD'],
+  US: ['High School Diploma', 'Associate Degree', 'Bachelor\'s', 'Master\'s', 'Ph.D', 'Ed.D'],
+  CA: ['High School Diploma', 'Associate Degree', 'Bachelor\'s', 'Master\'s', 'Ph.D', 'Ed.D'],
+  AE: ['High School', 'Bachelor\'s', 'Master\'s', 'Ph.D', 'Diploma'],
+  SA: ['High School', 'Bachelor\'s', 'Master\'s', 'Ph.D', 'Diploma'],
+  DEFAULT: ['High School', 'Bachelor\'s', 'Master\'s', 'Ph.D', 'Diploma']
+};
+
+const BANKS_BY_COUNTRY: Record<string, string[]> = {
+  PK: ['Habib Bank Limited (HBL)', 'United Bank Limited (UBL)', 'Meezan Bank', 'Allied Bank Limited', 'MCB Bank'],
+  UK: ['Barclays', 'HSBC', 'Lloyds Bank', 'NatWest', 'Standard Chartered'],
+  US: ['JPMorgan Chase', 'Bank of America', 'Wells Fargo', 'Citibank', 'U.S. Bank'],
+  CA: ['Royal Bank of Canada', 'Toronto-Dominion Bank', 'Scotiabank', 'Bank of Montreal'],
+  AE: ['Emirates NBD', 'First Abu Dhabi Bank (FAB)', 'Dubai Islamic Bank', 'Mashreq Bank'],
+  SA: ['Al Rajhi Bank', 'National Commercial Bank (NCB)', 'Riyad Bank', 'Samba Financial Group'],
+  DEFAULT: ['Standard Bank', 'Global Corporate Bank', 'First National Bank']
+};
+
+const SALARIES_BY_COUNTRY: Record<string, string[]> = {
+  PK: ['30000', '40000', '50000', '60000', '80000', '100000'],
+  UK: ['2000', '2500', '3000', '3500', '4000'],
+  US: ['3000', '4000', '5000', '6000', '8000'],
+  CA: ['3000', '4000', '5000', '6000', '8000'],
+  AE: ['4000', '6000', '8000', '10000', '15000'],
+  SA: ['4000', '6000', '8000', '10000', '15000'],
+  DEFAULT: ['3000', '4000', '5000', '6000']
+};
+
 export const UnifiedDashboard: React.FC = () => {
   const navigate = useNavigate();
   const currentUser = useAuthStore((state) => state.user);
@@ -365,11 +396,25 @@ export const UnifiedDashboard: React.FC = () => {
   const { darkMode, toggleTheme } = useThemeStore();
   const formatCurrency = useSchoolStore((state) => state.formatCurrency);
   const getRollLabel = useSchoolStore((state) => state.getRollLabel);
+  const getPhonePrefix = useSchoolStore((state) => state.getPhonePrefix);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFeature, setActiveFeature] = useState<string | null>(null);
   const [activeGuide, setActiveGuide] = useState<{ title: string; answerTitle: string; answerContent: string } | null>(null);
   const [activeFunnelView, setActiveFunnelView] = useState<string | null>(null);
+  const [showAddFunnel, setShowAddFunnel] = useState(false);
+  const [funnelAddState, setFunnelAddState] = useState({
+    className: '',
+    candidateId: '',
+    isManual: true,
+    name: '',
+    phone: '',
+    email: '',
+    source: '',
+    followUp: 'Warm'
+  });
+  const [editingFunnelId, setEditingFunnelId] = useState<string | null>(null);
+  const [editFunnelForm, setEditFunnelForm] = useState<any | null>(null);
   const [activeSection, setActiveSection] = useState<'primary' | 'secondary'>('primary');
   const [selectedReportStudent, setSelectedReportStudent] = useState('');
   const [activeExamView, setActiveExamView] = useState<string | null>(null);
@@ -522,26 +567,999 @@ export const UnifiedDashboard: React.FC = () => {
       fileType?: string;
     };
     inventory?: { id: string; name: string; category: string; location: string; qty: string; value: string }[];
+    admissionFunnel?: {
+      inquiries: { id: string; name: string; phone: string; email: string; className: string; date: string; notes: string; status: string }[];
+      applications: { id: string; name: string; phone: string; email: string; className: string; date: string; fatherName: string; documents: string; status: string }[];
+      interviews: { id: string; name: string; phone: string; email: string; className: string; date: string; interviewer: string; score: string; remarks: string; status: string }[];
+      enrolled: { id: string; name: string; phone: string; email: string; className: string; date: string; rollNumber: string; admissionDate: string; status: string }[];
+    };
   }>>(() => {
     // DB_VERSION: bump this to force a re-seed when new fields are added
-    const DB_VERSION = '4';
+    const DB_VERSION = '5';
     const savedVersion = localStorage.getItem('academic_hub_db_version');
     const saved = localStorage.getItem('academic_hub_offline_db');
     const freshData = {
     // 1. Dar-e-Arqam School (PK)
     '11111111-1111-1111-1111-111111111111': {
       students: [
-        { id: '1', name: 'Kamran Shah', roll: '12', className: 'Class 10-A', status: 'Present', borrowedBooks: ['Physics Vol 1', 'Advanced Mathematics'], bookedTransport: 'Route A', hostelStatus: 'Room 101' },
-        { id: '2', name: 'Ayesha Siddiqui', roll: '04', className: 'Class 10-B', status: 'Present', borrowedBooks: ['English Literature'], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
-        { id: '3', name: 'Zainab Ali', roll: '22', className: 'Class 9-A', status: 'Absent', borrowedBooks: ['Biology Concepts'], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
-        { id: '4', name: 'Bilal Ahmed', roll: '08', className: 'Class 10-A', status: 'Present', borrowedBooks: ['Chemistry Essentials'], bookedTransport: 'Route A', hostelStatus: 'Room 102' },
-        { id: '5', name: 'Fatima Noor', roll: '15', className: 'Class 8-C', status: 'Present', borrowedBooks: [], bookedTransport: 'Route C', hostelStatus: 'Day Scholar' },
-        { id: '6', name: 'Saad Tariq', roll: '31', className: 'Class 9-B', status: 'Late', borrowedBooks: ['World History'], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
-        { id: '7', name: 'Hassan Raza', roll: '02', className: 'Class 7-A', status: 'Present', borrowedBooks: ['Math Grade 7'], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
-        { id: '8', name: 'Mariam Khan', roll: '19', className: 'Class 10-A', status: 'Present', borrowedBooks: ['English Grammar'], bookedTransport: 'Route A', hostelStatus: 'Room 205' },
-        { id: '9', name: 'Usman Ghani', roll: '27', className: 'Class 8-B', status: 'Absent', borrowedBooks: ['Intro to Computer Science'], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
-        { id: '10', name: 'Hira Malik', roll: '11', className: 'Class 9-A', status: 'Present', borrowedBooks: ['Geography Workbook'], bookedTransport: 'Route C', hostelStatus: 'Room 110' }
-      ],
+        {
+                "id": "s1-1",
+                "name": "Asad Siddiqui",
+                "roll": "237",
+                "className": "Class 10-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route A",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 3379861",
+                "email": "students1_0@example.com"
+        },
+        {
+                "id": "s1-2",
+                "name": "Arif Ghani",
+                "roll": "386",
+                "className": "Class 10-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6174069",
+                "email": "students1_1@example.com"
+        },
+        {
+                "id": "s1-3",
+                "name": "Mehwish Khan",
+                "roll": "428",
+                "className": "Class 10-A",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 4093249",
+                "email": "students1_2@example.com"
+        },
+        {
+                "id": "s1-4",
+                "name": "Nida Raza",
+                "roll": "738",
+                "className": "Class 10-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 5385123",
+                "email": "students1_3@example.com"
+        },
+        {
+                "id": "s1-5",
+                "name": "Hassan Ali",
+                "roll": "962",
+                "className": "Class 10-A",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 5994570",
+                "email": "students1_4@example.com"
+        },
+        {
+                "id": "s1-6",
+                "name": "Nawaz Noor",
+                "roll": "265",
+                "className": "Class 10-A",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 9459686",
+                "email": "students1_5@example.com"
+        },
+        {
+                "id": "s1-7",
+                "name": "Sara Sultan",
+                "roll": "792",
+                "className": "Class 10-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route A",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 7081785",
+                "email": "students1_6@example.com"
+        },
+        {
+                "id": "s1-8",
+                "name": "Fawad Tariq",
+                "roll": "820",
+                "className": "Class 10-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route A",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 3698753",
+                "email": "students1_7@example.com"
+        },
+        {
+                "id": "s1-9",
+                "name": "Hafsa Malik",
+                "roll": "213",
+                "className": "Class 10-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 2630662",
+                "email": "students1_8@example.com"
+        },
+        {
+                "id": "s1-10",
+                "name": "Farhan Hussain",
+                "roll": "969",
+                "className": "Class 10-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route A",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 2580578",
+                "email": "students1_9@example.com"
+        },
+        {
+                "id": "s1-11",
+                "name": "Sana Sultan",
+                "roll": "134",
+                "className": "Class 10-B",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "Route B",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6588876",
+                "email": "students1_10@example.com"
+        },
+        {
+                "id": "s1-12",
+                "name": "Zara Ghani",
+                "roll": "210",
+                "className": "Class 10-B",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 3361102",
+                "email": "students1_11@example.com"
+        },
+        {
+                "id": "s1-13",
+                "name": "Ahmed Sultan",
+                "roll": "293",
+                "className": "Class 10-B",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6756479",
+                "email": "students1_12@example.com"
+        },
+        {
+                "id": "s1-14",
+                "name": "Salman Zafar",
+                "roll": "143",
+                "className": "Class 10-B",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "Route B",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 3934849",
+                "email": "students1_13@example.com"
+        },
+        {
+                "id": "s1-15",
+                "name": "Nida Sultan",
+                "roll": "124",
+                "className": "Class 10-B",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "Route B",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 1279774",
+                "email": "students1_14@example.com"
+        },
+        {
+                "id": "s1-16",
+                "name": "Ayesha Malik",
+                "roll": "687",
+                "className": "Class 10-B",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 9515174",
+                "email": "students1_15@example.com"
+        },
+        {
+                "id": "s1-17",
+                "name": "Nadia Nawaz",
+                "roll": "863",
+                "className": "Class 10-B",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route B",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 9304873",
+                "email": "students1_16@example.com"
+        },
+        {
+                "id": "s1-18",
+                "name": "Zahid Shah",
+                "roll": "803",
+                "className": "Class 10-B",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 9557406",
+                "email": "students1_17@example.com"
+        },
+        {
+                "id": "s1-19",
+                "name": "Qasim Siddiqui",
+                "roll": "780",
+                "className": "Class 10-B",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6570721",
+                "email": "students1_18@example.com"
+        },
+        {
+                "id": "s1-20",
+                "name": "Omar Shah",
+                "roll": "482",
+                "className": "Class 10-B",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 2516371",
+                "email": "students1_19@example.com"
+        },
+        {
+                "id": "s1-21",
+                "name": "Ali Ahmed",
+                "roll": "405",
+                "className": "Class 2",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 4866433",
+                "email": "students1_20@example.com"
+        },
+        {
+                "id": "s1-22",
+                "name": "Farhan Raza",
+                "roll": "163",
+                "className": "Class 9-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 5353416",
+                "email": "students1_21@example.com"
+        },
+        {
+                "id": "s1-23",
+                "name": "Bilal Raza",
+                "roll": "992",
+                "className": "Class 10-A",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6461980",
+                "email": "students1_22@example.com"
+        },
+        {
+                "id": "s1-24",
+                "name": "Rabia Noor",
+                "roll": "143",
+                "className": "Class 7-B",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6486457",
+                "email": "students1_23@example.com"
+        },
+        {
+                "id": "s1-25",
+                "name": "Salman Farooq",
+                "roll": "759",
+                "className": "Class 6-B",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 5517670",
+                "email": "students1_24@example.com"
+        },
+        {
+                "id": "s1-26",
+                "name": "Bilal Tariq",
+                "roll": "716",
+                "className": "Class 10-B",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 5375238",
+                "email": "students1_25@example.com"
+        },
+        {
+                "id": "s1-27",
+                "name": "Ayesha Shah",
+                "roll": "979",
+                "className": "Class 10-B",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6988006",
+                "email": "students1_26@example.com"
+        },
+        {
+                "id": "s1-28",
+                "name": "Zafar Zafar",
+                "roll": "914",
+                "className": "Class 10-A",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 4836337",
+                "email": "students1_27@example.com"
+        },
+        {
+                "id": "s1-29",
+                "name": "Waseem Shah",
+                "roll": "662",
+                "className": "Class 2",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 8076945",
+                "email": "students1_28@example.com"
+        },
+        {
+                "id": "s1-30",
+                "name": "Nida Raza",
+                "roll": "407",
+                "className": "Class 8-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 9323315",
+                "email": "students1_29@example.com"
+        },
+        {
+                "id": "s1-31",
+                "name": "Jameel Shah",
+                "roll": "895",
+                "className": "Class 9-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6375227",
+                "email": "students1_30@example.com"
+        },
+        {
+                "id": "s1-32",
+                "name": "Maryam Shah",
+                "roll": "684",
+                "className": "Class 1",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6202248",
+                "email": "students1_31@example.com"
+        },
+        {
+                "id": "s1-33",
+                "name": "Iqra Raza",
+                "roll": "523",
+                "className": "Class 1",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 4577964",
+                "email": "students1_32@example.com"
+        },
+        {
+                "id": "s1-34",
+                "name": "Rabia Tariq",
+                "roll": "353",
+                "className": "Class 1",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 8367678",
+                "email": "students1_33@example.com"
+        },
+        {
+                "id": "s1-35",
+                "name": "Nadia Mirza",
+                "roll": "427",
+                "className": "Class 7-A",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 3538170",
+                "email": "students1_34@example.com"
+        },
+        {
+                "id": "s1-36",
+                "name": "Sadia Zafar",
+                "roll": "557",
+                "className": "Class 10-A",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 3180250",
+                "email": "students1_35@example.com"
+        },
+        {
+                "id": "s1-37",
+                "name": "Iqra Ghani",
+                "roll": "318",
+                "className": "Class 6-A",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6723633",
+                "email": "students1_36@example.com"
+        },
+        {
+                "id": "s1-38",
+                "name": "Hamza Nawaz",
+                "roll": "604",
+                "className": "Class 7-A",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 3349720",
+                "email": "students1_37@example.com"
+        },
+        {
+                "id": "s1-39",
+                "name": "Ali Ahmed",
+                "roll": "408",
+                "className": "Class 6-B",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6012565",
+                "email": "students1_38@example.com"
+        },
+        {
+                "id": "s1-40",
+                "name": "Tariq Tariq",
+                "roll": "301",
+                "className": "Class 7-A",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 1626682",
+                "email": "students1_39@example.com"
+        },
+        {
+                "id": "s1-41",
+                "name": "Maryam Tariq",
+                "roll": "699",
+                "className": "Class 7-B",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 3872756",
+                "email": "students1_40@example.com"
+        },
+        {
+                "id": "s1-42",
+                "name": "Kamran Malik",
+                "roll": "494",
+                "className": "Class 1",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 7800848",
+                "email": "students1_41@example.com"
+        },
+        {
+                "id": "s1-43",
+                "name": "Sana Farooq",
+                "roll": "371",
+                "className": "Class 10-B",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 5595037",
+                "email": "students1_42@example.com"
+        },
+        {
+                "id": "s1-44",
+                "name": "Sobia Khan",
+                "roll": "437",
+                "className": "Class 1",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 9070305",
+                "email": "students1_43@example.com"
+        },
+        {
+                "id": "s1-45",
+                "name": "Ahmed Farooq",
+                "roll": "571",
+                "className": "Class 4",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 2740595",
+                "email": "students1_44@example.com"
+        },
+        {
+                "id": "s1-46",
+                "name": "Saad Sultan",
+                "roll": "287",
+                "className": "Class 10-B",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 7413218",
+                "email": "students1_45@example.com"
+        },
+        {
+                "id": "s1-47",
+                "name": "Maha Farooq",
+                "roll": "484",
+                "className": "Class 10-A",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 7993313",
+                "email": "students1_46@example.com"
+        },
+        {
+                "id": "s1-48",
+                "name": "Saad Noor",
+                "roll": "706",
+                "className": "Class 7-A",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 9444683",
+                "email": "students1_47@example.com"
+        },
+        {
+                "id": "s1-49",
+                "name": "Hafsa Nawaz",
+                "roll": "847",
+                "className": "Class 9-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 5806041",
+                "email": "students1_48@example.com"
+        },
+        {
+                "id": "s1-50",
+                "name": "Qasim Ahmed",
+                "roll": "215",
+                "className": "Class 3",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6039778",
+                "email": "students1_49@example.com"
+        },
+        {
+                "id": "s1-51",
+                "name": "Waseem Sultan",
+                "roll": "909",
+                "className": "Class 6-B",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 5202808",
+                "email": "students1_50@example.com"
+        },
+        {
+                "id": "s1-52",
+                "name": "Faiza Hussain",
+                "roll": "490",
+                "className": "Class 8-A",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 5334781",
+                "email": "students1_51@example.com"
+        },
+        {
+                "id": "s1-53",
+                "name": "Faiza Farooq",
+                "roll": "663",
+                "className": "Class 8-B",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 7270653",
+                "email": "students1_52@example.com"
+        },
+        {
+                "id": "s1-54",
+                "name": "Amna Ahmed",
+                "roll": "941",
+                "className": "Class 8-B",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 4103972",
+                "email": "students1_53@example.com"
+        },
+        {
+                "id": "s1-55",
+                "name": "Yasin Ghani",
+                "roll": "124",
+                "className": "Class 10-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 9625435",
+                "email": "students1_54@example.com"
+        },
+        {
+                "id": "s1-56",
+                "name": "Qasim Raza",
+                "roll": "181",
+                "className": "Class 10-B",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 3727473",
+                "email": "students1_55@example.com"
+        },
+        {
+                "id": "s1-57",
+                "name": "Sobia Farooq",
+                "roll": "364",
+                "className": "Class 10-A",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 7995377",
+                "email": "students1_56@example.com"
+        },
+        {
+                "id": "s1-58",
+                "name": "Zubaida Sultan",
+                "roll": "432",
+                "className": "Class 6-B",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 4567595",
+                "email": "students1_57@example.com"
+        },
+        {
+                "id": "s1-59",
+                "name": "Sonia Noor",
+                "roll": "244",
+                "className": "Class 3",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 5397681",
+                "email": "students1_58@example.com"
+        },
+        {
+                "id": "s1-60",
+                "name": "Sadia Sultan",
+                "roll": "318",
+                "className": "Class 1",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 4453770",
+                "email": "students1_59@example.com"
+        },
+        {
+                "id": "s1-61",
+                "name": "Farhan Malik",
+                "roll": "836",
+                "className": "Class 7-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 3396887",
+                "email": "students1_60@example.com"
+        },
+        {
+                "id": "s1-62",
+                "name": "Khadija Nawaz",
+                "roll": "174",
+                "className": "Class 7-B",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 2642338",
+                "email": "students1_61@example.com"
+        },
+        {
+                "id": "s1-63",
+                "name": "Ahmed Farooq",
+                "roll": "775",
+                "className": "Class 4",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 4203286",
+                "email": "students1_62@example.com"
+        },
+        {
+                "id": "s1-64",
+                "name": "Hamza Zafar",
+                "roll": "541",
+                "className": "Class 4",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 9861867",
+                "email": "students1_63@example.com"
+        },
+        {
+                "id": "s1-65",
+                "name": "Usman Ahmed",
+                "roll": "302",
+                "className": "Class 8-A",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 1834861",
+                "email": "students1_64@example.com"
+        },
+        {
+                "id": "s1-66",
+                "name": "Fawad Sultan",
+                "roll": "484",
+                "className": "Class 5",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 9775075",
+                "email": "students1_65@example.com"
+        },
+        {
+                "id": "s1-67",
+                "name": "Imran Hussain",
+                "roll": "724",
+                "className": "Class 1",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 5913104",
+                "email": "students1_66@example.com"
+        },
+        {
+                "id": "s1-68",
+                "name": "Zubaida Khan",
+                "roll": "221",
+                "className": "Class 6-A",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 4899870",
+                "email": "students1_67@example.com"
+        },
+        {
+                "id": "s1-69",
+                "name": "Bilal Ahmed",
+                "roll": "645",
+                "className": "Class 8-A",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6669567",
+                "email": "students1_68@example.com"
+        },
+        {
+                "id": "s1-70",
+                "name": "Mahnoor Farooq",
+                "roll": "620",
+                "className": "Class 7-B",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 2969691",
+                "email": "students1_69@example.com"
+        },
+        {
+                "id": "s1-71",
+                "name": "Kamran Ahmed",
+                "roll": "900",
+                "className": "Class 6-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 3030469",
+                "email": "students1_70@example.com"
+        },
+        {
+                "id": "s1-72",
+                "name": "Sobia Hussain",
+                "roll": "892",
+                "className": "Class 10-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 1935185",
+                "email": "students1_71@example.com"
+        },
+        {
+                "id": "s1-73",
+                "name": "Waseem Siddiqui",
+                "roll": "607",
+                "className": "Class 7-A",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 3817917",
+                "email": "students1_72@example.com"
+        },
+        {
+                "id": "s1-74",
+                "name": "Mehwish Mirza",
+                "roll": "632",
+                "className": "Class 2",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 4420685",
+                "email": "students1_73@example.com"
+        },
+        {
+                "id": "s1-75",
+                "name": "Kamran Nawaz",
+                "roll": "792",
+                "className": "Class 7-A",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 4410726",
+                "email": "students1_74@example.com"
+        },
+        {
+                "id": "s1-76",
+                "name": "Sara Zafar",
+                "roll": "102",
+                "className": "Class 7-B",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 7482488",
+                "email": "students1_75@example.com"
+        },
+        {
+                "id": "s1-77",
+                "name": "Waseem Ahmed",
+                "roll": "385",
+                "className": "Class 1",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 4656189",
+                "email": "students1_76@example.com"
+        },
+        {
+                "id": "s1-78",
+                "name": "Raza Sultan",
+                "roll": "373",
+                "className": "Class 1",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 3367031",
+                "email": "students1_77@example.com"
+        },
+        {
+                "id": "s1-79",
+                "name": "Usman Ghani",
+                "roll": "735",
+                "className": "Class 3",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6567744",
+                "email": "students1_78@example.com"
+        },
+        {
+                "id": "s1-80",
+                "name": "Ali Ghani",
+                "roll": "772",
+                "className": "Class 7-B",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 7898275",
+                "email": "students1_79@example.com"
+        }
+],
+
+      admissionFunnel: {
+        inquiries: [
+          { id: 'inq-1', name: 'Ali Hamza', phone: '+92 300 1111111', email: 'ali@example.com', className: 'Class 1', date: new Date().toISOString().split('T')[0], notes: 'Interested in sports', status: 'Pending' },
+          { id: 'inq-2', name: 'Sara Khan', phone: '+92 300 2222222', email: 'sara@example.com', className: 'Class 5', date: new Date().toISOString().split('T')[0], notes: 'Needs transport', status: 'Pending' }
+        ],
+        applications: [
+          { id: 'app-1', name: 'Zainab Ahmed', phone: '+92 300 3333333', email: 'zainab@example.com', className: 'Class 3', date: new Date().toISOString().split('T')[0], fatherName: 'Ahmed Raza', documents: 'Pending', status: 'Under Review' },
+          { id: 'app-2', name: 'Omer Farooq', phone: '+92 300 4444444', email: 'omer@example.com', className: 'Class 6', date: new Date().toISOString().split('T')[0], fatherName: 'Farooq', documents: 'Submitted', status: 'Under Review' }
+        ],
+        interviews: [
+          { id: 'int-1', name: 'Hassan Ali', phone: '+92 300 5555555', email: 'hassan@example.com', className: 'Class 2', date: new Date().toISOString().split('T')[0], interviewer: 'Principal', score: '85', remarks: 'Good communication', status: 'Scheduled' }
+        ],
+        enrolled: [
+          { id: 'enr-1', name: 'Fatima Bilal', phone: '+92 300 6666666', email: 'fatima@example.com', className: 'Class 4', date: new Date().toISOString().split('T')[0], rollNumber: '25', admissionDate: new Date().toISOString().split('T')[0], status: 'Admitted' }
+        ]
+      },
       teachers: [
         { id: '1', name: 'Sarah Khan', role: 'Principal', subject: 'Administration', className: 'Admin Block', status: 'Active', salary: '150000', qualification: 'PhD Education', experience: '18 Years', phone: '+92 300 1010101', email: 'sarah.khan@academichub.edu', gender: 'Female' },
         { id: '2', name: 'Tariq Mehmood', role: 'Vice Principal', subject: 'Administration', className: 'Admin Block', status: 'Active', salary: '120000', qualification: 'PhD', experience: '14 Years', phone: '+92 300 1040404', email: 'tariq.m@academichub.edu', gender: 'Male' },
@@ -641,17 +1659,968 @@ export const UnifiedDashboard: React.FC = () => {
     // 2. Beaconhouse Campus Lahore (PK)
     '22222222-2222-2222-2222-222222222222': {
       students: [
-        { id: '1', name: 'Muhammad Ali', roll: '101', className: 'Class 10-A', status: 'Present', borrowedBooks: ['A-Level Physics', 'Maths Advance'], bookedTransport: 'Route A', hostelStatus: 'Room 301' },
-        { id: '2', name: 'Fatima Zahra', roll: '104', className: 'Class 10-B', status: 'Present', borrowedBooks: ['English Lit Anthology'], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
-        { id: '3', name: 'Bilal Ahmed', roll: '102', className: 'Class 9-A', status: 'Absent', borrowedBooks: [], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
-        { id: '4', name: 'Zainab Qasim', roll: '105', className: 'Class 10-A', status: 'Present', borrowedBooks: ['Chemistry Advanced'], bookedTransport: 'Route A', hostelStatus: 'Room 302' },
-        { id: '5', name: 'Omar Farooq', roll: '106', className: 'Class 10-B', status: 'Present', borrowedBooks: ['Biology Concepts'], bookedTransport: 'Route C', hostelStatus: 'Day Scholar' },
-        { id: '6', name: 'Ayesha Siddiqa', roll: '107', className: 'Class 9-A', status: 'Present', borrowedBooks: ['Islamic Studies 9'], bookedTransport: 'None', hostelStatus: 'Day Scholar' },
-        { id: '7', name: 'Hassan Raza', roll: '108', className: 'Class 10-A', status: 'Absent', borrowedBooks: ['Calculus Textbook'], bookedTransport: 'Route B', hostelStatus: 'Day Scholar' },
-        { id: '8', name: 'Maryam Noor', roll: '109', className: 'Class 8-A', status: 'Present', borrowedBooks: ['Science Grade 8'], bookedTransport: 'Route A', hostelStatus: 'Room 410' },
-        { id: '9', name: 'Usman Tariq', roll: '110', className: 'Class 8-A', status: 'Present', borrowedBooks: [], bookedTransport: 'Route C', hostelStatus: 'Day Scholar' },
-        { id: '10', name: 'Khadija Sultan', roll: '111', className: 'Class 9-B', status: 'Present', borrowedBooks: ['Urdu Adab 9'], bookedTransport: 'None', hostelStatus: 'Day Scholar' }
-      ],
+        {
+                "id": "s2-1",
+                "name": "Hassan Noor",
+                "roll": "453",
+                "className": "Class 10-A",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route A",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 3437962",
+                "email": "students2_0@example.com"
+        },
+        {
+                "id": "s2-2",
+                "name": "Shoaib Noor",
+                "roll": "897",
+                "className": "Class 10-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route A",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 2262701",
+                "email": "students2_1@example.com"
+        },
+        {
+                "id": "s2-3",
+                "name": "Sara Noor",
+                "roll": "347",
+                "className": "Class 10-A",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6053315",
+                "email": "students2_2@example.com"
+        },
+        {
+                "id": "s2-4",
+                "name": "Sadia Malik",
+                "roll": "806",
+                "className": "Class 10-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route A",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 4301596",
+                "email": "students2_3@example.com"
+        },
+        {
+                "id": "s2-5",
+                "name": "Zafar Khan",
+                "roll": "987",
+                "className": "Class 10-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6500170",
+                "email": "students2_4@example.com"
+        },
+        {
+                "id": "s2-6",
+                "name": "Hamza Khan",
+                "roll": "590",
+                "className": "Class 10-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route A",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 8429965",
+                "email": "students2_5@example.com"
+        },
+        {
+                "id": "s2-7",
+                "name": "Kiran Ahmed",
+                "roll": "339",
+                "className": "Class 10-A",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 4221036",
+                "email": "students2_6@example.com"
+        },
+        {
+                "id": "s2-8",
+                "name": "Tariq Ghani",
+                "roll": "211",
+                "className": "Class 10-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route A",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 9810655",
+                "email": "students2_7@example.com"
+        },
+        {
+                "id": "s2-9",
+                "name": "Iqra Ali",
+                "roll": "962",
+                "className": "Class 10-A",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route A",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 3955727",
+                "email": "students2_8@example.com"
+        },
+        {
+                "id": "s2-10",
+                "name": "Shoaib Sultan",
+                "roll": "616",
+                "className": "Class 10-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6183410",
+                "email": "students2_9@example.com"
+        },
+        {
+                "id": "s2-11",
+                "name": "Omar Farooq",
+                "roll": "989",
+                "className": "Class 10-B",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6044864",
+                "email": "students2_10@example.com"
+        },
+        {
+                "id": "s2-12",
+                "name": "Hamza Ahmed",
+                "roll": "662",
+                "className": "Class 10-B",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route B",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 1884130",
+                "email": "students2_11@example.com"
+        },
+        {
+                "id": "s2-13",
+                "name": "Yasin Zafar",
+                "roll": "400",
+                "className": "Class 10-B",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 2194082",
+                "email": "students2_12@example.com"
+        },
+        {
+                "id": "s2-14",
+                "name": "Zubaida Ghani",
+                "roll": "907",
+                "className": "Class 10-B",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 7827813",
+                "email": "students2_13@example.com"
+        },
+        {
+                "id": "s2-15",
+                "name": "Hamza Tariq",
+                "roll": "735",
+                "className": "Class 10-B",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6505747",
+                "email": "students2_14@example.com"
+        },
+        {
+                "id": "s2-16",
+                "name": "Jameel Zafar",
+                "roll": "467",
+                "className": "Class 10-B",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 9063062",
+                "email": "students2_15@example.com"
+        },
+        {
+                "id": "s2-17",
+                "name": "Ayesha Ahmed",
+                "roll": "660",
+                "className": "Class 10-B",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 1717305",
+                "email": "students2_16@example.com"
+        },
+        {
+                "id": "s2-18",
+                "name": "Zafar Farooq",
+                "roll": "417",
+                "className": "Class 10-B",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 4866951",
+                "email": "students2_17@example.com"
+        },
+        {
+                "id": "s2-19",
+                "name": "Maryam Ali",
+                "roll": "148",
+                "className": "Class 10-B",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 5229382",
+                "email": "students2_18@example.com"
+        },
+        {
+                "id": "s2-20",
+                "name": "Ahmed Nawaz",
+                "roll": "276",
+                "className": "Class 10-B",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route B",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 5416212",
+                "email": "students2_19@example.com"
+        },
+        {
+                "id": "s2-21",
+                "name": "Sobia Sultan",
+                "roll": "883",
+                "className": "Class 4",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 3337342",
+                "email": "students2_20@example.com"
+        },
+        {
+                "id": "s2-22",
+                "name": "Zubaida Ghani",
+                "roll": "992",
+                "className": "Class 10-B",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 7405373",
+                "email": "students2_21@example.com"
+        },
+        {
+                "id": "s2-23",
+                "name": "Sonia Zafar",
+                "roll": "263",
+                "className": "Class 1",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 1876624",
+                "email": "students2_22@example.com"
+        },
+        {
+                "id": "s2-24",
+                "name": "Salman Ahmed",
+                "roll": "964",
+                "className": "Class 9-B",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 9969496",
+                "email": "students2_23@example.com"
+        },
+        {
+                "id": "s2-25",
+                "name": "Zara Siddiqui",
+                "roll": "212",
+                "className": "Class 5",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 9670640",
+                "email": "students2_24@example.com"
+        },
+        {
+                "id": "s2-26",
+                "name": "Amna Zafar",
+                "roll": "215",
+                "className": "Class 6-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 5452344",
+                "email": "students2_25@example.com"
+        },
+        {
+                "id": "s2-27",
+                "name": "Hamza Siddiqui",
+                "roll": "998",
+                "className": "Class 9-B",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 5161563",
+                "email": "students2_26@example.com"
+        },
+        {
+                "id": "s2-28",
+                "name": "Bisma Sultan",
+                "roll": "355",
+                "className": "Class 2",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 4012956",
+                "email": "students2_27@example.com"
+        },
+        {
+                "id": "s2-29",
+                "name": "Ali Ahmed",
+                "roll": "628",
+                "className": "Class 6-A",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 8573678",
+                "email": "students2_28@example.com"
+        },
+        {
+                "id": "s2-30",
+                "name": "Omar Malik",
+                "roll": "881",
+                "className": "Class 5",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 1557890",
+                "email": "students2_29@example.com"
+        },
+        {
+                "id": "s2-31",
+                "name": "Mehwish Ghani",
+                "roll": "649",
+                "className": "Class 9-B",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 8086549",
+                "email": "students2_30@example.com"
+        },
+        {
+                "id": "s2-32",
+                "name": "Yasin Raza",
+                "roll": "883",
+                "className": "Class 8-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 8809005",
+                "email": "students2_31@example.com"
+        },
+        {
+                "id": "s2-33",
+                "name": "Kiran Hussain",
+                "roll": "913",
+                "className": "Class 10-B",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 7947779",
+                "email": "students2_32@example.com"
+        },
+        {
+                "id": "s2-34",
+                "name": "Hassan Zafar",
+                "roll": "799",
+                "className": "Class 8-B",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 7087970",
+                "email": "students2_33@example.com"
+        },
+        {
+                "id": "s2-35",
+                "name": "Sana Ahmed",
+                "roll": "296",
+                "className": "Class 9-B",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 2447691",
+                "email": "students2_34@example.com"
+        },
+        {
+                "id": "s2-36",
+                "name": "Zubaida Hussain",
+                "roll": "868",
+                "className": "Class 6-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 9224366",
+                "email": "students2_35@example.com"
+        },
+        {
+                "id": "s2-37",
+                "name": "Nadia Mirza",
+                "roll": "128",
+                "className": "Class 6-B",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 9408478",
+                "email": "students2_36@example.com"
+        },
+        {
+                "id": "s2-38",
+                "name": "Sobia Khan",
+                "roll": "335",
+                "className": "Class 7-B",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 9567627",
+                "email": "students2_37@example.com"
+        },
+        {
+                "id": "s2-39",
+                "name": "Hassan Ali",
+                "roll": "395",
+                "className": "Class 8-A",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 8184300",
+                "email": "students2_38@example.com"
+        },
+        {
+                "id": "s2-40",
+                "name": "Kamran Tariq",
+                "roll": "231",
+                "className": "Class 9-B",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 7397742",
+                "email": "students2_39@example.com"
+        },
+        {
+                "id": "s2-41",
+                "name": "Zara Farooq",
+                "roll": "168",
+                "className": "Class 5",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6371752",
+                "email": "students2_40@example.com"
+        },
+        {
+                "id": "s2-42",
+                "name": "Salman Mirza",
+                "roll": "851",
+                "className": "Class 10-B",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 4753014",
+                "email": "students2_41@example.com"
+        },
+        {
+                "id": "s2-43",
+                "name": "Mehwish Ali",
+                "roll": "919",
+                "className": "Class 6-B",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 9831686",
+                "email": "students2_42@example.com"
+        },
+        {
+                "id": "s2-44",
+                "name": "Zahid Ahmed",
+                "roll": "416",
+                "className": "Class 8-A",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 9275359",
+                "email": "students2_43@example.com"
+        },
+        {
+                "id": "s2-45",
+                "name": "Ayesha Farooq",
+                "roll": "559",
+                "className": "Class 3",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 7889388",
+                "email": "students2_44@example.com"
+        },
+        {
+                "id": "s2-46",
+                "name": "Sara Nawaz",
+                "roll": "640",
+                "className": "Class 3",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 1634158",
+                "email": "students2_45@example.com"
+        },
+        {
+                "id": "s2-47",
+                "name": "Kamran Siddiqui",
+                "roll": "212",
+                "className": "Class 3",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6049032",
+                "email": "students2_46@example.com"
+        },
+        {
+                "id": "s2-48",
+                "name": "Raza Ahmed",
+                "roll": "850",
+                "className": "Class 2",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 3249561",
+                "email": "students2_47@example.com"
+        },
+        {
+                "id": "s2-49",
+                "name": "Sobia Siddiqui",
+                "roll": "727",
+                "className": "Class 9-A",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 7863344",
+                "email": "students2_48@example.com"
+        },
+        {
+                "id": "s2-50",
+                "name": "Hafsa Tariq",
+                "roll": "800",
+                "className": "Class 7-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 9223260",
+                "email": "students2_49@example.com"
+        },
+        {
+                "id": "s2-51",
+                "name": "Rabia Malik",
+                "roll": "367",
+                "className": "Class 7-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 2419496",
+                "email": "students2_50@example.com"
+        },
+        {
+                "id": "s2-52",
+                "name": "Zara Farooq",
+                "roll": "728",
+                "className": "Class 8-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 5676802",
+                "email": "students2_51@example.com"
+        },
+        {
+                "id": "s2-53",
+                "name": "Raza Malik",
+                "roll": "668",
+                "className": "Class 4",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 7648494",
+                "email": "students2_52@example.com"
+        },
+        {
+                "id": "s2-54",
+                "name": "Nida Nawaz",
+                "roll": "901",
+                "className": "Class 1",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6979954",
+                "email": "students2_53@example.com"
+        },
+        {
+                "id": "s2-55",
+                "name": "Zubaida Nawaz",
+                "roll": "793",
+                "className": "Class 7-B",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 5761366",
+                "email": "students2_54@example.com"
+        },
+        {
+                "id": "s2-56",
+                "name": "Waseem Zafar",
+                "roll": "979",
+                "className": "Class 10-A",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 5172980",
+                "email": "students2_55@example.com"
+        },
+        {
+                "id": "s2-57",
+                "name": "Hassan Hussain",
+                "roll": "312",
+                "className": "Class 5",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 1319811",
+                "email": "students2_56@example.com"
+        },
+        {
+                "id": "s2-58",
+                "name": "Waseem Tariq",
+                "roll": "541",
+                "className": "Class 8-A",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 4298710",
+                "email": "students2_57@example.com"
+        },
+        {
+                "id": "s2-59",
+                "name": "Zahid Ali",
+                "roll": "372",
+                "className": "Class 8-B",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 7877991",
+                "email": "students2_58@example.com"
+        },
+        {
+                "id": "s2-60",
+                "name": "Saad Ghani",
+                "roll": "886",
+                "className": "Class 3",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 3023251",
+                "email": "students2_59@example.com"
+        },
+        {
+                "id": "s2-61",
+                "name": "Zainab Ahmed",
+                "roll": "962",
+                "className": "Class 3",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 5731977",
+                "email": "students2_60@example.com"
+        },
+        {
+                "id": "s2-62",
+                "name": "Zainab Siddiqui",
+                "roll": "706",
+                "className": "Class 6-B",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 5725241",
+                "email": "students2_61@example.com"
+        },
+        {
+                "id": "s2-63",
+                "name": "Omar Tariq",
+                "roll": "248",
+                "className": "Class 5",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 4785008",
+                "email": "students2_62@example.com"
+        },
+        {
+                "id": "s2-64",
+                "name": "Waseem Nawaz",
+                "roll": "107",
+                "className": "Class 7-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 5426691",
+                "email": "students2_63@example.com"
+        },
+        {
+                "id": "s2-65",
+                "name": "Kamran Ali",
+                "roll": "703",
+                "className": "Class 10-A",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6996837",
+                "email": "students2_64@example.com"
+        },
+        {
+                "id": "s2-66",
+                "name": "Yasin Malik",
+                "roll": "433",
+                "className": "Class 3",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 1342005",
+                "email": "students2_65@example.com"
+        },
+        {
+                "id": "s2-67",
+                "name": "Sana Nawaz",
+                "roll": "389",
+                "className": "Class 7-B",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 1432017",
+                "email": "students2_66@example.com"
+        },
+        {
+                "id": "s2-68",
+                "name": "Fatima Ahmed",
+                "roll": "237",
+                "className": "Class 9-B",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 5534823",
+                "email": "students2_67@example.com"
+        },
+        {
+                "id": "s2-69",
+                "name": "Saad Hussain",
+                "roll": "743",
+                "className": "Class 10-B",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6335521",
+                "email": "students2_68@example.com"
+        },
+        {
+                "id": "s2-70",
+                "name": "Kiran Khan",
+                "roll": "169",
+                "className": "Class 10-A",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 2960896",
+                "email": "students2_69@example.com"
+        },
+        {
+                "id": "s2-71",
+                "name": "Saad Shah",
+                "roll": "473",
+                "className": "Class 2",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 2247589",
+                "email": "students2_70@example.com"
+        },
+        {
+                "id": "s2-72",
+                "name": "Imran Zafar",
+                "roll": "705",
+                "className": "Class 6-B",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 2631405",
+                "email": "students2_71@example.com"
+        },
+        {
+                "id": "s2-73",
+                "name": "Waseem Farooq",
+                "roll": "130",
+                "className": "Class 8-A",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 7811437",
+                "email": "students2_72@example.com"
+        },
+        {
+                "id": "s2-74",
+                "name": "Nawaz Noor",
+                "roll": "343",
+                "className": "Class 7-B",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 9613734",
+                "email": "students2_73@example.com"
+        },
+        {
+                "id": "s2-75",
+                "name": "Sobia Nawaz",
+                "roll": "310",
+                "className": "Class 6-B",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 4354715",
+                "email": "students2_74@example.com"
+        },
+        {
+                "id": "s2-76",
+                "name": "Nida Hussain",
+                "roll": "524",
+                "className": "Class 7-B",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 6832884",
+                "email": "students2_75@example.com"
+        },
+        {
+                "id": "s2-77",
+                "name": "Mahnoor Sultan",
+                "roll": "581",
+                "className": "Class 3",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 4056849",
+                "email": "students2_76@example.com"
+        },
+        {
+                "id": "s2-78",
+                "name": "Khadija Farooq",
+                "roll": "431",
+                "className": "Class 1",
+                "status": "Late",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 3747532",
+                "email": "students2_77@example.com"
+        },
+        {
+                "id": "s2-79",
+                "name": "Nadia Shah",
+                "roll": "207",
+                "className": "Class 3",
+                "status": "Absent",
+                "borrowedBooks": [],
+                "bookedTransport": "None",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 9278169",
+                "email": "students2_78@example.com"
+        },
+        {
+                "id": "s2-80",
+                "name": "Fawad Siddiqui",
+                "roll": "588",
+                "className": "Class 8-A",
+                "status": "Present",
+                "borrowedBooks": [],
+                "bookedTransport": "Route C",
+                "hostelStatus": "Day Scholar",
+                "contact": "+92 300 4710229",
+                "email": "students2_79@example.com"
+        }
+],
+
       teachers: [
         { id: '1', name: 'Dr. Arshad Raza', role: 'Principal', subject: 'Administration', className: 'Admin Block', status: 'Active', salary: '180000', qualification: 'PhD Mathematics', experience: '20 Years', phone: '+92 300 2010101', email: 'principal@beaconhouse-lhr.edu', gender: 'Male' },
         { id: '2', name: 'Sohail Mirza', role: 'Vice Principal', subject: 'Administration', className: 'Admin Block', status: 'Active', salary: '130000', qualification: 'M.Ed.', experience: '11 Years', phone: '+92 300 2666666', email: 'coordinator@beaconhouse-lhr.edu', gender: 'Male' },
@@ -1245,18 +3214,21 @@ export const UnifiedDashboard: React.FC = () => {
     parentMessages: [],
     classes: CLASSES_LIST,
     subjects: SUBJECTS_LIST,
-    foodCert: null
+    foodCert: null,
+    admissionFunnel: { inquiries: [], applications: [], interviews: [], enrolled: [] }
   };
 
-  const students = schoolDb.students;
+  const admissionFunnel = schoolDb.admissionFunnel || { inquiries: [], applications: [], interviews: [], enrolled: [] };
+
+  const students = schoolDb.students || [];
   const waitingList = schoolDb.waitingList || [];
-  const teachers = schoolDb.teachers;
-  const notices = schoolDb.notices;
-  const leaves = schoolDb.leaves;
-  const invoices = schoolDb.invoices;
-  const assignments = schoolDb.assignments;
-  const disciplines = schoolDb.disciplines;
-  const parentMessages = schoolDb.parentMessages;
+  const teachers = schoolDb.teachers || [];
+  const notices = schoolDb.notices || [];
+  const leaves = schoolDb.leaves || [];
+  const invoices = schoolDb.invoices || [];
+  const assignments = schoolDb.assignments || [];
+  const disciplines = schoolDb.disciplines || [];
+  const parentMessages = schoolDb.parentMessages || [];
   const schoolClasses = schoolDb.classes || CLASSES_LIST;
   const schoolSubjects = schoolDb.subjects || SUBJECTS_LIST;
   const minAdmissionAge = schoolDb.minAdmissionAge || 3;
@@ -1274,6 +3246,40 @@ export const UnifiedDashboard: React.FC = () => {
   // Level-aware student filtering (only show students whose class is in filtered list)
   const filteredStudents = React.useMemo(() => students.filter(s => filteredClasses.includes(s.className)), [students, filteredClasses]);
   const filteredTeachers = React.useMemo(() => teachers.filter(t => filteredClasses.includes(t.className) || t.className === 'N/A'), [teachers, filteredClasses]);
+
+  const payrollData = React.useMemo(() => {
+    let totalGross = 0;
+    let totalDeductions = 0;
+    let totalNet = 0;
+    
+    const entries = teachers.map((t: any) => {
+      const baseSalary = (t.role || '').includes('Teacher') ? 60000 : 45000;
+      const experienceBonus = (t.name.length % 5) * 2000;
+      const gross = baseSalary + experienceBonus;
+      const deductions = Math.floor(gross * 0.05);
+      const net = gross - deductions;
+      
+      totalGross += gross;
+      totalDeductions += deductions;
+      totalNet += net;
+      
+      return {
+        name: t.name,
+        role: t.subject || t.role || 'Staff',
+        gross,
+        deductions,
+        net
+      };
+    });
+    
+    return {
+      totalGross,
+      totalDeductions,
+      totalNet,
+      employeeCount: teachers.length,
+      entries
+    };
+  }, [teachers]);
 
   const foodCert = schoolDb.foodCert || {
     authority: 'Punjab Food Authority',
@@ -1321,10 +3327,24 @@ export const UnifiedDashboard: React.FC = () => {
   const setMinAdmissionAge = (val: any) => updateSchoolDb('minAdmissionAge', val);
   const setInventory = (val: any) => updateSchoolDb('inventory', val);
   const setVisitors = (val: any) => updateSchoolDb('visitors', val);
+  const setAdmissionFunnel = (val: any) => updateSchoolDb('admissionFunnel', val);
 
-  const { portal_queries, replyToQuery } = useQueryStore();
+  const { queries: portal_queries, initialize: initQueries, replyToQuery } = useQueryStore();
   const [activeQueryId, setActiveQueryId] = useState<string | null>(null);
   const [replyMessage, setReplyMessage] = useState('');
+
+  const [whatsappApiUrl, setWhatsappApiUrl] = useState('https://api.whatsapp.com/v1/');
+  const [whatsappToken, setWhatsappToken] = useState('');
+  const [smsGatewayProvider, setSmsGatewayProvider] = useState('');
+  const [smsApiKey, setSmsApiKey] = useState('');
+  const [smtpHost, setSmtpHost] = useState('');
+  const [smtpPort, setSmtpPort] = useState('');
+  const [smtpUser, setSmtpUser] = useState('');
+  const [smtpPass, setSmtpPass] = useState('');
+
+  React.useEffect(() => {
+    initQueries();
+  }, [initQueries]);
 
   const [completedAssignments, setCompletedAssignments] = useState<string[]>([]);
 
@@ -1432,6 +3452,10 @@ export const UnifiedDashboard: React.FC = () => {
   const [newTeacherPhoto, setNewTeacherPhoto] = useState<string | null>(null);
   const [newTeacherDoc, setNewTeacherDoc] = useState<string | null>(null);
   const [selectedDetailedTeacher, setSelectedDetailedTeacher] = useState<any | null>(null);
+  const [newTeacherBankName, setNewTeacherBankName] = useState('');
+  const [newTeacherBankAccName, setNewTeacherBankAccName] = useState('');
+  const [newTeacherBankAccNo, setNewTeacherBankAccNo] = useState('');
+  const [newTeacherBankSortCode, setNewTeacherBankSortCode] = useState('');
   const [recycleBin, setRecycleBin] = useState<{ id: string; type: 'teacher' | 'student'; data: any; labelName: string }[]>([]);
 
   const [newNoticeTitle, setNewNoticeTitle] = useState('');
@@ -1452,6 +3476,17 @@ export const UnifiedDashboard: React.FC = () => {
   const [newParentMessageSubject, setNewParentMessageSubject] = useState('');
   const [newParentMessageText, setNewParentMessageText] = useState('');
   const [newParentMessageImage, setNewParentMessageImage] = useState<string | null>(null);
+  const [newParentMessageChannel, setNewParentMessageChannel] = useState('WhatsApp Message');
+  const [isSendingParentMessage, setIsSendingParentMessage] = useState(false);
+  const [whatsappCardPreview, setWhatsappCardPreview] = useState<string | null>(null);
+  const [attachmentFiles, setAttachmentFiles] = useState<File[]>([]);
+  const [unreadInboxCount, setUnreadInboxCount] = useState(0);
+  const [showDeliveryPopup, setShowDeliveryPopup] = useState<string | null>(null);
+
+  const [isProcessingPayroll, setIsProcessingPayroll] = useState(false);
+  const [isPayrollProcessed, setIsPayrollProcessed] = useState(false);
+  const [showPayrollReport, setShowPayrollReport] = useState(false);
+  const [selectedPayslip, setSelectedPayslip] = useState<any | null>(null);
 
   const [newSetupClass, setNewSetupClass] = useState('');
   const [newSetupSubject, setNewSetupSubject] = useState('');
@@ -3402,6 +5437,20 @@ export const UnifiedDashboard: React.FC = () => {
                   </>
                 )}
               </button>
+              <div className="relative">
+                <button
+                  className="inline-flex items-center justify-center gap-1 bg-card border border-border hover:bg-muted hover:text-foreground px-2 py-1.5 rounded-lg text-foreground/80 transition-all font-semibold shadow-sm shrink-0 relative"
+                  title="Notifications"
+                  onClick={() => setUnreadInboxCount(0)}
+                >
+                  <Bell className="w-4 h-4 shrink-0" />
+                  {unreadInboxCount > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-black text-white shadow-sm ring-2 ring-card animate-pulse">
+                      {unreadInboxCount}
+                    </span>
+                  )}
+                </button>
+              </div>
               <button 
                 onClick={handleLogout}
                 className="inline-flex items-center justify-center gap-1 bg-card border border-border hover:bg-muted hover:text-foreground px-2.5 py-1.5 rounded-lg text-[10px] transition-all whitespace-nowrap shrink-0 font-semibold"
@@ -5246,7 +7295,11 @@ export const UnifiedDashboard: React.FC = () => {
                 <div className="space-y-4">
                   {/* Add Student Form */}
                   {isEditor && (() => {
-                    const nextRollNo = (Math.max(0, ...students.map(s => parseInt(s.roll) || 0)) + 1).toString().padStart(3, '0');
+                    let nextNum = students.length + 1;
+                    while (students.some(s => s.roll === nextNum.toString() || s.roll === nextNum.toString().padStart(3, '0'))) {
+                      nextNum++;
+                    }
+                    const nextRollNo = nextNum.toString();
                     return (
                     <form 
                       onSubmit={(e) => {
@@ -5389,7 +7442,12 @@ export const UnifiedDashboard: React.FC = () => {
                   {/* Beautiful Student Roster Grid */}
                   <div className="space-y-3 pt-2">
                     <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
-                      <span className="block text-xs font-bold text-foreground/75 uppercase tracking-wider">Student Roster</span>
+                      <div className="flex items-center gap-2">
+                        <span className="block text-xs font-bold text-foreground/75 uppercase tracking-wider">Student Roster</span>
+                        <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold">
+                          Total Enrolled: {students.length}
+                        </span>
+                      </div>
                       <input type="text" placeholder="Search students by name..." value={studentSearchTerm} onChange={e => setStudentSearchTerm(e.target.value)} className="bg-card border border-border rounded-lg text-[11px] p-2 px-3 w-full sm:w-64 text-foreground outline-none focus:border-primary transition-colors" />
                     </div>
                     <div className="flex flex-wrap justify-center gap-3">
@@ -5546,6 +7604,12 @@ export const UnifiedDashboard: React.FC = () => {
                               phone: newTeacherPhone || '-',
                               photo: newTeacherPhoto,
                               doc: newTeacherDoc,
+                              bankDetails: {
+                                bankName: newTeacherBankName,
+                                accountName: newTeacherBankAccName,
+                                accountNo: newTeacherBankAccNo,
+                                sortCode: newTeacherBankSortCode
+                              },
                               status: 'Active' 
                             }
                           ]);
@@ -5559,6 +7623,10 @@ export const UnifiedDashboard: React.FC = () => {
                           setNewTeacherPhone('');
                           setNewTeacherPhoto(null);
                           setNewTeacherDoc(null);
+                          setNewTeacherBankName('');
+                          setNewTeacherBankAccName('');
+                          setNewTeacherBankAccNo('');
+                          setNewTeacherBankSortCode('');
                         });
                       }}
                       className="p-5 bg-muted/30 border border-border rounded-xl space-y-4 shadow-inner"
@@ -5635,94 +7703,72 @@ export const UnifiedDashboard: React.FC = () => {
 
                         <div className="flex flex-col gap-1">
                           <label className="text-[10px] text-foreground/70 font-semibold">Academic Qualification</label>
-                          <select 
-                            className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
-                            value={
-                              ['B.Ed', 'M.Ed', 'B.Sc', 'M.Sc', 'M.Phil', 'Ph.D'].includes(newTeacherQualification) 
-                                ? newTeacherQualification 
-                                : (newTeacherQualification ? 'Other' : '')
+                          {(() => {
+                            const qualOpts = QUALIFICATIONS_BY_COUNTRY[currentSchool?.country || 'DEFAULT'] || QUALIFICATIONS_BY_COUNTRY['DEFAULT'];
+                            const isCustom = newTeacherQualification && !qualOpts.includes(newTeacherQualification);
+                            if (isCustom) {
+                              return (
+                                <div className="flex items-center gap-2">
+                                  <input 
+                                    className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" 
+                                    value={newTeacherQualification === 'CUSTOM_MANUAL' ? '' : newTeacherQualification}
+                                    onChange={e => setNewTeacherQualification(e.target.value)}
+                                    placeholder="Type manually..."
+                                  />
+                                  <button onClick={() => setNewTeacherQualification(qualOpts[0])} className="text-[10px] px-2 py-1 rounded bg-primary/10 text-primary font-bold">List</button>
+                                </div>
+                              );
                             }
-                            onChange={e => {
-                              if (e.target.value === 'Other') {
-                                setNewTeacherQualification(' ');
-                              } else {
-                                setNewTeacherQualification(e.target.value);
-                              }
-                            }}
-                          >
-                            <option value="" disabled>Select</option>
-                            <option value="B.Ed">B.Ed</option>
-                            <option value="M.Ed">M.Ed</option>
-                            <option value="B.Sc">B.Sc</option>
-                            <option value="M.Sc">M.Sc</option>
-                            <option value="M.Phil">M.Phil</option>
-                            <option value="Ph.D">Ph.D</option>
-                            <option value="Other">Other (Manual)</option>
-                          </select>
-                          {(!['B.Ed', 'M.Ed', 'B.Sc', 'M.Sc', 'M.Phil', 'Ph.D', ''].includes(newTeacherQualification)) && (
-                            <input 
-                              type="text" 
-                              placeholder="Type manually"
-                              value={newTeacherQualification === ' ' ? '' : newTeacherQualification}
-                              onChange={(e) => setNewTeacherQualification(e.target.value)}
-                              className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground mt-1"
-                              autoFocus
-                            />
-                          )}
+                            return (
+                              <select 
+                                className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
+                                value={newTeacherQualification}
+                                onChange={e => {
+                                  if (e.target.value === 'CUSTOM_MANUAL') setNewTeacherQualification('CUSTOM_MANUAL');
+                                  else setNewTeacherQualification(e.target.value);
+                                }}
+                              >
+                                <option value="" disabled>Select Qualification</option>
+                                {qualOpts.map(q => <option key={q} value={q}>{q}</option>)}
+                                <option value="CUSTOM_MANUAL">Add Manually...</option>
+                              </select>
+                            );
+                          })()}
                         </div>
 
                         <div className="flex flex-col gap-1">
                           <label className="text-[10px] text-foreground/70 font-semibold">Decided Salary (Monthly)</label>
-                          <select 
-                            className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
-                            value={
-                              ['30000', '40000', '50000', '80000', '100000', '2000', '3000', '4000', '5000'].includes(newTeacherSalary) 
-                                ? newTeacherSalary 
-                                : (newTeacherSalary ? 'Other' : '')
+                          {(() => {
+                            const salOpts = SALARIES_BY_COUNTRY[currentSchool?.country || 'DEFAULT'] || SALARIES_BY_COUNTRY['DEFAULT'];
+                            const isCustom = newTeacherSalary && !salOpts.includes(newTeacherSalary);
+                            if (isCustom) {
+                              return (
+                                <div className="flex items-center gap-2">
+                                  <input 
+                                    className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" 
+                                    value={newTeacherSalary === 'CUSTOM_MANUAL' ? '' : newTeacherSalary}
+                                    onChange={e => setNewTeacherSalary(e.target.value)}
+                                    placeholder="Type manually..."
+                                  />
+                                  <button onClick={() => setNewTeacherSalary(salOpts[0])} className="text-[10px] px-2 py-1 rounded bg-primary/10 text-primary font-bold">List</button>
+                                </div>
+                              );
                             }
-                            onChange={e => {
-                              if (e.target.value === 'Other') {
-                                setNewTeacherSalary(' ');
-                              } else {
-                                setNewTeacherSalary(e.target.value);
-                              }
-                            }}
-                          >
-                            <option value="" disabled>Select</option>
-                            {currentSchool?.country === 'PK' || currentSchool?.country === 'SA' || currentSchool?.country === 'AE' ? (
-                              <>
-                                <option value="30000">30,000</option>
-                                <option value="40000">40,000</option>
-                                <option value="50000">50,000</option>
-                                <option value="80000">80,000</option>
-                                <option value="100000">100,000</option>
-                              </>
-                            ) : (
-                              <>
-                                <option value="2000">2,000</option>
-                                <option value="3000">3,000</option>
-                                <option value="4000">4,000</option>
-                                <option value="5000">5,000</option>
-                                <option value="8000">8,000</option>
-                              </>
-                            )}
-                            <option value="Other">Other (Manual)</option>
-                          </select>
-                          {(!['30000', '40000', '50000', '80000', '100000', '2000', '3000', '4000', '5000', ''].includes(newTeacherSalary)) && (
-                            <input 
-                              type="text" 
-                              placeholder="Type amount"
-                              value={newTeacherSalary === ' ' ? '' : newTeacherSalary}
-                              onChange={(e) => {
-                                const val = e.target.value;
-                                if (/^[\d]*$/.test(val)) {
-                                  setNewTeacherSalary(val);
-                                }
-                              }}
-                              className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground mt-1"
-                              autoFocus
-                            />
-                          )}
+                            return (
+                              <select 
+                                className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
+                                value={newTeacherSalary}
+                                onChange={e => {
+                                  if (e.target.value === 'CUSTOM_MANUAL') setNewTeacherSalary('CUSTOM_MANUAL');
+                                  else setNewTeacherSalary(e.target.value);
+                                }}
+                              >
+                                <option value="" disabled>Select Salary</option>
+                                {salOpts.map(s => <option key={s} value={s}>{formatCurrency(parseInt(s))}</option>)}
+                                <option value="CUSTOM_MANUAL">Add Manually...</option>
+                              </select>
+                            );
+                          })()}
                         </div>
 
                         <div className="flex flex-col gap-1">
@@ -5753,26 +7799,113 @@ export const UnifiedDashboard: React.FC = () => {
 
                         <div className="flex flex-col gap-1">
                           <label className="text-[10px] text-foreground/70 font-semibold">Contact / Phone Number</label>
-                          <input 
-                            type="text" 
-                            placeholder="e.g. +92 300 1234567"
-                            value={
-                              newTeacherPhone === '' 
-                                ? (COUNTRY_CONFIGS[currentSchool?.country || 'PK']?.phonePrefix || '+92') + ' '
-                                : newTeacherPhone
-                            }
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              if (/^[\d\s+]*$/.test(val)) {
-                                setNewTeacherPhone(val);
-                              }
-                            }}
-                            className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
-                          />
+                          <div className="flex">
+                            <span className="flex items-center px-3 bg-muted/50 border border-border border-r-0 rounded-l-lg text-xs text-foreground/70">
+                              {getPhonePrefix()}
+                            </span>
+                            <input 
+                              type="text" 
+                              placeholder="e.g. 300 1234567"
+                              value={newTeacherPhone.replace(getPhonePrefix(), '').trim()}
+                              onChange={(e) => setNewTeacherPhone(`${getPhonePrefix()} ${e.target.value}`)}
+                              className="flex-1 bg-card border border-border rounded-r-lg text-xs p-2.5 text-foreground focus:outline-none"
+                            />
+                          </div>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                      {/* BANK DETAILS SECTION */}
+                      <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider mt-4 border-t border-border/50 pt-4">Bank & Payment Details (Private)</span>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] text-foreground/70 font-semibold">Bank Name</label>
+                          {(() => {
+                            const bankOpts = BANKS_BY_COUNTRY[currentSchool?.country || 'DEFAULT'] || BANKS_BY_COUNTRY['DEFAULT'];
+                            const isCustom = newTeacherBankName && !bankOpts.includes(newTeacherBankName) && newTeacherBankName !== 'N/A';
+                            if (isCustom) {
+                              return (
+                                <div className="flex items-center gap-2">
+                                  <input 
+                                    className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" 
+                                    value={newTeacherBankName === 'CUSTOM_MANUAL' ? '' : newTeacherBankName}
+                                    onChange={e => setNewTeacherBankName(e.target.value)}
+                                    placeholder="Type bank name..."
+                                  />
+                                  <button onClick={() => setNewTeacherBankName(bankOpts[0])} className="text-[10px] px-2 py-1 rounded bg-primary/10 text-primary font-bold border border-primary/20">List</button>
+                                </div>
+                              );
+                            }
+                            return (
+                              <select 
+                                className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
+                                value={newTeacherBankName === 'N/A' ? '' : (newTeacherBankName || '')}
+                                onChange={e => {
+                                  if (e.target.value === 'CUSTOM_MANUAL') setNewTeacherBankName('CUSTOM_MANUAL');
+                                  else setNewTeacherBankName(e.target.value);
+                                }}
+                              >
+                                <option value="" disabled>Select Bank</option>
+                                {bankOpts.map(b => <option key={b} value={b}>{b}</option>)}
+                                <option value="CUSTOM_MANUAL">Add Manually...</option>
+                              </select>
+                            );
+                          })()}
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] text-foreground/70 font-semibold">Account Title / Name</label>
+                          <input type="text" placeholder="e.g. John Doe" value={newTeacherBankAccName} onChange={(e) => setNewTeacherBankAccName(e.target.value)} className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] text-foreground/70 font-semibold">Account Number</label>
+                          <input type="text" placeholder="e.g. 123456789" value={newTeacherBankAccNo} onChange={(e) => setNewTeacherBankAccNo(e.target.value)} className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] text-foreground/70 font-semibold">Sort Code</label>
+                          <div className="flex gap-1.5 items-center">
+                            <input 
+                              id="add-sort-1"
+                              maxLength={2} 
+                              className="w-full bg-card border border-border rounded-lg text-xs p-2 text-foreground text-center focus:border-primary/50 transition-colors" 
+                              value={newTeacherBankSortCode.split('-')[0] || ''} 
+                              onChange={(e) => {
+                                const val = e.target.value.replace(/\D/g, '');
+                                const parts = newTeacherBankSortCode.split('-');
+                                setNewTeacherBankSortCode(`${val}-${parts[1] || ''}-${parts[2] || ''}`);
+                                if (val.length === 2) document.getElementById('add-sort-2')?.focus();
+                              }} 
+                            />
+                            <span className="text-foreground/40 font-bold">-</span>
+                            <input 
+                              id="add-sort-2"
+                              maxLength={2} 
+                              className="w-full bg-card border border-border rounded-lg text-xs p-2 text-foreground text-center focus:border-primary/50 transition-colors" 
+                              value={newTeacherBankSortCode.split('-')[1] || ''} 
+                              onChange={(e) => {
+                                const val = e.target.value.replace(/\D/g, '');
+                                const parts = newTeacherBankSortCode.split('-');
+                                setNewTeacherBankSortCode(`${parts[0] || ''}-${val}-${parts[2] || ''}`);
+                                if (val.length === 2) document.getElementById('add-sort-3')?.focus();
+                                else if (val.length === 0) document.getElementById('add-sort-1')?.focus();
+                              }} 
+                            />
+                            <span className="text-foreground/40 font-bold">-</span>
+                            <input 
+                              id="add-sort-3"
+                              maxLength={2} 
+                              className="w-full bg-card border border-border rounded-lg text-xs p-2 text-foreground text-center focus:border-primary/50 transition-colors" 
+                              value={newTeacherBankSortCode.split('-')[2] || ''} 
+                              onChange={(e) => {
+                                const val = e.target.value.replace(/\D/g, '');
+                                const parts = newTeacherBankSortCode.split('-');
+                                setNewTeacherBankSortCode(`${parts[0] || ''}-${parts[1] || ''}-${val}`);
+                                if (val.length === 0) document.getElementById('add-sort-2')?.focus();
+                              }} 
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 mt-2">
                         {/* Profile Photo */}
                         <div className="flex flex-col gap-2">
                           <span className="text-[10px] font-bold text-foreground/70 uppercase">Teacher Profile Photo</span>
@@ -6080,91 +8213,71 @@ export const UnifiedDashboard: React.FC = () => {
                           <div className="grid grid-cols-2 gap-3.5">
                             <div className="p-3 bg-card border border-border rounded-xl">
                               <span className="block text-[9px] uppercase font-bold text-foreground/60 mb-1">Qualification</span>
-                              <div className="flex flex-col gap-1">
-                                <select 
-                                  className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground"
-                                  value={
-                                    ['B.Ed', 'M.Ed', 'B.Sc', 'M.Sc', 'M.Phil', 'Ph.D'].includes(selectedDetailedTeacher.qualification) 
-                                      ? selectedDetailedTeacher.qualification 
-                                      : (selectedDetailedTeacher.qualification ? 'Other' : '')
-                                  }
-                                  onChange={e => {
-                                    if (e.target.value === 'Other') {
-                                      setSelectedDetailedTeacher({...selectedDetailedTeacher, qualification: ' '});
-                                    } else {
-                                      setSelectedDetailedTeacher({...selectedDetailedTeacher, qualification: e.target.value});
-                                    }
-                                  }}
-                                >
-                                  <option value="" disabled>Select</option>
-                                  <option value="B.Ed">B.Ed</option>
-                                  <option value="M.Ed">M.Ed</option>
-                                  <option value="B.Sc">B.Sc</option>
-                                  <option value="M.Sc">M.Sc</option>
-                                  <option value="M.Phil">M.Phil</option>
-                                  <option value="Ph.D">Ph.D</option>
-                                  <option value="Other">Other (Manual)</option>
-                                </select>
-                                {(!['B.Ed', 'M.Ed', 'B.Sc', 'M.Sc', 'M.Phil', 'Ph.D', ''].includes(selectedDetailedTeacher.qualification) && selectedDetailedTeacher.qualification !== 'N/A') && (
-                                  <input 
-                                    className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground" 
-                                    value={selectedDetailedTeacher.qualification === ' ' ? '' : selectedDetailedTeacher.qualification}
-                                    onChange={e => setSelectedDetailedTeacher({...selectedDetailedTeacher, qualification: e.target.value})}
-                                    placeholder="Type manually"
-                                    autoFocus
-                                  />
-                                )}
-                              </div>
+                              {(() => {
+                                const qualOpts = QUALIFICATIONS_BY_COUNTRY[currentSchool?.country || 'DEFAULT'] || QUALIFICATIONS_BY_COUNTRY['DEFAULT'];
+                                const isCustom = selectedDetailedTeacher.qualification && !qualOpts.includes(selectedDetailedTeacher.qualification) && selectedDetailedTeacher.qualification !== 'N/A';
+                                if (isCustom) {
+                                  return (
+                                    <div className="flex items-center gap-2">
+                                      <input 
+                                        className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground" 
+                                        value={selectedDetailedTeacher.qualification === 'CUSTOM_MANUAL' ? '' : selectedDetailedTeacher.qualification}
+                                        onChange={e => setSelectedDetailedTeacher({...selectedDetailedTeacher, qualification: e.target.value})}
+                                        placeholder="Type manually..."
+                                      />
+                                      <button onClick={() => setSelectedDetailedTeacher({...selectedDetailedTeacher, qualification: qualOpts[0]})} className="text-[10px] px-2 py-1 rounded bg-primary/10 text-primary font-bold">List</button>
+                                    </div>
+                                  );
+                                }
+                                return (
+                                  <select 
+                                    className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground"
+                                    value={selectedDetailedTeacher.qualification === 'N/A' ? '' : (selectedDetailedTeacher.qualification || '')}
+                                    onChange={e => {
+                                      if (e.target.value === 'CUSTOM_MANUAL') setSelectedDetailedTeacher({...selectedDetailedTeacher, qualification: 'CUSTOM_MANUAL'});
+                                      else setSelectedDetailedTeacher({...selectedDetailedTeacher, qualification: e.target.value});
+                                    }}
+                                  >
+                                    <option value="" disabled>Select Qualification</option>
+                                    {qualOpts.map(q => <option key={q} value={q}>{q}</option>)}
+                                    <option value="CUSTOM_MANUAL">Add Manually...</option>
+                                  </select>
+                                );
+                              })()}
                             </div>
                             <div className="p-3 bg-card border border-border rounded-xl">
                               <span className="block text-[9px] uppercase font-bold text-foreground/60 mb-1">Decided Salary</span>
-                              <div className="flex flex-col gap-1">
-                                <select 
-                                  className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground"
-                                  value={
-                                    ['30000', '40000', '50000', '80000', '100000', '2000', '3000', '4000', '5000'].includes(selectedDetailedTeacher.salary) 
-                                      ? selectedDetailedTeacher.salary 
-                                      : (selectedDetailedTeacher.salary ? 'Other' : '')
-                                  }
-                                  onChange={e => {
-                                    if (e.target.value === 'Other') {
-                                      setSelectedDetailedTeacher({...selectedDetailedTeacher, salary: ' '});
-                                    } else {
-                                      setSelectedDetailedTeacher({...selectedDetailedTeacher, salary: e.target.value});
-                                    }
-                                  }}
-                                >
-                                  <option value="" disabled>Select</option>
-                                  {currentSchool?.country === 'PK' || currentSchool?.country === 'SA' || currentSchool?.country === 'AE' ? (
-                                    <>
-                                      <option value="30000">30,000</option>
-                                      <option value="40000">40,000</option>
-                                      <option value="50000">50,000</option>
-                                      <option value="80000">80,000</option>
-                                      <option value="100000">100,000</option>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <option value="2000">2,000</option>
-                                      <option value="3000">3,000</option>
-                                      <option value="4000">4,000</option>
-                                      <option value="5000">5,000</option>
-                                      <option value="8000">8,000</option>
-                                    </>
-                                  )}
-                                  <option value="Other">Other (Manual)</option>
-                                </select>
-                                {(!['30000', '40000', '50000', '80000', '100000', '2000', '3000', '4000', '5000', ''].includes(selectedDetailedTeacher.salary) && selectedDetailedTeacher.salary !== 'N/A') && (
-                                  <input 
-                                    type="number"
-                                    className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground" 
-                                    value={selectedDetailedTeacher.salary === ' ' ? '' : selectedDetailedTeacher.salary}
-                                    onChange={e => setSelectedDetailedTeacher({...selectedDetailedTeacher, salary: e.target.value})}
-                                    placeholder="Type amount"
-                                    autoFocus
-                                  />
-                                )}
-                              </div>
+                              {(() => {
+                                const salOpts = SALARIES_BY_COUNTRY[currentSchool?.country || 'DEFAULT'] || SALARIES_BY_COUNTRY['DEFAULT'];
+                                const isCustom = selectedDetailedTeacher.salary && !salOpts.includes(selectedDetailedTeacher.salary) && selectedDetailedTeacher.salary !== 'N/A';
+                                if (isCustom) {
+                                  return (
+                                    <div className="flex items-center gap-2">
+                                      <input 
+                                        className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground" 
+                                        value={selectedDetailedTeacher.salary === 'CUSTOM_MANUAL' ? '' : selectedDetailedTeacher.salary}
+                                        onChange={e => setSelectedDetailedTeacher({...selectedDetailedTeacher, salary: e.target.value})}
+                                        placeholder="Type manually..."
+                                      />
+                                      <button onClick={() => setSelectedDetailedTeacher({...selectedDetailedTeacher, salary: salOpts[0]})} className="text-[10px] px-2 py-1 rounded bg-primary/10 text-primary font-bold">List</button>
+                                    </div>
+                                  );
+                                }
+                                return (
+                                  <select 
+                                    className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground"
+                                    value={selectedDetailedTeacher.salary === 'N/A' ? '' : (selectedDetailedTeacher.salary || '')}
+                                    onChange={e => {
+                                      if (e.target.value === 'CUSTOM_MANUAL') setSelectedDetailedTeacher({...selectedDetailedTeacher, salary: 'CUSTOM_MANUAL'});
+                                      else setSelectedDetailedTeacher({...selectedDetailedTeacher, salary: e.target.value});
+                                    }}
+                                  >
+                                    <option value="" disabled>Select Salary</option>
+                                    {salOpts.map(s => <option key={s} value={s}>{formatCurrency(parseInt(s))}</option>)}
+                                    <option value="CUSTOM_MANUAL">Add Manually...</option>
+                                  </select>
+                                );
+                              })()}
                             </div>
                             <div className="p-3 bg-card border border-border rounded-xl">
                               <span className="block text-[9px] uppercase font-bold text-foreground/60 mb-1">Experience</span>
@@ -6186,6 +8299,111 @@ export const UnifiedDashboard: React.FC = () => {
                             </div>
                           </div>
 
+                          {isEditor && (
+                            <div className="space-y-2 p-3 bg-card border border-border rounded-xl">
+                              <span className="block text-[9px] uppercase font-bold text-foreground/60">Bank & Payment Details</span>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-foreground/80 font-medium mt-2">
+                                <div className="flex flex-col gap-1">
+                                  <span>Bank Name:</span>
+                                  {(() => {
+                                    const bankOpts = BANKS_BY_COUNTRY[currentSchool?.country || 'DEFAULT'] || BANKS_BY_COUNTRY['DEFAULT'];
+                                    const currentBank = selectedDetailedTeacher.bankDetails?.bankName || '';
+                                    const isCustom = currentBank && !bankOpts.includes(currentBank) && currentBank !== 'N/A';
+                                    if (isCustom) {
+                                      return (
+                                        <div className="flex items-center gap-2">
+                                          <input 
+                                            className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground" 
+                                            value={currentBank === 'CUSTOM_MANUAL' ? '' : currentBank}
+                                            onChange={e => setSelectedDetailedTeacher({...selectedDetailedTeacher, bankDetails: {...(selectedDetailedTeacher.bankDetails || {}), bankName: e.target.value}})}
+                                            placeholder="Type bank name..."
+                                          />
+                                          <button onClick={() => setSelectedDetailedTeacher({...selectedDetailedTeacher, bankDetails: {...(selectedDetailedTeacher.bankDetails || {}), bankName: bankOpts[0]}})} className="text-[10px] px-2 py-1 rounded bg-primary/10 text-primary font-bold">List</button>
+                                        </div>
+                                      );
+                                    }
+                                    return (
+                                      <select 
+                                        className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground"
+                                        value={currentBank === 'N/A' ? '' : (currentBank || '')}
+                                        onChange={e => {
+                                          if (e.target.value === 'CUSTOM_MANUAL') setSelectedDetailedTeacher({...selectedDetailedTeacher, bankDetails: {...(selectedDetailedTeacher.bankDetails || {}), bankName: 'CUSTOM_MANUAL'}});
+                                          else setSelectedDetailedTeacher({...selectedDetailedTeacher, bankDetails: {...(selectedDetailedTeacher.bankDetails || {}), bankName: e.target.value}});
+                                        }}
+                                      >
+                                        <option value="" disabled>Select Bank</option>
+                                        {bankOpts.map(b => <option key={b} value={b}>{b}</option>)}
+                                        <option value="CUSTOM_MANUAL">Add Manually...</option>
+                                      </select>
+                                    );
+                                  })()}
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                  <span>Account Title:</span>
+                                  <input 
+                                    className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground" 
+                                    value={selectedDetailedTeacher.bankDetails?.accountName || ''}
+                                    onChange={e => setSelectedDetailedTeacher({...selectedDetailedTeacher, bankDetails: {...(selectedDetailedTeacher.bankDetails || {}), accountName: e.target.value}})}
+                                    placeholder="e.g. John Doe"
+                                  />
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                  <span>Account No:</span>
+                                  <input 
+                                    className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground" 
+                                    value={selectedDetailedTeacher.bankDetails?.accountNo || ''}
+                                    onChange={e => setSelectedDetailedTeacher({...selectedDetailedTeacher, bankDetails: {...(selectedDetailedTeacher.bankDetails || {}), accountNo: e.target.value}})}
+                                    placeholder="e.g. 123456789"
+                                  />
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                  <span>Sort Code:</span>
+                                  <div className="flex gap-1.5 items-center">
+                                    <input 
+                                      id="edit-sort-1"
+                                      maxLength={2} 
+                                      className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground text-center" 
+                                      value={(selectedDetailedTeacher.bankDetails?.sortCode || '').split('-')[0] || ''} 
+                                      onChange={(e) => {
+                                        const val = e.target.value.replace(/\D/g, '');
+                                        const parts = (selectedDetailedTeacher.bankDetails?.sortCode || '').split('-');
+                                        setSelectedDetailedTeacher({...selectedDetailedTeacher, bankDetails: {...(selectedDetailedTeacher.bankDetails || {}), sortCode: `${val}-${parts[1] || ''}-${parts[2] || ''}`}});
+                                        if (val.length === 2) document.getElementById('edit-sort-2')?.focus();
+                                      }} 
+                                    />
+                                    <span className="text-foreground/40 font-bold">-</span>
+                                    <input 
+                                      id="edit-sort-2"
+                                      maxLength={2} 
+                                      className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground text-center" 
+                                      value={(selectedDetailedTeacher.bankDetails?.sortCode || '').split('-')[1] || ''} 
+                                      onChange={(e) => {
+                                        const val = e.target.value.replace(/\D/g, '');
+                                        const parts = (selectedDetailedTeacher.bankDetails?.sortCode || '').split('-');
+                                        setSelectedDetailedTeacher({...selectedDetailedTeacher, bankDetails: {...(selectedDetailedTeacher.bankDetails || {}), sortCode: `${parts[0] || ''}-${val}-${parts[2] || ''}`}});
+                                        if (val.length === 2) document.getElementById('edit-sort-3')?.focus();
+                                        else if (val.length === 0) document.getElementById('edit-sort-1')?.focus();
+                                      }} 
+                                    />
+                                    <span className="text-foreground/40 font-bold">-</span>
+                                    <input 
+                                      id="edit-sort-3"
+                                      maxLength={2} 
+                                      className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground text-center" 
+                                      value={(selectedDetailedTeacher.bankDetails?.sortCode || '').split('-')[2] || ''} 
+                                      onChange={(e) => {
+                                        const val = e.target.value.replace(/\D/g, '');
+                                        const parts = (selectedDetailedTeacher.bankDetails?.sortCode || '').split('-');
+                                        setSelectedDetailedTeacher({...selectedDetailedTeacher, bankDetails: {...(selectedDetailedTeacher.bankDetails || {}), sortCode: `${parts[0] || ''}-${parts[1] || ''}-${val}`}});
+                                        if (val.length === 0) document.getElementById('edit-sort-2')?.focus();
+                                      }} 
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
                           <div className="space-y-2 p-3 bg-card border border-border rounded-xl">
                             <span className="block text-[9px] uppercase font-bold text-foreground/60">Contact Details</span>
                             <div className="text-xs space-y-2 text-foreground/80 font-medium mt-2">
@@ -6200,16 +8418,17 @@ export const UnifiedDashboard: React.FC = () => {
                               </div>
                               <div className="flex flex-col gap-1">
                                 <span>Phone:</span>
-                                <input 
-                                  className="w-full bg-muted border border-border rounded text-xs p-1.5 text-foreground" 
-                                  value={
-                                    selectedDetailedTeacher.phone === 'N/A' || !selectedDetailedTeacher.phone 
-                                      ? (COUNTRY_CONFIGS[currentSchool?.country || 'PK']?.phonePrefix || '+92') + ' '
-                                      : selectedDetailedTeacher.phone
-                                  }
-                                  onChange={e => setSelectedDetailedTeacher({...selectedDetailedTeacher, phone: e.target.value})}
-                                  placeholder="e.g. +92 300 1234567"
-                                />
+                                <div className="flex">
+                                  <span className="flex items-center px-2 bg-muted/50 border border-border border-r-0 rounded-l text-xs text-foreground/70">
+                                    {getPhonePrefix()}
+                                  </span>
+                                  <input 
+                                    className="flex-1 bg-muted border border-border rounded-r text-xs p-1.5 text-foreground focus:outline-none" 
+                                    value={selectedDetailedTeacher.phone?.replace(getPhonePrefix(), '').trim() || ''}
+                                    onChange={e => setSelectedDetailedTeacher({...selectedDetailedTeacher, phone: `${getPhonePrefix()} ${e.target.value}`})}
+                                    placeholder="e.g. 300 1234567"
+                                  />
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -6754,17 +8973,41 @@ export const UnifiedDashboard: React.FC = () => {
                   <div className="p-5 bg-card border border-border rounded-xl flex flex-col md:flex-row gap-6">
                     <div className="flex-1 space-y-4">
                       <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Batch Payroll Generator</span>
-                      <p className="text-[11px] text-muted-foreground">Automatically compute base salaries, tax deductions, and unpaid leave penalties for all 142 employees.</p>
-                      <button 
-                        onClick={(e) => {
-                           const btn = e.currentTarget;
-                           btn.innerHTML = '<span class="animate-pulse">Computing Taxes & Deductions...</span>';
-                           setTimeout(() => btn.innerHTML = '✅ Payroll Processed & Payslips Generated', 2000);
-                        }}
-                        className="w-full px-4 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-colors"
-                      >
-                        Process June Payroll
-                      </button>
+                      <p className="text-[11px] text-muted-foreground">Automatically compute base salaries, tax deductions, and unpaid leave penalties for all {payrollData.employeeCount} employees.</p>
+                      {isPayrollProcessed && !showPayrollReport ? (
+                        <div className="flex gap-2">
+                          <button 
+                            className="flex-1 px-4 py-2 bg-emerald-500 text-white font-bold text-xs rounded-lg cursor-default"
+                          >
+                            ✅ Payroll Processed
+                          </button>
+                          <button 
+                            onClick={() => setShowPayrollReport(true)}
+                            className="px-4 py-2 bg-slate-800 text-white font-bold text-xs rounded-lg hover:bg-slate-700 transition-colors flex items-center gap-2"
+                          >
+                            👁️ View Report
+                          </button>
+                        </div>
+                      ) : (
+                        <button 
+                          disabled={isProcessingPayroll || isPayrollProcessed}
+                          onClick={() => {
+                             setIsProcessingPayroll(true);
+                             setTimeout(() => {
+                               setIsProcessingPayroll(false);
+                               setIsPayrollProcessed(true);
+                               setShowPayrollReport(true);
+                             }, 2000);
+                          }}
+                          className="w-full px-4 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-colors flex justify-center items-center gap-2 disabled:opacity-50"
+                        >
+                          {isProcessingPayroll ? (
+                            <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Computing...</>
+                          ) : (
+                            isPayrollProcessed ? '✅ Payroll Processed' : 'Process June Payroll'
+                          )}
+                        </button>
+                      )}
                     </div>
                     
                     <div className="w-px bg-border hidden md:block"></div>
@@ -8551,14 +10794,47 @@ export const UnifiedDashboard: React.FC = () => {
                       className="p-4 bg-muted/30 border border-border rounded-xl space-y-3"
                     >
                       <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Publish New Notice Board Alert</span>
-                      <input 
-                        type="text" 
-                        required 
-                        placeholder="Announcement Title"
-                        value={newNoticeTitle}
-                        onChange={(e) => setNewNoticeTitle(e.target.value)}
-                        className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
-                      />
+                      {(() => {
+                        const standardTitles = [
+                          'General Announcement',
+                          'Fee Submission Reminder',
+                          'Upcoming Exams',
+                          'Result Declaration',
+                          'Parent-Teacher Meeting',
+                          'Holidays / Vacations',
+                          'Event / Activity Notification'
+                        ];
+                        const isCustom = newNoticeTitle && !standardTitles.includes(newNoticeTitle);
+                        if (isCustom) {
+                          return (
+                            <div className="flex items-center gap-2">
+                              <input 
+                                className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" 
+                                value={newNoticeTitle === 'CUSTOM_MANUAL' ? '' : newNoticeTitle}
+                                onChange={e => setNewNoticeTitle(e.target.value)}
+                                placeholder="Type manual title..."
+                                required
+                              />
+                              <button type="button" onClick={() => setNewNoticeTitle(standardTitles[0])} className="text-[10px] px-2 py-1 rounded bg-primary/10 text-primary font-bold">List</button>
+                            </div>
+                          );
+                        }
+                        return (
+                          <select 
+                            className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
+                            value={newNoticeTitle}
+                            onChange={e => {
+                              if (e.target.value === 'CUSTOM_MANUAL') setNewNoticeTitle('CUSTOM_MANUAL');
+                              else setNewNoticeTitle(e.target.value);
+                            }}
+                            required
+                          >
+                            <option value="" disabled>Select Announcement Title</option>
+                            {standardTitles.map(t => <option key={t} value={t}>{t}</option>)}
+                            <option value="CUSTOM_MANUAL">Add Manually...</option>
+                          </select>
+                        );
+                      })()}
                       <textarea 
                         required 
                         rows={3}
@@ -11499,10 +13775,12 @@ export const UnifiedDashboard: React.FC = () => {
                   <form
                     onSubmit={(e) => {
                       e.preventDefault();
+                      const form = e.target as HTMLFormElement;
+                      const isPreview = form.dataset.preview === 'true';
+                      form.dataset.preview = 'false'; // reset for next submit
+                      
                       if (!newParentMessageSubject || !newParentMessageText) return;
                       
-                      const form = e.target as HTMLFormElement;
-                      const deliveryChannel = (form.elements.namedItem('deliveryChannel') as HTMLSelectElement).value;
                       const parentLabel = simulatedRole === 'parent' 
                         ? `Parent of ${activeStudentName} (${currentUser?.name || 'M. Shah'})` 
                         : `Broadcast (re: ${newParentMessageStudent || (students[0]?.name || '')})`;
@@ -11511,30 +13789,384 @@ export const UnifiedDashboard: React.FC = () => {
                         ? 'Sent to Tutors'
                         : 'Dispatched Successfully';
 
-                      setParentMessages(prev => [
-                        {
-                          id: `pm-${Date.now()}`,
-                          parent: parentLabel,
-                          date: new Date().toISOString().split('T')[0],
-                          subject: newParentMessageSubject,
-                          message: newParentMessageText,
-                          image: newParentMessageImage,
-                          channel: deliveryChannel,
-                          status: finalStatus
-                        },
-                        ...prev
-                      ]);
+                      if (newParentMessageChannel === 'WhatsApp Message') {
+                        const schoolName = currentSchool?.name || 'School Administration';
+                        const studentData = students.find(s => s.name === newParentMessageStudent) || students[0];
+                        const sName = studentData?.name || 'Student';
+                        const sClass = studentData?.className || 'N/A';
 
-                      alert(simulatedRole === 'parent'
-                        ? `Message successfully sent to school tutors via ${deliveryChannel}!`
-                        : `Broadcast message successfully sent to parent directory via ${deliveryChannel}!`
-                      );
+                        // WhatsApp image will be shared via navigator.share() API
+                        
+                        // Generate Premium Professional School Notice Card via Canvas
+                        const canvas = document.createElement('canvas');
+                        canvas.width = 700;
+                        const msgLines: string[] = [];
+                        const rawLines = newParentMessageText.split('\n');
+                        
+                        // Pre-calculate message height with line wrapping
+                        const tempCanvas = document.createElement('canvas');
+                        const tempCtx = tempCanvas.getContext('2d');
+                        if (tempCtx) tempCtx.font = '15px "Segoe UI", sans-serif';
+                        for (const rawLine of rawLines) {
+                          if (rawLine.trim() === '') { msgLines.push(''); continue; }
+                          const words = rawLine.split(' ');
+                          let currentLine = '';
+                          for (let n = 0; n < words.length; n++) {
+                            const testLine = currentLine + words[n] + ' ';
+                            if (tempCtx && tempCtx.measureText(testLine).width > 520 && n > 0) {
+                              msgLines.push(currentLine.trim());
+                              currentLine = words[n] + ' ';
+                            } else {
+                              currentLine = testLine;
+                            }
+                          }
+                          if (currentLine.trim()) msgLines.push(currentLine.trim());
+                        }
+                        const messageHeight = msgLines.length * 24;
 
-                      setNewParentMessageSubject('');
-                      setNewParentMessageText('');
-                      setNewParentMessageImage(null);
+                        canvas.height = 760 + messageHeight;
+                        const ctx = canvas.getContext('2d');
+                        const W = canvas.width;
+                        const H = canvas.height;
+                        if (ctx) {
+                          // ═══ BACKGROUND — Soft dark gradient ═══
+                          const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+                          bgGrad.addColorStop(0, '#0d1f15');
+                          bgGrad.addColorStop(0.3, '#0a1a10');
+                          bgGrad.addColorStop(0.7, '#081510');
+                          bgGrad.addColorStop(1, '#06120d');
+                          ctx.fillStyle = bgGrad;
+                          ctx.fillRect(0, 0, W, H);
+
+                          // ═══ OUTER BORDER — Elegant double-line gold ═══
+                          ctx.strokeStyle = '#c8a44e';
+                          ctx.lineWidth = 2.5;
+                          if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(12, 12, W - 24, H - 24, 18); ctx.stroke(); }
+                          else { ctx.strokeRect(12, 12, W - 24, H - 24); }
+                          ctx.strokeStyle = 'rgba(200, 164, 78, 0.25)';
+                          ctx.lineWidth = 1;
+                          if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(20, 20, W - 40, H - 40, 14); ctx.stroke(); }
+                          else { ctx.strokeRect(20, 20, W - 40, H - 40); }
+
+                          // ═══ TOP DECORATIVE CORNERS ═══
+                          const cornerLen = 35;
+                          ctx.strokeStyle = '#c8a44e';
+                          ctx.lineWidth = 3;
+                          // Top-left
+                          ctx.beginPath(); ctx.moveTo(30, 55); ctx.lineTo(30, 30); ctx.lineTo(30 + cornerLen, 30); ctx.stroke();
+                          // Top-right
+                          ctx.beginPath(); ctx.moveTo(W - 30, 55); ctx.lineTo(W - 30, 30); ctx.lineTo(W - 30 - cornerLen, 30); ctx.stroke();
+                          // Bottom-left
+                          ctx.beginPath(); ctx.moveTo(30, H - 55); ctx.lineTo(30, H - 30); ctx.lineTo(30 + cornerLen, H - 30); ctx.stroke();
+                          // Bottom-right
+                          ctx.beginPath(); ctx.moveTo(W - 30, H - 55); ctx.lineTo(W - 30, H - 30); ctx.lineTo(W - 30 - cornerLen, H - 30); ctx.stroke();
+
+                          // ═══ HEADER GRADIENT BAND ═══
+                          const headerH = 155;
+                          const hdrGrad = ctx.createLinearGradient(0, 50, 0, 50 + headerH);
+                          hdrGrad.addColorStop(0, 'rgba(34, 85, 52, 0.7)');
+                          hdrGrad.addColorStop(1, 'rgba(15, 45, 28, 0.3)');
+                          ctx.fillStyle = hdrGrad;
+                          if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(35, 50, W - 70, headerH, 12); ctx.fill(); }
+                          else { ctx.fillRect(35, 50, W - 70, headerH); }
+
+                          // Header subtle border
+                          ctx.strokeStyle = 'rgba(200, 164, 78, 0.3)';
+                          ctx.lineWidth = 1;
+                          if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(35, 50, W - 70, headerH, 12); ctx.stroke(); }
+                          else { ctx.strokeRect(35, 50, W - 70, headerH); }
+
+                          // ═══ SCHOOL CREST / LOGO ═══
+                          const crestX = W / 2;
+                          const crestY = 105;
+                          // Outer circle glow
+                          const glowGrad = ctx.createRadialGradient(crestX, crestY, 20, crestX, crestY, 42);
+                          glowGrad.addColorStop(0, 'rgba(200, 164, 78, 0.4)');
+                          glowGrad.addColorStop(1, 'rgba(200, 164, 78, 0)');
+                          ctx.fillStyle = glowGrad;
+                          ctx.beginPath(); ctx.arc(crestX, crestY, 42, 0, Math.PI * 2); ctx.fill();
+                          // Inner crest circle
+                          const crestGrad = ctx.createLinearGradient(crestX - 28, crestY - 28, crestX + 28, crestY + 28);
+                          crestGrad.addColorStop(0, '#c8a44e');
+                          crestGrad.addColorStop(0.5, '#d4b05a');
+                          crestGrad.addColorStop(1, '#a88a3e');
+                          ctx.fillStyle = crestGrad;
+                          ctx.beginPath(); ctx.arc(crestX, crestY, 30, 0, Math.PI * 2); ctx.fill();
+                          ctx.strokeStyle = '#f0d878';
+                          ctx.lineWidth = 1.5;
+                          ctx.beginPath(); ctx.arc(crestX, crestY, 30, 0, Math.PI * 2); ctx.stroke();
+                          // Emoji inside crest
+                          ctx.font = '30px sans-serif';
+                          ctx.textAlign = 'center';
+                          ctx.textBaseline = 'middle';
+                          ctx.fillText('🏫', crestX, crestY + 2);
+                          ctx.textBaseline = 'alphabetic';
+
+                          // ═══ SCHOOL NAME ═══
+                          ctx.fillStyle = '#ffffff';
+                          ctx.font = 'bold 26px "Times New Roman", Georgia, serif';
+                          ctx.textAlign = 'center';
+                          const displaySchoolName = schoolName.toUpperCase();
+                          ctx.fillText(displaySchoolName, crestX, 160);
+                          // Subtitle motto
+                          ctx.fillStyle = '#c8a44e';
+                          ctx.font = '11px "Segoe UI", sans-serif';
+                          ctx.fillText('E X C E L L E N C E   ·   I N T E G R I T Y   ·   K N O W L E D G E', crestX, 180);
+
+                          // ═══ GOLD DIVIDER with diamond ═══
+                          const divY1 = 225;
+                          ctx.strokeStyle = 'rgba(200, 164, 78, 0.5)';
+                          ctx.lineWidth = 1;
+                          ctx.beginPath(); ctx.moveTo(60, divY1); ctx.lineTo(W / 2 - 15, divY1); ctx.stroke();
+                          ctx.beginPath(); ctx.moveTo(W / 2 + 15, divY1); ctx.lineTo(W - 60, divY1); ctx.stroke();
+                          // Diamond shape in center
+                          ctx.fillStyle = '#c8a44e';
+                          ctx.beginPath();
+                          ctx.moveTo(crestX, divY1 - 6);
+                          ctx.lineTo(crestX + 6, divY1);
+                          ctx.lineTo(crestX, divY1 + 6);
+                          ctx.lineTo(crestX - 6, divY1);
+                          ctx.closePath();
+                          ctx.fill();
+
+                          // ═══ NOTICE TITLE BADGE ═══
+                          const badgeY = 250;
+                          const badgeW = 280;
+                          const badgeH = 34;
+                          const badgeX = (W - badgeW) / 2;
+                          const badgeGrad = ctx.createLinearGradient(badgeX, badgeY, badgeX + badgeW, badgeY);
+                          badgeGrad.addColorStop(0, 'rgba(200, 164, 78, 0.15)');
+                          badgeGrad.addColorStop(0.5, 'rgba(200, 164, 78, 0.25)');
+                          badgeGrad.addColorStop(1, 'rgba(200, 164, 78, 0.15)');
+                          ctx.fillStyle = badgeGrad;
+                          if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 17); ctx.fill(); }
+                          else { ctx.fillRect(badgeX, badgeY, badgeW, badgeH); }
+                          ctx.strokeStyle = 'rgba(200, 164, 78, 0.5)';
+                          ctx.lineWidth = 1;
+                          if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 17); ctx.stroke(); }
+                          else { ctx.strokeRect(badgeX, badgeY, badgeW, badgeH); }
+                          ctx.fillStyle = '#c8a44e';
+                          ctx.font = 'bold 13px "Segoe UI", sans-serif';
+                          ctx.textAlign = 'center';
+                          ctx.fillText('📌  ' + newParentMessageSubject.toUpperCase(), crestX, badgeY + 22);
+
+                          // ═══ STUDENT DETAILS CARD ═══
+                          const cardY = 305;
+                          const cardH = 100;
+                          // Card background
+                          const cardGrad = ctx.createLinearGradient(50, cardY, 50, cardY + cardH);
+                          cardGrad.addColorStop(0, 'rgba(20, 50, 30, 0.6)');
+                          cardGrad.addColorStop(1, 'rgba(15, 35, 22, 0.4)');
+                          ctx.fillStyle = cardGrad;
+                          if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(50, cardY, W - 100, cardH, 12); ctx.fill(); }
+                          else { ctx.fillRect(50, cardY, W - 100, cardH); }
+                          ctx.strokeStyle = 'rgba(200, 164, 78, 0.2)';
+                          ctx.lineWidth = 1;
+                          if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(50, cardY, W - 100, cardH, 12); ctx.stroke(); }
+                          else { ctx.strokeRect(50, cardY, W - 100, cardH); }
+
+                          // Left side — Student info
+                          ctx.textAlign = 'left';
+                          ctx.fillStyle = 'rgba(200, 164, 78, 0.7)';
+                          ctx.font = 'bold 9px "Segoe UI", sans-serif';
+                          ctx.fillText('S T U D E N T   D E T A I L S', 75, cardY + 22);
+
+                          ctx.fillStyle = '#ffffff';
+                          ctx.font = 'bold 18px "Times New Roman", Georgia, serif';
+                          ctx.fillText('👤  ' + sName, 75, cardY + 50);
+
+                          ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                          ctx.font = '13px "Segoe UI", sans-serif';
+                          ctx.fillText('📚 ' + sClass, 75, cardY + 75);
+
+                          // Right side — Date
+                          ctx.textAlign = 'right';
+                          ctx.fillStyle = 'rgba(200, 164, 78, 0.7)';
+                          ctx.font = 'bold 9px "Segoe UI", sans-serif';
+                          ctx.fillText('D A T E', W - 75, cardY + 22);
+
+                          const dateStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                          ctx.fillStyle = '#ffffff';
+                          ctx.font = 'bold 16px "Times New Roman", Georgia, serif';
+                          ctx.fillText('📅 ' + dateStr, W - 75, cardY + 50);
+
+                          const timeStr = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                          ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                          ctx.font = '13px "Segoe UI", sans-serif';
+                          ctx.fillText('🕒 ' + timeStr, W - 75, cardY + 75);
+
+                          // ═══ MESSAGE BODY ═══
+                          const msgBoxY = cardY + cardH + 25;
+                          const msgBoxH = messageHeight + 50;
+                          // Soft background for message area
+                          ctx.fillStyle = 'rgba(10, 25, 16, 0.5)';
+                          if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(50, msgBoxY, W - 100, msgBoxH, 12); ctx.fill(); }
+                          else { ctx.fillRect(50, msgBoxY, W - 100, msgBoxH); }
+                          // Left accent bar
+                          ctx.fillStyle = '#c8a44e';
+                          if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(50, msgBoxY, 4, msgBoxH, 2); ctx.fill(); }
+                          else { ctx.fillRect(50, msgBoxY, 4, msgBoxH); }
+
+                          // Render message lines
+                          ctx.textAlign = 'left';
+                          let textY = msgBoxY + 28;
+                          for (const mLine of msgLines) {
+                            if (mLine.trim() === '') { textY += 12; continue; }
+                            // Check if the line has bold markers (*)
+                            const isBoldLine = mLine.startsWith('*') || mLine.includes('*');
+                            const isEmojiDivider = mLine.startsWith('➖');
+                            if (isEmojiDivider) {
+                              ctx.fillStyle = 'rgba(200, 164, 78, 0.4)';
+                              ctx.font = '13px "Segoe UI", sans-serif';
+                              ctx.fillText(mLine, 72, textY);
+                            } else if (isBoldLine) {
+                              ctx.fillStyle = '#ffffff';
+                              ctx.font = 'bold 15px "Segoe UI", sans-serif';
+                              ctx.fillText(mLine.replace(/\*/g, ''), 72, textY);
+                            } else {
+                              ctx.fillStyle = 'rgba(226, 232, 240, 0.9)';
+                              ctx.font = '15px "Segoe UI", sans-serif';
+                              ctx.fillText(mLine, 72, textY);
+                            }
+                            textY += 24;
+                          }
+
+                          // ═══ BOTTOM DIVIDER with diamond ═══
+                          const divY2 = msgBoxY + msgBoxH + 30;
+                          ctx.strokeStyle = 'rgba(200, 164, 78, 0.5)';
+                          ctx.lineWidth = 1;
+                          ctx.beginPath(); ctx.moveTo(60, divY2); ctx.lineTo(W / 2 - 15, divY2); ctx.stroke();
+                          ctx.beginPath(); ctx.moveTo(W / 2 + 15, divY2); ctx.lineTo(W - 60, divY2); ctx.stroke();
+                          ctx.fillStyle = '#c8a44e';
+                          ctx.beginPath();
+                          ctx.moveTo(crestX, divY2 - 5);
+                          ctx.lineTo(crestX + 5, divY2);
+                          ctx.lineTo(crestX, divY2 + 5);
+                          ctx.lineTo(crestX - 5, divY2);
+                          ctx.closePath();
+                          ctx.fill();
+
+                          // ═══ FOOTER SECTION ═══
+                          const footerStartY = divY2 + 20;
+                          ctx.textAlign = 'center';
+
+                          ctx.fillStyle = '#ffffff';
+                          ctx.font = 'italic 14px "Times New Roman", Georgia, serif';
+                          ctx.fillText(`"Nurturing Minds, Shaping Futures"`, crestX, footerStartY);
+
+                          ctx.fillStyle = 'rgba(200, 164, 78, 0.8)';
+                          ctx.font = 'bold 12px "Segoe UI", sans-serif';
+                          ctx.fillText(displaySchoolName, crestX, footerStartY + 25);
+
+                          ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                          ctx.font = '10px "Segoe UI", sans-serif';
+                          ctx.fillText('This is an official automated communication from the school administration.', crestX, footerStartY + 48);
+                          ctx.fillText('Please do not reply to this image. Contact the school office for queries.', crestX, footerStartY + 63);
+                          
+                          // Convert canvas to data URL for preview
+                          const dataUrl = canvas.toDataURL('image/png');
+                          setWhatsappCardPreview(dataUrl);
+
+                          // If this was just a preview request, stop here
+                          if (isPreview) {
+                            return;
+                          }
+
+                          // Share image directly to WhatsApp via native Share API
+                          canvas.toBlob(async (blob) => {
+                            if (blob) {
+                              const fileName = `${schoolName.replace(/\s+/g, '_')}_${newParentMessageSubject.replace(/[\s/]+/g, '_')}_${sName.replace(/\s+/g, '_')}.png`;
+                              const cardFile = new File([blob], fileName, { type: 'image/png' });
+                              
+                              if (navigator.canShare && navigator.canShare({ files: [cardFile] })) {
+                                try {
+                                  // Step 1: Share image card
+                                  await navigator.share({
+                                    files: [cardFile],
+                                    title: `${schoolName} - ${newParentMessageSubject}`,
+                                    text: `${newParentMessageSubject} - ${sName} (${sClass})`
+                                  });
+                                  
+                                  // Step 2: If there are attachments, share them separately
+                                  if (attachmentFiles.length > 0) {
+                                    // Small delay so first share completes
+                                    await new Promise(r => setTimeout(r, 800));
+                                    if (navigator.canShare({ files: attachmentFiles })) {
+                                      await navigator.share({
+                                        files: attachmentFiles,
+                                        title: `${newParentMessageSubject} - Attachments`,
+                                        text: `Attachments for ${sName} (${sClass})`
+                                      });
+                                    } else {
+                                      // Some file types may not be shareable - download them instead
+                                      for (const f of attachmentFiles) {
+                                        const url = URL.createObjectURL(f);
+                                        const a = document.createElement('a');
+                                        a.href = url;
+                                        a.download = f.name;
+                                        document.body.appendChild(a);
+                                        a.click();
+                                        document.body.removeChild(a);
+                                        URL.revokeObjectURL(url);
+                                      }
+                                      alert(`📎 ${attachmentFiles.length} attachment(s) have been downloaded.\nPlease send them manually on WhatsApp along with the image.`);
+                                    }
+                                  }
+                                } catch (shareErr: any) {
+                                  if (shareErr.name !== 'AbortError') {
+                                    console.error('Share failed:', shareErr);
+                                  }
+                                }
+                              } else {
+                                alert('📱 Premium Image Card generated!\n\nYour image preview is shown below. Use the "💾 Save Image" button to download it, then share it on WhatsApp manually.');
+                              }
+                            }
+                          }, 'image/png');
+                        }
+                      }
+
+                      setIsSendingParentMessage(true);
+
+                      // Simulate network delay for API calls
+                      setTimeout(() => {
+                        setIsSendingParentMessage(false);
+                        
+                        setParentMessages(prev => [
+                          {
+                            id: `pm-${Date.now()}`,
+                            parent: parentLabel,
+                            date: new Date().toISOString().split('T')[0],
+                            subject: newParentMessageSubject,
+                            message: newParentMessageText,
+                            image: newParentMessageImage,
+                            channel: newParentMessageChannel,
+                            status: finalStatus
+                          },
+                          ...prev
+                        ]);
+
+                        if (newParentMessageChannel === 'App Inbox') {
+                          setUnreadInboxCount(prev => prev + 1);
+                        }
+
+                        const successMsg = simulatedRole === 'parent'
+                          ? `Message successfully sent to school tutors via ${newParentMessageChannel}!`
+                          : `Broadcast message successfully sent to parent directory via ${newParentMessageChannel}!`;
+                        
+                        setShowDeliveryPopup(successMsg);
+
+                        setNewParentMessageSubject('');
+                        setNewParentMessageText('');
+                        setNewParentMessageImage(null);
+                        setWhatsappCardPreview(null);
+                        setAttachmentFiles([]);
+                        
+                        // Auto-hide popup after 4 seconds
+                        setTimeout(() => setShowDeliveryPopup(null), 4000);
+                      }, 1200);
                     }}
-                    className="p-4 bg-muted/30 border border-border rounded-xl space-y-3"
+                    className="p-4 bg-muted/30 border border-border rounded-xl space-y-3 relative"
+                    data-parent-msg-form="true"
                   >
                     <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">
                       {simulatedRole === 'parent' ? 'Send message to Tutors / School' : 'Send message to parents'}
@@ -11542,7 +14174,29 @@ export const UnifiedDashboard: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                       <select 
                         value={newParentMessageStudent || (students[0]?.name || '')}
-                        onChange={(e) => setNewParentMessageStudent(e.target.value)}
+                        onChange={(e) => {
+                          const selectedStudent = e.target.value;
+                          setNewParentMessageStudent(selectedStudent);
+                          setWhatsappCardPreview(null);
+                          // Re-generate template if a subject is already selected
+                          if (newParentMessageSubject && newParentMessageSubject !== 'CUSTOM_MANUAL') {
+                            const sc = students.find(s => s.name === selectedStudent)?.className || 'N/A';
+                            const templates: Record<string, string> = {
+                              'Fee Reminder / Dues': `Dear Parent/Guardian,\n\nThis is a gentle reminder to please pay the outstanding school fees for your child ${selectedStudent} (${sc}) at your earliest convenience.\n\nIf you have already paid, please ignore this message. Thank you for your cooperation!`,
+                              'Academic Performance / Grades': `Dear Parent/Guardian,\n\nWe would like to inform you about the recent academic performance and grades of your child ${selectedStudent} (${sc}).\n\nPlease review the attached report and feel free to contact the school for any queries regarding your child's progress.`,
+                              'Student Attendance / Absence': `Dear Parent/Guardian,\n\nThis is to inform you regarding the attendance record of your child ${selectedStudent} (${sc}).\n\nRegular attendance is essential for academic success. Please ensure your child maintains consistent attendance. Contact us if there are any concerns.`,
+                              'Behavior / Conduct Issue': `Dear Parent/Guardian,\n\nWe wish to bring to your attention a matter related to the behavior/conduct of your child ${selectedStudent} (${sc}).\n\nWe believe in working together with parents to ensure the best environment for all students. We request a meeting to discuss this matter further.`,
+                              'Parent-Teacher Meeting (PTM)': `Dear Parent/Guardian,\n\nYou are cordially invited to attend the Parent-Teacher Meeting (PTM) for your child ${selectedStudent} (${sc}).\n\nYour presence is highly valued as it helps us work together for the betterment of your child's education. Please confirm your attendance.`,
+                              'School Event / Activity': `Dear Parent/Guardian,\n\nWe are pleased to inform you about an upcoming school event/activity in which your child ${selectedStudent} (${sc}) is invited to participate.\n\nPlease see the attached details and ensure your child is prepared. We look forward to your support!`,
+                              'Health / Medical Update': `Dear Parent/Guardian,\n\nThis is to inform you about a health/medical update regarding your child ${selectedStudent} (${sc}).\n\nPlease review the details and take any necessary action. Do not hesitate to contact the school nurse or administration for further information.`,
+                              'General Announcement': `Dear Parent/Guardian,\n\nWe would like to share an important announcement with you regarding ${selectedStudent} (${sc}).\n\nPlease read the details carefully and contact the school office if you have any questions.`,
+                              'Holiday / Vacation Notice': `Dear Parent/Guardian,\n\nThis is to notify you about the upcoming holiday/vacation schedule for your child ${selectedStudent} (${sc}).\n\nPlease make necessary arrangements. The school will resume as per the schedule mentioned. We wish you a pleasant break!`
+                            };
+                            if (templates[newParentMessageSubject]) {
+                              setNewParentMessageText(templates[newParentMessageSubject]);
+                            }
+                          }
+                        }}
                         className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold"
                       >
                         {simulatedRole === 'parent' ? (
@@ -11554,39 +14208,75 @@ export const UnifiedDashboard: React.FC = () => {
                           students.map(s => <option key={s.id} value={s.name}>Parent of {s.name}</option>)
                         )}
                       </select>
+                      {(() => {
+                        const standardParentOptions = [
+                          'Sick Leave / Absence Request', 'Fee Related Query', 'Academic Progress Query', 
+                          'Meeting Request with Teacher', 'Event / Activity Query'
+                        ];
+                        const standardSchoolOptions = [
+                          'Fee Reminder / Dues', 'Academic Performance / Grades', 'Student Attendance / Absence',
+                          'Behavior / Conduct Issue', 'Parent-Teacher Meeting (PTM)', 'School Event / Activity',
+                          'Health / Medical Update', 'General Announcement', 'Holiday / Vacation Notice'
+                        ];
+                        const activeOptions = simulatedRole === 'parent' ? standardParentOptions : standardSchoolOptions;
+                        
+                        const isCustom = newParentMessageSubject && !activeOptions.includes(newParentMessageSubject);
+                        
+                        if (isCustom) {
+                          return (
+                            <div className="flex items-center gap-2">
+                              <input 
+                                className="modern-input flex-1" 
+                                value={newParentMessageSubject === 'CUSTOM_MANUAL' ? '' : newParentMessageSubject}
+                                onChange={e => setNewParentMessageSubject(e.target.value)}
+                                placeholder="Type manual subject..."
+                                required
+                              />
+                              <button type="button" onClick={() => setNewParentMessageSubject(activeOptions[0])} className="text-[10px] px-2 py-1 rounded bg-primary/10 text-primary font-bold">List</button>
+                            </div>
+                          );
+                        }
+                        return (
+                          <select 
+                            required 
+                            value={newParentMessageSubject}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              if (val === 'CUSTOM_MANUAL') { setNewParentMessageSubject('CUSTOM_MANUAL'); return; }
+                              setNewParentMessageSubject(val);
+                              setWhatsappCardPreview(null);
+                              // Read student name directly from the student dropdown to avoid stale state
+                              const studentSelect = document.querySelector('[data-parent-msg-form] select') as HTMLSelectElement;
+                              const sn = studentSelect?.value || newParentMessageStudent || (students[0]?.name || 'Student Name');
+                              const sc = students.find(s => s.name === sn)?.className || 'N/A';
+                              const schName = currentSchool?.name || 'School Administration';
+                              const dateStr = new Date().toLocaleDateString('en-GB');
+                              const templates: Record<string, string> = {
+                                'Fee Reminder / Dues': `Dear Parent/Guardian,\n\nThis is a gentle reminder to please pay the outstanding school fees for your child ${sn} (${sc}) at your earliest convenience.\n\nIf you have already paid, please ignore this message. Thank you for your cooperation!`,
+                                'Academic Performance / Grades': `Dear Parent/Guardian,\n\nWe would like to inform you about the recent academic performance and grades of your child ${sn} (${sc}).\n\nPlease review the attached report and feel free to contact the school for any queries regarding your child's progress.`,
+                                'Student Attendance / Absence': `Dear Parent/Guardian,\n\nThis is to inform you regarding the attendance record of your child ${sn} (${sc}).\n\nRegular attendance is essential for academic success. Please ensure your child maintains consistent attendance. Contact us if there are any concerns.`,
+                                'Behavior / Conduct Issue': `Dear Parent/Guardian,\n\nWe wish to bring to your attention a matter related to the behavior/conduct of your child ${sn} (${sc}).\n\nWe believe in working together with parents to ensure the best environment for all students. We request a meeting to discuss this matter further.`,
+                                'Parent-Teacher Meeting (PTM)': `Dear Parent/Guardian,\n\nYou are cordially invited to attend the Parent-Teacher Meeting (PTM) for your child ${sn} (${sc}).\n\nYour presence is highly valued as it helps us work together for the betterment of your child's education. Please confirm your attendance.`,
+                                'School Event / Activity': `Dear Parent/Guardian,\n\nWe are pleased to inform you about an upcoming school event/activity in which your child ${sn} (${sc}) is invited to participate.\n\nPlease see the attached details and ensure your child is prepared. We look forward to your support!`,
+                                'Health / Medical Update': `Dear Parent/Guardian,\n\nThis is to inform you about a health/medical update regarding your child ${sn} (${sc}).\n\nPlease review the details and take any necessary action. Do not hesitate to contact the school nurse or administration for further information.`,
+                                'General Announcement': `Dear Parent/Guardian,\n\nWe would like to share an important announcement with you regarding ${sn} (${sc}).\n\nPlease read the details carefully and contact the school office if you have any questions.`,
+                                'Holiday / Vacation Notice': `Dear Parent/Guardian,\n\nThis is to notify you about the upcoming holiday/vacation schedule for your child ${sn} (${sc}).\n\nPlease make necessary arrangements. The school will resume as per the schedule mentioned. We wish you a pleasant break!`
+                              };
+                              if (templates[val]) {
+                                setNewParentMessageText(templates[val]);
+                              }
+                            }}
+                            className="modern-input"
+                          >
+                            <option value="" disabled>Select Subject</option>
+                            {activeOptions.map(o => <option key={o} value={o}>{o}</option>)}
+                            <option value="CUSTOM_MANUAL">Add Manually...</option>
+                          </select>
+                        );
+                      })()}
                       <select 
-                        required 
-                        value={newParentMessageSubject}
-                        onChange={(e) => setNewParentMessageSubject(e.target.value)}
-                        className="modern-input"
-                      >
-                        <option value="" disabled>Select Subject</option>
-                        {simulatedRole === 'parent' ? (
-                          <>
-                            <option value="Sick Leave / Absence Request">Sick Leave / Absence Request</option>
-                            <option value="Fee Related Query">Fee Related Query</option>
-                            <option value="Academic Progress Query">Academic Progress Query</option>
-                            <option value="Meeting Request with Teacher">Meeting Request with Teacher</option>
-                            <option value="Event / Activity Query">Event / Activity Query</option>
-                            <option value="Other">Other</option>
-                          </>
-                        ) : (
-                          <>
-                            <option value="Fee Reminder / Dues">Fee Reminder / Dues</option>
-                            <option value="Academic Performance / Grades">Academic Performance / Grades</option>
-                            <option value="Student Attendance / Absence">Student Attendance / Absence</option>
-                            <option value="Behavior / Conduct Issue">Behavior / Conduct Issue</option>
-                            <option value="Parent-Teacher Meeting (PTM)">Parent-Teacher Meeting (PTM)</option>
-                            <option value="School Event / Activity">School Event / Activity</option>
-                            <option value="Health / Medical Update">Health / Medical Update</option>
-                            <option value="General Announcement">General Announcement</option>
-                            <option value="Holiday / Vacation Notice">Holiday / Vacation Notice</option>
-                            <option value="Other">Other</option>
-                          </>
-                        )}
-                      </select>
-                      <select 
-                        name="deliveryChannel"
+                        value={newParentMessageChannel}
+                        onChange={(e) => setNewParentMessageChannel(e.target.value)}
                         className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold"
                       >
                         <option value="WhatsApp Message">📱 WhatsApp Message</option>
@@ -11595,67 +14285,264 @@ export const UnifiedDashboard: React.FC = () => {
                         <option value="Email">📧 Email</option>
                       </select>
                     </div>
-                    <textarea 
-                      required 
-                      rows={2}
-                      placeholder="Message content..."
-                      value={newParentMessageText}
-                      onChange={(e) => setNewParentMessageText(e.target.value)}
-                      className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground"
-                    />
+
+                    {/* Dynamic API Configuration Placeholders based on channel */}
+                    {newParentMessageChannel === 'WhatsApp Message' && (
+                      <div className="flex gap-2 p-3 rounded-lg bg-[#25D366]/10 border border-[#25D366]/30 mb-2">
+                        <div className="flex-1 space-y-1">
+                          <label className="text-[10px] font-bold text-foreground/60 uppercase">WhatsApp API Instance URL</label>
+                          <input type="text" value={whatsappApiUrl} onChange={e => setWhatsappApiUrl(e.target.value)} placeholder="https://api.whatsapp.com/v1/..." className="w-full bg-card border border-border rounded text-xs p-1.5 text-foreground" />
+                        </div>
+                        <div className="flex-1 space-y-1">
+                          <label className="text-[10px] font-bold text-foreground/60 uppercase">Access Token</label>
+                          <input type="password" value={whatsappToken} onChange={e => setWhatsappToken(e.target.value)} placeholder="Enter Access Token" className="w-full bg-card border border-border rounded text-xs p-1.5 text-foreground" />
+                        </div>
+                      </div>
+                    )}
+                    {newParentMessageChannel === 'Email' && (
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-3 rounded-lg bg-blue-500/10 border border-blue-500/30 mb-2">
+                        <div className="space-y-1"><label className="text-[9px] font-bold text-foreground/60 uppercase">SMTP Host</label><input type="text" value={smtpHost} onChange={e => setSmtpHost(e.target.value)} placeholder="smtp.gmail.com" className="w-full bg-card border border-border rounded text-xs p-1 text-foreground" /></div>
+                        <div className="space-y-1"><label className="text-[9px] font-bold text-foreground/60 uppercase">SMTP Port</label><input type="text" value={smtpPort} onChange={e => setSmtpPort(e.target.value)} placeholder="587" className="w-full bg-card border border-border rounded text-xs p-1 text-foreground" /></div>
+                        <div className="space-y-1"><label className="text-[9px] font-bold text-foreground/60 uppercase">Auth User</label><input type="text" value={smtpUser} onChange={e => setSmtpUser(e.target.value)} placeholder="admin@school.edu" className="w-full bg-card border border-border rounded text-xs p-1 text-foreground" /></div>
+                        <div className="space-y-1"><label className="text-[9px] font-bold text-foreground/60 uppercase">Auth Pass</label><input type="password" value={smtpPass} onChange={e => setSmtpPass(e.target.value)} placeholder="****" className="w-full bg-card border border-border rounded text-xs p-1 text-foreground" /></div>
+                      </div>
+                    )}
+                    {newParentMessageChannel === 'SMS Text Message' && (
+                      <div className="flex gap-2 p-3 rounded-lg bg-orange-500/10 border border-orange-500/30 mb-2">
+                        <div className="flex-1 space-y-1">
+                          <label className="text-[10px] font-bold text-foreground/60 uppercase">SMS Gateway Provider</label>
+                          <input type="text" value={smsGatewayProvider} onChange={e => setSmsGatewayProvider(e.target.value)} placeholder="Twilio / Nexmo" className="w-full bg-card border border-border rounded text-xs p-1.5 text-foreground" />
+                        </div>
+                        <div className="flex-1 space-y-1">
+                          <label className="text-[10px] font-bold text-foreground/60 uppercase">API Key</label>
+                          <input type="password" value={smsApiKey} onChange={e => setSmsApiKey(e.target.value)} placeholder="Enter API Key" className="w-full bg-card border border-border rounded text-xs p-1.5 text-foreground" />
+                        </div>
+                      </div>
+                    )}
+                    {/* Message Body — Editable */}
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[11px] font-bold text-foreground/75">✏️ Message Body <span className="text-foreground/40 font-normal">(auto-generated — you can edit freely)</span></label>
+                        {newParentMessageText && (
+                          <button type="button" onClick={() => setNewParentMessageText('')} className="text-[9px] text-red-400 hover:text-red-300 font-bold">Clear</button>
+                        )}
+                      </div>
+                      <textarea 
+                        required 
+                        rows={6}
+                        placeholder="Select a subject above to auto-generate a message, or type your own message here..."
+                        value={newParentMessageText}
+                        onChange={(e) => { setNewParentMessageText(e.target.value); setWhatsappCardPreview(null); }}
+                        className="w-full bg-card border border-border rounded-lg text-xs p-3 text-foreground leading-relaxed"
+                      />
+                    </div>
                     
-                    {/* Dynamic Image / Circular Attachment Input */}
+                    {/* Attachments Section — Multiple files: PDF, Images, Docs */}
                     <div className="flex flex-col gap-2">
-                      <label className="text-[11px] font-bold text-foreground/75">Attach Image / School Circular (Optional)</label>
-                      <div className="flex items-center gap-3">
+                      <label className="text-[11px] font-bold text-foreground/75">📎 Attachments <span className="text-foreground/40 font-normal">(PDF, Image, Invoice, Report — shared with the message)</span></label>
+                      <div className="flex items-center gap-3 flex-wrap">
                         <input 
                           type="file" 
-                          accept="image/*" 
-                          id="parent-msg-image-upload" 
-                          className="hidden" 
+                          accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" 
+                          id="parent-msg-file-upload" 
+                          className="hidden"
+                          multiple
                           onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              const reader = new FileReader();
-                              reader.onload = () => {
-                                setNewParentMessageImage(reader.result as string);
-                              };
-                              reader.readAsDataURL(file);
+                            const files = e.target.files;
+                            if (files && files.length > 0) {
+                              const newFiles = Array.from(files);
+                              setAttachmentFiles(prev => [...prev, ...newFiles]);
+                              // Also set image preview for the first image file
+                              const imgFile = newFiles.find(f => f.type.startsWith('image/'));
+                              if (imgFile) {
+                                const reader = new FileReader();
+                                reader.onload = () => setNewParentMessageImage(reader.result as string);
+                                reader.readAsDataURL(imgFile);
+                              }
                             }
+                            e.target.value = ''; // Reset so same file can be re-selected
                           }}
                         />
                         <button 
                           type="button" 
-                          onClick={() => document.getElementById('parent-msg-image-upload')?.click()}
+                          onClick={() => document.getElementById('parent-msg-file-upload')?.click()}
                           className="bg-card hover:bg-muted border border-border px-3 py-1.5 rounded-lg text-[10px] font-bold text-foreground/80 transition-all shadow-sm"
                         >
-                          📷 {newParentMessageImage ? 'Change Image' : 'Choose Image File'}
+                          📎 {attachmentFiles.length > 0 ? 'Add More Files' : 'Choose Files'}
                         </button>
-                        {newParentMessageImage && (
-                          <div className="flex items-center gap-2">
-                            <span className="text-[10px] text-emerald-400 font-bold">✓ Image Selected</span>
-                            <button 
-                              type="button" 
-                              onClick={() => setNewParentMessageImage(null)}
-                              className="text-foreground/50 hover:text-red-400 text-xs font-bold"
-                            >
-                              Remove
-                            </button>
-                          </div>
+                        {attachmentFiles.length > 0 && (
+                          <button 
+                            type="button" 
+                            onClick={() => { setAttachmentFiles([]); setNewParentMessageImage(null); }}
+                            className="text-[10px] text-red-400 hover:text-red-300 font-bold"
+                          >
+                            Remove All
+                          </button>
                         )}
                       </div>
-                      {newParentMessageImage && (
-                        <div className="mt-1.5 max-w-[120px] rounded-lg overflow-hidden border border-border shadow-sm">
-                          <img src={newParentMessageImage} alt="Attachment Preview" className="h-16 w-auto object-cover" />
+                      {attachmentFiles.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-1">
+                          {attachmentFiles.map((f, i) => (
+                            <div key={i} className="flex items-center gap-1.5 bg-card border border-border rounded-lg px-2.5 py-1.5 text-[10px] text-foreground/80">
+                              <span>{f.type.startsWith('image/') ? '🖼️' : f.name.endsWith('.pdf') ? '📄' : '📁'}</span>
+                              <span className="max-w-[120px] truncate font-semibold">{f.name}</span>
+                              <span className="text-foreground/40">({(f.size / 1024).toFixed(0)}KB)</span>
+                              <button type="button" onClick={() => setAttachmentFiles(prev => prev.filter((_, idx) => idx !== i))} className="text-red-400 hover:text-red-300 font-bold ml-1">✕</button>
+                            </div>
+                          ))}
                         </div>
                       )}
                     </div>
 
-                    <div className="flex justify-end pt-2">
-                      <button type="submit" className="px-6 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md">
-                        ✉️ Send Message
+                    {/* WhatsApp Card Preview Section */}
+                    {whatsappCardPreview && (
+                      <div className="mt-3 p-4 rounded-xl border-2 border-[#25D366]/40 bg-[#25D366]/5 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-[#25D366] uppercase tracking-wider flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-[#25D366] animate-pulse"></div>
+                            📱 WhatsApp Image Card — Preview
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setWhatsappCardPreview(null)}
+                            className="text-foreground/50 hover:text-red-400 text-xs font-bold px-2 py-1"
+                          >
+                            ✕ Close
+                          </button>
+                        </div>
+                        <div className="rounded-lg overflow-hidden border border-border/50 shadow-lg max-h-[400px] overflow-y-auto">
+                          <img src={whatsappCardPreview} alt="WhatsApp Card Preview" className="w-full object-contain" />
+                        </div>
+                        {attachmentFiles.length > 0 && (
+                          <div className="text-[10px] text-foreground/60 flex items-center gap-1.5 justify-center">
+                            📎 {attachmentFiles.length} attachment{attachmentFiles.length > 1 ? 's' : ''} will be shared along with this image
+                          </div>
+                        )}
+                    <div className="flex items-center justify-center gap-3 pt-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const a = document.createElement('a');
+                              a.href = whatsappCardPreview;
+                              a.download = `School_Notice_${new Date().toISOString().split('T')[0]}.png`;
+                              document.body.appendChild(a);
+                              a.click();
+                              document.body.removeChild(a);
+                              // Also download attachment files
+                              if (attachmentFiles.length > 0) {
+                                attachmentFiles.forEach(f => {
+                                  const url = URL.createObjectURL(f);
+                                  const link = document.createElement('a');
+                                  link.href = url;
+                                  link.download = f.name;
+                                  document.body.appendChild(link);
+                                  link.click();
+                                  document.body.removeChild(link);
+                                  URL.revokeObjectURL(url);
+                                });
+                              }
+                            }}
+                            className="px-4 py-2 bg-card hover:bg-muted border border-border text-foreground text-[11px] font-bold rounded-lg transition-all shadow-sm flex items-center gap-1.5"
+                          >
+                            💾 Save All Files
+                          </button>
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              try {
+                                // Step 1: Share image card
+                                const response = await fetch(whatsappCardPreview);
+                                const blob = await response.blob();
+                                const cardFile = new File([blob], `School_Notice_${new Date().toISOString().split('T')[0]}.png`, { type: 'image/png' });
+                                
+                                if (navigator.canShare && navigator.canShare({ files: [cardFile] })) {
+                                  await navigator.share({ files: [cardFile], title: 'School Notice', text: `${newParentMessageSubject}` });
+                                  
+                                  // Step 2: If attachments exist, share them separately
+                                  if (attachmentFiles.length > 0) {
+                                    await new Promise(r => setTimeout(r, 800));
+                                    if (navigator.canShare({ files: attachmentFiles })) {
+                                      await navigator.share({
+                                        files: attachmentFiles,
+                                        title: `${newParentMessageSubject} - Attachments`,
+                                        text: `Attached documents`
+                                      });
+                                    } else {
+                                      // Download files that can't be shared
+                                      for (const f of attachmentFiles) {
+                                        const url = URL.createObjectURL(f);
+                                        const a = document.createElement('a');
+                                        a.href = url;
+                                        a.download = f.name;
+                                        document.body.appendChild(a);
+                                        a.click();
+                                        document.body.removeChild(a);
+                                        URL.revokeObjectURL(url);
+                                      }
+                                      alert(`📎 ${attachmentFiles.length} attachment(s) downloaded.\nPlease send them manually on WhatsApp.`);
+                                    }
+                                  }
+                                } else {
+                                  alert('Your browser does not support direct file sharing.\nPlease use "Save All Files" and share manually.');
+                                }
+                              } catch (err: any) {
+                                if (err.name !== 'AbortError') console.error('Share error:', err);
+                              }
+                            }}
+                            className="px-4 py-2 bg-[#25D366] hover:bg-[#1da851] text-white text-[11px] font-bold rounded-lg transition-all shadow-md flex items-center gap-1.5"
+                          >
+                            📲 Share on WhatsApp
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Action Buttons: Preview + Send */}
+                    <div className="flex items-center justify-end gap-3 pt-2">
+                      {newParentMessageChannel === 'WhatsApp Message' && newParentMessageText && !whatsappCardPreview && (
+                        <button 
+                          type="button"
+                          onClick={() => {
+                            // Trigger the form's submit specifically for previewing
+                            const form = document.querySelector('[data-parent-msg-form]') as HTMLFormElement;
+                            if (form) {
+                              form.dataset.preview = 'true';
+                              form.requestSubmit();
+                            }
+                          }}
+                          className="px-5 py-2 bg-[#25D366]/20 hover:bg-[#25D366]/30 border border-[#25D366]/40 text-[#25D366] font-bold text-xs rounded-lg transition-all flex items-center gap-2"
+                        >
+                          👁️ Preview Card
+                        </button>
+                      )}
+                      {whatsappCardPreview && (
+                        <button 
+                          type="button"
+                          onClick={() => setWhatsappCardPreview(null)}
+                          className="px-4 py-2 bg-card hover:bg-muted border border-border text-foreground/70 font-bold text-xs rounded-lg transition-all flex items-center gap-2"
+                        >
+                          ✏️ Edit Message
+                        </button>
+                      )}
+                      <button disabled={isSendingParentMessage} type="submit" className="px-6 py-2 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white font-bold text-xs rounded-lg transition-all shadow-md flex items-center gap-2">
+                        {isSendingParentMessage ? (
+                          <><div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Sending...</>
+                        ) : (
+                          <>✉️ Send Message</>
+                        )}
                       </button>
                     </div>
+
+                    {/* Delivery Success Popup Overlay inside the form */}
+                    {showDeliveryPopup && (
+                      <div className="absolute inset-0 bg-card/80 backdrop-blur-sm z-10 flex items-center justify-center rounded-xl animate-fadeIn">
+                        <div className="bg-emerald-500 text-white p-4 rounded-xl shadow-lg flex flex-col items-center gap-2 text-center max-w-[80%] animate-slideUp">
+                          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-xl">✓</div>
+                          <span className="font-bold text-sm">Delivered Successfully</span>
+                          <span className="text-xs font-medium text-emerald-50">{showDeliveryPopup}</span>
+                        </div>
+                      </div>
+                    )}
                   </form>
 
                   {/* Messages Feed */}
@@ -11703,10 +14590,25 @@ export const UnifiedDashboard: React.FC = () => {
                     📬 Support queries received from the portal login page specifically for your domain.
                   </div>
                   <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-                    {Object.values(portal_queries).filter(q => q.target === currentSchool?.subdomain).length === 0 ? (
-                      <div className="text-center py-8 text-foreground/60 text-sm bg-card border border-border rounded-xl">No portal queries found for your domain.</div>
+                    {Object.values(portal_queries).filter(q => q.target === currentSchool?.domain).length === 0 ? (
+                      <div className="text-center py-8 bg-card border border-border rounded-xl flex flex-col items-center justify-center space-y-4">
+                        <p className="text-foreground/60 text-sm">No portal queries found for your domain.</p>
+                        <button
+                          onClick={async () => {
+                            if (!currentSchool) return;
+                            await useQueryStore.getState().sendQuery({
+                              target: currentSchool.domain,
+                              subject: 'Admission Inquiry - Class 5',
+                              message: 'Hello, I would like to know if admissions for Class 5 are still open for the upcoming session. Please let me know the required documents.',
+                            });
+                          }}
+                          className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold shadow-md hover:bg-primary/90 transition-all"
+                        >
+                          Load Sample Query
+                        </button>
+                      </div>
                     ) : (
-                      Object.values(portal_queries).filter(q => q.target === currentSchool?.subdomain).sort((a: any, b: any) => b.createdAt - a.createdAt).map((q: any) => (
+                      Object.values(portal_queries).filter(q => q.target === currentSchool?.domain).sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((q: any) => (
                         <div key={q.id} className="p-4 bg-card border border-border rounded-xl space-y-3">
                           <div className="flex justify-between items-start">
                             <div>
@@ -13542,70 +16444,525 @@ export const UnifiedDashboard: React.FC = () => {
               
               {activeFeature === 'Admission Funnel Analytics' && (
                 <div className="space-y-4 animate-fadeIn">
-                  <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
-                    📊 Track inquiries, applications, interviews, and final enrollments to optimize your admission process.
+                  <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed flex items-center justify-between">
+                    <span>📊 Track inquiries, applications, interviews, and final enrollments to optimize your admission process.</span>
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                   </div>
+                  
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div 
-                      className="p-4 bg-card border border-border rounded-xl text-center shadow-sm cursor-pointer hover:bg-muted/50 transition-colors"
-                      onClick={() => setActiveFunnelView('Inquiries')}
+                      className={`p-4 bg-card border ${activeFunnelView === 'inquiries' ? 'border-primary ring-1 ring-primary' : 'border-border'} rounded-xl text-center shadow-sm cursor-pointer hover:bg-muted/50 transition-all`}
+                      onClick={() => { setActiveFunnelView('inquiries'); setShowAddFunnel(false); setEditingFunnelId(null); }}
                     >
-                      <span className="block text-2xl font-black text-primary">145</span>
+                      <span className="block text-2xl font-black text-primary">{admissionFunnel.inquiries.length}</span>
                       <span className="text-[10px] font-bold uppercase text-foreground/60 tracking-wider">Inquiries</span>
                     </div>
                     <div 
-                      className="p-4 bg-card border border-border rounded-xl text-center shadow-sm cursor-pointer hover:bg-muted/50 transition-colors"
-                      onClick={() => setActiveFunnelView('Applications')}
+                      className={`p-4 bg-card border ${activeFunnelView === 'applications' ? 'border-amber-500 ring-1 ring-amber-500' : 'border-border'} rounded-xl text-center shadow-sm cursor-pointer hover:bg-muted/50 transition-all`}
+                      onClick={() => { setActiveFunnelView('applications'); setShowAddFunnel(false); setEditingFunnelId(null); }}
                     >
-                      <span className="block text-2xl font-black text-amber-500">89</span>
+                      <span className="block text-2xl font-black text-amber-500">{admissionFunnel.applications.length}</span>
                       <span className="text-[10px] font-bold uppercase text-foreground/60 tracking-wider">Applications</span>
                     </div>
                     <div 
-                      className="p-4 bg-card border border-border rounded-xl text-center shadow-sm cursor-pointer hover:bg-muted/50 transition-colors"
-                      onClick={() => setActiveFunnelView('Interviews')}
+                      className={`p-4 bg-card border ${activeFunnelView === 'interviews' ? 'border-blue-500 ring-1 ring-blue-500' : 'border-border'} rounded-xl text-center shadow-sm cursor-pointer hover:bg-muted/50 transition-all`}
+                      onClick={() => { setActiveFunnelView('interviews'); setShowAddFunnel(false); setEditingFunnelId(null); }}
                     >
-                      <span className="block text-2xl font-black text-blue-500">42</span>
+                      <span className="block text-2xl font-black text-blue-500">{admissionFunnel.interviews.length}</span>
                       <span className="text-[10px] font-bold uppercase text-foreground/60 tracking-wider">Interviews</span>
                     </div>
                     <div 
-                      className="p-4 bg-card border border-border rounded-xl text-center shadow-sm cursor-pointer hover:bg-muted/50 transition-colors"
-                      onClick={() => setActiveFunnelView('Enrolled')}
+                      className={`p-4 bg-card border ${activeFunnelView === 'enrolled' ? 'border-emerald-500 ring-1 ring-emerald-500' : 'border-border'} rounded-xl text-center shadow-sm cursor-pointer hover:bg-muted/50 transition-all`}
+                      onClick={() => { setActiveFunnelView('enrolled'); setShowAddFunnel(false); setEditingFunnelId(null); }}
                     >
-                      <span className="block text-2xl font-black text-emerald-500">38</span>
+                      <span className="block text-2xl font-black text-emerald-500">{admissionFunnel.enrolled.length}</span>
                       <span className="text-[10px] font-bold uppercase text-foreground/60 tracking-wider">Enrolled</span>
                     </div>
                   </div>
+
                   <div className="w-full bg-muted/30 rounded-full h-3 mt-4 overflow-hidden flex">
-                    <div className="bg-primary h-3" style={{width: '40%'}}></div>
-                    <div className="bg-amber-500 h-3" style={{width: '25%'}}></div>
-                    <div className="bg-blue-500 h-3" style={{width: '15%'}}></div>
-                    <div className="bg-emerald-500 h-3" style={{width: '20%'}}></div>
+                    {(() => {
+                      const total = admissionFunnel.inquiries.length + admissionFunnel.applications.length + admissionFunnel.interviews.length + admissionFunnel.enrolled.length;
+                      if (total === 0) return <div className="bg-muted h-3 w-full"></div>;
+                      return (
+                        <>
+                          <div className="bg-primary h-3 transition-all" style={{width: `${(admissionFunnel.inquiries.length / total) * 100}%`}}></div>
+                          <div className="bg-amber-500 h-3 transition-all" style={{width: `${(admissionFunnel.applications.length / total) * 100}%`}}></div>
+                          <div className="bg-blue-500 h-3 transition-all" style={{width: `${(admissionFunnel.interviews.length / total) * 100}%`}}></div>
+                          <div className="bg-emerald-500 h-3 transition-all" style={{width: `${(admissionFunnel.enrolled.length / total) * 100}%`}}></div>
+                        </>
+                      );
+                    })()}
                   </div>
-                  
+
                   {activeFunnelView && (
-                    <div className="mt-4 p-4 border border-border rounded-xl bg-card animate-fadeIn">
-                      <div className="flex justify-between items-center mb-4">
-                        <h4 className="text-sm font-bold text-foreground">Recent {activeFunnelView}</h4>
-                        <button onClick={() => setActiveFunnelView(null)} className="text-xs text-foreground/50 hover:text-foreground">Close</button>
+                    <div className="mt-4 animate-fadeIn space-y-4">
+                      <div className="flex justify-between items-center bg-card p-3 rounded-xl border border-border shadow-sm">
+                        <h4 className="text-sm font-bold text-foreground capitalize">Manage {activeFunnelView}</h4>
+                        <div className="flex gap-2">
+                          <button onClick={() => { setShowAddFunnel(!showAddFunnel); setEditingFunnelId(null); }} className="px-3 py-1.5 bg-primary text-white text-xs font-bold rounded hover:bg-primary/90 transition-colors">
+                            {showAddFunnel ? 'Cancel' : `+ Add Entry`}
+                          </button>
+                          <button onClick={() => { setActiveFunnelView(null); setShowAddFunnel(false); setEditingFunnelId(null); }} className="px-3 py-1.5 bg-muted text-foreground/80 hover:text-foreground text-xs font-bold rounded hover:bg-border transition-colors">Close</button>
+                        </div>
                       </div>
-                      <div className="space-y-2">
-                        {[1, 2, 3].map(i => (
-                          <div key={i} className="flex justify-between items-center p-2 hover:bg-muted/30 rounded-lg transition-colors border border-transparent hover:border-border">
-                            <div className="flex flex-col">
-                              <span className="text-xs font-bold text-foreground">Candidate #{Math.floor(Math.random() * 1000) + 1000}</span>
-                              <span className="text-[10px] text-foreground/60">Updated: Today</span>
-                            </div>
-                            <button className="px-3 py-1 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded text-[10px] font-bold transition-colors">
-                              View Details
-                            </button>
+
+                      {/* Add Form */}
+                      {showAddFunnel && (() => {
+                        // Aggregate candidates from all other funnel stages PLUS existing students to ensure the dropdown is always populated
+                        const funnelCandidates: any[] = [];
+                        Object.entries(admissionFunnel).forEach(([stage, list]) => {
+                          if (stage !== activeFunnelView) {
+                            funnelCandidates.push(...(list as any[]).map(c => ({ ...c, sourceStage: stage })));
+                          }
+                        });
+                        
+                        const existingStudents = students.map((s: any) => ({
+                            id: s.id, 
+                            name: s.name, 
+                            phone: s.contact || '+92 000 0000000', 
+                            email: s.email || `${s.name.split(' ')[0].toLowerCase()}@example.com`, 
+                            className: s.className, 
+                            sourceStage: 'existing student'
+                        }));
+
+                        const allAvailable = [...funnelCandidates, ...existingStudents];
+                        const availableCandidates = allAvailable.filter((c: any) => c.className === funnelAddState.className);
+
+                        return (
+                        <form onSubmit={(e) => {
+                          e.preventDefault();
+                          const f = e.target as any;
+                          const newEntry = {
+                            id: `${activeFunnelView?.slice(0, 3)}-${Date.now()}`,
+                            name: funnelAddState.isManual ? f.fName?.value : funnelAddState.name,
+                            phone: funnelAddState.isManual ? f.fPhone?.value : funnelAddState.phone,
+                            email: funnelAddState.isManual ? f.fEmail?.value : funnelAddState.email,
+                            className: funnelAddState.className,
+                            date: new Date().toISOString().split('T')[0],
+                            status: activeFunnelView === 'enrolled' ? 'Admitted' : activeFunnelView === 'interviews' ? 'Scheduled' : activeFunnelView === 'applications' ? 'Under Review' : 'Pending',
+                            ...(activeFunnelView === 'inquiries' && { 
+                                notes: f.fNotes?.value || '',
+                                source: f.fSource?.value || 'Walk-in',
+                                followUp: f.fFollowUp?.value || 'Warm'
+                            }),
+                            ...(activeFunnelView === 'applications' && { fatherName: f.fFatherName?.value || '', documents: 'Pending' }),
+                            ...(activeFunnelView === 'interviews' && { interviewer: f.fInterviewer?.value || '', score: f.fScore?.value || '', remarks: f.fRemarks?.value || '' }),
+                            ...(activeFunnelView === 'enrolled' && { rollNumber: f.fRollNumber?.value || '', admissionDate: f.fAdmissionDate?.value || new Date().toISOString().split('T')[0] }),
+                          };
+                          
+                          // If promoted from previous stage, remove from previous stage
+                          let newDbState = { ...admissionFunnel };
+                          newDbState[activeFunnelView as keyof typeof admissionFunnel] = [newEntry, ...newDbState[activeFunnelView as keyof typeof admissionFunnel]];
+                          
+                          if (!funnelAddState.isManual && funnelAddState.candidateId) {
+                            let sourceStage = '';
+                            Object.entries(admissionFunnel).forEach(([stage, list]) => {
+                                if (stage !== activeFunnelView && (list as any[]).find(c => c.id === funnelAddState.candidateId)) {
+                                    sourceStage = stage;
+                                }
+                            });
+                            if (sourceStage) {
+                                newDbState[sourceStage as keyof typeof admissionFunnel] = newDbState[sourceStage as keyof typeof admissionFunnel].filter((c: any) => c.id !== funnelAddState.candidateId);
+                            }
+                          }
+                          
+                          setAdmissionFunnel(newDbState);
+                          setShowAddFunnel(false);
+                          setFunnelAddState({ ...funnelAddState, candidateId: '', isManual: true, name: '', phone: '', email: '' });
+                        }} className="p-5 bg-card border border-border rounded-xl space-y-4 shadow-sm animate-fadeIn">
+                          
+                          <div className="flex items-center gap-3 pb-3 border-b border-border/50">
+                            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-sm font-bold">1</div>
+                            <h3 className="text-sm font-bold text-foreground">Select Candidate</h3>
                           </div>
-                        ))}
-                      </div>
-                      {activeFunnelView === 'Inquiries' && (
-                        <div className="mt-4 flex justify-end">
-                          <button className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary/90 transition-colors shadow-sm">+ Add Inquiry</button>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-semibold text-foreground/70">Class / Grade</label>
+                                <select required value={funnelAddState.className} onChange={(e) => {
+                                    setFunnelAddState({...funnelAddState, className: e.target.value, candidateId: '', isManual: true, name: '', phone: '', email: ''});
+                                }} className="w-full bg-muted/50 border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold focus:ring-1 focus:ring-primary focus:border-primary transition-all">
+                                    <option className="bg-slate-900 text-white" value="" disabled>Select a class...</option>
+                                    {filteredClasses.map((c: string) => <option className="bg-slate-900 text-white" key={c} value={c}>{c}</option>)}
+                                </select>
+                            </div>
+                            
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-semibold text-foreground/70">Candidate</label>
+                                <select 
+                                  disabled={!funnelAddState.className}
+                                  value={funnelAddState.isManual ? 'manual' : funnelAddState.candidateId} 
+                                  onChange={(e) => {
+                                      const val = e.target.value;
+                                      if (val === 'manual') {
+                                          setFunnelAddState({...funnelAddState, isManual: true, candidateId: '', name: '', phone: '', email: ''});
+                                      } else {
+                                          const cand = availableCandidates.find((c: any) => c.id === val);
+                                          if (cand) {
+                                              // Auto-submit immediately
+                                              const newEntry = {
+                                                id: `${activeFunnelView?.slice(0, 3)}-${Date.now()}`,
+                                                name: cand.name,
+                                                phone: cand.phone,
+                                                email: cand.email,
+                                                className: funnelAddState.className,
+                                                date: new Date().toISOString().split('T')[0],
+                                                status: activeFunnelView === 'enrolled' ? 'Admitted' : activeFunnelView === 'interviews' ? 'Scheduled' : activeFunnelView === 'applications' ? 'Under Review' : 'Pending',
+                                                ...(activeFunnelView === 'inquiries' && { 
+                                                    notes: '',
+                                                    source: 'Walk-in',
+                                                    followUp: 'Warm'
+                                                }),
+                                                ...(activeFunnelView === 'applications' && { fatherName: '', documents: 'Pending' }),
+                                                ...(activeFunnelView === 'interviews' && { interviewer: '', score: '', remarks: '' }),
+                                                ...(activeFunnelView === 'enrolled' && { rollNumber: '', admissionDate: new Date().toISOString().split('T')[0] }),
+                                              };
+                                              
+                                              let sourceStage = '';
+                                              Object.entries(admissionFunnel).forEach(([stage, list]) => {
+                                                  if (stage !== activeFunnelView && (list as any[]).find(c => c.id === val)) {
+                                                      sourceStage = stage;
+                                                  }
+                                              });
+
+                                              let newDbState = { ...admissionFunnel };
+                                              newDbState[activeFunnelView as keyof typeof admissionFunnel] = [newEntry, ...newDbState[activeFunnelView as keyof typeof admissionFunnel]];
+                                              
+                                              if (sourceStage) {
+                                                  newDbState[sourceStage as keyof typeof admissionFunnel] = newDbState[sourceStage as keyof typeof admissionFunnel].filter((c: any) => c.id !== val);
+                                              }
+                                              
+                                              setAdmissionFunnel(newDbState);
+                                              setShowAddFunnel(false);
+                                              setFunnelAddState({ ...funnelAddState, candidateId: '', isManual: true, name: '', phone: '', email: '' });
+                                          }
+                                      }
+                                  }} 
+                                  className="w-full bg-muted/50 border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold focus:ring-1 focus:ring-primary focus:border-primary transition-all">
+                                    <option className="bg-slate-900 text-white" value="manual">+ Add Manually (New)</option>
+                                    {availableCandidates.length > 0 && <optgroup className="bg-slate-800 text-white font-bold" label={`Available Candidates`}>
+                                        {availableCandidates.map((c: any) => <option className="bg-slate-900 text-white font-normal" key={c.id} value={c.id}>{c.name} ({c.id}) - {c.sourceStage}</option>)}
+                                    </optgroup>}
+                                </select>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3 pb-3 border-b border-border/50 pt-2">
+                            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-sm font-bold">2</div>
+                            <h3 className="text-sm font-bold text-foreground">Entry Details</h3>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Full Name</label>
+                                <input name="fName" required placeholder="Candidate Name" value={funnelAddState.name} onChange={e => setFunnelAddState({...funnelAddState, name: e.target.value})} disabled={!funnelAddState.isManual} className="w-full bg-muted/30 border border-border rounded-lg text-xs p-2.5 text-foreground disabled:opacity-50 focus:ring-1 focus:ring-primary focus:border-primary transition-all" />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Phone</label>
+                                <input name="fPhone" required placeholder="Phone Number" value={funnelAddState.phone} onChange={e => setFunnelAddState({...funnelAddState, phone: e.target.value})} disabled={!funnelAddState.isManual} className="w-full bg-muted/30 border border-border rounded-lg text-xs p-2.5 text-foreground disabled:opacity-50 focus:ring-1 focus:ring-primary focus:border-primary transition-all" />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Email Address</label>
+                                <input name="fEmail" type="email" placeholder="Email Address" value={funnelAddState.email} onChange={e => setFunnelAddState({...funnelAddState, email: e.target.value})} disabled={!funnelAddState.isManual} className="w-full bg-muted/30 border border-border rounded-lg text-xs p-2.5 text-foreground disabled:opacity-50 focus:ring-1 focus:ring-primary focus:border-primary transition-all" />
+                            </div>
+                            
+                            {activeFunnelView === 'inquiries' && (
+                                <>
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Inquiry Source</label>
+                                        <select name="fSource" className="w-full bg-muted/30 border border-border rounded-lg text-xs p-2.5 text-foreground">
+                                            <option className="bg-slate-900 text-white">Walk-in</option>
+                                            <option className="bg-slate-900 text-white">Social Media</option>
+                                            <option className="bg-slate-900 text-white">Reference</option>
+                                            <option className="bg-slate-900 text-white">Website</option>
+                                            <option className="bg-slate-900 text-white">Phone Call</option>
+                                        </select>
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Follow-up Priority</label>
+                                        <select name="fFollowUp" className="w-full bg-muted/30 border border-border rounded-lg text-xs p-2.5 text-foreground">
+                                            <option className="bg-slate-900 text-white">Hot (Immediate)</option>
+                                            <option className="bg-slate-900 text-white">Warm (This Week)</option>
+                                            <option className="bg-slate-900 text-white">Cold (Future)</option>
+                                        </select>
+                                    </div>
+                                    <div className="space-y-1.5 lg:col-span-3">
+                                        <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Additional Notes</label>
+                                        <input name="fNotes" placeholder="Inquiry Notes" className="w-full bg-muted/30 border border-border rounded-lg text-xs p-2.5 text-foreground" />
+                                    </div>
+                                </>
+                            )}
+                            
+                            {activeFunnelView === 'applications' && (
+                                <div className="space-y-1.5 lg:col-span-3">
+                                    <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Father's Name</label>
+                                    <input name="fFatherName" required placeholder="Father's Name" className="w-full bg-muted/30 border border-border rounded-lg text-xs p-2.5 text-foreground" />
+                                </div>
+                            )}
+                            
+                            {activeFunnelView === 'interviews' && (
+                              <>
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Interviewer</label>
+                                    <input name="fInterviewer" required placeholder="Interviewer Name" className="w-full bg-muted/30 border border-border rounded-lg text-xs p-2.5 text-foreground" />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Score (0-100)</label>
+                                    <input name="fScore" placeholder="Score" type="number" max="100" className="w-full bg-muted/30 border border-border rounded-lg text-xs p-2.5 text-foreground" />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Remarks</label>
+                                    <input name="fRemarks" placeholder="Remarks" className="w-full bg-muted/30 border border-border rounded-lg text-xs p-2.5 text-foreground" />
+                                </div>
+                              </>
+                            )}
+                            
+                            {activeFunnelView === 'enrolled' && (
+                              <>
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Roll Number</label>
+                                    <input name="fRollNumber" required placeholder="Roll Number" className="w-full bg-muted/30 border border-border rounded-lg text-xs p-2.5 text-foreground" />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Admission Date</label>
+                                    <input name="fAdmissionDate" type="date" required className="w-full bg-muted/30 border border-border rounded-lg text-xs p-2.5 text-foreground" defaultValue={new Date().toISOString().split('T')[0]} />
+                                </div>
+                              </>
+                            )}
+                          </div>
+                          <div className="flex justify-end pt-4 mt-2 border-t border-border/50">
+                            <button type="submit" className="px-5 py-2.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary/90 shadow transition-all">Save Entry</button>
+                          </div>
+                        </form>
+                      );})()}
+
+                      {/* Edit Form */}
+                      {editingFunnelId && editFunnelForm && (
+                        <div className="p-5 bg-card border-2 border-primary/20 rounded-xl space-y-4 shadow-md animate-fadeIn mb-4">
+                          <div className="flex items-center justify-between pb-3 border-b border-border/50">
+                              <h3 className="text-sm font-bold text-primary flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div> Edit Entry Details</h3>
+                              <button onClick={() => { setEditingFunnelId(null); }} className="text-xs font-bold text-foreground/50 hover:text-foreground">Close</button>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Full Name</label>
+                                <input value={editFunnelForm.name} onChange={e => setEditFunnelForm({...editFunnelForm, name: e.target.value})} placeholder="Candidate Name" className="w-full bg-muted/50 border border-border rounded-lg text-xs p-2.5 text-foreground focus:ring-1 focus:ring-primary transition-all" />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Phone Number</label>
+                                <input value={editFunnelForm.phone} onChange={e => setEditFunnelForm({...editFunnelForm, phone: e.target.value})} placeholder="Phone Number" className="w-full bg-muted/50 border border-border rounded-lg text-xs p-2.5 text-foreground focus:ring-1 focus:ring-primary transition-all" />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Email Address</label>
+                                <input value={editFunnelForm.email} onChange={e => setEditFunnelForm({...editFunnelForm, email: e.target.value})} placeholder="Email Address" className="w-full bg-muted/50 border border-border rounded-lg text-xs p-2.5 text-foreground focus:ring-1 focus:ring-primary transition-all" />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Class / Grade</label>
+                                <select value={editFunnelForm.className} onChange={e => setEditFunnelForm({...editFunnelForm, className: e.target.value})} className="w-full bg-muted/50 border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold focus:ring-1 focus:ring-primary transition-all">
+                                    <option className="bg-slate-900 text-white" value="" disabled>Select a class...</option>
+                                    {filteredClasses.map((c: string) => <option className="bg-slate-900 text-white" key={c} value={c}>{c}</option>)}
+                                </select>
+                            </div>
+                            
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Status</label>
+                                <select value={editFunnelForm.status} onChange={e => setEditFunnelForm({...editFunnelForm, status: e.target.value})} className="w-full bg-muted/50 border border-border rounded-lg text-xs p-2.5 text-foreground font-semibold focus:ring-1 focus:ring-primary transition-all">
+                                  {activeFunnelView === 'inquiries' && <><option className="bg-slate-900 text-white">Pending</option><option className="bg-slate-900 text-white">Responded</option><option className="bg-slate-900 text-white">Closed</option></>}
+                                  {activeFunnelView === 'applications' && <><option className="bg-slate-900 text-white">Under Review</option><option className="bg-slate-900 text-white">Accepted</option><option className="bg-slate-900 text-white">Rejected</option></>}
+                                  {activeFunnelView === 'interviews' && <><option className="bg-slate-900 text-white">Scheduled</option><option className="bg-slate-900 text-white">Completed</option><option className="bg-slate-900 text-white">No Show</option></>}
+                                  {activeFunnelView === 'enrolled' && <><option className="bg-slate-900 text-white">Admitted</option><option className="bg-slate-900 text-white">Withdrawn</option></>}
+                                </select>
+                            </div>
+
+                            {activeFunnelView === 'inquiries' && (
+                                <>
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Inquiry Source</label>
+                                        <select value={editFunnelForm.source || 'Walk-in'} onChange={e => setEditFunnelForm({...editFunnelForm, source: e.target.value})} className="w-full bg-muted/50 border border-border rounded-lg text-xs p-2.5 text-foreground focus:ring-1 focus:ring-primary transition-all">
+                                            <option>Walk-in</option>
+                                            <option>Social Media</option>
+                                            <option>Reference</option>
+                                            <option>Website</option>
+                                            <option>Phone Call</option>
+                                        </select>
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Follow-up Priority</label>
+                                        <select value={editFunnelForm.followUp || 'Warm'} onChange={e => setEditFunnelForm({...editFunnelForm, followUp: e.target.value})} className="w-full bg-muted/50 border border-border rounded-lg text-xs p-2.5 text-foreground focus:ring-1 focus:ring-primary transition-all">
+                                            <option>Hot (Immediate)</option>
+                                            <option>Warm (This Week)</option>
+                                            <option>Cold (Future)</option>
+                                        </select>
+                                    </div>
+                                    <div className="space-y-1.5 lg:col-span-2">
+                                        <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Additional Notes</label>
+                                        <input value={editFunnelForm.notes || ''} onChange={e => setEditFunnelForm({...editFunnelForm, notes: e.target.value})} placeholder="Inquiry Notes" className="w-full bg-muted/50 border border-border rounded-lg text-xs p-2.5 text-foreground focus:ring-1 focus:ring-primary transition-all" />
+                                    </div>
+                                </>
+                            )}
+                            
+                            {activeFunnelView === 'applications' && (
+                              <>
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Father's Name</label>
+                                    <input value={editFunnelForm.fatherName || ''} onChange={e => setEditFunnelForm({...editFunnelForm, fatherName: e.target.value})} placeholder="Father's Name" className="w-full bg-muted/50 border border-border rounded-lg text-xs p-2.5 text-foreground focus:ring-1 focus:ring-primary transition-all" />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Documents Status</label>
+                                    <select value={editFunnelForm.documents || ''} onChange={e => setEditFunnelForm({...editFunnelForm, documents: e.target.value})} className="w-full bg-muted/50 border border-border rounded-lg text-xs p-2.5 text-foreground focus:ring-1 focus:ring-primary transition-all">
+                                      <option className="bg-slate-900 text-white">Pending</option><option className="bg-slate-900 text-white">Submitted</option><option className="bg-slate-900 text-white">Verified</option>
+                                    </select>
+                                </div>
+                              </>
+                            )}
+                            
+                            {activeFunnelView === 'interviews' && (
+                              <>
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Interviewer Name</label>
+                                    <input value={editFunnelForm.interviewer || ''} onChange={e => setEditFunnelForm({...editFunnelForm, interviewer: e.target.value})} placeholder="Interviewer Name" className="w-full bg-muted/50 border border-border rounded-lg text-xs p-2.5 text-foreground focus:ring-1 focus:ring-primary transition-all" />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Score (0-100)</label>
+                                    <input value={editFunnelForm.score || ''} onChange={e => setEditFunnelForm({...editFunnelForm, score: e.target.value})} placeholder="Score" type="number" className="w-full bg-muted/50 border border-border rounded-lg text-xs p-2.5 text-foreground focus:ring-1 focus:ring-primary transition-all" />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Remarks</label>
+                                    <input value={editFunnelForm.remarks || ''} onChange={e => setEditFunnelForm({...editFunnelForm, remarks: e.target.value})} placeholder="Remarks" className="w-full bg-muted/50 border border-border rounded-lg text-xs p-2.5 text-foreground focus:ring-1 focus:ring-primary transition-all" />
+                                </div>
+                              </>
+                            )}
+
+                            {activeFunnelView === 'enrolled' && (
+                              <>
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Roll Number</label>
+                                    <input value={editFunnelForm.rollNumber || ''} onChange={e => setEditFunnelForm({...editFunnelForm, rollNumber: e.target.value})} placeholder="Roll Number" className="w-full bg-muted/50 border border-border rounded-lg text-xs p-2.5 text-foreground focus:ring-1 focus:ring-primary transition-all" />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold uppercase tracking-wider text-foreground/50">Admission Date</label>
+                                    <input value={editFunnelForm.admissionDate || ''} onChange={e => setEditFunnelForm({...editFunnelForm, admissionDate: e.target.value})} type="date" className="w-full bg-muted/50 border border-border rounded-lg text-xs p-2.5 text-foreground focus:ring-1 focus:ring-primary transition-all" />
+                                </div>
+                              </>
+                            )}
+                          </div>
+                          
+                          <div className="flex justify-end pt-4 mt-2 border-t border-border/50">
+                            <button onClick={() => {
+                              const newList = admissionFunnel[activeFunnelView as keyof typeof admissionFunnel].map((c: any) => c.id === editFunnelForm.id ? editFunnelForm : c);
+                              setAdmissionFunnel({ ...admissionFunnel, [activeFunnelView]: newList });
+                              setEditingFunnelId(null);
+                            }} className="px-5 py-2.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary/90 shadow transition-all">Save Changes</button>
+                          </div>
                         </div>
                       )}
+
+                      {/* Data Table */}
+                      <div className="border border-border rounded-xl bg-card overflow-hidden">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs min-w-[800px]">
+                          <thead>
+                            <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
+                              <th className="p-3">Candidate</th>
+                              <th className="p-3">Contact</th>
+                              <th className="p-3">Class</th>
+                              {activeFunnelView === 'inquiries' && <th className="p-3">Notes</th>}
+                              {activeFunnelView === 'applications' && <th className="p-3">Documents</th>}
+                              {activeFunnelView === 'interviews' && <th className="p-3">Score / Interviewer</th>}
+                              {activeFunnelView === 'enrolled' && <th className="p-3">Roll No.</th>}
+                              <th className="p-3">Status</th>
+                              <th className="p-3 text-right">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-border text-foreground/85">
+                            {admissionFunnel[activeFunnelView as keyof typeof admissionFunnel].map((item: any) => (
+                              <tr key={item.id} className="hover:bg-muted/10 transition-colors">
+                                <td className="p-3">
+                                  <div className="font-bold text-primary">{item.name}</div>
+                                  <div className="text-[10px] text-foreground/60">{item.date}</div>
+                                </td>
+                                <td className="p-3">
+                                  <div>{item.phone}</div>
+                                  <div className="text-[10px] text-foreground/60">{item.email}</div>
+                                </td>
+                                <td className="p-3 font-medium">{item.className}</td>
+                                
+                                {activeFunnelView === 'inquiries' && <td className="p-3 max-w-[150px] truncate text-foreground/70">{item.notes || '-'}</td>}
+                                {activeFunnelView === 'applications' && <td className="p-3 font-bold text-blue-500">{item.documents}</td>}
+                                {activeFunnelView === 'interviews' && <td className="p-3">
+                                  <div className="font-bold text-amber-500">{item.score ? `${item.score}/100` : '-'}</div>
+                                  <div className="text-[10px] text-foreground/60">{item.interviewer}</div>
+                                </td>}
+                                {activeFunnelView === 'enrolled' && <td className="p-3 font-mono font-bold">{item.rollNumber}</td>}
+                                
+                                <td className="p-3">
+                                  <span className={`px-2 py-0.5 rounded border font-bold text-[10px] ${
+                                    item.status.includes('Pending') || item.status.includes('Under') ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
+                                    item.status.includes('Scheduled') ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
+                                    item.status.includes('Admitted') || item.status.includes('Accepted') ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
+                                    'bg-muted text-foreground/70 border-border'
+                                  }`}>{item.status}</span>
+                                </td>
+                                
+                                <td className="p-3 text-right">
+                                  <div className="flex gap-1.5 justify-end">
+                                    {activeFunnelView === 'inquiries' && (
+                                      <button onClick={() => {
+                                        if (window.confirm(`Promote ${item.name} to Application stage?`)) {
+                                          const newApp = { ...item, id: `app-${Date.now()}`, fatherName: '', documents: 'Pending', status: 'Under Review' };
+                                          delete newApp.notes;
+                                          setAdmissionFunnel({
+                                            ...admissionFunnel,
+                                            inquiries: admissionFunnel.inquiries.filter((i: any) => i.id !== item.id),
+                                            applications: [newApp, ...admissionFunnel.applications]
+                                          });
+                                        }
+                                      }} className="px-2 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 text-[10px] font-bold rounded border border-amber-500/20" title="Promote to Application">→</button>
+                                    )}
+                                    {activeFunnelView === 'applications' && (
+                                      <button onClick={() => {
+                                        if (window.confirm(`Promote ${item.name} to Interview stage?`)) {
+                                          const newInt = { ...item, id: `int-${Date.now()}`, interviewer: '', score: '', remarks: '', status: 'Scheduled' };
+                                          delete newInt.fatherName; delete newInt.documents;
+                                          setAdmissionFunnel({
+                                            ...admissionFunnel,
+                                            applications: admissionFunnel.applications.filter((i: any) => i.id !== item.id),
+                                            interviews: [newInt, ...admissionFunnel.interviews]
+                                          });
+                                        }
+                                      }} className="px-2 py-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 text-[10px] font-bold rounded border border-blue-500/20" title="Promote to Interview">→</button>
+                                    )}
+                                    {activeFunnelView === 'interviews' && (
+                                      <button onClick={() => {
+                                        if (window.confirm(`Promote ${item.name} to Enrolled stage?`)) {
+                                          const newEnr = { ...item, id: `enr-${Date.now()}`, rollNumber: '', admissionDate: new Date().toISOString().split('T')[0], status: 'Admitted' };
+                                          delete newEnr.interviewer; delete newEnr.score; delete newEnr.remarks;
+                                          setAdmissionFunnel({
+                                            ...admissionFunnel,
+                                            interviews: admissionFunnel.interviews.filter((i: any) => i.id !== item.id),
+                                            enrolled: [newEnr, ...admissionFunnel.enrolled]
+                                          });
+                                        }
+                                      }} className="px-2 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 text-[10px] font-bold rounded border border-emerald-500/20" title="Enroll Candidate">→</button>
+                                    )}
+                                    <button onClick={() => { setEditingFunnelId(item.id); setEditFunnelForm({...item}); setShowAddFunnel(false); }} className="px-2 py-1 bg-primary/10 hover:bg-primary/20 text-primary text-[10px] font-bold rounded border border-primary/20">Edit</button>
+                                    <button onClick={() => { if(window.confirm('Delete this entry?')) {
+                                      setAdmissionFunnel({
+                                        ...admissionFunnel,
+                                        [activeFunnelView]: admissionFunnel[activeFunnelView as keyof typeof admissionFunnel].filter((i: any) => i.id !== item.id)
+                                      });
+                                    } }} className="px-2 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-[10px] font-bold rounded border border-rose-500/20">Delete</button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                            {admissionFunnel[activeFunnelView as keyof typeof admissionFunnel].length === 0 && (
+                              <tr><td colSpan={8} className="p-8 text-center text-foreground/40 text-xs">No records found.</td></tr>
+                            )}
+                          </tbody>
+                        </table></div>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -14163,27 +17520,36 @@ export const UnifiedDashboard: React.FC = () => {
                     {/* Class Setup */}
                     <div className="p-4 bg-card/50 border border-border rounded-xl space-y-4">
                       <h4 className="text-sm font-bold text-foreground">Manage Classes</h4>
-                      <div className="flex gap-2">
+                      <div className="flex w-full mb-2">
+                        <span className="flex items-center px-3 bg-muted/50 border border-border border-r-0 rounded-l-lg text-xs text-foreground/70 font-bold">
+                          Class
+                        </span>
                         <input
                           type="text"
-                          value={newSetupClass}
-                          onChange={(e) => setNewSetupClass(e.target.value)}
-                          placeholder="e.g. Class 11-A"
-                          className="flex-1 bg-muted/50 border border-border rounded-lg text-xs p-2 text-foreground"
+                          value={newSetupClass.replace(/^Class\s+/i, '')}
+                          onChange={(e) => setNewSetupClass(e.target.value.replace(/^Class\s+/i, ''))}
+                          placeholder="e.g. 11-A"
+                          className="flex-1 bg-card border border-border text-xs p-2 text-foreground focus:outline-none focus:border-primary transition-colors"
                         />
                         <button
                           onClick={() => {
-                            if (!newSetupClass) return;
-                            if (schoolClasses.includes(newSetupClass)) {
-                              alert('Class already exists!');
+                            const trimmed = newSetupClass.trim();
+                            if (!trimmed) return;
+                            
+                            const formattedClass = `Class ${trimmed}`;
+                            const isDuplicate = schoolClasses.some(c => c.toLowerCase() === formattedClass.toLowerCase());
+                            
+                            if (isDuplicate) {
+                              alert(`Oops! "${formattedClass}" already exists in the system.\nPlease enter a unique class name.`);
                               return;
                             }
-                            requestSecurityVerification(`Add new class: ${newSetupClass}`, () => {
-                              setSchoolClasses([...schoolClasses, newSetupClass]);
+                            
+                            requestSecurityVerification(`Add new class: ${formattedClass}`, () => {
+                              setSchoolClasses([...schoolClasses, formattedClass]);
                               setNewSetupClass('');
                             });
                           }}
-                          className="px-4 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md"
+                          className="px-4 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-r-lg transition-all shadow-md"
                         >
                           Add
                         </button>
@@ -14213,27 +17579,35 @@ export const UnifiedDashboard: React.FC = () => {
                     {/* Subject Setup */}
                     <div className="p-4 bg-card/50 border border-border rounded-xl space-y-4">
                       <h4 className="text-sm font-bold text-foreground">Manage Subjects</h4>
-                      <div className="flex gap-2">
+                      <div className="flex w-full mb-2">
                         <input
                           type="text"
                           value={newSetupSubject}
                           onChange={(e) => setNewSetupSubject(e.target.value)}
                           placeholder="e.g. Advanced AI"
-                          className="flex-1 bg-muted/50 border border-border rounded-lg text-xs p-2 text-foreground"
+                          className="flex-1 bg-card border border-border rounded-l-lg text-xs p-2 text-foreground focus:outline-none focus:border-primary transition-colors"
                         />
                         <button
                           onClick={() => {
-                            if (!newSetupSubject) return;
-                            if (schoolSubjects.includes(newSetupSubject)) {
-                              alert('Subject already exists!');
+                            const trimmed = newSetupSubject.trim();
+                            if (!trimmed) return;
+                            
+                            // Capitalize each word for consistent formatting
+                            const formattedSubject = trimmed.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+                            
+                            const isDuplicate = schoolSubjects.some(s => s.toLowerCase() === formattedSubject.toLowerCase());
+                            
+                            if (isDuplicate) {
+                              alert(`Oops! The subject "${formattedSubject}" already exists in the system.\nPlease enter a unique subject name.`);
                               return;
                             }
-                            requestSecurityVerification(`Add new subject: ${newSetupSubject}`, () => {
-                              setSchoolSubjects([...schoolSubjects, newSetupSubject]);
+                            
+                            requestSecurityVerification(`Add new subject: ${formattedSubject}`, () => {
+                              setSchoolSubjects([...schoolSubjects, formattedSubject]);
                               setNewSetupSubject('');
                             });
                           }}
-                          className="px-4 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md"
+                          className="px-4 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-r-lg transition-all shadow-md"
                         >
                           Add
                         </button>
@@ -14333,6 +17707,231 @@ export const UnifiedDashboard: React.FC = () => {
               </button>
             </div>
           </form>
+        </div>
+      )}
+
+      {/* PAYROLL REPORT OVERLAY MODAL */}
+      {showPayrollReport && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden animate-slideUp">
+            <div className="flex items-center justify-between p-4 border-b border-border bg-muted/30">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-500">
+                  <span className="text-xl">💰</span>
+                </div>
+                <div>
+                  <h3 className="font-bold text-foreground text-sm sm:text-base">Batch Payroll Processing Report</h3>
+                  <p className="text-[10px] text-muted-foreground">Generated on {new Date().toLocaleDateString()} | {payrollData.employeeCount} Employees Processed</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowPayrollReport(false)}
+                className="p-2 hover:bg-muted rounded-full transition-colors text-foreground"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-4 sm:p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="p-4 rounded-xl border border-border bg-card shadow-sm flex flex-col gap-1">
+                  <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Total Gross Pay</span>
+                  <strong className="text-lg text-foreground font-black">Rs {payrollData.totalGross.toLocaleString()}</strong>
+                </div>
+                <div className="p-4 rounded-xl border border-rose-500/30 bg-rose-500/5 shadow-sm flex flex-col gap-1">
+                  <span className="text-[10px] text-rose-500 uppercase font-bold tracking-wider">Tax & Deductions</span>
+                  <strong className="text-lg text-rose-600 font-black">- Rs {payrollData.totalDeductions.toLocaleString()}</strong>
+                </div>
+                <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/5 shadow-sm flex flex-col gap-1">
+                  <span className="text-[10px] text-emerald-500 uppercase font-bold tracking-wider">Total Net Transfer</span>
+                  <strong className="text-lg text-emerald-600 font-black">Rs {payrollData.totalNet.toLocaleString()}</strong>
+                </div>
+                <div className="p-4 rounded-xl border border-indigo-500/30 bg-indigo-500/5 shadow-sm flex flex-col gap-1">
+                  <span className="text-[10px] text-indigo-500 uppercase font-bold tracking-wider">Generated Payslips</span>
+                  <strong className="text-lg text-indigo-600 font-black">{payrollData.employeeCount} Documents</strong>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-xs font-bold text-foreground/80 uppercase tracking-wider mb-3">Recent Payroll Entries</h4>
+                <div className="border border-border rounded-lg overflow-hidden bg-card/50">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-muted/50 border-b border-border">
+                      <tr>
+                        <th className="p-3 font-semibold text-foreground/80">Employee</th>
+                        <th className="p-3 font-semibold text-foreground/80">Role / Dept</th>
+                        <th className="p-3 font-semibold text-foreground/80 text-right">Gross Salary</th>
+                        <th className="p-3 font-semibold text-foreground/80 text-right">Deductions</th>
+                        <th className="p-3 font-semibold text-foreground/80 text-right">Net Pay</th>
+                        <th className="p-3 font-semibold text-foreground/80 text-center">Payslip</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {payrollData.entries.map((emp: any, i: number) => (
+                        <tr key={i} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
+                          <td className="p-3 font-bold text-primary">{emp.name}</td>
+                          <td className="p-3 text-muted-foreground">{emp.role}</td>
+                          <td className="p-3 text-right font-medium text-foreground">Rs {emp.gross.toLocaleString()}</td>
+                          <td className="p-3 text-right font-semibold text-rose-500">- Rs {emp.deductions.toLocaleString()}</td>
+                          <td className="p-3 text-right font-black text-emerald-500">Rs {emp.net.toLocaleString()}</td>
+                          <td className="p-3 text-center">
+                            <button 
+                              onClick={() => setSelectedPayslip(emp)}
+                              className="px-2 py-1 bg-indigo-500/10 text-indigo-500 hover:bg-indigo-500 hover:text-white transition-colors rounded text-[10px] font-bold"
+                            >
+                              PDF
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            
+            <div className="p-4 border-t border-border bg-muted/20 flex justify-end gap-3">
+              <button 
+                onClick={() => setShowPayrollReport(false)}
+                className="px-4 py-2 bg-card border border-border hover:bg-muted text-foreground font-bold text-xs rounded-lg transition-colors"
+              >
+                Close Report
+              </button>
+              <button 
+                onClick={() => {
+                   alert('Sending payslips to all employee emails & portal accounts...');
+                   setShowPayrollReport(false);
+                }}
+                className="px-4 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-colors shadow-md"
+              >
+                Send All Payslips Now
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* INDIVIDUAL PAYSLIP MODAL (Printable) */}
+      {selectedPayslip && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-background/90 backdrop-blur-md animate-fadeIn">
+          <div className="bg-white border border-border rounded-xl shadow-2xl w-full max-w-2xl flex flex-col overflow-hidden animate-slideUp max-h-[90vh]">
+            {/* NO PRINT CONTROLS */}
+            <div className="no-print flex items-center justify-between p-3 border-b border-border bg-muted/50">
+              <span className="text-xs font-bold text-foreground">Payslip Preview</span>
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={async () => {
+                    try {
+                      const html2pdf = (await import('html2pdf.js')).default;
+                      const element = document.getElementById('printable-payslip');
+                      if (!element) return;
+                      
+                      const opt = {
+                        margin:       [0.5, 0.5, 0.5, 0.5],
+                        filename:     `Payslip_${selectedPayslip.name.replace(/\s+/g, '_')}.pdf`,
+                        image:        { type: 'jpeg', quality: 0.98 },
+                        html2canvas:  { scale: 2, useCORS: true, windowWidth: 800 },
+                        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+                      };
+                      
+                      html2pdf().set(opt).from(element).save();
+                    } catch (e) {
+                      console.error('Failed to generate PDF:', e);
+                    }
+                  }}
+                  className="px-3 py-1.5 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-bold text-xs rounded transition-colors flex items-center gap-2"
+                >
+                  📄 Download PDF
+                </button>
+                <button 
+                  onClick={() => window.print()}
+                  className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded transition-colors flex items-center gap-2 shadow-sm"
+                >
+                  🖨️ Print
+                </button>
+                <button 
+                  onClick={() => setSelectedPayslip(null)}
+                  className="p-1.5 hover:bg-red-500/10 text-red-500 rounded transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* PRINTABLE AREA */}
+            <div className="p-8 text-black bg-white flex-1 overflow-y-auto custom-scrollbar" id="printable-payslip">
+              <div className="flex items-center justify-between border-b-2 border-slate-200 pb-6 mb-6">
+                <div className="flex items-center gap-4">
+                  {currentSchool?.logoUrl ? (
+                    <img src={currentSchool.logoUrl} alt="School Logo" className="w-16 h-16 object-contain" />
+                  ) : (
+                    <div className="w-16 h-16 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-100">
+                      <span className="text-2xl font-black">{currentSchool?.schoolName?.charAt(0) || 'S'}</span>
+                    </div>
+                  )}
+                  <div>
+                    <h1 className="text-2xl font-black text-slate-800 uppercase tracking-wider">{currentSchool?.schoolName || 'Academic Hub Board'}</h1>
+                    <p className="text-sm text-slate-500">{currentSchool?.city ? `${currentSchool.city}, ${currentSchool.country}` : '123 Education Lane, Learning City'}</p>
+                    <p className="text-sm text-slate-500">Email: hr@{currentSchool?.domain || 'school'}.edu | Phone: {useSchoolStore.getState().getPhonePrefix()} {currentSchool?.schoolName?.length || 5}{currentSchool?.city?.length || 4}{currentSchool?.domain?.length || 6} 4201</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <h2 className="text-xl font-bold text-indigo-600 uppercase tracking-widest">Payslip</h2>
+                  <p className="text-xs font-bold text-slate-400 uppercase mt-1">Pay Period: June 2026</p>
+                  <p className="text-xs font-bold text-slate-400 uppercase">Date: {new Date().toLocaleDateString()}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-8 mb-8">
+                <div>
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Employee Details</h3>
+                  <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 h-full">
+                    <p className="text-sm mb-1"><span className="font-bold text-slate-600">Name:</span> <span className="font-semibold text-slate-900">{selectedPayslip.name}</span></p>
+                    <p className="text-sm mb-1"><span className="font-bold text-slate-600">Role / Dept:</span> <span className="font-semibold text-slate-900">{selectedPayslip.role}</span></p>
+                    <p className="text-sm"><span className="font-bold text-slate-600">Employee ID:</span> <span className="font-semibold text-slate-900">EMP-{Math.floor(Math.random() * 9000) + 1000}</span></p>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Payment Details</h3>
+                  <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 h-full">
+                    <p className="text-sm mb-1"><span className="font-bold text-slate-600">Bank Name:</span> <span className="font-semibold text-slate-900">{selectedPayslip.bankDetails?.bankName || 'Standard Bank'}</span></p>
+                    <p className="text-sm mb-1"><span className="font-bold text-slate-600">Account No:</span> <span className="font-semibold text-slate-900">{selectedPayslip.bankDetails?.accountNo ? `**** **** ${selectedPayslip.bankDetails.accountNo.slice(-4)}` : '**** **** 4201'}</span></p>
+                    <p className="text-sm"><span className="font-bold text-slate-600">Method:</span> <span className="font-semibold text-slate-900">Direct Deposit</span></p>
+                  </div>
+                </div>
+              </div>
+
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Earnings & Deductions</h3>
+              <table className="w-full text-left border-collapse mb-8">
+                <thead>
+                  <tr className="bg-slate-100 border-y border-slate-200">
+                    <th className="py-2 px-4 text-xs font-bold text-slate-600 uppercase w-1/2">Description</th>
+                    <th className="py-2 px-4 text-xs font-bold text-slate-600 uppercase text-right">Amount (Rs)</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  <tr>
+                    <td className="py-3 px-4 text-sm font-semibold text-slate-800">Basic Salary</td>
+                    <td className="py-3 px-4 text-sm font-bold text-slate-800 text-right">{selectedPayslip.gross.toLocaleString()}</td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 px-4 text-sm font-semibold text-rose-600">Tax & Absences Deductions</td>
+                    <td className="py-3 px-4 text-sm font-bold text-rose-600 text-right">- {selectedPayslip.deductions.toLocaleString()}</td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr className="bg-indigo-50 border-y-2 border-indigo-200">
+                    <td className="py-4 px-4 text-sm font-black text-indigo-900 uppercase tracking-wider">Net Transfer Amount</td>
+                    <td className="py-4 px-4 text-lg font-black text-indigo-600 text-right">Rs {selectedPayslip.net.toLocaleString()}</td>
+                  </tr>
+                </tfoot>
+              </table>
+
+              <div className="mt-16 pt-8 border-t border-slate-200">
+                <p className="text-center text-[10px] text-slate-400 italic">This is a system generated document and does not require a physical signature if delivered electronically through the official portal.</p>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

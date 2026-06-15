@@ -33,21 +33,70 @@ export const useQueryStore = create<QueryState>((set, get) => ({
     
     // Subscribe to portal_queries node in Firebase
     setupRealtimeSync('portal_queries', (data) => {
+      let queriesMap: Record<string, PortalQuery> = {};
+      
       if (data && typeof data === 'object') {
-        // Data might be an object map (id -> query) or an array
-        let queriesArray: PortalQuery[] = [];
         if (Array.isArray(data)) {
-          queriesArray = data.filter(Boolean);
+          data.filter(Boolean).forEach(q => { queriesMap[q.id] = q; });
         } else {
-          queriesArray = Object.values(data);
+          queriesMap = { ...data };
         }
-        
-        // Sort by createdAt descending
-        queriesArray.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        set({ queries: queriesArray, loading: false });
-      } else {
-        set({ queries: [], loading: false });
       }
+      
+      // Clean up any old demo queries that might be stuck in local storage
+      let cleaned = false;
+      for (const key of Object.keys(queriesMap)) {
+        if (queriesMap[key].subject?.includes('Demo:')) {
+          delete queriesMap[key];
+          cleaned = true;
+        }
+      }
+      
+      // Force inject demo queries if they are missing
+      let injected = false;
+      const demoQueries: Record<string, PortalQuery> = {
+        'query-demo-1': {
+          id: 'query-demo-1',
+          target: 'school-a',
+          subject: 'Admission Process Query',
+          message: 'Hello, I would like to know if admissions for Class 5 are still open for the upcoming session.',
+          status: 'open',
+          createdAt: new Date().toISOString()
+        },
+        'query-demo-2': {
+          id: 'query-demo-2',
+          target: 'school-b',
+          subject: 'Fee Structure Inquiry',
+          message: 'Could you please share the updated fee structure for the secondary section?',
+          status: 'open',
+          createdAt: new Date(Date.now() - 86400000).toISOString()
+        },
+        'query-demo-3': {
+          id: 'query-demo-3',
+          target: 'superadmin',
+          subject: 'System Integration Support',
+          message: 'We need help integrating the biometric attendance system.',
+          status: 'open',
+          createdAt: new Date(Date.now() - 172800000).toISOString()
+        }
+      };
+
+      for (const [id, q] of Object.entries(demoQueries)) {
+        if (!queriesMap[id]) {
+          queriesMap[id] = q;
+          injected = true;
+        }
+      }
+
+      if (injected || cleaned) {
+        updateRealtimeData('portal_queries', queriesMap);
+      }
+
+      const queriesArray = Object.values(queriesMap);
+      // Sort by createdAt descending
+      queriesArray.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      
+      set({ queries: queriesArray, loading: false });
     });
   },
   
