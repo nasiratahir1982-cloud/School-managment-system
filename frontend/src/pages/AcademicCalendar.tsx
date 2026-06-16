@@ -1,6 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { useCalendarStore } from '../store/calendarStore';
 import { CalendarDays, Plus, Edit3, Trash2, X, Check, Clock } from 'lucide-react';
+import * as XLSX from 'xlsx';
+import html2pdf from 'html2pdf.js';
+
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -124,7 +127,45 @@ export const AcademicCalendar: React.FC<AcademicCalendarProps> = ({
   const todayStr = new Date().toISOString().split('T')[0];
 
   const exportToExcel = () => {
-    let csv = 'Date,Day,Type,Details\n';
+    const wb = XLSX.utils.book_new();
+
+    // 1. Term Dates Sheet
+    const termData = termDates.map(t => ({
+      'Term Name': t.term,
+      'Start Date': t.start,
+      'End Date': t.end,
+      'Status': t.status
+    }));
+    const wsTerms = XLSX.utils.json_to_sheet(termData);
+    XLSX.utils.book_append_sheet(wb, wsTerms, "Term Dates");
+
+    // 2. INSET Days Sheet
+    const insetData = insetDays.map(d => ({
+      'Date': d.date,
+      'Title': d.title,
+      'Type': 'Staff Only / No Students'
+    }));
+    const wsInset = XLSX.utils.json_to_sheet(insetData);
+    XLSX.utils.book_append_sheet(wb, wsInset, "INSET Days");
+
+    // 3. Academic Events
+    const eventsData = academicEvents.map(e => ({
+      'Date': e.date,
+      'Event': e.title
+    }));
+    const wsEvents = XLSX.utils.json_to_sheet(eventsData);
+    XLSX.utils.book_append_sheet(wb, wsEvents, "Academic Events");
+
+    // 4. Public Holidays
+    const holidaysData = schoolHolidays.map(h => ({
+      'Date': h,
+      'Type': 'Public/National Holiday'
+    }));
+    const wsHolidays = XLSX.utils.json_to_sheet(holidaysData);
+    XLSX.utils.book_append_sheet(wb, wsHolidays, "Public Holidays");
+
+    // 5. Full Year Grid Snapshot
+    const yearData: any[] = [];
     academicYearMonths.forEach(({year, month}) => {
       const daysInMonth = getDaysInMonth(year, month);
       for(let d=1; d<=daysInMonth; d++) {
@@ -144,17 +185,20 @@ export const AcademicCalendar: React.FC<AcademicCalendarProps> = ({
            }
         }
         if (type !== 'Regular' || details !== '') {
-            csv += `${dateStr},${new Date(year, month, d).toLocaleDateString('en-GB', {weekday:'short'})},${type},"${details.replace(/"/g, '""')}"\n`;
+            yearData.push({
+              'Date': dateStr,
+              'Day': new Date(year, month, d).toLocaleDateString('en-GB', {weekday:'short'}),
+              'Type': type,
+              'Details': details
+            });
         }
       }
     });
+    const wsYear = XLSX.utils.json_to_sheet(yearData);
+    XLSX.utils.book_append_sheet(wb, wsYear, "Full Year Summary");
 
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Academic_Calendar_${startYear}_${MONTH_NAMES[startMonth]}.csv`;
-    a.click();
+    // Download
+    XLSX.writeFile(wb, `Academic_Calendar_${startYear}_${MONTH_NAMES[startMonth]}.xlsx`);
   };
 
   // ── Render a single month mini-calendar ──
@@ -716,7 +760,19 @@ export const AcademicCalendar: React.FC<AcademicCalendarProps> = ({
               className="px-3 py-1.5 bg-emerald-500 text-white rounded text-[10px] font-bold shadow-md hover:bg-emerald-600 transition-all cursor-pointer border border-emerald-600/50">
               Export Excel
             </button>
-            <button onClick={() => alert('Full academic calendar exported to PDF!')}
+            <button onClick={() => {
+              const element = document.getElementById('calendar-export-area');
+              if(element) {
+                const opt = {
+                  margin: 0.5,
+                  filename: `Academic_Calendar_${startYear}.pdf`,
+                  image: { type: 'jpeg' as const, quality: 0.98 },
+                  html2canvas: { scale: 2, useCORS: true },
+                  jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' as const }
+                };
+                html2pdf().set(opt).from(element).save();
+              }
+            }}
               className="px-3 py-1.5 bg-primary text-white rounded text-[10px] font-bold shadow-md hover:bg-primary/90 transition-all cursor-pointer">
               Export PDF
             </button>
@@ -743,7 +799,7 @@ export const AcademicCalendar: React.FC<AcademicCalendarProps> = ({
 
         {/* Tab Content */}
         {activeTab === 'calendar' && (
-          <div className="space-y-4">
+          <div className="space-y-4" id="calendar-export-area">
             {/* Legend */}
             {renderLegend()}
 
