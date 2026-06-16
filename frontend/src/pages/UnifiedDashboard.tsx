@@ -7579,7 +7579,7 @@ export const UnifiedDashboard: React.FC = () => {
                 </div>
               )}
 
-              {(activeFeature === 'Exam Management' || activeFeature === 'Result Processing') && (
+              {(activeFeature === 'Exam Management') && (
                 <div className="space-y-4 animate-fadeIn">
                   <div className="p-5 bg-card border border-border rounded-xl flex flex-col md:flex-row gap-6">
                     <div className="flex-1 space-y-4">
@@ -7599,28 +7599,6 @@ export const UnifiedDashboard: React.FC = () => {
                         </button>
                       </div>
                     </div>
-                    
-                    <div className="w-px bg-border hidden md:block"></div>
-                    
-                    <div className="flex-1 space-y-4">
-                      <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider flex items-center gap-2"><Award className="w-4 h-4 text-emerald-500" /> Result Processing Engine</span>
-                      <p className="text-[11px] text-muted-foreground">Compile mid-term grades from all teachers to generate final report cards.</p>
-                      <button 
-                        onClick={(e) => {
-                           const btn = e.currentTarget;
-                           const originalText = btn.innerHTML;
-                           btn.innerHTML = '<span class="animate-pulse">Aggregating Subject Grades...</span>';
-                           setTimeout(() => {
-                             btn.innerHTML = '✅ Report Cards Compiled & Ready for Print';
-                             setActiveExamView('results');
-                             setTimeout(() => btn.innerHTML = originalText, 3000);
-                           }, 1500);
-                        }}
-                        className="w-full px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-lg transition-colors shadow-lg shadow-emerald-500/20"
-                      >
-                        Compile Final Results
-                      </button>
-                    </div>
                   </div>
 
                   {activeExamView === 'datesheet' && (
@@ -7630,7 +7608,7 @@ export const UnifiedDashboard: React.FC = () => {
                         <button onClick={() => setActiveExamView(null)} className="text-xs text-muted-foreground hover:text-foreground">Close</button>
                       </div>
                       <div className="overflow-x-auto">
-                        <table className="w-full text-left text-[11px] border-collapse min-w-[500px]">
+                        <table className="w-full text-left text-[11px] border-collapse min-w-[300px]">
                           <thead>
                             <tr className="border-b border-border/50 text-muted-foreground bg-muted/20">
                               <th className="p-3">Date</th>
@@ -7641,34 +7619,34 @@ export const UnifiedDashboard: React.FC = () => {
                           </thead>
                           <tbody>
                             <tr className="border-b border-border/50 hover:bg-muted/10 transition-colors">
-                              <td className="p-3 font-bold text-foreground">15 Oct 2026</td>
-                              <td className="p-3 text-foreground/80">Monday</td>
-                              <td className="p-3 text-blue-500 font-semibold">Physics</td>
-                              <td className="p-3 text-emerald-500 font-semibold">Maths</td>
+                              <td className="p-3 font-bold text-foreground" contentEditable suppressContentEditableWarning>15 Oct 2026</td>
+                              <td className="p-3 text-foreground/80" contentEditable suppressContentEditableWarning>Monday</td>
+                              <td className="p-3 text-blue-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-blue-500/10 rounded" contentEditable suppressContentEditableWarning>Physics</td>
+                              <td className="p-3 text-emerald-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-emerald-500/10 rounded" contentEditable suppressContentEditableWarning>Maths</td>
                             </tr>
                             <tr className="border-b border-border/50 hover:bg-muted/10 transition-colors">
-                              <td className="p-3 font-bold text-foreground">16 Oct 2026</td>
-                              <td className="p-3 text-foreground/80">Tuesday</td>
-                              <td className="p-3 text-amber-500 font-semibold">English</td>
-                              <td className="p-3 text-rose-500 font-semibold">Biology</td>
+                              <td className="p-3 font-bold text-foreground" contentEditable suppressContentEditableWarning>16 Oct 2026</td>
+                              <td className="p-3 text-foreground/80" contentEditable suppressContentEditableWarning>Tuesday</td>
+                              <td className="p-3 text-amber-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-amber-500/10 rounded" contentEditable suppressContentEditableWarning>English</td>
+                              <td className="p-3 text-rose-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-rose-500/10 rounded" contentEditable suppressContentEditableWarning>Biology</td>
                             </tr>
                             <tr className="border-b border-border/50 hover:bg-muted/10 transition-colors">
-                              <td className="p-3 font-bold text-foreground">17 Oct 2026</td>
-                              <td className="p-3 text-foreground/80">Wednesday</td>
-                              <td className="p-3 text-emerald-500 font-semibold">Maths</td>
-                              <td className="p-3 text-purple-500 font-semibold">Chemistry</td>
+                              <td className="p-3 font-bold text-foreground" contentEditable suppressContentEditableWarning>17 Oct 2026</td>
+                              <td className="p-3 text-foreground/80" contentEditable suppressContentEditableWarning>Wednesday</td>
+                              <td className="p-3 text-emerald-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-emerald-500/10 rounded" contentEditable suppressContentEditableWarning>Maths</td>
+                              <td className="p-3 text-purple-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-purple-500/10 rounded" contentEditable suppressContentEditableWarning>Chemistry</td>
                             </tr>
                             <tr className="border-b border-border/50 hover:bg-muted/10 transition-colors">
-                              <td className="p-3 font-bold text-foreground">18 Oct 2026</td>
-                              <td className="p-3 text-foreground/80">Thursday</td>
-                              <td className="p-3 text-rose-500 font-semibold">Biology</td>
-                              <td className="p-3 text-amber-500 font-semibold">English</td>
+                              <td className="p-3 font-bold text-foreground" contentEditable suppressContentEditableWarning>18 Oct 2026</td>
+                              <td className="p-3 text-foreground/80" contentEditable suppressContentEditableWarning>Thursday</td>
+                              <td className="p-3 text-rose-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-rose-500/10 rounded" contentEditable suppressContentEditableWarning>Biology</td>
+                              <td className="p-3 text-amber-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-amber-500/10 rounded" contentEditable suppressContentEditableWarning>English</td>
                             </tr>
                           </tbody>
                         </table>
                       </div>
                       <div className="flex justify-end mt-4">
-                        <button className="px-4 py-2 bg-primary hover:bg-primary/90 transition-colors text-white text-xs font-bold rounded-lg shadow-sm">Export PDF</button>
+                        <button onClick={() => window.print()} className="px-4 py-2 bg-primary hover:bg-primary/90 transition-colors text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1"><span className="text-white">🖨️</span> Export PDF</button>
                       </div>
                     </div>
                   )}
@@ -7732,34 +7710,83 @@ export const UnifiedDashboard: React.FC = () => {
                               <td className="p-3 text-foreground/80">850/1100</td>
                               <td className="p-3 font-mono font-bold text-foreground">77.2%</td>
                               <td className="p-3"><span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 font-bold rounded border border-emerald-500/20 text-[9px] uppercase tracking-wider">Pass</span></td>
-                              <td className="p-3 text-right"><button className="text-primary hover:text-primary/80 font-bold text-[10px]">Print Card</button></td>
-                            </tr>
-                            <tr className="border-b border-border/50 hover:bg-muted/10 transition-colors">
-                              <td className="p-3 text-foreground/80">1043</td>
-                              <td className="p-3 font-bold text-primary">Sarah Ahmed</td>
-                              <td className="p-3 text-foreground/80">9-B</td>
-                              <td className="p-3 text-foreground/80">920/1100</td>
-                              <td className="p-3 font-mono font-bold text-foreground">83.6%</td>
-                              <td className="p-3"><span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 font-bold rounded border border-emerald-500/20 text-[9px] uppercase tracking-wider">Pass</span></td>
-                              <td className="p-3 text-right"><button className="text-primary hover:text-primary/80 font-bold text-[10px]">Print Card</button></td>
-                            </tr>
-                            <tr className="border-b border-border/50 hover:bg-muted/10 transition-colors">
-                              <td className="p-3 text-foreground/80">1044</td>
-                              <td className="p-3 font-bold text-primary">Zainab Bibi</td>
-                              <td className="p-3 text-foreground/80">10-B</td>
-                              <td className="p-3 text-foreground/80">410/1100</td>
-                              <td className="p-3 font-mono font-bold text-foreground">37.2%</td>
-                              <td className="p-3"><span className="px-2 py-0.5 bg-rose-500/10 text-rose-500 font-bold rounded border border-rose-500/20 text-[9px] uppercase tracking-wider">Fail</span></td>
-                              <td className="p-3 text-right"><button className="text-primary hover:text-primary/80 font-bold text-[10px]">Print Card</button></td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div className="flex justify-end mt-4">
-                        <button className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 transition-colors text-white text-xs font-bold rounded-lg shadow-sm">Publish All Results</button>
-                      </div>
+                </div>
+              )}
+
+              {activeFeature === 'Result Processing' && (
+                <div className="space-y-6 animate-fadeIn">
+                  <div className="p-5 bg-card border border-border rounded-xl">
+                    <div className="space-y-4">
+                      <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider flex items-center gap-2"><Award className="w-4 h-4 text-emerald-500" /> Result Processing Engine</span>
+                      <p className="text-[11px] text-muted-foreground">Compile mid-term grades from all teachers to generate final report cards.</p>
+                      <button 
+                        onClick={(e) => {
+                           const btn = e.currentTarget;
+                           const originalText = btn.innerHTML;
+                           btn.innerHTML = '<span class="animate-pulse">Aggregating Subject Grades...</span>';
+                           setTimeout(() => {
+                             btn.innerHTML = '✅ Report Cards Compiled & Ready for Print';
+                             setActiveExamView('results');
+                             setTimeout(() => btn.innerHTML = originalText, 3000);
+                           }, 1500);
+                        }}
+                        className="w-full md:w-auto px-6 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-lg transition-colors shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2"
+                      >
+                        <span className="text-lg">⚙️</span> Compile Final Results
+                      </button>
                     </div>
-                  )}
+                  </div>
+                  
+                  <div className="p-4 border border-border rounded-xl bg-card animate-fadeIn shadow-sm">
+                    <div className="flex justify-between items-center mb-4">
+                      <h4 className="text-sm font-bold text-foreground flex items-center gap-2">📊 Compiled Final Results</h4>
+                      <button onClick={() => window.print()} className="px-4 py-2 bg-primary hover:bg-primary/90 transition-colors text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-1"><span className="text-white">🖨️</span> Print Master Sheet</button>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-[11px] border-collapse min-w-[600px]">
+                        <thead>
+                          <tr className="border-b border-border/50 text-muted-foreground bg-muted/20">
+                            <th className="p-3">Roll No</th>
+                            <th className="p-3">Student Name</th>
+                            <th className="p-3">Grade</th>
+                            <th className="p-3">Total Marks</th>
+                            <th className="p-3">Percentage</th>
+                            <th className="p-3">Status</th>
+                            <th className="p-3 text-right">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr className="border-b border-border/50 hover:bg-muted/10 transition-colors">
+                            <td className="p-3 text-foreground/80">1042</td>
+                            <td className="p-3 font-bold text-primary">Ali Khan</td>
+                            <td className="p-3 text-foreground/80">10-A</td>
+                            <td className="p-3 text-foreground/80">850/1100</td>
+                            <td className="p-3 font-mono font-bold text-foreground">77.2%</td>
+                            <td className="p-3"><span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 font-bold rounded border border-emerald-500/20 text-[9px] uppercase tracking-wider">Pass</span></td>
+                            <td className="p-3 text-right"><button className="text-primary hover:text-primary/80 font-bold text-[10px]">Print Card</button></td>
+                          </tr>
+                          <tr className="border-b border-border/50 hover:bg-muted/10 transition-colors">
+                            <td className="p-3 text-foreground/80">1043</td>
+                            <td className="p-3 font-bold text-primary">Sarah Ahmed</td>
+                            <td className="p-3 text-foreground/80">9-B</td>
+                            <td className="p-3 text-foreground/80">920/1100</td>
+                            <td className="p-3 font-mono font-bold text-foreground">83.6%</td>
+                            <td className="p-3"><span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 font-bold rounded border border-emerald-500/20 text-[9px] uppercase tracking-wider">Pass</span></td>
+                            <td className="p-3 text-right"><button className="text-primary hover:text-primary/80 font-bold text-[10px]">Print Card</button></td>
+                          </tr>
+                          <tr className="border-b border-border/50 hover:bg-muted/10 transition-colors">
+                            <td className="p-3 text-foreground/80">1044</td>
+                            <td className="p-3 font-bold text-primary">Zainab Bibi</td>
+                            <td className="p-3 text-foreground/80">10-B</td>
+                            <td className="p-3 text-foreground/80">410/1100</td>
+                            <td className="p-3 font-mono font-bold text-foreground">37.2%</td>
+                            <td className="p-3"><span className="px-2 py-0.5 bg-rose-500/10 text-rose-500 font-bold rounded border border-rose-500/20 text-[9px] uppercase tracking-wider">Fail</span></td>
+                            <td className="p-3 text-right"><button className="text-primary hover:text-primary/80 font-bold text-[10px]">Print Card</button></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -15561,7 +15588,7 @@ export const UnifiedDashboard: React.FC = () => {
 
                       {/* Data Table */}
                       <div className="border border-border rounded-xl bg-card overflow-hidden">
-                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs min-w-[800px]">
+                        <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs min-w-[600px]">
                           <thead>
                             <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
                               <th className="p-3">Candidate</th>
