@@ -5722,26 +5722,26 @@ export const UnifiedDashboard: React.FC = () => {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-foreground/60 uppercase">Full Name</label>
-                          <input type="text" required placeholder="Student Name" value={newStudentName} onChange={(e) => setNewStudentName(e.target.value)} className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" />
+                          <label className="text-[10px] font-bold text-foreground/60 uppercase tracking-widest">Full Name</label>
+                          <input type="text" required placeholder="Student Name" value={newStudentName} onChange={(e) => setNewStudentName(e.target.value)} className="w-full modern-input" />
                         </div>
                         <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-foreground/60 uppercase">Age (Years)</label>
-                          <input type="number" required placeholder={`Minimum ${minAdmissionAge} years`} value={newStudentAge} onChange={(e) => setNewStudentAge(e.target.value)} className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" />
+                          <label className="text-[10px] font-bold text-foreground/60 uppercase tracking-widest">Age (Years)</label>
+                          <input type="number" required placeholder={`Minimum ${minAdmissionAge} years`} value={newStudentAge} onChange={(e) => setNewStudentAge(e.target.value)} className="w-full modern-input" />
                         </div>
                         <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-foreground/60 uppercase">Previous Marks (%)</label>
-                          <input type="number" required placeholder="Minimum 50%" value={newStudentMarks} onChange={(e) => setNewStudentMarks(e.target.value)} className="w-full bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" />
+                          <label className="text-[10px] font-bold text-foreground/60 uppercase tracking-widest">Previous Marks (%)</label>
+                          <input type="number" required placeholder="Minimum 50%" value={newStudentMarks} onChange={(e) => setNewStudentMarks(e.target.value)} className="w-full modern-input" />
                         </div>
                         <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-foreground/60 uppercase">Class Group</label>
-                          <select value={newStudentClass} onChange={(e) => setNewStudentClass(e.target.value)} className="w-full modern-input">
+                          <label className="text-[10px] font-bold text-foreground/60 uppercase tracking-widest">Class Group</label>
+                          <select value={newStudentClass} onChange={(e) => setNewStudentClass(e.target.value)} className="w-full modern-input cursor-pointer">
                             {filteredClasses.map((cls) => <option key={cls} value={cls}>{cls}</option>)}
                           </select>
                         </div>
                         <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-foreground/60 uppercase">Auto Roll No</label>
-                          <input type="text" disabled value={`${getRollLabel()}: ${nextRollNo}`} className="w-full bg-card/50 border border-border/50 rounded-lg text-xs p-2.5 text-foreground/60 cursor-not-allowed font-mono" />
+                          <label className="text-[10px] font-bold text-foreground/60 uppercase tracking-widest">Auto Roll No</label>
+                          <input type="text" disabled value={`${getRollLabel()}: ${nextRollNo}`} className="w-full modern-input opacity-70 cursor-not-allowed font-mono" />
                         </div>
                       </div>
 
@@ -16234,7 +16234,7 @@ export const UnifiedDashboard: React.FC = () => {
                           value={newSetupClass.replace(/^Class\s+/i, '')}
                           onChange={(e) => setNewSetupClass(e.target.value.replace(/^Class\s+/i, ''))}
                           placeholder="e.g. 11-A"
-                          className="flex-1 bg-card border border-border text-xs p-2 text-foreground focus:outline-none focus:border-primary transition-colors"
+                          className="flex-1 modern-input rounded-r-none rounded-l-none min-w-0"
                         />
                         <button
                           onClick={() => {
@@ -16290,7 +16290,7 @@ export const UnifiedDashboard: React.FC = () => {
                           value={newSetupSubject}
                           onChange={(e) => setNewSetupSubject(e.target.value)}
                           placeholder="e.g. Advanced AI"
-                          className="flex-1 bg-card border border-border rounded-l-lg text-xs p-2 text-foreground focus:outline-none focus:border-primary transition-colors"
+                          className="flex-1 modern-input rounded-r-none min-w-0"
                         />
                         <button
                           onClick={() => {
@@ -16337,6 +16337,94 @@ export const UnifiedDashboard: React.FC = () => {
                           <div className="p-3 text-center text-xs text-foreground/50 border border-dashed border-border/50 rounded-lg">No subjects configured.</div>
                         )}
                       </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {/* GENERIC FEATURE FALLBACK */}
+              {!IMPLEMENTED_FEATURES.includes(activeFeature || '') && activeFeature && (
+                <div className="space-y-6 animate-fadeIn">
+                  <div className="flex items-center justify-between p-4 bg-primary/10 border border-primary/20 rounded-xl">
+                    <div>
+                      <h4 className="text-lg font-bold text-foreground flex items-center gap-2">
+                        <span className="text-primary">⚡</span> {activeFeature} Workspace
+                      </h4>
+                      <p className="text-xs text-foreground/60 mt-1">
+                        View analytics, manage records, and configure settings for {activeFeature}.
+                      </p>
+                    </div>
+                    <button 
+                      onClick={() => alert(`Creating new record in ${activeFeature}...`)}
+                      className="px-4 py-2 bg-primary hover:bg-primary/90 text-white text-xs font-bold rounded-lg shadow-md transition-all flex items-center gap-2"
+                    >
+                      <span>+</span> Create New
+                    </button>
+                  </div>
+
+                  {/* Dummy KPI Cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="p-4 bg-card/50 border border-border rounded-xl flex items-center gap-4 hover:border-primary/50 transition-colors cursor-pointer group">
+                      <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
+                        <Activity className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-bold text-foreground/50 uppercase tracking-wider">Total Active</p>
+                        <p className="text-xl font-black text-foreground">142</p>
+                      </div>
+                    </div>
+                    <div className="p-4 bg-card/50 border border-border rounded-xl flex items-center gap-4 hover:border-primary/50 transition-colors cursor-pointer group">
+                      <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 group-hover:scale-110 transition-transform">
+                        <CheckCircle className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-bold text-foreground/50 uppercase tracking-wider">Success Rate</p>
+                        <p className="text-xl font-black text-foreground">98.5%</p>
+                      </div>
+                    </div>
+                    <div className="p-4 bg-card/50 border border-border rounded-xl flex items-center gap-4 hover:border-primary/50 transition-colors cursor-pointer group">
+                      <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-500 group-hover:scale-110 transition-transform">
+                        <Clock className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-bold text-foreground/50 uppercase tracking-wider">Pending Action</p>
+                        <p className="text-xl font-black text-foreground">12</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Dummy Data Table */}
+                  <div className="bg-card/50 border border-border rounded-xl overflow-hidden">
+                    <div className="flex items-center justify-between p-4 border-b border-border/50 bg-muted/20">
+                      <h4 className="text-sm font-bold text-foreground">Recent Activity</h4>
+                      <input 
+                        type="text" 
+                        placeholder={`Search ${activeFeature}...`}
+                        className="modern-input w-48 text-[11px] py-1.5"
+                      />
+                    </div>
+                    <div className="p-0">
+                      <table className="w-full text-left text-xs">
+                        <thead className="bg-muted/30 text-foreground/60 font-bold uppercase tracking-wider">
+                          <tr>
+                            <th className="p-3">Reference ID</th>
+                            <th className="p-3">Description</th>
+                            <th className="p-3">Status</th>
+                            <th className="p-3 text-right">Date</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border/50 text-foreground/80">
+                          {[1, 2, 3, 4, 5].map(i => (
+                            <tr key={i} className="hover:bg-muted/20 transition-colors group cursor-pointer">
+                              <td className="p-3 font-mono text-[10px] text-primary/80">#{activeFeature.substring(0, 3).toUpperCase()}-2024-{i}0{i * 2}</td>
+                              <td className="p-3 font-medium">Standard process execution for batch {i}</td>
+                              <td className="p-3">
+                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-green-500/10 text-green-500">Completed</span>
+                              </td>
+                              <td className="p-3 text-right opacity-60 group-hover:opacity-100 transition-opacity">Today, 10:0{i} AM</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 </div>
