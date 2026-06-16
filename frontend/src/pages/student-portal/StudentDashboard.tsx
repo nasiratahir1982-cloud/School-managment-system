@@ -15,7 +15,7 @@ import {
   Moon
 } from 'lucide-react';
 import { useThemeStore } from '../../store/themeStore';
-import { setupRealtimeSync } from '../../store/firebase';
+import { setupRealtimeSync, updateRealtimeData } from '../../store/firebase';
 import { useQueryStore } from '../../store/queryStore';
 import AcademicCalendar from '../AcademicCalendar';
 
@@ -65,12 +65,14 @@ export const StudentDashboard: React.FC = () => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
 
-  // High fidelity mock database for student portal
-  const [invoices, setInvoices] = useState<FeeChallan[]>([
+  // Sync invoices with Firebase
+  const currentSchoolId = currentSchool?.id || '11111111-1111-1111-1111-111111111111';
+  const schoolData = schoolDb[currentSchoolId] || {};
+  const invoices = schoolData.invoices || [
     { invoice_id: 'i1', challan_number: 'CH-2026-9081', amount: 8500, due_date: '2026-06-15', status: 'unpaid' },
     { invoice_id: 'i2', challan_number: 'CH-2026-8022', amount: 8500, due_date: '2026-05-15', status: 'paid' },
     { invoice_id: 'i3', challan_number: 'CH-2026-7019', amount: 7200, due_date: '2026-04-15', status: 'paid' }
-  ]);
+  ];
 
   const handleLogout = () => {
     logout();
@@ -82,13 +84,17 @@ export const StudentDashboard: React.FC = () => {
     console.log('Initiating transaction processing via gateway:', gateway);
     setPaymentLoading(true);
 
-    // Simulate standard transaction processing via RabbitMQ / DB update
+    // Update Firebase instead of local state
     setTimeout(() => {
-      setInvoices(prev => prev.map(inv => 
+      const updatedInvoices = invoices.map((inv: any) => 
         inv.invoice_id === selectedInvoice.invoice_id 
           ? { ...inv, status: 'paid' as const } 
           : inv
-      ));
+      );
+      
+      const updatedSchoolData = { ...schoolData, invoices: updatedInvoices };
+      updateRealtimeData('school_database', { ...schoolDb, [currentSchoolId]: updatedSchoolData });
+
       setPaymentLoading(false);
       setPaymentSuccess(true);
       setTimeout(() => {

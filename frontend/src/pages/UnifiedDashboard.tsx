@@ -1,6 +1,8 @@
 // @ts-nocheck
 // @ts-nocheck
 import React, { useState, useEffect } from 'react';
+import { QRCodeSVG } from 'qrcode.react';
+import { generateCertificatePDF } from '../components/CertificateGenerator';
 
 
 import { Helmet } from 'react-helmet-async';
@@ -9436,7 +9438,17 @@ export const UnifiedDashboard: React.FC = () => {
                             <span className="text-xs text-muted-foreground block mt-2">Issued by: {cert.issuer}</span>
                             <span className="text-xs text-muted-foreground block">Date: {cert.issueDate}</span>
                           </div>
-                          <button className="flex items-center justify-center w-full mt-2 gap-2 py-2 rounded-lg bg-muted border border-border text-xs font-bold text-foreground hover:bg-card hover:text-primary transition-colors">
+                          <button 
+                            onClick={() => generateCertificatePDF({
+                              studentName: currentUser?.name || 'Student Name',
+                              courseName: cert.title,
+                              issueDate: cert.issueDate,
+                              issuerName: cert.issuer,
+                              schoolName: currentSchool?.schoolName || 'AcaHub',
+                              themeColor: '#3b82f6',
+                              logoUrl: currentSchool?.logoUrl
+                            })}
+                            className="flex items-center justify-center w-full mt-2 gap-2 py-2 rounded-lg bg-muted border border-border text-xs font-bold text-foreground hover:bg-card hover:text-primary transition-colors">
                             Download PDF <ArrowRight className="w-3 h-3" />
                           </button>
                         </div>
