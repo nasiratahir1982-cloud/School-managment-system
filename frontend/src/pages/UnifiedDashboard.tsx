@@ -59,7 +59,6 @@ import {
   Box,
   Bus,
   Brain,
-  DollarSign,
   Megaphone,
   Fingerprint,
   Banknote,
@@ -16345,6 +16344,7 @@ export const UnifiedDashboard: React.FC = () => {
 
             </div>
 
+            </div>
           </div>
         </div>
       )}
@@ -16636,7 +16636,6 @@ export const UnifiedDashboard: React.FC = () => {
               <div className="mt-16 pt-8 border-t border-slate-200">
                 <p className="text-center text-[10px] text-slate-400 italic">This is a system generated document and does not require a physical signature if delivered electronically through the official portal.</p>
               </div>
-            </div>
             </div>
           </div>
         </div>
