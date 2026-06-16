@@ -5720,7 +5720,7 @@ export const UnifiedDashboard: React.FC = () => {
                         </div>
                       )}
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                         <div className="space-y-1">
                           <label className="text-[10px] font-bold text-foreground/60 uppercase tracking-widest">Full Name</label>
                           <input type="text" required placeholder="Student Name" value={newStudentName} onChange={(e) => setNewStudentName(e.target.value)} className="w-full modern-input" />
@@ -5747,7 +5747,7 @@ export const UnifiedDashboard: React.FC = () => {
 
                       <div className="border-t border-border/50 pt-3">
                         <span className="block text-[10px] font-black text-foreground/50 uppercase tracking-wider mb-3">Required Documents (PDF/Images)</span>
-                        <div className="flex flex-wrap justify-center gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                           <div className="bg-muted/20 border border-dashed border-border rounded-lg p-3 flex flex-col justify-center gap-2 hover:bg-muted/30 transition-colors cursor-pointer">
                             <label className="text-xs font-bold text-foreground/80 flex items-center gap-1 cursor-pointer"><FileText className="w-3 h-3 text-primary" /> Birth Certificate / B-Form <span className="text-rose-500">*</span></label>
                             <input name="birthCert" type="file" accept="image/*,.pdf" className="text-[10px] file:mr-3 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer text-foreground/60 w-full" />
@@ -7472,41 +7472,60 @@ export const UnifiedDashboard: React.FC = () => {
                     
                     {/* Mock grid */}
                     <div className="overflow-x-auto mt-4">
-                       <table className="w-full min-w-[800px] text-center border-collapse">
+                       <table className="w-full min-w-[900px] text-center border-collapse">
                          <thead>
-                           <tr className="border-b border-border text-[10px] font-black text-muted-foreground uppercase">
-                             <th className="p-2 border-r border-border/50">Time</th>
-                             <th className="p-2 border-r border-border/50">Monday</th>
-                             <th className="p-2 border-r border-border/50">Tuesday</th>
-                             <th className="p-2 border-r border-border/50">Wednesday</th>
-                             <th className="p-2 border-r border-border/50">Thursday</th>
-                             <th className="p-2 border-r border-border/50">Friday</th>
+                           <tr className="border-b border-border text-xs font-black text-muted-foreground uppercase">
+                             <th className="p-3 border-r border-border/50">Time</th>
+                             <th className="p-3 border-r border-border/50">Monday</th>
+                             <th className="p-3 border-r border-border/50">Tuesday</th>
+                             <th className="p-3 border-r border-border/50">Wednesday</th>
+                             <th className="p-3 border-r border-border/50">Thursday</th>
+                             <th className="p-3 border-r border-border/50">Friday</th>
                            </tr>
                          </thead>
-                         <tbody className="text-[10px]">
+                         <tbody className="text-xs">
                            <tr className="border-b border-border/50">
-                             <td className="p-2 border-r border-border/50 font-bold" contentEditable suppressContentEditableWarning>08:00 AM</td>
-                             <td className="p-2 border-r border-border/50 bg-blue-500/10 text-blue-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-blue-500/20 transition-colors" contentEditable suppressContentEditableWarning>Physics (Lab)</td>
-                             <td className="p-2 border-r border-border/50 bg-emerald-500/10 text-emerald-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-emerald-500/20 transition-colors" contentEditable suppressContentEditableWarning>Maths</td>
-                             <td className="p-2 border-r border-border/50 bg-amber-500/10 text-amber-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-amber-500/20 transition-colors" contentEditable suppressContentEditableWarning>English</td>
-                             <td className="p-2 border-r border-border/50 bg-purple-500/10 text-purple-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-purple-500/20 transition-colors" contentEditable suppressContentEditableWarning>Chemistry</td>
-                             <td className="p-2 border-r border-border/50 bg-rose-500/10 text-rose-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-rose-500/20 transition-colors" contentEditable suppressContentEditableWarning>Biology</td>
+                             <td className="p-3 border-r border-border/50 font-bold" contentEditable suppressContentEditableWarning>08:00 AM</td>
+                             <td className="p-3 border-r border-border/50 bg-blue-500/10 text-blue-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-blue-500/20 transition-colors" contentEditable suppressContentEditableWarning>Physics (Lab)</td>
+                             <td className="p-3 border-r border-border/50 bg-emerald-500/10 text-emerald-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-emerald-500/20 transition-colors" contentEditable suppressContentEditableWarning>Maths</td>
+                             <td className="p-3 border-r border-border/50 bg-amber-500/10 text-amber-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-amber-500/20 transition-colors" contentEditable suppressContentEditableWarning>English</td>
+                             <td className="p-3 border-r border-border/50 bg-purple-500/10 text-purple-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-purple-500/20 transition-colors" contentEditable suppressContentEditableWarning>Chemistry</td>
+                             <td className="p-3 border-r border-border/50 bg-rose-500/10 text-rose-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-rose-500/20 transition-colors" contentEditable suppressContentEditableWarning>Biology</td>
                            </tr>
                            <tr className="border-b border-border/50">
-                             <td className="p-2 border-r border-border/50 font-bold" contentEditable suppressContentEditableWarning>09:00 AM</td>
-                             <td className="p-2 border-r border-border/50 bg-emerald-500/10 text-emerald-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-emerald-500/20 transition-colors" contentEditable suppressContentEditableWarning>Maths</td>
-                             <td className="p-2 border-r border-border/50 bg-purple-500/10 text-purple-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-purple-500/20 transition-colors" contentEditable suppressContentEditableWarning>Chemistry</td>
-                             <td className="p-2 border-r border-border/50 bg-rose-500/10 text-rose-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-rose-500/20 transition-colors" contentEditable suppressContentEditableWarning>Biology</td>
-                             <td className="p-2 border-r border-border/50 bg-blue-500/10 text-blue-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-blue-500/20 transition-colors" contentEditable suppressContentEditableWarning>Physics</td>
-                             <td className="p-2 border-r border-border/50 bg-amber-500/10 text-amber-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-amber-500/20 transition-colors" contentEditable suppressContentEditableWarning>English</td>
+                             <td className="p-3 border-r border-border/50 font-bold" contentEditable suppressContentEditableWarning>09:00 AM</td>
+                             <td className="p-3 border-r border-border/50 bg-emerald-500/10 text-emerald-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-emerald-500/20 transition-colors" contentEditable suppressContentEditableWarning>Maths</td>
+                             <td className="p-3 border-r border-border/50 bg-purple-500/10 text-purple-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-purple-500/20 transition-colors" contentEditable suppressContentEditableWarning>Chemistry</td>
+                             <td className="p-3 border-r border-border/50 bg-rose-500/10 text-rose-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-rose-500/20 transition-colors" contentEditable suppressContentEditableWarning>Biology</td>
+                             <td className="p-3 border-r border-border/50 bg-blue-500/10 text-blue-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-blue-500/20 transition-colors" contentEditable suppressContentEditableWarning>Physics</td>
+                             <td className="p-3 border-r border-border/50 bg-amber-500/10 text-amber-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-amber-500/20 transition-colors" contentEditable suppressContentEditableWarning>English</td>
                            </tr>
                            <tr className="border-b border-border/50">
-                             <td className="p-2 border-r border-border/50 font-bold" contentEditable suppressContentEditableWarning>10:00 AM</td>
-                             <td className="p-2 border-r border-border/50 bg-amber-500/10 text-amber-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-amber-500/20 transition-colors" contentEditable suppressContentEditableWarning>English</td>
-                             <td className="p-2 border-r border-border/50 bg-rose-500/10 text-rose-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-rose-500/20 transition-colors" contentEditable suppressContentEditableWarning>Biology</td>
-                             <td className="p-2 border-r border-border/50 bg-blue-500/10 text-blue-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-blue-500/20 transition-colors" contentEditable suppressContentEditableWarning>Physics</td>
-                             <td className="p-2 border-r border-border/50 bg-emerald-500/10 text-emerald-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-emerald-500/20 transition-colors" contentEditable suppressContentEditableWarning>Maths</td>
-                             <td className="p-2 border-r border-border/50 bg-purple-500/10 text-purple-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-purple-500/20 transition-colors" contentEditable suppressContentEditableWarning>Chemistry</td>
+                             <td className="p-3 border-r border-border/50 font-bold" contentEditable suppressContentEditableWarning>10:00 AM</td>
+                             <td className="p-3 border-r border-border/50 bg-amber-500/10 text-amber-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-amber-500/20 transition-colors" contentEditable suppressContentEditableWarning>English</td>
+                             <td className="p-3 border-r border-border/50 bg-rose-500/10 text-rose-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-rose-500/20 transition-colors" contentEditable suppressContentEditableWarning>Biology</td>
+                             <td className="p-3 border-r border-border/50 bg-blue-500/10 text-blue-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-blue-500/20 transition-colors" contentEditable suppressContentEditableWarning>Physics</td>
+                             <td className="p-3 border-r border-border/50 bg-emerald-500/10 text-emerald-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-emerald-500/20 transition-colors" contentEditable suppressContentEditableWarning>Maths</td>
+                             <td className="p-3 border-r border-border/50 bg-purple-500/10 text-purple-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-purple-500/20 transition-colors" contentEditable suppressContentEditableWarning>Chemistry</td>
+                           </tr>
+                           <tr className="border-b border-border/50 bg-muted/20">
+                             <td className="p-3 border-r border-border/50 font-black text-center text-foreground/50 tracking-widest" colSpan={6}>BREAK TIME (11:00 AM - 11:30 AM)</td>
+                           </tr>
+                           <tr className="border-b border-border/50">
+                             <td className="p-3 border-r border-border/50 font-bold" contentEditable suppressContentEditableWarning>11:30 AM</td>
+                             <td className="p-3 border-r border-border/50 bg-indigo-500/10 text-indigo-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-indigo-500/20 transition-colors" contentEditable suppressContentEditableWarning>Computer Science</td>
+                             <td className="p-3 border-r border-border/50 bg-teal-500/10 text-teal-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-teal-500/20 transition-colors" contentEditable suppressContentEditableWarning>Geography</td>
+                             <td className="p-3 border-r border-border/50 bg-orange-500/10 text-orange-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-orange-500/20 transition-colors" contentEditable suppressContentEditableWarning>History</td>
+                             <td className="p-3 border-r border-border/50 bg-pink-500/10 text-pink-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-pink-500/20 transition-colors" contentEditable suppressContentEditableWarning>Urdu</td>
+                             <td className="p-3 border-r border-border/50 bg-indigo-500/10 text-indigo-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-indigo-500/20 transition-colors" contentEditable suppressContentEditableWarning>Islamic Studies</td>
+                           </tr>
+                           <tr className="border-b border-border/50">
+                             <td className="p-3 border-r border-border/50 font-bold" contentEditable suppressContentEditableWarning>12:30 PM</td>
+                             <td className="p-3 border-r border-border/50 bg-teal-500/10 text-teal-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-teal-500/20 transition-colors" contentEditable suppressContentEditableWarning>Geography</td>
+                             <td className="p-3 border-r border-border/50 bg-pink-500/10 text-pink-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-pink-500/20 transition-colors" contentEditable suppressContentEditableWarning>Urdu</td>
+                             <td className="p-3 border-r border-border/50 bg-indigo-500/10 text-indigo-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-indigo-500/20 transition-colors" contentEditable suppressContentEditableWarning>Computer Science</td>
+                             <td className="p-3 border-r border-border/50 bg-orange-500/10 text-orange-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-orange-500/20 transition-colors" contentEditable suppressContentEditableWarning>History</td>
+                             <td className="p-3 border-r border-border/50 bg-lime-500/10 text-lime-600 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-lime-500/20 transition-colors" contentEditable suppressContentEditableWarning>Physical Ed.</td>
                            </tr>
                          </tbody>
                        </table>
@@ -16318,7 +16337,7 @@ export const UnifiedDashboard: React.FC = () => {
                               setNewSetupClass('');
                             });
                           }}
-                          className="px-4 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-r-lg transition-all shadow-md"
+                          className="px-5 py-2.5 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-r-lg transition-all shadow-md shrink-0 border-l border-primary/50"
                         >
                           Add
                         </button>
@@ -16376,7 +16395,7 @@ export const UnifiedDashboard: React.FC = () => {
                               setNewSetupSubject('');
                             });
                           }}
-                          className="px-4 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-r-lg transition-all shadow-md"
+                          className="px-5 py-2.5 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-r-lg transition-all shadow-md shrink-0 border-l border-primary/50"
                         >
                           Add
                         </button>
