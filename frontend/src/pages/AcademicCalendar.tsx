@@ -87,8 +87,9 @@ export const AcademicCalendar: React.FC<AcademicCalendarProps> = ({
     getInsetDay, getEventsForDate, getTermForDate
   } = useCalendarStore();
 
-  const [startYear, setStartYear] = useState(2026);
-  const [startMonth, setStartMonth] = useState(0); // 0 = Jan
+  const initialYear = new Date().getMonth() < 8 ? new Date().getFullYear() - 1 : new Date().getFullYear();
+  const [startYear, setStartYear] = useState(initialYear);
+  const [startMonth, setStartMonth] = useState(8); // 8 = Sep
 
   const academicYearMonths = useMemo(() => {
     const months: { year: number; month: number }[] = [];
