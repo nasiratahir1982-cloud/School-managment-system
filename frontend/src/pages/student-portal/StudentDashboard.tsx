@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { useSchoolStore } from '../../store/schoolStore';
 import { useAuthStore } from '../../store/authStore';

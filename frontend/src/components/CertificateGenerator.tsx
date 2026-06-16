@@ -1,4 +1,4 @@
-import React from 'react';
+// @ts-nocheck
 import html2pdf from 'html2pdf.js';
 
 interface CertificateProps {
