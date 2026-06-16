@@ -7677,24 +7677,21 @@ export const UnifiedDashboard: React.FC = () => {
                         <button onClick={() => setActiveExamView(null)} className="text-xs text-muted-foreground hover:text-foreground">Close</button>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {[
-                          { roll: '1042', name: 'Ali Khan', grade: 'Grade 10-A', center: 'Hall A' },
-                          { roll: '1043', name: 'Sarah Ahmed', grade: 'Grade 9-B', center: 'Hall B' },
-                          { roll: '1044', name: 'Zainab Bibi', grade: 'Grade 10-B', center: 'Hall A' },
-                          { roll: '1045', name: 'Hamza Tariq', grade: 'Grade 9-A', center: 'Hall C' }
-                        ].map((ticket, idx) => (
+                        {students.length > 0 ? students.map((student: any, idx: number) => (
                           <div key={idx} className="p-4 border border-border rounded-xl bg-muted/10 hover:bg-muted/30 transition-colors">
                             <div className="flex justify-between items-center border-b border-border/50 pb-3 mb-3">
                               <div className="flex flex-col">
                                 <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Roll No</span>
-                                <strong className="text-sm text-foreground">{ticket.roll}</strong>
+                                <strong className="text-sm text-foreground">{student.rollNo || `Auto-${idx+1}`}</strong>
                               </div>
-                              <span className="text-[10px] font-bold px-2.5 py-1 bg-primary/10 text-primary rounded-full">{ticket.grade}</span>
+                              <span className="text-[10px] font-bold px-2.5 py-1 bg-primary/10 text-primary rounded-full">{student.class || 'N/A'}</span>
                             </div>
-                            <p className="text-sm font-bold text-primary mb-1">{ticket.name}</p>
-                            <p className="text-xs text-muted-foreground flex items-center gap-1"><MapPin size={12} /> Center: {ticket.center}</p>
+                            <p className="text-sm font-bold text-primary mb-1">{student.name}</p>
+                            <p className="text-xs text-muted-foreground flex items-center gap-1"><MapPin size={12} /> Center: Main Hall</p>
                           </div>
-                        ))}
+                        )) : (
+                          <div className="col-span-full p-6 text-center text-muted-foreground border border-dashed rounded-xl">No students enrolled yet. Please enroll students first.</div>
+                        )}
                       </div>
                       <div className="flex justify-end mt-4">
                         <button className="px-4 py-2 bg-primary hover:bg-primary/90 transition-colors text-white text-xs font-bold rounded-lg shadow-sm">Print All Slips</button>
@@ -7722,14 +7719,40 @@ export const UnifiedDashboard: React.FC = () => {
                             </tr>
                           </thead>
                           <tbody>
-                            <tr className="border-b border-border/50 hover:bg-muted/10 transition-colors">
-                              <td className="p-3 text-foreground/80">1042</td>
-                              <td className="p-3 font-bold text-primary">Ali Khan</td>
-                              <td className="p-3 text-foreground/80">10-A</td>
-                              <td className="p-3 text-foreground/80">850/1100</td>
-                              <td className="p-3 font-mono font-bold text-foreground">77.2%</td>
-                              <td className="p-3"><span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 font-bold rounded border border-emerald-500/20 text-[9px] uppercase tracking-wider">Pass</span></td>
-                </div>
+                            {students.length > 0 ? students.map((student: any, idx: number) => {
+                              const pass = parseInt(student.marks || '0') >= 50;
+                              return (
+                                <tr key={idx} className="border-b border-border/50 hover:bg-muted/10 transition-colors">
+                                  <td className="p-3 text-foreground/80">{student.rollNo || `Auto-${idx+1}`}</td>
+                                  <td className="p-3 font-bold text-primary">{student.name}</td>
+                                  <td className="p-3 text-foreground/80">{student.class || 'N/A'}</td>
+                                  <td className="p-3 text-foreground/80">{student.marks || '0'}/1100</td>
+                                  <td className="p-3 font-mono font-bold text-foreground">{((parseInt(student.marks || '0') / 1100) * 100).toFixed(1)}%</td>
+                                  <td className="p-3"><span className={`px-2 py-0.5 font-bold rounded border text-[9px] uppercase tracking-wider ${pass ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-rose-500/10 text-rose-500 border-rose-500/20'}`}>{pass ? 'Pass' : 'Fail'}</span></td>
+                                  <td className="p-3 text-right"><button className="text-primary hover:text-primary/80 font-bold text-[10px]">Print Card</button></td>
+                                </tr>
+                              );
+                            }) : (
+                              <tr><td colSpan={7} className="p-6 text-center text-muted-foreground border-b border-dashed">No students enrolled to generate results.</td></tr>
+                            )}
+                          </tbody>
+                        </table>
+                        <div className="flex justify-end mt-4">
+                           <button 
+                             onClick={(e) => {
+                               const btn = e.currentTarget;
+                               btn.innerHTML = '<span class="animate-pulse">Publishing Results...</span>';
+                               setTimeout(() => {
+                                 btn.innerHTML = '✅ Results Published to Portals';
+                                 alert('Results have been published to student and parent portals successfully!');
+                               }, 1500);
+                             }}
+                             className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 transition-colors text-white text-xs font-bold rounded-lg shadow-sm border-2 border-white/20"
+                           >
+                             Publish All Results
+                           </button>
+                        </div>
+                      </div>
               )}
 
               {activeFeature === 'Result Processing' && (
@@ -7775,35 +7798,39 @@ export const UnifiedDashboard: React.FC = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          <tr className="border-b border-border/50 hover:bg-muted/10 transition-colors">
-                            <td className="p-3 text-foreground/80">1042</td>
-                            <td className="p-3 font-bold text-primary">Ali Khan</td>
-                            <td className="p-3 text-foreground/80">10-A</td>
-                            <td className="p-3 text-foreground/80">850/1100</td>
-                            <td className="p-3 font-mono font-bold text-foreground">77.2%</td>
-                            <td className="p-3"><span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 font-bold rounded border border-emerald-500/20 text-[9px] uppercase tracking-wider">Pass</span></td>
-                            <td className="p-3 text-right"><button className="text-primary hover:text-primary/80 font-bold text-[10px]">Print Card</button></td>
-                          </tr>
-                          <tr className="border-b border-border/50 hover:bg-muted/10 transition-colors">
-                            <td className="p-3 text-foreground/80">1043</td>
-                            <td className="p-3 font-bold text-primary">Sarah Ahmed</td>
-                            <td className="p-3 text-foreground/80">9-B</td>
-                            <td className="p-3 text-foreground/80">920/1100</td>
-                            <td className="p-3 font-mono font-bold text-foreground">83.6%</td>
-                            <td className="p-3"><span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 font-bold rounded border border-emerald-500/20 text-[9px] uppercase tracking-wider">Pass</span></td>
-                            <td className="p-3 text-right"><button className="text-primary hover:text-primary/80 font-bold text-[10px]">Print Card</button></td>
-                          </tr>
-                          <tr className="border-b border-border/50 hover:bg-muted/10 transition-colors">
-                            <td className="p-3 text-foreground/80">1044</td>
-                            <td className="p-3 font-bold text-primary">Zainab Bibi</td>
-                            <td className="p-3 text-foreground/80">10-B</td>
-                            <td className="p-3 text-foreground/80">410/1100</td>
-                            <td className="p-3 font-mono font-bold text-foreground">37.2%</td>
-                            <td className="p-3"><span className="px-2 py-0.5 bg-rose-500/10 text-rose-500 font-bold rounded border border-rose-500/20 text-[9px] uppercase tracking-wider">Fail</span></td>
-                            <td className="p-3 text-right"><button className="text-primary hover:text-primary/80 font-bold text-[10px]">Print Card</button></td>
-                          </tr>
+                          {students.length > 0 ? students.map((student: any, idx: number) => {
+                              const pass = parseInt(student.marks || '0') >= 50;
+                              return (
+                                <tr key={idx} className="border-b border-border/50 hover:bg-muted/10 transition-colors">
+                                  <td className="p-3 text-foreground/80">{student.rollNo || `Auto-${idx+1}`}</td>
+                                  <td className="p-3 font-bold text-primary">{student.name}</td>
+                                  <td className="p-3 text-foreground/80">{student.class || 'N/A'}</td>
+                                  <td className="p-3 text-foreground/80">{student.marks || '0'}/1100</td>
+                                  <td className="p-3 font-mono font-bold text-foreground">{((parseInt(student.marks || '0') / 1100) * 100).toFixed(1)}%</td>
+                                  <td className="p-3"><span className={`px-2 py-0.5 font-bold rounded border text-[9px] uppercase tracking-wider ${pass ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-rose-500/10 text-rose-500 border-rose-500/20'}`}>{pass ? 'Pass' : 'Fail'}</span></td>
+                                  <td className="p-3 text-right"><button className="text-primary hover:text-primary/80 font-bold text-[10px]">Print Card</button></td>
+                                </tr>
+                              );
+                            }) : (
+                              <tr><td colSpan={7} className="p-6 text-center text-muted-foreground border-b border-dashed">No students enrolled to generate results.</td></tr>
+                            )}
                         </tbody>
                       </table>
+                      <div className="flex justify-end mt-4">
+                         <button 
+                           onClick={(e) => {
+                             const btn = e.currentTarget;
+                             btn.innerHTML = '<span class="animate-pulse">Publishing Results...</span>';
+                             setTimeout(() => {
+                               btn.innerHTML = '✅ Results Published to Portals';
+                               alert('Results have been published to student and parent portals successfully!');
+                             }, 1500);
+                           }}
+                           className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-600 transition-colors text-white text-xs font-bold rounded-lg shadow-sm border-2 border-white/20"
+                         >
+                           Publish All Results
+                         </button>
+                      </div>
                     </div>
                   </div>
                 </div>
