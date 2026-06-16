@@ -5590,7 +5590,7 @@ export const UnifiedDashboard: React.FC = () => {
       {/* INTERACTIVE MODULE MODALS */}
       {(activeGroup || activeFeature) && (
         <div className="modal-overlay">
-          <div className={`modal-container modal-xl glass-card glow-purple text-foreground ${activeGroup ? 'flex p-0 overflow-hidden h-[85vh] max-h-[800px]' : ''}`}>
+          <div className={`modal-container modal-xl glass-card glow-purple text-foreground ${activeGroup ? 'flex flex-col md:flex-row p-0 overflow-hidden h-[85vh] max-h-[800px]' : ''}`}>
             
             {/* Group Sidebar */}
             {activeGroup && (
