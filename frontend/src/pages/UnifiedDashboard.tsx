@@ -3507,7 +3507,7 @@ export const UnifiedDashboard: React.FC = () => {
         { label: "Total Countries", value: `${countries.filter(c => c.status === 'Active').length} Active`, icon: GlobeIcon, colorClass: "text-purple-400 bg-purple-500/10 border-purple-500/25", desc: countries.filter(c => c.status === 'Active').map(c => c.code).join(', ') || "None" },
           { label: "Organizations", value: `${organizations.filter(o => o.status === 'Active').length} Groups`, icon: Building2, colorClass: "text-indigo-400 bg-indigo-500/10 border-indigo-500/25", desc: "School groups overview" },
           { label: "Total Schools", value: `${schoolsList.filter(s => s.status !== 'Suspended' && s.status !== 'Inactive').length} Schools`, icon: Layers, colorClass: "text-blue-400 bg-blue-500/10 border-blue-500/25", desc: "Secure data channels active" },
-          { label: "Active Revenue", value: "$48,920/mo", icon: TrendingUp, colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/25", desc: "Monthly collection records" }
+          { label: "Active Revenue", value: `${formatCurrency(48920)}/mo`, icon: TrendingUp, colorClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/25", desc: "Monthly collection records" }
         ],
       features: ["Country Management", "Organization Management", "School Management", "Subscription Plans", "Billing & Invoicing", "Revenue Analytics", "White Label Configuration", "Global Announcements", "Support Tickets", "Audit Logs", "Multi-Level Permissions", "Advanced Activity Monitoring", "School Health Monitoring", "Server Monitoring", "Backup Manager", "API Key Management", "SMS Gateway Settings", "Email Server Settings", "School Suspension System", "School Performance Analytics", "Fraud Detection Dashboard", "Two Factor Authentication", "Device Management", "Session Tracking", "IP Restriction", "Login Audit Trail", "SMS Gateway", "WhatsApp Integration", "Email Automation", "Push Notifications", "AI Attendance Insights", "AI Fee Defaulter Prediction", "AI Student Performance Prediction", "AI Admission Analytics", "School KPI Dashboard", "Revenue Dashboard", "Student Growth Dashboard", "Teacher Performance Dashboard", "AI Command Center", "AI Content Studio", "Payment Gateway Settings", "Term Dates & Academic Calendar"],
       quickActions: [
@@ -13443,7 +13443,7 @@ export const UnifiedDashboard: React.FC = () => {
                           <div key={plan.id} className="p-4 bg-card border border-border rounded-2xl flex flex-col justify-between items-center text-center space-y-3 shadow-md hover:border-primary/50 transition-all duration-300">
                             <span className="font-black text-foreground text-sm uppercase tracking-wide">{plan.name}</span>
                             <div>
-                              <span className="text-3xl font-extrabold text-foreground">${plan.price}</span>
+                              <span className="text-3xl font-extrabold text-foreground">{formatCurrency(plan.price)}</span>
                               <span className="text-[10px] text-foreground/50 block">/ {plan.billing}</span>
                             </div>
                             <div className="w-full text-xs text-foreground/70 border-t border-border/60 pt-2 space-y-1">
@@ -13467,12 +13467,12 @@ export const UnifiedDashboard: React.FC = () => {
                       <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-center space-y-1 shadow-lg">
                           <span className="text-xs text-slate-400 font-bold block uppercase tracking-wider">Consolidated Inflow</span>
-                          <span className="text-2xl font-black text-white">$12,450 / mo</span>
+                          <span className="text-2xl font-black text-white">{formatCurrency(12450)} / mo</span>
                           <span className="text-[10px] text-emerald-400 block font-semibold">+18.4% growth</span>
                         </div>
                         <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-center space-y-1 shadow-lg">
                           <span className="text-xs text-slate-400 font-bold block uppercase tracking-wider">Group Cashflow Outflow</span>
-                          <span className="text-2xl font-black text-white">$8,520 / mo</span>
+                          <span className="text-2xl font-black text-white">{formatCurrency(8520)} / mo</span>
                           <span className="text-[10px] text-slate-500 block">Server & API nodes cost</span>
                         </div>
                         <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-center space-y-1 shadow-lg">
@@ -13487,11 +13487,11 @@ export const UnifiedDashboard: React.FC = () => {
                         <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider text-center">Monthly Software Subscriptions Revenue (USD)</span>
                         <div className="flex items-end justify-between h-32 pt-6 px-4">
                           {[
-                            { label: 'Jan', val: '$8K', height: '65%' },
-                            { label: 'Feb', val: '$9K', height: '70%' },
-                            { label: 'Mar', val: '$10K', height: '78%' },
-                            { label: 'Apr', val: '$11K', height: '85%' },
-                            { label: 'May', val: '$12K', height: '95%' }
+                            { label: 'Jan', val: `${useSchoolStore.getState().currencySymbol}8K`, height: '65%' },
+                            { label: 'Feb', val: `${useSchoolStore.getState().currencySymbol}9K`, height: '70%' },
+                            { label: 'Mar', val: `${useSchoolStore.getState().currencySymbol}10K`, height: '78%' },
+                            { label: 'Apr', val: `${useSchoolStore.getState().currencySymbol}11K`, height: '85%' },
+                            { label: 'May', val: `${useSchoolStore.getState().currencySymbol}12K`, height: '95%' }
                           ].map((bar, i) => (
                             <div key={i} className="flex flex-col items-center gap-1.5 w-12">
                               <span className="text-[9px] font-bold text-foreground/50">{bar.val}</span>
@@ -14099,21 +14099,21 @@ export const UnifiedDashboard: React.FC = () => {
                               <td className="p-3 font-bold text-primary">Allied School Campus A</td>
                               <td className="p-3 text-right font-mono">1,204</td>
                               <td className="p-3 text-right font-mono text-emerald-400">96.4%</td>
-                              <td className="p-3 text-right font-mono">$12,400</td>
+                              <td className="p-3 text-right font-mono">{formatCurrency(12400)}</td>
                               <td className="p-3 text-right font-mono text-emerald-400">+12%</td>
                             </tr>
                             <tr className="hover:bg-muted/10">
                               <td className="p-3 font-bold text-primary">Beaconhouse UK Branch</td>
                               <td className="p-3 text-right font-mono">850</td>
                               <td className="p-3 text-right font-mono text-amber-400">89.2%</td>
-                              <td className="p-3 text-right font-mono">$28,500</td>
+                              <td className="p-3 text-right font-mono">{formatCurrency(28500)}</td>
                               <td className="p-3 text-right font-mono text-emerald-400">+4%</td>
                             </tr>
                             <tr className="hover:bg-muted/10">
                               <td className="p-3 font-bold text-primary">The Educators Lahore</td>
                               <td className="p-3 text-right font-mono">3,400</td>
                               <td className="p-3 text-right font-mono text-emerald-400">92.1%</td>
-                              <td className="p-3 text-right font-mono">$8,200</td>
+                              <td className="p-3 text-right font-mono">{formatCurrency(8200)}</td>
                               <td className="p-3 text-right font-mono text-rose-400">-2%</td>
                             </tr>
                           </tbody>
@@ -15674,7 +15674,7 @@ export const UnifiedDashboard: React.FC = () => {
                         </select>
                         <input name="itemLocation" required placeholder="Location (e.g. Room 12)" className="bg-muted/50 border border-border rounded-lg text-xs p-2 text-foreground" />
                         <input name="itemQty" required placeholder="Qty & Status (e.g. 10 Good)" className="bg-muted/50 border border-border rounded-lg text-xs p-2 text-foreground" />
-                        <input name="itemValue" required placeholder="Estimated Value (e.g. $500)" className="bg-muted/50 border border-border rounded-lg text-xs p-2 text-foreground" />
+                        <input name="itemValue" required placeholder="Estimated Value (e.g. {formatCurrency(500)})" className="bg-muted/50 border border-border rounded-lg text-xs p-2 text-foreground" />
                       </div>
                       <div className="flex justify-end pt-2">
                         <button type="submit" className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary/90">Save Asset</button>
