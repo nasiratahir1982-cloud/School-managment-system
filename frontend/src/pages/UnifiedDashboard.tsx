@@ -9261,6 +9261,15 @@ export const UnifiedDashboard: React.FC = () => {
                           <strong className="text-sm text-foreground block font-bold">{not.title}</strong>
                           <div className="flex items-center gap-2">
                             <span className="text-[10px] text-slate-500 font-mono">{not.date}</span>
+                            <button onClick={() => {
+                              const newT = prompt('Edit Title:', not.title);
+                              if (newT !== null) {
+                                const newC = prompt('Edit Content:', not.content);
+                                if (newC !== null) {
+                                  setNotices(prev => prev.map(n => n.id === not.id ? { ...n, title: newT, content: newC } : n));
+                                }
+                              }
+                            }} className="text-[10px] text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded font-bold transition-colors opacity-0 group-hover:opacity-100">Edit</button>
                             <button onClick={() => setNotices(prev => prev.filter(n => n.id !== not.id))} className="text-[10px] text-red-500 hover:bg-red-500/10 px-1.5 py-0.5 rounded font-bold transition-colors opacity-0 group-hover:opacity-100">Del</button>
                           </div>
                         </div>
