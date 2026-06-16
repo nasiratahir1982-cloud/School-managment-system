@@ -10903,7 +10903,7 @@ export const UnifiedDashboard: React.FC = () => {
 
               {/* Term Dates & Academic Calendar — Full Year Planner */}
               {(activeFeature === 'Term Dates & Academic Calendar') && (
-                <AcademicCalendar editable={['admin', 'super_admin', 'vice_principal', 'org_owner', 'school_owner', 'hr'].includes(simulatedRole)} />
+                <AcademicCalendar editable={['admin', 'super_admin', 'principal', 'vice_principal', 'org_owner', 'school_owner', 'hr'].includes(simulatedRole)} />
               )}
 
               {/* RECEPTION & VISITOR LOGS & APPOINTMENT SCHEDULING */}
