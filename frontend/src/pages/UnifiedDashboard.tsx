@@ -447,6 +447,11 @@ export const UnifiedDashboard: React.FC = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFeature, setActiveFeature] = useState<string | null>(null);
+  const [activeDevices, setActiveDevices] = useState([
+    { id: '1', dev: 'MacBook Pro 16" - Chrome', loc: 'Lahore, PK (119.16.22.1)', time: 'Current Session', iconType: 'smartphone_emerald', active: true },
+    { id: '2', dev: 'iPhone 14 Pro Max - Safari', loc: 'Lahore, PK (119.16.22.8)', time: '2 hours ago', iconType: 'smartphone_muted', active: false },
+    { id: '3', dev: 'Windows 11 Desktop - Edge', loc: 'Dubai, UAE (185.22.11.9)', time: '3 days ago', iconType: 'activity_amber', active: false },
+  ]);
   const [activeGuide, setActiveGuide] = useState<{ title: string; answerTitle: string; answerContent: string } | null>(null);
   const [activeFunnelView, setActiveFunnelView] = useState<string | null>(null);
   const [showAddFunnel, setShowAddFunnel] = useState(false);
@@ -8318,14 +8323,12 @@ export const UnifiedDashboard: React.FC = () => {
                         </tr>
                       </thead>
                       <tbody className="text-[11px] font-semibold">
-                        {[
-                          { dev: 'MacBook Pro 16" - Chrome', loc: 'Lahore, PK (119.16.22.1)', time: 'Current Session', icon: <Smartphone className="w-4 h-4 text-emerald-400" />, active: true },
-                          { dev: 'iPhone 14 Pro Max - Safari', loc: 'Lahore, PK (119.16.22.8)', time: '2 hours ago', icon: <Smartphone className="w-4 h-4 text-muted-foreground" />, active: false },
-                          { dev: 'Windows 11 Desktop - Edge', loc: 'Dubai, UAE (185.22.11.9)', time: '3 days ago', icon: <Activity className="w-4 h-4 text-amber-500" />, active: false },
-                        ].map((row, i) => (
-                          <tr key={i} className="border-b border-border/50 hover:bg-muted/10 transition-colors device-row">
+                        {activeDevices.map((row) => (
+                          <tr key={row.id} className="border-b border-border/50 hover:bg-muted/10 transition-colors device-row">
                             <td className="p-2 flex items-center gap-2">
-                              {row.icon}
+                              {row.iconType === 'smartphone_emerald' && <Smartphone className="w-4 h-4 text-emerald-400" />}
+                              {row.iconType === 'smartphone_muted' && <Smartphone className="w-4 h-4 text-muted-foreground" />}
+                              {row.iconType === 'activity_amber' && <Activity className="w-4 h-4 text-amber-500" />}
                               <span className={row.active ? 'text-primary font-bold' : 'text-foreground'}>{row.dev}</span>
                               {row.active && <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-500 text-[9px] rounded ml-1">Live</span>}
                             </td>
@@ -8337,13 +8340,7 @@ export const UnifiedDashboard: React.FC = () => {
                               ) : (
                                 <button 
                                   onClick={(e) => {
-                                    const tr = (e.currentTarget as HTMLElement).closest('tr');
-                                    if(tr) {
-                                      tr.style.transition = 'all 0.5s ease';
-                                      tr.style.opacity = '0';
-                                      tr.style.transform = 'translateX(20px)';
-                                      setTimeout(() => tr.remove(), 500);
-                                    }
+                                    setActiveDevices(prev => prev.filter(d => d.id !== row.id));
                                   }}
                                   className="px-2 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded font-bold text-[10px] transition-colors"
                                 >
