@@ -14481,59 +14481,96 @@ export const UnifiedDashboard: React.FC = () => {
               {['Expense Tracking', 'Financial Reports', 'Payroll Support'].includes(activeFeature) && (
                 <div className="space-y-4">
                   <div className="p-3 bg-muted/20 border border-border rounded-xl text-xs text-foreground/75 leading-relaxed">
-                    💳 Monitor fee collections and school expenditures.
+                    💳 Monitor fee collections, cash inflows, and school expenditures in real-time.
                   </div>
 
                   {isEditor && (
                     <form onSubmit={(e) => { 
-              e.preventDefault(); 
-              alert('Expense payout logged!'); 
-              (e.target as HTMLFormElement).reset(); 
-            }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
-                      <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Add School Expense</span>
-                      <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                        <select defaultValue="" className="modern-input" required>
-  <option value="" disabled>Expense Category</option>
-  <option value="Electricity Bill">Electricity Bill</option>
-  <option value="Water Bill">Water Bill</option>
-  <option value="Internet / Phone">Internet / Phone</option>
-  <option value="Stationery">Stationery</option>
-  <option value="Maintenance / Repairs">Maintenance / Repairs</option>
-  <option value="Event Expenses">Event Expenses</option>
-  <option value="Transport / Fuel">Transport / Fuel</option>
-  <option value="Other">Other</option>
-</select>
-                        <input type="number" placeholder="Expenditure Amount" className="bg-card border border-border rounded-lg text-xs p-2.5 text-foreground" required />
-                        <select className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
-                          <option>Cash</option>
-                          <option>Card Payment</option>
-                          <option>Bank Transfer</option>
+                      e.preventDefault(); 
+                      alert('Transaction logged in Cash Book!'); 
+                      (e.target as HTMLFormElement).reset(); 
+                    }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+                      <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider text-primary">Add Cash Book Entry</span>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <select defaultValue="Expense" className="modern-input min-w-0" required>
+                          <option value="Income" className="bg-slate-900 text-emerald-400 font-bold">Cash In (Income)</option>
+                          <option value="Expense" className="bg-slate-900 text-rose-400 font-bold">Cash Out (Expense)</option>
+                        </select>
+                        <select defaultValue="" className="modern-input min-w-0" required>
+                          <option value="" disabled>Category / Head</option>
+                          <option value="Fee Collection">Fee Collection</option>
+                          <option value="Donation / Grant">Donation / Grant</option>
+                          <option value="Other Income">Other Income</option>
+                          <option disabled>──────────</option>
+                          <option value="Electricity Bill">Electricity Bill</option>
+                          <option value="Water Bill">Water Bill</option>
+                          <option value="Internet / Phone">Internet / Phone</option>
+                          <option value="Staff Salary">Staff Salary</option>
+                          <option value="Maintenance / Repairs">Maintenance / Repairs</option>
+                          <option value="Event Expenses">Event Expenses</option>
+                          <option value="Transport / Fuel">Transport / Fuel</option>
+                          <option value="Other Expense">Other Expense</option>
+                        </select>
+                        <input type="number" placeholder="Amount (e.g. 5000)" className="modern-input min-w-0" required />
+                        <select className="modern-input min-w-0 font-semibold" required>
+                          <option>Cash in Hand</option>
+                          <option>Bank Account</option>
+                          <option>Cheque</option>
                         </select>
                       </div>
                       <div className="flex justify-end pt-2">
                         <button type="submit" className="px-6 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-lg transition-all shadow-md">
-                          + Save Expense
+                          + Save Transaction
                         </button>
                       </div>
                     </form>
                   )}
 
-                  <div className="space-y-2 max-h-44 overflow-y-auto pr-1">
-                    <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Expense Logs</span>
-                    <div className="w-full overflow-x-auto pb-2"><table className="w-full text-left border-collapse text-xs">
-                      <thead>
-                        <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
-                          <th className="p-2">Transaction ID</th>
-                          <th className="p-2">Category</th>
-                          <th className="p-2 text-right">Amount</th>
-                          <th className="p-2 text-center">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-border text-foreground/85">
-                        <tr className="hover:bg-muted/10"><td className="p-2 font-mono">TX-2026-908</td><td className="p-2">Internet DSL Fiber Line</td><td className="p-2 text-right font-semibold text-rose-400">- {formatCurrency(4800)}</td><td className="p-2 text-center"><span className="text-emerald-400 font-bold">Cleared</span></td></tr>
-                        <tr className="hover:bg-muted/10"><td className="p-2 font-mono">TX-2026-907</td><td className="p-2">Monthly Building Rent</td><td className="p-2 text-right font-semibold text-rose-400">- {formatCurrency(35000)}</td><td className="p-2 text-center"><span className="text-emerald-400 font-bold">Cleared</span></td></tr>
-                      </tbody>
-                    </table></div>
+                  <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
+                    <span className="block text-xs font-bold text-foreground/70 uppercase tracking-wider">Cash Book & Transaction Logs</span>
+                    <div className="w-full overflow-x-auto pb-2">
+                      <table className="w-full text-left border-collapse text-xs min-w-[500px]">
+                        <thead>
+                          <tr className="border-b border-border bg-muted/20 font-bold text-foreground/60">
+                            <th className="p-3">Date</th>
+                            <th className="p-3">Transaction ID</th>
+                            <th className="p-3">Category</th>
+                            <th className="p-3">Account</th>
+                            <th className="p-3 text-right">Amount</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border text-foreground/85">
+                          <tr className="hover:bg-muted/10 transition-colors">
+                            <td className="p-3 text-foreground/70">16 Jun 2026</td>
+                            <td className="p-3 font-mono text-primary">TX-2026-909</td>
+                            <td className="p-3 font-bold">Fee Collection (Grade 10)</td>
+                            <td className="p-3 text-foreground/70">Bank Account</td>
+                            <td className="p-3 text-right font-bold text-emerald-500">+ {formatCurrency(150000)}</td>
+                          </tr>
+                          <tr className="hover:bg-muted/10 transition-colors">
+                            <td className="p-3 text-foreground/70">15 Jun 2026</td>
+                            <td className="p-3 font-mono text-primary">TX-2026-908</td>
+                            <td className="p-3 font-bold">Internet DSL Fiber Line</td>
+                            <td className="p-3 text-foreground/70">Cash in Hand</td>
+                            <td className="p-3 text-right font-bold text-rose-500">- {formatCurrency(4800)}</td>
+                          </tr>
+                          <tr className="hover:bg-muted/10 transition-colors">
+                            <td className="p-3 text-foreground/70">10 Jun 2026</td>
+                            <td className="p-3 font-mono text-primary">TX-2026-907</td>
+                            <td className="p-3 font-bold">Monthly Building Rent</td>
+                            <td className="p-3 text-foreground/70">Bank Account</td>
+                            <td className="p-3 text-right font-bold text-rose-500">- {formatCurrency(35000)}</td>
+                          </tr>
+                          <tr className="hover:bg-muted/10 transition-colors">
+                            <td className="p-3 text-foreground/70">01 Jun 2026</td>
+                            <td className="p-3 font-mono text-primary">TX-2026-906</td>
+                            <td className="p-3 font-bold">Donation / Grant</td>
+                            <td className="p-3 text-foreground/70">Cheque</td>
+                            <td className="p-3 text-right font-bold text-emerald-500">+ {formatCurrency(500000)}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
 
                   <button onClick={() => handlePrintPdf('financial_statement')} className="w-full py-2 bg-muted hover:bg-muted/80 border border-border text-foreground text-xs font-bold rounded-lg transition-all shadow-md">
