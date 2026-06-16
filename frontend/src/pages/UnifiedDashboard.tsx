@@ -4090,7 +4090,7 @@ export const UnifiedDashboard: React.FC = () => {
         </section>
 
         {/* Middle Section: Quick Operations & Live System Telemetry */}
-        <section className="grid grid-cols-1 lg:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch w-full">
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8 items-stretch w-full max-w-6xl mx-auto">
           {/* Card 1: Quick Operations (Left side, col-span-1 w-full or col-span-3) */}
           <div className={`${showSystemTelemetry ? 'lg:col-span-1 w-full' : 'lg:col-span-3'} glass-card p-6 rounded-2xl border border-border bg-card/30 space-y-4 flex flex-col justify-between`}>
             <div>
