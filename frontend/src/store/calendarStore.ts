@@ -88,45 +88,45 @@ interface CalendarState {
 // ─── Default Data ────────────────────────────────────────────────────────────
 
 const DEFAULT_HOLIDAYS: string[] = [
-  '2026-12-25', '2026-12-26', '2027-01-01', '2026-08-14', '2026-11-09',
-  '2027-03-23', '2026-07-01', '2026-07-02', '2026-07-03', '2026-06-17',
-  '2026-06-18', '2026-06-19', '2026-06-29', '2026-06-30'
+  '2025-12-25', '2025-12-26', '2026-01-01', '2025-08-14', '2025-11-09',
+  '2026-03-23', '2025-07-01', '2025-07-02', '2025-07-03', '2025-06-17',
+  '2025-06-18', '2025-06-19', '2025-06-29', '2025-06-30'
 ];
 
 const DEFAULT_TERM_DATES: TermDate[] = [
-  { id: 't1', term: 'Autumn Term 1', start: '2026-09-01', end: '2026-10-23', status: 'Upcoming' },
-  { id: 't2', term: 'Autumn Half-Term Break', start: '2026-10-26', end: '2026-10-30', status: 'Holiday' },
-  { id: 't3', term: 'Autumn Term 2', start: '2026-11-02', end: '2026-12-18', status: 'Upcoming' },
-  { id: 't4', term: 'Christmas Break', start: '2026-12-21', end: '2027-01-01', status: 'Holiday' },
-  { id: 't5', term: 'Spring Term 1', start: '2027-01-05', end: '2027-02-13', status: 'Upcoming' },
-  { id: 't6', term: 'Spring Half-Term Break', start: '2027-02-16', end: '2027-02-20', status: 'Holiday' },
-  { id: 't7', term: 'Spring Term 2', start: '2027-02-23', end: '2027-04-02', status: 'Upcoming' },
-  { id: 't8', term: 'Easter Break', start: '2027-04-06', end: '2027-04-17', status: 'Holiday' },
-  { id: 't9', term: 'Summer Term 1', start: '2027-04-20', end: '2027-05-22', status: 'Upcoming' },
-  { id: 't10', term: 'Summer Half-Term Break', start: '2027-05-25', end: '2027-05-29', status: 'Holiday' },
-  { id: 't11', term: 'Summer Term 2', start: '2027-06-01', end: '2027-07-17', status: 'Upcoming' },
-  { id: 't12', term: 'Summer Holiday', start: '2027-07-20', end: '2027-08-31', status: 'Holiday' }
+  { id: 't1', term: 'Autumn Term 1', start: '2025-09-01', end: '2025-10-23', status: 'Upcoming' },
+  { id: 't2', term: 'Autumn Half-Term Break', start: '2025-10-26', end: '2025-10-30', status: 'Holiday' },
+  { id: 't3', term: 'Autumn Term 2', start: '2025-11-02', end: '2025-12-18', status: 'Upcoming' },
+  { id: 't4', term: 'Christmas Break', start: '2025-12-21', end: '2026-01-01', status: 'Holiday' },
+  { id: 't5', term: 'Spring Term 1', start: '2026-01-05', end: '2026-02-13', status: 'Upcoming' },
+  { id: 't6', term: 'Spring Half-Term Break', start: '2026-02-16', end: '2026-02-20', status: 'Holiday' },
+  { id: 't7', term: 'Spring Term 2', start: '2026-02-23', end: '2026-04-02', status: 'Upcoming' },
+  { id: 't8', term: 'Easter Break', start: '2026-04-06', end: '2026-04-17', status: 'Holiday' },
+  { id: 't9', term: 'Summer Term 1', start: '2026-04-20', end: '2026-05-22', status: 'Upcoming' },
+  { id: 't10', term: 'Summer Half-Term Break', start: '2026-05-25', end: '2026-05-29', status: 'Holiday' },
+  { id: 't11', term: 'Summer Term 2', start: '2026-06-01', end: '2026-07-17', status: 'Upcoming' },
+  { id: 't12', term: 'Summer Holiday', start: '2026-07-20', end: '2026-08-31', status: 'Holiday' }
 ];
 
 const DEFAULT_INSET_DAYS: InsetDay[] = [
-  { id: 'i1', date: '2026-09-01', title: 'Staff Training & Orientation', editable: true },
-  { id: 'i2', date: '2026-11-02', title: 'Curriculum Planning Day', editable: true },
-  { id: 'i3', date: '2027-01-05', title: 'Safeguarding & First Aid Training', editable: true },
-  { id: 'i4', date: '2027-04-20', title: 'Assessment & Moderation Day', editable: true },
-  { id: 'i5', date: '2027-06-01', title: 'End of Year Review & CPD', editable: true }
+  { id: 'i1', date: '2025-09-01', title: 'Staff Training & Orientation', editable: true },
+  { id: 'i2', date: '2025-11-02', title: 'Curriculum Planning Day', editable: true },
+  { id: 'i3', date: '2026-01-05', title: 'Safeguarding & First Aid Training', editable: true },
+  { id: 'i4', date: '2026-04-20', title: 'Assessment & Moderation Day', editable: true },
+  { id: 'i5', date: '2026-06-01', title: 'End of Year Review & CPD', editable: true }
 ];
 
 const DEFAULT_ACADEMIC_EVENTS: AcademicEvent[] = [
-  { id: 'ev1', date: '2026-09-10', title: 'Open Day / Admissions', color: 'bg-blue-500' },
-  { id: 'ev2', date: '2026-10-15', title: 'Parents Evening - Autumn', color: 'bg-amber-500' },
-  { id: 'ev3', date: '2026-11-14', title: 'Anti-Bullying Week', color: 'bg-rose-500' },
-  { id: 'ev4', date: '2026-12-16', title: 'Christmas Concert', color: 'bg-emerald-500' },
-  { id: 'ev5', date: '2027-02-10', title: 'Mock Exams Begin', color: 'bg-purple-500' },
-  { id: 'ev6', date: '2027-03-13', title: 'Science Week', color: 'bg-cyan-500' },
-  { id: 'ev7', date: '2027-03-20', title: 'Parents Evening - Spring', color: 'bg-amber-500' },
-  { id: 'ev8', date: '2027-05-04', title: 'External Exams Begin', color: 'bg-red-500' },
-  { id: 'ev9', date: '2027-06-25', title: 'Sports Day', color: 'bg-green-500' },
-  { id: 'ev10', date: '2027-07-10', title: 'Prize Giving / Awards', color: 'bg-yellow-500' }
+  { id: 'ev1', date: '2025-09-10', title: 'Open Day / Admissions', color: 'bg-blue-500' },
+  { id: 'ev2', date: '2025-10-15', title: 'Parents Evening - Autumn', color: 'bg-amber-500' },
+  { id: 'ev3', date: '2025-11-14', title: 'Anti-Bullying Week', color: 'bg-rose-500' },
+  { id: 'ev4', date: '2025-12-16', title: 'Christmas Concert', color: 'bg-emerald-500' },
+  { id: 'ev5', date: '2026-02-10', title: 'Mock Exams Begin', color: 'bg-purple-500' },
+  { id: 'ev6', date: '2026-03-13', title: 'Science Week', color: 'bg-cyan-500' },
+  { id: 'ev7', date: '2026-03-20', title: 'Parents Evening - Spring', color: 'bg-amber-500' },
+  { id: 'ev8', date: '2026-05-04', title: 'External Exams Begin', color: 'bg-red-500' },
+  { id: 'ev9', date: '2026-06-25', title: 'Sports Day', color: 'bg-green-500' },
+  { id: 'ev10', date: '2026-07-10', title: 'Prize Giving / Awards', color: 'bg-yellow-500' }
 ];
 
 // ─── Store ───────────────────────────────────────────────────────────────────
