@@ -7450,7 +7450,7 @@ export const UnifiedDashboard: React.FC = () => {
                   <div className="p-5 bg-card border border-border rounded-xl space-y-4">
                     <div className="flex justify-between items-center pb-2 border-b border-border/50">
                       <strong className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-2"><CalendarDays className="w-4 h-4 text-primary" /> AI Timetable Generator</strong>
-                      <button className="px-3 py-1 bg-primary text-white rounded text-[10px] font-bold shadow-md">Export PDF</button>
+                      <button onClick={() => window.print()} className="px-3 py-1 bg-primary hover:bg-primary/90 text-white rounded text-[10px] font-bold shadow-md transition-all flex items-center gap-1"><span className="text-white">🖨️</span> Print / PDF</button>
                     </div>
                     <div className="bg-muted/10 p-4 border border-dashed border-border rounded-xl text-center space-y-3">
                       <p className="text-[11px] text-muted-foreground">Select a grade section to automatically distribute subjects without teacher overlaps.</p>
@@ -7485,28 +7485,28 @@ export const UnifiedDashboard: React.FC = () => {
                          </thead>
                          <tbody className="text-[10px]">
                            <tr className="border-b border-border/50">
-                             <td className="p-2 border-r border-border/50 font-bold">08:00 AM</td>
-                             <td className="p-2 border-r border-border/50 bg-blue-500/10 text-blue-500 font-semibold">Physics (Lab)</td>
-                             <td className="p-2 border-r border-border/50 bg-emerald-500/10 text-emerald-500 font-semibold">Maths</td>
-                             <td className="p-2 border-r border-border/50 bg-amber-500/10 text-amber-500 font-semibold">English</td>
-                             <td className="p-2 border-r border-border/50 bg-purple-500/10 text-purple-500 font-semibold">Chemistry</td>
-                             <td className="p-2 border-r border-border/50 bg-rose-500/10 text-rose-500 font-semibold">Biology</td>
+                             <td className="p-2 border-r border-border/50 font-bold" contentEditable suppressContentEditableWarning>08:00 AM</td>
+                             <td className="p-2 border-r border-border/50 bg-blue-500/10 text-blue-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-blue-500/20 transition-colors" contentEditable suppressContentEditableWarning>Physics (Lab)</td>
+                             <td className="p-2 border-r border-border/50 bg-emerald-500/10 text-emerald-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-emerald-500/20 transition-colors" contentEditable suppressContentEditableWarning>Maths</td>
+                             <td className="p-2 border-r border-border/50 bg-amber-500/10 text-amber-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-amber-500/20 transition-colors" contentEditable suppressContentEditableWarning>English</td>
+                             <td className="p-2 border-r border-border/50 bg-purple-500/10 text-purple-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-purple-500/20 transition-colors" contentEditable suppressContentEditableWarning>Chemistry</td>
+                             <td className="p-2 border-r border-border/50 bg-rose-500/10 text-rose-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-rose-500/20 transition-colors" contentEditable suppressContentEditableWarning>Biology</td>
                            </tr>
                            <tr className="border-b border-border/50">
-                             <td className="p-2 border-r border-border/50 font-bold">09:00 AM</td>
-                             <td className="p-2 border-r border-border/50 bg-emerald-500/10 text-emerald-500 font-semibold">Maths</td>
-                             <td className="p-2 border-r border-border/50 bg-purple-500/10 text-purple-500 font-semibold">Chemistry</td>
-                             <td className="p-2 border-r border-border/50 bg-rose-500/10 text-rose-500 font-semibold">Biology</td>
-                             <td className="p-2 border-r border-border/50 bg-blue-500/10 text-blue-500 font-semibold">Physics</td>
-                             <td className="p-2 border-r border-border/50 bg-amber-500/10 text-amber-500 font-semibold">English</td>
+                             <td className="p-2 border-r border-border/50 font-bold" contentEditable suppressContentEditableWarning>09:00 AM</td>
+                             <td className="p-2 border-r border-border/50 bg-emerald-500/10 text-emerald-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-emerald-500/20 transition-colors" contentEditable suppressContentEditableWarning>Maths</td>
+                             <td className="p-2 border-r border-border/50 bg-purple-500/10 text-purple-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-purple-500/20 transition-colors" contentEditable suppressContentEditableWarning>Chemistry</td>
+                             <td className="p-2 border-r border-border/50 bg-rose-500/10 text-rose-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-rose-500/20 transition-colors" contentEditable suppressContentEditableWarning>Biology</td>
+                             <td className="p-2 border-r border-border/50 bg-blue-500/10 text-blue-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-blue-500/20 transition-colors" contentEditable suppressContentEditableWarning>Physics</td>
+                             <td className="p-2 border-r border-border/50 bg-amber-500/10 text-amber-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-amber-500/20 transition-colors" contentEditable suppressContentEditableWarning>English</td>
                            </tr>
                            <tr className="border-b border-border/50">
-                             <td className="p-2 border-r border-border/50 font-bold">10:00 AM</td>
-                             <td className="p-2 border-r border-border/50 bg-amber-500/10 text-amber-500 font-semibold">English</td>
-                             <td className="p-2 border-r border-border/50 bg-rose-500/10 text-rose-500 font-semibold">Biology</td>
-                             <td className="p-2 border-r border-border/50 bg-blue-500/10 text-blue-500 font-semibold">Physics</td>
-                             <td className="p-2 border-r border-border/50 bg-emerald-500/10 text-emerald-500 font-semibold">Maths</td>
-                             <td className="p-2 border-r border-border/50 bg-purple-500/10 text-purple-500 font-semibold">Chemistry</td>
+                             <td className="p-2 border-r border-border/50 font-bold" contentEditable suppressContentEditableWarning>10:00 AM</td>
+                             <td className="p-2 border-r border-border/50 bg-amber-500/10 text-amber-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-amber-500/20 transition-colors" contentEditable suppressContentEditableWarning>English</td>
+                             <td className="p-2 border-r border-border/50 bg-rose-500/10 text-rose-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-rose-500/20 transition-colors" contentEditable suppressContentEditableWarning>Biology</td>
+                             <td className="p-2 border-r border-border/50 bg-blue-500/10 text-blue-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-blue-500/20 transition-colors" contentEditable suppressContentEditableWarning>Physics</td>
+                             <td className="p-2 border-r border-border/50 bg-emerald-500/10 text-emerald-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-emerald-500/20 transition-colors" contentEditable suppressContentEditableWarning>Maths</td>
+                             <td className="p-2 border-r border-border/50 bg-purple-500/10 text-purple-500 font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:bg-purple-500/20 transition-colors" contentEditable suppressContentEditableWarning>Chemistry</td>
                            </tr>
                          </tbody>
                        </table>
@@ -7540,18 +7540,18 @@ export const UnifiedDashboard: React.FC = () => {
                         }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3 mb-4 animate-fadeIn">
                           <span className="block text-xs font-bold text-foreground/80 uppercase tracking-wider">Assign Alternative Teacher</span>
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-                            <input name="subDate" type="date" required defaultValue={new Date().toISOString().split('T')[0]} className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" />
-                            <select name="absentTeacher" required className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
+                            <input name="subDate" type="date" required defaultValue={new Date().toISOString().split('T')[0]} className="modern-input min-w-0 w-full" />
+                            <select name="absentTeacher" required className="modern-input min-w-0 w-full">
                               <option value="">Select Absent Teacher</option>
                               {teachers.map(t => <option key={t.id} value={`${t.name} (${t.subject})`}>{t.name} ({t.subject})</option>)}
                               <option value="Mr. Ali (Physics)">Mr. Ali (Physics)</option>
                             </select>
-                            <select name="subTeacher" required className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold">
+                            <select name="subTeacher" required className="modern-input min-w-0 w-full">
                               <option value="">Select Substitute Teacher</option>
                               {teachers.map(t => <option key={`sub-${t.id}`} value={`${t.name} (${t.subject})`}>{t.name} ({t.subject})</option>)}
                               <option value="Ms. Sana (Science)">Ms. Sana (Science)</option>
                             </select>
-                            <input name="subPeriod" required placeholder="Period / Time (e.g. 09:00 AM)" className="bg-card border border-border rounded-lg text-xs p-2 text-foreground" />
+                            <input name="subPeriod" required placeholder="Period / Time (e.g. 09:00 AM)" className="modern-input min-w-0 w-full" />
                           </div>
                           <div className="flex justify-end pt-2">
                             <button type="submit" className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary/90">Assign Substitute</button>
@@ -11522,7 +11522,7 @@ export const UnifiedDashboard: React.FC = () => {
                               const firstStudent = students.find(s => s.className === e.target.value);
                               if (firstStudent) setSelectedReportStudent(firstStudent.name);
                             }}
-                            className="bg-card border border-border rounded text-foreground font-black text-xs px-1 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary w-full"
+                            className="modern-input w-full min-w-0 py-1 px-2 font-bold"
                           >
                             {Array.from(new Set(students.map(s => s.className))).map(c => <option key={c} value={c}>{c}</option>)}
                           </select>
@@ -11538,7 +11538,7 @@ export const UnifiedDashboard: React.FC = () => {
                           <select 
                             value={activeStudentName}
                             onChange={(e) => setSelectedReportStudent(e.target.value)}
-                            className="bg-card border border-border rounded text-foreground font-black text-xs px-1 py-0.5 focus:outline-none focus:ring-1 focus:ring-primary w-full"
+                            className="modern-input w-full min-w-0 py-1 px-2 font-bold"
                           >
                             {students.filter(s => !selectedReportClassGroup || s.className === selectedReportClassGroup).map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
                           </select>
@@ -12282,7 +12282,7 @@ export const UnifiedDashboard: React.FC = () => {
                       <select 
                         value={newDisciplineStudent}
                         onChange={(e) => setNewDisciplineStudent(e.target.value)}
-                        className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold"
+                        className="modern-input w-full min-w-0"
                       >
                         {students.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
                       </select>
@@ -12307,7 +12307,7 @@ export const UnifiedDashboard: React.FC = () => {
                       <select
                         value={newDisciplineAction}
                         onChange={(e) => setNewDisciplineAction(e.target.value)}
-                        className="bg-card border border-border rounded-lg text-xs p-2 text-foreground font-semibold"
+                        className="modern-input w-full min-w-0"
                       >
                         <option value="Warning Issued">Warning Issued</option>
                         <option value="Parent Notified">Parent Notified</option>
