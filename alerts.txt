@@ -1,0 +1,92 @@
+Line 3618: alert("You must be logged in to sync to Firebase.");
+Line 3629: alert("Successfully pushed demo data to Firebase! The page will now reload.");
+Line 3632: alert("Failed to push data: " + e);
+Line 3649: alert('Firebase Database Configuration saved! The system will now reload to apply the new database connection.');
+Line 3902: alert("Please allow popups to generate and print reports.");
+Line 5700: <button onClick={() => alert("Leave verification request logged. The school coordinator will check.")} className="px-3.5 py-1 bg-red-650 hover:bg-red-700 text-white rounded-lg font-bold transition-all shadow text-[10px] whitespace-nowrap">Verify Leave</button>
+Line 5912: alert(`Access Denied! Your logged in role (${currentUser?.role}) does not have editing rights for the "${section}" module.`);
+Line 5934: alert(`[${currentSchool?.schoolName || 'School'}] Starting operation: ${action.label}`);
+Line 6056: alert('Please enter a valid age');
+Line 6139: onClick={() => alert("Pinging GPS vehicle transponder... Connection healthy. Status: Active & Synced.")}
+Line 6450: onClick={() => alert("Redirecting to the global documentation portal...")}
+Line 6833: alert("Link added successfully!");
+Line 7109: alert("Access Denied! You do not have permission to publish assignments.");
+Line 7134: alert(`Assignment "${newAssignmentTitle}" successfully dispatched/scheduled!`);
+Line 7549: alert(`Congratulations message sent to ${topCandidate.name}'s parents via SMS/Email!`);
+Line 7575: alert('Old entries discarded. "Re-apply" SMS sent to parents successfully.');
+Line 8590: onClick={(e) => { e.preventDefault(); alert("Lesson Plan uploaded and sent to Principal for review!"); }}
+Line 8629: onClick={() => alert("Class Diary Entry successfully published! Parents will receive a notification.")}
+Line 8682: onClick={() => alert("Quiz Generated! A notification has been sent to the class.")}
+Line 8732: onClick={() => alert("Remark logged! It is now visible on the Parent's Dashboard.")}
+Line 9094: alert(`Leave Request for ${req.name} Approved successfully.`);
+Line 9098: alert(`Leave Request for ${req.name} Rejected.`);
+Line 9582: alert('Assignment Published Successfully!');
+Line 9613: alert('Live Quiz has been successfully launched. Students will be notified instantly.');
+Line 9667: alert('Class diary has been updated. Parents will be notified.');
+Line 9725: alert('Attendance has been successfully saved to the system.');
+Line 9766: alert('Grades have been saved to the report card.');
+Line 9796: alert('Student remark has been logged and sent to parents.');
+Line 10060: alert("New IP Address added to whitelist successfully!");
+Line 10215: alert(`OCR Scan Complete for ${file.name}. Document is authentic.`);
+Line 10306: onClick={() => alert("Merit List Generated! 42 candidates passed the 75% cut-off. Emails are ready to be dispatched.")}
+Line 10570: alert(`An unpaid invoice of Rs ${amt} already exists for ${newInvoiceStudent}.`);
+Line 10587: alert('Invoice generated and shared to student portal! (Popup blocked: Allow popups to auto-print PDF)');
+Line 10749: alert(`Fee Payment of Rs ${inv.amount} Processed Successfully via online banking!`);
+Line 11267: alert("Error: Leaves cannot be requested on weekends!");
+Line 11273: alert("Error: Leaves must be requested at least 24 hours in advance!");
+Line 11284: alert("Leave application successfully registered!");
+Line 11376: alert("Recommended and forwarded to Principal for final approval.");
+Line 11404: alert("Approved directly by VP.");
+Line 11456: alert("Major leave officially approved by Principal.");
+Line 11610: alert('Book issued successfully to selected student!');
+Line 11911: <form onSubmit={(e) => { e.preventDefault(); alert('New vehicle added to fleet!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+Line 11951: <form onSubmit={(e) => { e.preventDefault(); alert('New route saved!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+Line 11988: <form onSubmit={(e) => { e.preventDefault(); alert('Driver registered successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+Line 12028: <form onSubmit={(e) => { e.preventDefault(); alert('Student transport route assigned!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+Line 12083: <form onSubmit={(e) => { e.preventDefault(); alert('Fee payment recorded!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+Line 12238: <form onSubmit={(e) => { e.preventDefault(); alert('Mess menu updated successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+Line 12259: <form onSubmit={(e) => { e.preventDefault(); alert('Dorm room assigned successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+Line 12302: <form onSubmit={(e) => { e.preventDefault(); alert('Hostel Bed allocation logged successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+Line 12440: alert(`Fee collection of ${formatCurrency(inv.amount)} for ${inv.name} logged successfully!`);
+Line 12450: alert(`Defaulter notification alert sent to ${inv.name}'s parent contact regarding outstanding payment.`);
+Line 12488: alert('Visitor entry logged successfully!');
+Line 12619: alert('Call registry logged successfully!');
+Line 12705: alert('Employee record registered successfully!');
+Line 12805: <form onSubmit={(e) => { e.preventDefault(); alert('Job vacancy opening posted successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+Line 12845: <form onSubmit={(e) => { e.preventDefault(); alert('Performance score logged!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+Line 12890: <form onSubmit={(e) => { e.preventDefault(); alert('Monthly payroll disbursement initiated!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+Line 13184: alert(`Grades for ${studentName} updated successfully!`);
+Line 13550: alert(`Successfully submitted ${file} for assignment: "${ass.title}"!`);
+Line 14177: alert(`📎 ${attachmentFiles.length} attachment(s) have been downloaded.\nPlease send them manually on WhatsApp along with the image.`);
+Line 14186: alert('📱 Premium Image Card generated!\n\nYour image preview is shown below. Use the "💾 Save Image" button to download it, then share it on WhatsApp manually.');
+Line 14547: alert(`📎 ${attachmentFiles.length} attachment(s) downloaded.\nPlease send them manually on WhatsApp.`);
+Line 14551: alert('Your browser does not support direct file sharing.\nPlease use "Save All Files" and share manually.');
+Line 14707: alert('Query marked as resolved and replied!');
+Line 14743: alert(`Country ${newCountryName} successfully registered!`);
+Line 14811: alert(`Organization ${newOrgName} has been registered!`);
+Line 14874: alert(`School Campus ${newSchoolName} successfully created!`);
+Line 14936: alert(`Subscription plan ${newPlanName} has been configured!`);
+Line 15036: alert('Custom DNS target configurations saved! DNS is currently propagation-testing.');
+Line 15116: alert('Reply submitted and ticket marked as Resolved!');
+Line 15235: <button onClick={() => alert('Multi-Level Permissions updated successfully!')} className="w-full sm:w-auto px-4 py-2.5 bg-primary text-white text-xs font-bold rounded-lg shadow hover:bg-primary/90 transition-all flex items-center justify-center gap-2">Save Matrix Configuration</button>
+Line 15353: <button onClick={() => alert('Manual SQL Dump Triggered! Backend process started.')} className="w-full sm:w-auto px-4 py-2.5 bg-primary text-white text-xs font-bold rounded-lg shadow hover:bg-primary/90 transition-all whitespace-nowrap">Trigger Manual Backup</button>
+Line 15513: <button onClick={() => alert('Test SMS sent successfully!')} className="px-4 py-2 bg-muted text-foreground border border-border text-xs font-bold rounded-lg shadow-sm hover:bg-muted/80 transition-all">Send Test SMS</button>
+Line 15514: <button onClick={() => alert('SMS Settings saved!')} className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg shadow hover:bg-primary/90 transition-all">Save Settings</button>
+Line 15550: <button onClick={() => alert('Email Server Configuration saved!')} className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg shadow hover:bg-primary/90 transition-all mt-4">Save Configuration</button>
+Line 15696: alert('Global notice announcement broadcasted successfully!');
+Line 15792: <form onSubmit={(e) => { e.preventDefault(); alert('Prospective lead added successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+Line 15858: <form onSubmit={(e) => { e.preventDefault(); alert('Expense payout logged!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+Line 15917: <form onSubmit={(e) => { e.preventDefault(); alert('Staff profile created successfully!'); }} className="p-4 bg-muted/30 border border-border rounded-xl space-y-3">
+Line 16000: onClick={() => alert("AI Report generated successfully and added to school records!")}
+Line 16019: alert('Marketing Broadcast successfully dispatched to parent contact lists!');
+Line 16064: <button onClick={() => alert("Ticket TCK-4819 resolved successfully!")} className="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-bold">Resolve</button>
+Line 16072: <button onClick={() => alert("Ticket TCK-4820 resolved successfully!")} className="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-bold">Resolve</button>
+Line 16105: onClick={() => alert("Simulated Push Notification successfully sent to parent smartphone!")}
+Line 16366: alert("Post saved and published to School Notices portal!");
+Line 16449: alert("Failed to export PNG: " + (e as Error).message);
+Line 16460: alert("Caption text copied to clipboard!");
+Line 17554: alert(`Gateway ${gw.name} status changed successfully!`);
+Line 17575: alert("Payment configurations synced successfully across branch gateways!");
+Line 17617: alert(`Oops! "${formattedClass}" already exists in the system.\nPlease enter a unique class name.`);
+Line 17675: alert(`Oops! The subject "${formattedSubject}" already exists in the system.\nPlease enter a unique subject name.`);
+Line 17876: alert('Sending payslips to all employee emails & portal accounts...');

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Message Card Preview</title>
+  <style>
+    body {
+      background-color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+      font-family: sans-serif;
+    }
+    #canvas-container {
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      border-radius: 24px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .controls {
+      display: flex;
+      gap: 16px;
+    }
+    button {
+      padding: 12px 24px;
+      background: #D4AF37;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #e5c048;
+    }
+  </style>
+</head>
+<body>
+  <h2>WhatsApp Premium Message Preview</h2>
+  <div id="canvas-container">
+    <canvas id="msgCanvas"></canvas>
+  </div>
+  <div class="controls">
+    <button onclick="downloadImage()">Download as Image</button>
+  </div>
+
+  <script>
+    function drawCard() {
+      const canvas = document.getElementById('msgCanvas');
+      const ctx = canvas.getContext('2d');
+      
+      const width = 640;
+      const padding = 40;
+      
+      // Sample Data
+      const schoolName = "CENTRAL SCHOOL";
+      const tagline = "E X C E L L E N C E   I N   E D U C A T I O N";
+      const studentName = "ALI B.";
+      const studentDetails = "Class 10-A • Roll 45";
+      const msgDate = "6 Jun 2026";
+      const msgTime = "10:30 AM";
+      const subject = "FEE REMINDER / DUES";
+      const rawMessage = "Dear Parent/Guardian,\n\nWe hope this message finds you well. This is a gentle reminder that the tuition fees for the current term are now due. Please ensure the payment is made by the end of this week to avoid any late charges.\n\nThank you for your prompt attention to this matter.";
+      
+      // Calculate text wrapping for message
+      ctx.font = '16px "Segoe UI", sans-serif';
+      const words = rawMessage.replace(/\n/g, " \n ").split(' ');
+      let lines = [];
+      let currentLine = '';
+      
+      for (let i = 0; i < words.length; i++) {
+        if (words[i] === '\n') {
+          lines.push(currentLine);
+          currentLine = '';
+          continue;
+        }
+        let testLine = currentLine + words[i] + ' ';
+        let metrics = ctx.measureText(testLine);
+        if (metrics.width > width - (padding * 2) - 40 && i > 0) {
+          lines.push(currentLine);
+          currentLine = words[i] + ' ';
+        } else {
+          currentLine = testLine;
+        }
+      }
+      lines.push(currentLine);
+      
+      const messageBoxHeight = (lines.length * 26) + 100;
+      const height = 750 + messageBoxHeight;
+      
+      canvas.width = width;
+      canvas.height = height;
+      
+      // Background gradient
+      const grad = ctx.createLinearGradient(0, 0, 0, height);
+      grad.addColorStop(0, '#101012');
+      grad.addColorStop(1, '#050505');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, width, height);
+      
+      // --- HEADER ---
+      // Logo Box
+      ctx.fillStyle = '#D4AF37'; // Gold
+      ctx.beginPath();
+      ctx.roundRect(width/2 - 45, 50, 90, 90, 24);
+      ctx.fill();
+      
+      // Logo Icon (Crown or Cap)
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '40px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('👑', width/2, 108);
+      
+      // School Name
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 36px "Times New Roman", Georgia, serif';
+      ctx.fillText(schoolName, width/2, 190);
+      
+      // Tagline
+      ctx.fillStyle = '#D4AF37';
+      ctx.font = 'bold 12px "Segoe UI", sans-serif';
+      ctx.letterSpacing = "2px"; // Canvas API supports letterSpacing in newer browsers
+      ctx.fillText(tagline, width/2, 220);
+      
+      // Pills
+      const pillY = 250;
+      
+      // Pill 1: ID
+      ctx.fillStyle = '#1A1A1A';
+      ctx.beginPath(); ctx.roundRect(width/2 - 95, pillY, 85, 32, 16); ctx.fill();
+      ctx.fillStyle = '#888888';
+      ctx.font = 'bold 11px "Segoe UI", sans-serif';
+      ctx.fillText('#O-4368', width/2 - 52, pillY + 20);
+      
+      // Pill 2: Status
+      ctx.fillStyle = '#D4AF37';
+      ctx.beginPath(); ctx.roundRect(width/2 + 10, pillY, 85, 32, 16); ctx.fill();
+      ctx.fillStyle = '#000000';
+      ctx.font = 'bold 11px "Segoe UI", sans-serif';
+      ctx.fillText('OFFICIAL', width/2 + 52, pillY + 20);
+      
+      // Divider
+      ctx.strokeStyle = '#222222';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(padding, 320); ctx.lineTo(width - padding, 320); ctx.stroke();
+      
+      // --- DETAILS GRID ---
+      const gridY = 360;
+      ctx.textAlign = 'left';
+      
+      // Left Col: Student
+      ctx.fillStyle = '#666666';
+      ctx.font = 'bold 10px "Segoe UI", sans-serif';
+      ctx.letterSpacing = "1px";
+      ctx.fillText('👤 STUDENT', padding, gridY);
+      
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 18px "Times New Roman", Georgia, serif';
+      ctx.letterSpacing = "0px";
+      ctx.fillText(studentName, padding, gridY + 28);
+      
+      ctx.fillStyle = '#888888';
+      ctx.font = '12px "Segoe UI", sans-serif';
+      ctx.fillText(studentDetails, padding, gridY + 48);
+      
+      // Right Col: Date/Time
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#666666';
+      ctx.font = 'bold 10px "Segoe UI", sans-serif';
+      ctx.letterSpacing = "1px";
+      ctx.fillText('SESSION 📅', width - padding, gridY);
+      
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 18px "Times New Roman", Georgia, serif';
+      ctx.letterSpacing = "0px";
+      ctx.fillText(msgDate, width - padding, gridY + 28);
+      
+      ctx.fillStyle = '#D4AF37';
+      ctx.font = '12px "Segoe UI", sans-serif';
+      ctx.fillText(msgTime, width - padding, gridY + 48);
+      
+      // --- MESSAGE SECTION ---
+      const msgY = 460;
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#666666';
+      ctx.font = 'bold 11px "Segoe UI", sans-serif';
+      ctx.letterSpacing = "2px";
+      ctx.fillText('C O M M U N I C A T I O N   D E T A I L S', padding, msgY);
+      
+      // Message Box
+      const boxY = msgY + 20;
+      ctx.fillStyle = '#111111';
+      ctx.strokeStyle = '#222222';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); 
+      ctx.roundRect(padding, boxY, width - (padding * 2), messageBoxHeight, 24); 
+      ctx.fill();
+      ctx.stroke();
+      
+      // Subject
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 18px "Times New Roman", Georgia, serif';
+      ctx.letterSpacing = "0px";
+      ctx.fillText(subject, padding + 24, boxY + 40);
+      
+      // Subject Badge
+      ctx.fillStyle = '#33270b';
+      ctx.beginPath(); ctx.roundRect(padding + 24, boxY + 55, 60, 20, 4); ctx.fill();
+      ctx.fillStyle = '#D4AF37';
+      ctx.font = 'bold 9px "Segoe UI", sans-serif';
+      ctx.fillText('URGENT', padding + 32, boxY + 68);
+      
+      // Message Text
+      ctx.fillStyle = '#CCCCCC';
+      ctx.font = '16px "Segoe UI", sans-serif';
+      ctx.lineHeight = 26;
+      let textY = boxY + 110;
+      
+      for (let i = 0; i < lines.length; i++) {
+        ctx.fillText(lines[i], padding + 24, textY);
+        textY += 26;
+      }
+      
+      // --- FOOTER ---
+      const footerY = height - 120;
+      
+      // Footer Pill 1
+      ctx.fillStyle = '#0a0a0a';
+      ctx.strokeStyle = '#222222';
+      ctx.beginPath(); ctx.roundRect(padding, footerY, 160, 40, 20); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#888888';
+      ctx.font = 'bold 10px "Segoe UI", sans-serif';
+      ctx.fillText('METHOD', padding + 15, footerY + 15);
+      ctx.fillStyle = '#D4AF37';
+      ctx.fillText('📱 APP NOTIFICATION', padding + 15, footerY + 30);
+
+      // Footer Pill 2
+      ctx.beginPath(); ctx.roundRect(width - padding - 160, footerY, 160, 40, 20); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#888888';
+      ctx.textAlign = 'right';
+      ctx.fillText('SECURITY', width - padding - 15, footerY + 15);
+      ctx.fillStyle = '#D4AF37';
+      ctx.fillText('VERIFIED ✅', width - padding - 15, footerY + 30);
+      
+      // Bottom Divider
+      ctx.strokeStyle = '#222222';
+      ctx.beginPath(); ctx.moveTo(padding, footerY + 70); ctx.lineTo(width - padding, footerY + 70); ctx.stroke();
+      
+      // Bottom Text
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'italic bold 14px "Times New Roman", Georgia, serif';
+      ctx.fillText(`Thank you for choosing ${schoolName}.`, width/2, height - 30);
+    }
+    
+    function downloadImage() {
+      const canvas = document.getElementById('msgCanvas');
+      const link = document.createElement('a');
+      link.download = 'premium-message.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+    
+    // Make sure fonts are loaded before drawing
+    document.fonts.ready.then(() => {
+      drawCard();
+    });
+  </script>
+</body>
+</html>
